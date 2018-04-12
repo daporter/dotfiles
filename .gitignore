@@ -13,6 +13,7 @@
 /.bundle
 /.config
 /.dropbox
+/.emacs.d
 /.exercism.json
 /.gem
 /.gnupg
