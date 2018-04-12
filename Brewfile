@@ -65,3 +65,9 @@ mas 'FruitJuice', id: 671736912
 mas 'Numbers',    id: 409203825
 mas 'Pages',      id: 409201541
 mas 'Tweetbot',   id: 557168941
+
+# chunkwm
+tap 'crisidev/homebrew-chunkwm'
+brew 'chunkwm', args: ['HEAD']
+brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
+
