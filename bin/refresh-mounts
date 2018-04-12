@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo "Restarting nfs-kernel-server.service"
+ssh pi@beilen 'sudo systemctl restart nfs-kernel-server.service'
+
+echo "Restarting nfs-common.service"
+ssh pi@beilen 'sudo systemctl restart nfs-common.service'
+
+echo "Restarting rpcbind.service"
+ssh pi@beilen 'sudo systemctl restart rpcbind.service'
+
+echo "Unmounting alkmaar:/mnt/NAS/iTunes_Media"
+ssh volumio@alkmaar 'sudo umount -v /mnt/NAS/iTunes_Media'
+
+echo "Mounting all on alkmaar"
+ssh volumio@alkmaar 'sudo mount -av'
