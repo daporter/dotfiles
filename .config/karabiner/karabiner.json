@@ -974,6 +974,32 @@
                             }
                         ]
                     },
+		    {
+                        "description": "Post right_shift when slash is held, slash otherwise",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "slash",
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "right_shift"
+                                    }
+                                ],
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "slash"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
                     {
                         "description": "Toggle caps_lock by pressing left_shift + right_shift at the same time",
                         "manipulators": [
