@@ -1,3 +1,13 @@
+if has("autocmd")
+  filetype on
+  filetype indent on
+  filetype plugin on
+endif
+
+syntax on
+set background=dark
+set termguicolors
+
 " vim-plug
 " Plugins will be downloaded under the specified directory.
 call plug#begin('~/.vim/plugged')
@@ -9,9 +19,6 @@ Plug 'airblade/vim-gitgutter'
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
 
-syntax on
-set background=dark
-set termguicolors
 let g:gruvbox_italic=1
 colorscheme gruvbox
 
