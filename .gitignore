@@ -26,6 +26,7 @@
 /.rvm
 /.ssh
 /.viminfo
+/.vim/plugged
 /.wget-hsts
 /Applications
 /Calibre
