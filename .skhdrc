@@ -38,7 +38,7 @@ alt - p : chunkc tiling::window --focus prev
 alt - n : chunkc tiling::window --focus next
 
 # Toggle window fullscreen
-alt - f : chunkc tiling::window --toggle fullscreen
+shift + alt - f : chunkc tiling::window --toggle fullscreen
 
 # Change focus between tiling and floating windows
 shift + alt - space : chunkc tiling::window --toggle float
