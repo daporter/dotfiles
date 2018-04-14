@@ -7,12 +7,15 @@
 
 export PATH="/usr/local/sbin:$PATH"
 
-# GnuPG configuration.
-GPG_TTY=$(tty)
-export GPG_TTY
+# Add ~/bin to PATH if it exists.
+[ -d "$HOME"/bin ] && PATH=$HOME/bin:$PATH
 
-# MacTEX
-export PATH="$PATH:/usr/local/texlive/2017/bin/x86_64-darwin/"
+# Load all supplementary scripts in ~/.profile.d
+for sh in "$HOME"/.profile.d/*.sh 
+do
+    [ -e "$sh" ] && . "$sh"
+done
+unset -v sh
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
