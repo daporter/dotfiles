@@ -68,6 +68,7 @@ ctrl + alt - r : chunkc tiling::desktop --rotate 90
 # Open terminal
 ctrl - return : osascript -e 'tell application "iTerm2" to create window with default profile'
 shift + ctrl + alt + cmd - a : open /Applications/Anki.app
+shift + ctrl + alt + cmd - c : open '/Applications/Google Chrome.app'
 shift + ctrl + alt + cmd - g : open /Applications/GoldenCheetah.app
 shift + ctrl + alt + cmd - m : open /Applications/Mail.app
 shift + ctrl + alt + cmd - o : open /Applications/OmniFocus.app
