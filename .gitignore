@@ -1,4 +1,6 @@
-.DS_Store
+!/.config/karabiner
+!/.config/goldencheetah.org
+*.DS_Store
 *.elc
 *.orig
 *.rbc
@@ -11,7 +13,7 @@
 /.bash_history
 /.bash_sessions
 /.bundle
-/.config
+/.config/*
 /.dropbox
 /.emacs.d
 /.exercism.json
