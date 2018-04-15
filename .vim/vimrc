@@ -1,40 +1,39 @@
 if has("autocmd")
   filetype on
-  filetype indent on
+  filetype indent on    " load filetype-specific indentation files
   filetype plugin on
 endif
 
-syntax on
+syntax enable		" switch on syntax highlighting
 set background=dark
-set termguicolors
+set termguicolors       " use 24-bit colour
+
+set expandtab		" use spaces instead of a tab character
+set wildmenu            " use a menu for command-line completion
+set incsearch           " use incremental searching
 
 " vim-plug
-" Plugins will be downloaded under the specified directory.
-call plug#begin('~/.vim/plugged')
-
-" Declare the list of plugins.
+call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
 Plug 'morhetz/gruvbox'
 Plug 'airblade/vim-gitgutter'
-
-" List ends here. Plugins become visible to Vim after this call.
 call plug#end()
 
 let g:gruvbox_italic=1
 colorscheme gruvbox
 
-hi vertsplit ctermfg=238 ctermbg=235
-hi LineNr ctermfg=237
-hi StatusLine ctermfg=235 ctermbg=245
-hi StatusLineNC ctermfg=235 ctermbg=237
-hi Search ctermbg=58 ctermfg=15
-hi Default ctermfg=1
-hi clear SignColumn
-hi SignColumn ctermbg=235
-hi GitGutterAdd ctermbg=235 ctermfg=245
-hi GitGutterChange ctermbg=235 ctermfg=245
-hi GitGutterDelete ctermbg=235 ctermfg=245
-hi GitGutterChangeDelete ctermbg=235 ctermfg=245
-hi EndOfBuffer ctermfg=237 ctermbg=235
+highlight vertsplit ctermfg=238 ctermbg=235
+highlight LineNr ctermfg=237
+highlight StatusLine ctermfg=235 ctermbg=245
+highlight StatusLineNC ctermfg=235 ctermbg=237
+highlight Search ctermbg=58 ctermfg=15
+highlight Default ctermfg=1
+highlight clear SignColumn
+highlight SignColumn ctermbg=235
+highlight GitGutterAdd ctermbg=235 ctermfg=245
+highlight GitGutterChange ctermbg=235 ctermfg=245
+highlight GitGutterDelete ctermbg=235 ctermfg=245
+highlight GitGutterChangeDelete ctermbg=235 ctermfg=245
+highlight EndOfBuffer ctermfg=237 ctermbg=235
 
 set statusline=%=%P\ %f\ %m
 set fillchars=vert:\ ,stl:\ ,stlnc:\ 
