@@ -3,8 +3,7 @@
 # Disable press-and-hold for keys in favor of key repeat.
 defaults write -g ApplePressAndHoldEnabled -bool false
 
-# Set key repeat rates a bit higher.
-defaults write -g InitialKeyRepeat -int 11 # normal minimum is 15 (225 ms)
+# Set key repeat rate a bit higher than is possible with System Prefs.
 defaults write -g KeyRepeat -int 1 # 15 ms
 
 # Use AirDrop over every interface.
