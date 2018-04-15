@@ -11,11 +11,14 @@
 # From the Bash documentation:
 #   For almost every purpose, shell functions are preferred over aliases.
 
+shopt -s cdspell        # Correct small errors in directory names given to the `cd` builtin
+shopt -s histappend     # Append history to $HISTFILE rather than overwriting it
+
+# Load Bash-specific startup files
+for sh in "$HOME"/.bashrc.d/*.bash ; do
+    [[ -e $sh ]] && source "$sh"
+done
+unset -v sh
+
 # From Homebrew bash-completion:
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
-
-# From Homebrew bash-git-prompt:
-if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
-    __GIT_PROMPT_DIR="/usr/local/opt/bash-git-prompt/share"
-    source "/usr/local/opt/bash-git-prompt/share/gitprompt.sh"
-fi

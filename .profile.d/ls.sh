@@ -6,9 +6,8 @@ unset -v LS_OPTIONS LS_COLORS
 
 # Define function proper.
 function ls() {
-    # -F to show trailing indicators of the filetype
     # -q to replace control chars with '?'
-    set -- -Fq "$@"
+    set -- -q "$@"
 
     # If output is to a terminal, add -x to format entries across, not down
     [ -t 1 ] && set -- -x "$@"
