@@ -11,8 +11,69 @@
 # From the Bash documentation:
 #   For almost every purpose, shell functions are preferred over aliases.
 
-shopt -s cdspell        # Correct small errors in directory names given to the `cd` builtin
-shopt -s histappend     # Append history to $HISTFILE rather than overwriting it
+# Correct small errors in directory names given to the `cd` builtin
+shopt -s cdspell        
+
+# Correct spelling errors during tab-completion
+shopt -s dirspell 2> /dev/null
+
+# Prepend cd to directory names automatically
+shopt -s autocd 2> /dev/null
+
+# This defines where cd looks for targets
+# Add the directories you want to have fast access to, separated by colon
+# Ex: CDPATH=".:~:~/projects" will look for targets in the current working directory, in home and in the ~/projects folder
+CDPATH=".:~:~/projects"
+
+# Prevent file overwrite on stdout redirection Use `>|` to force redirection to
+# an existing file
+set -o noclobber
+
+# Update window size after every command
+shopt -s checkwinsize
+
+# Enable history expansion with space. E.g. typing !!<space> will replace the !!
+# with your last command
+bind Space:magic-space
+
+# Turn on recursive globbing (enables ** to recurse all directories)
+shopt -s globstar 2> /dev/null
+
+# Case-insensitive globbing (used in pathname expansion)
+shopt -s nocaseglob;
+
+# Perform file completion in a case insensitive fashion
+bind "set completion-ignore-case on"
+
+# Display matches for ambiguous patterns at first tab press
+bind "set show-all-if-ambiguous on"
+
+# Immediately add a trailing slash when autocompleting symlinks to directories
+bind "set mark-symlinked-directories on"
+
+# Append history to $HISTFILE rather than overwriting it
+shopt -s histappend     
+
+# Save multi-line commands as one command
+shopt -s cmdhist
+
+# Record each line as it gets issued
+PROMPT_COMMAND="${PROMPT_COMMAND}history -a"
+
+# Huge history. Doesn't appear to slow things down, so why not?
+HISTSIZE=500000
+HISTFILESIZE=100000
+
+# Avoid duplicate entries
+HISTCONTROL="erasedups:ignoreboth"
+
+# Don't record uninteresting commands
+export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
+
+# Use standard ISO 8601 timestamp
+# %F equivalent to %Y-%m-%d
+# %T equivalent to %H:%M:%S (24-hour format)
+HISTTIMEFORMAT='%F %T '
 
 # Load Bash-specific startup files
 for sh in "$HOME"/.bashrc.d/*.bash ; do
