@@ -18,6 +18,7 @@ set incsearch           " use incremental searching
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-commentary'
 Plug 'tommcdo/vim-lion'
 Plug 'morhetz/gruvbox'
 Plug 'airblade/vim-gitgutter'
