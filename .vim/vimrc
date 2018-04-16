@@ -16,9 +16,12 @@ set incsearch           " use incremental searching
 
 " vim-plug
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
+Plug 'tommcdo/vim-lion'
 Plug 'morhetz/gruvbox'
 Plug 'airblade/vim-gitgutter'
 call plug#end()
+
+let g:lion_squeeze_spaces=1     " minimise spaces around aligned operator
 
 let g:gruvbox_italic=1
 colorscheme gruvbox
