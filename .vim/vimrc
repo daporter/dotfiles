@@ -1,6 +1,6 @@
 set nocompatible       " No need to be vi-like
 
-if has("autocmd")
+if has('autocmd')
   filetype on
   filetype indent on    " load filetype-specific indentation files
   filetype plugin on
@@ -16,6 +16,7 @@ set incsearch           " use incremental searching
 
 " vim-plug
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
+Plug 'tpope/vim-surround'
 Plug 'tommcdo/vim-lion'
 Plug 'morhetz/gruvbox'
 Plug 'airblade/vim-gitgutter'
