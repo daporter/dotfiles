@@ -1,3 +1,5 @@
+set nocompatible       " No need to be vi-like
+
 if has("autocmd")
   filetype on
   filetype indent on    " load filetype-specific indentation files
