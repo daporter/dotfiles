@@ -1,19 +1,36 @@
-set nocompatible        " No need to be vi-like
+set nocompatible        " no need to be vi-like
 
-if has('autocmd')
-  filetype on
+" If compiled with support for autocommands
+if has('autocmd')       
+  filetype on           " enable file type detection
   filetype indent on    " load filetype-specific indentation files
   filetype plugin on
+
+  " Syntax of these languages is fussy over tabs Vs spaces
+  autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
+  autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+
+  " Customisations based on house style (arbitrary)
+  autocmd FileType html       setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType css        setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType javascript setlocal ts=4 sts=4 sw=4 expandtab
 endif
 
-syntax enable		" switch on syntax highlighting
+syntax enable           " switch on syntax highlighting
 set background=dark
-set termguicolors       " use 24-bit colour
 
-set expandtab		" use spaces instead of a tab character
+if has('termguicolors')
+  set termguicolors       " use 24-bit colour
+endif
+
+set expandtab           " use spaces instead of a tab character
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
 set wildmenu            " use a menu for command-line completion
 set incsearch           " use incremental searching
-set textwidth=78        " wrap lines at 78th column
+set textwidth=78        " wrap lines at this column
+set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 
 " vim-plug
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
@@ -28,21 +45,19 @@ call plug#end()
 let g:lion_squeeze_spaces=1     " minimise spaces around aligned operator
 
 let g:gruvbox_italic=1
+let g:gruvbox_sign_column='bg0'
+let g:gruvbox_improved_warnings=1
 colorscheme gruvbox
 
-highlight vertsplit ctermfg=238 ctermbg=235
-highlight LineNr ctermfg=237
-highlight StatusLine ctermfg=235 ctermbg=245
-highlight StatusLineNC ctermfg=235 ctermbg=237
-highlight Search ctermbg=58 ctermfg=15
-highlight Default ctermfg=1
-highlight clear SignColumn
-highlight SignColumn ctermbg=235
-highlight GitGutterAdd ctermbg=235 ctermfg=245
-highlight GitGutterChange ctermbg=235 ctermfg=245
-highlight GitGutterDelete ctermbg=235 ctermfg=245
-highlight GitGutterChangeDelete ctermbg=235 ctermfg=245
-highlight EndOfBuffer ctermfg=237 ctermbg=235
+highlight StatusLine   guifg='#282828' guibg='#d5c4a1'
+highlight StatusLineNC guifg='#282828' guibg='#928374'
+" highlight Search       ctermfg=15  ctermbg=58  
+" highlight Default      ctermfg=1
+highlight GitGutterAdd          ctermfg=245 ctermbg=235 
+highlight GitGutterChange       ctermfg=245 ctermbg=235 
+highlight GitGutterDelete       ctermfg=245 ctermbg=235
+highlight GitGutterChangeDelete ctermfg=245 ctermbg=235
+" highlight EndOfBuffer           guifg='#3c3836' guibg='#282828'
 
 set statusline=%=%P\ %f\ %m
 set fillchars=vert:\ ,stl:\ ,stlnc:\ 
