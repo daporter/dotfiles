@@ -1,4 +1,4 @@
-set nocompatible       " No need to be vi-like
+set nocompatible        " No need to be vi-like
 
 if has('autocmd')
   filetype on
@@ -13,6 +13,7 @@ set termguicolors       " use 24-bit colour
 set expandtab		" use spaces instead of a tab character
 set wildmenu            " use a menu for command-line completion
 set incsearch           " use incremental searching
+set textwidth=78        " wrap lines at 78th column
 
 " vim-plug
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
