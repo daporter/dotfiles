@@ -35,6 +35,10 @@ brew 'tree'
 brew 'typespeed'
 brew 'wget'
 
+# When installing vim, remember to first edit the formula to enable the
+# '--with-termguicolors' option.
+brew 'vim', args: ['--build-from-source']
+
 cask '1password'
 cask 'anki'
 cask 'atom'
