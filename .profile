@@ -10,6 +10,8 @@ export PATH="/usr/local/sbin:$PATH"
 # Add ~/bin to PATH if it exists.
 [ -d "$HOME"/bin ] && PATH=$HOME/bin:$PATH
 
+export EDITOR=vim
+
 # Load all supplementary scripts in ~/.profile.d
 for sh in "$HOME"/.profile.d/*.sh 
 do
