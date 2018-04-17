@@ -1,20 +1,22 @@
 #!/bin/sh
 
+BREW=/usr/local/bin/brew
+
 echo "*** Updating Homebrew..."
-brew update
+${BREW} update
 echo
 echo "*** Outdated Homebrew packages:"
-brew outdated
+${BREW} outdated
 echo
 echo "*** Upgrading Homebrew packages..."
-brew upgrade
+${BREW} upgrade
 echo
 echo "*** Outdated Cask packages:"
-brew cask outdated
+${BREW} cask outdated
 echo
 echo "*** Upgrading Cask packages..."
-brew cask upgrade
+${BREW} cask upgrade
 echo
 echo "*** Cleaning up Homebrew and Cask packages..."
-brew cleanup
-brew cask cleanup
+${BREW} cleanup
+${BREW} cask cleanup
