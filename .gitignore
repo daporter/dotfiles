@@ -27,6 +27,7 @@
 /.ssh
 /.viminfo
 /.vim/plugged
+/.vim/spell
 /.wget-hsts
 /.wpm.csv
 /Applications
