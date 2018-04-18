@@ -32,7 +32,6 @@ brew 'sloccount'
 brew 'the_silver_searcher'
 brew 'tmux'
 brew 'tree'
-brew 'typespeed'
 brew 'wget'
 
 # When installing vim, remember to first edit the formula to enable the
