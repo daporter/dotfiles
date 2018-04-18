@@ -65,7 +65,7 @@ shift + ctrl + alt - l : chunkc tiling::window --swap east
 # Rotate tree
 ctrl + alt - r : chunkc tiling::desktop --rotate 90
 
-# Open terminal
+# Open applications
 ctrl - return : osascript -e 'tell application "iTerm2" to create window with default profile'
 shift + ctrl + alt + cmd - a : open /Applications/Anki.app
 shift + ctrl + alt + cmd - c : open '/Applications/Google Chrome.app'
