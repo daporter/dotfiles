@@ -32,6 +32,10 @@ set incsearch           " use incremental searching
 set textwidth=78        " wrap lines at this column
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 
+" Spelling
+set spelllang=en_au
+set spellfile=~/.vim/spell/en.utf-8.add
+
 " vim-plug
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
 Plug 'tpope/vim-surround'
