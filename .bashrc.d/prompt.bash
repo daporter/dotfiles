@@ -9,15 +9,16 @@ RED="$(tput setaf 1)"
 YELLOW="$(tput setaf 3)"
 
 git_prompt() {
+    GIT_PROMPT=
     BRANCH=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/*\(.*\)/\1/')
 
     if [ ! -z "$BRANCH" ]; then
-        echo -n "$GREEN$BRANCH"
+        GIT_PROMPT=$GREEN$BRANCH
 
-    if [ ! -z "$(git status --short)" ]; then
-        echo " ${RED}✗"
-    fi
+        if [ ! -z "$(git status --short)" ]; then
+            GIT_PROMPT=" ${GIT_PROMPT} ${RED}✗"
         fi
+    fi
 }
 
 vim_prompt() {
@@ -26,12 +27,11 @@ vim_prompt() {
     fi
 }
 
-jobs_prompt() {
-    if [ $(jobs -p | wc -l) -ne 0 ]; then
-        echo "${GREY}\j "
-    fi
-}
+# Record each line as it gets issued
+PROMPT_COMMAND='history -a'
 
-PS1="
-\[${GREY}\t ${YELLOW}\j${RESET} ${BLUE}\w$(git_prompt)\]
-\[${RESET}\]\$ "
+PROMPT_COMMAND=${PROMPT_COMMAND}';git_prompt'
+
+PS1='
+\[${GREY}\t ${YELLOW}\j${RESET} ${BLUE}\w${RESET}${GIT_PROMPT}\]
+\[${RESET}\]\$ '
