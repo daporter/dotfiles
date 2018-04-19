@@ -11,6 +11,7 @@ set trash = "+/trash"
 set record = "+/sent"
 set header_cache =~/.mutt/cache/headers
 set header_cache_compress = no
+set sendmail = "/usr/local/bin/msmtp -a personal"
 
 macro index G "!mbsync -a^M" "Update through mbsync"
 
@@ -111,6 +112,8 @@ set mailcap_path = "~/.mutt/mailcap"
 
 # # Load local config file for local overrides
 # source `x=~/.muttrc.local; if [ -e "$x" ]; then echo "$x"; fi; echo /dev/null`
+
+mailboxes =inbox =starred =drafts =sent =archive =wattage =goldencheetah =spam =trash
 
 source $HOME/.mutt/commands.mutt
 source $HOME/.mutt/bindings.mutt
