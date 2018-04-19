@@ -1,0 +1,74 @@
+# Global defaults
+Create Both
+Expunge Both
+SyncState *
+
+IMAPAccount personal
+Host imap.gmail.com
+User david.a.porter@gmail.com
+PassCmd "/usr/bin/security find-internet-password -w -a david.a.porter@gmail.com -s imap.gmail.com ~/Library/Keychains/login.keychain"
+SSLType IMAPS
+AuthMechs LOGIN
+
+IMAPStore personal-remote
+Account personal
+
+MaildirStore personal-local
+Path ~/mail/personal/
+Inbox ~/mail/personal/inbox
+SubFolders Verbatim
+
+Channel personal-inbox
+Master :personal-remote:INBOX
+Slave :personal-local:inbox
+
+Channel personal-drafts
+Master :personal-remote:"[Gmail]/Drafts"
+Slave :personal-local:drafts
+
+Channel personal-sent
+Master :personal-remote:"[Gmail]/Sent Mail"
+Slave :personal-local:sent
+
+Channel personal-starred
+Master :personal-remote:"[Gmail]/Starred"
+Slave :personal-local:starred
+
+Channel personal-trash
+Master :personal-remote:"[Gmail]/Trash"
+Slave :personal-local:trash
+
+Channel personal-spam
+Master :personal-remote:"[Gmail]/Spam"
+Slave :personal-local:spam
+
+Channel personal-archive
+Master :personal-remote:"[Gmail]/All Mail"
+Slave :personal-local:archive
+
+# Catch-all for everything else: note that the `Patterns` have to exclude both
+# the remote and local names for all the folders we want to exclude (except
+# "INBOX", which is special-cased, it would seem).
+Channel personal-catchall
+Master :personal-remote:
+Slave :personal-local:
+Patterns *
+Patterns !inbox
+Patterns !search
+Patterns !sent
+Patterns !spam
+Patterns !trash
+Patterns ![Gmail]*
+Patterns !archive
+Patterns !drafts
+Patterns !starred
+ 
+Group everything
+Channel personal-inbox
+Channel personal-starred
+Channel personal-drafts
+Channel personal-sent
+Channel personal-spam
+Channel personal-trash
+Channel personal-archive
+Channel personal-catchall

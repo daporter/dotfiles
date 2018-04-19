@@ -22,6 +22,7 @@
 /.irb_history
 /.lesshst
 /.local
+/.mutt/tmp
 /.npm
 /.rvm
 /.ssh
@@ -45,6 +46,7 @@
 /doc
 /journal
 /learning
+/mail
 /media
 /misc
 /notes
