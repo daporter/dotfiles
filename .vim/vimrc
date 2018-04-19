@@ -38,13 +38,20 @@ set spellfile=~/.vim/spell/en.utf-8.add
 
 " vim-plug
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
+Plug 'zhou13/vim-easyescape'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
 Plug 'tommcdo/vim-lion'
-Plug 'morhetz/gruvbox'
 Plug 'airblade/vim-gitgutter'
+Plug 'morhetz/gruvbox'
 call plug#end()
+
+" Enable use of both jk and kj for <ESC>.
+let g:easyescape_chars = { "j": 1, "k": 1 }
+let g:easyescape_timeout = 100
+cnoremap jk <ESC>
+cnoremap kj <ESC>
 
 let g:gruvbox_italic=1
 let g:gruvbox_sign_column='bg0'
