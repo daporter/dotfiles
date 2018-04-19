@@ -31,9 +31,9 @@
 
 # Change Focus
 alt - h : chunkc tiling::window --focus west
-alt - j : chunkc tiling::window --focus south
-alt - k : chunkc tiling::window --focus north
-alt - l : chunkc tiling::window --focus east
+alt - t : chunkc tiling::window --focus south
+alt - c : chunkc tiling::window --focus north
+alt - n : chunkc tiling::window --focus east
 alt - p : chunkc tiling::window --focus prev
 alt - n : chunkc tiling::window --focus next
 
@@ -52,26 +52,26 @@ alt - s : chunkc tiling::desktop --layout monocle
 
 # Move focused window
 shift + alt - h : chunkc tiling::window --warp west
-shift + alt - j : chunkc tiling::window --warp south
-shift + alt - k : chunkc tiling::window --warp north
-shift + alt - l : chunkc tiling::window --warp east
+shift + alt - t : chunkc tiling::window --warp south
+shift + alt - c : chunkc tiling::window --warp north
+shift + alt - n : chunkc tiling::window --warp east
 
 # Swap window
 shift + ctrl + alt - h : chunkc tiling::window --swap west
-shift + ctrl + alt - j : chunkc tiling::window --swap south
-shift + ctrl + alt - k : chunkc tiling::window --swap north
-shift + ctrl + alt - l : chunkc tiling::window --swap east
+shift + ctrl + alt - t : chunkc tiling::window --swap south
+shift + ctrl + alt - c : chunkc tiling::window --swap north
+shift + ctrl + alt - n : chunkc tiling::window --swap east
 
 # Rotate tree
 ctrl + alt - r : chunkc tiling::desktop --rotate 90
 
 # Open applications
 ctrl - return : osascript -e 'tell application "iTerm2" to create window with default profile'
-shift + ctrl + alt + cmd - a : open /Applications/Anki.app
-shift + ctrl + alt + cmd - c : open '/Applications/Google Chrome.app'
-shift + ctrl + alt + cmd - g : open /Applications/GoldenCheetah.app
-shift + ctrl + alt + cmd - m : open /Applications/Mail.app
-shift + ctrl + alt + cmd - o : open /Applications/OmniFocus.app
+hyper - a : open /Applications/Anki.app
+hyper - c : open '/Applications/Google Chrome.app'
+hyper - g : open /Applications/GoldenCheetah.app
+hyper - m : open /Applications/Mail.app
+hyper - o : open /Applications/OmniFocus.app
 
 ## Equalize size of windows
 #shift + alt - 0 : chunkc tiling::desktop --equalize
@@ -111,17 +111,17 @@ shift + alt - 2 : chunkc tiling::window --send-to-desktop 2
 #ctrl + cmd - 3  : chunkc tiling::window --send-to-monitor 3; chunkc tiling::monitor -f 3
 
 ## increase region size
-#shift + alt - a : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge west
-#shift + alt - s : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge south
-#shift + alt - w : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge north
-#shift + alt - d : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge east
-#
+alt - left : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge west
+alt - down : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge south
+alt - up : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge north # 0x37 = .
+alt - right : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge east
+
 ## decrease region size
-#shift + cmd - a : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge west
-#shift + cmd - s : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge south
-#shift + cmd - w : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge north
-#shift + cmd - d : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge east
-#
+shift + alt - left : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge west
+shift + alt - down : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge south
+shift + alt - up : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge north # 0x337 = .
+shift + alt - right : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge east
+
 ## set insertion point for focused container
 #ctrl + alt - f : chunkc tiling::window --use-insertion-point cancel
 #ctrl + alt - h : chunkc tiling::window --use-insertion-point west
