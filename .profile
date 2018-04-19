@@ -11,6 +11,8 @@ export PATH="/usr/local/sbin:$PATH"
 [ -d "$HOME"/bin ] && PATH=$HOME/bin:$PATH
 
 export EDITOR=vim
+export MAILPATH=$HOME/mail/personal/inbox
+export EMAIL=david.a.porter@gmail.com
 
 # Load all supplementary scripts in ~/.profile.d
 for sh in "$HOME"/.profile.d/*.sh 
