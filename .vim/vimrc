@@ -27,10 +27,14 @@ set expandtab           " use spaces instead of a tab character
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
+set number              " display line numbers
 set wildmenu            " use a menu for command-line completion
 set incsearch           " use incremental searching
 set textwidth=78        " wrap lines at this column
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
+set laststatus=2
+set statusline=%=%P\ %f\ %m
+set fillchars=vert:\ ,stl:\ ,stlnc:\ 
 
 " Spelling
 set spelllang=en_au
@@ -44,7 +48,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
 Plug 'tommcdo/vim-lion'
 Plug 'airblade/vim-gitgutter'
-Plug 'morhetz/gruvbox'
+Plug 'chriskempson/base16-vim'
 call plug#end()
 
 " Enable use of both jk and kj for <ESC>.
@@ -53,22 +57,4 @@ let g:easyescape_timeout = 100
 cnoremap jk <ESC>
 cnoremap kj <ESC>
 
-let g:gruvbox_italic=1
-let g:gruvbox_sign_column='bg0'
-let g:gruvbox_improved_warnings=1
-colorscheme gruvbox
-
-highlight StatusLine   guifg='#282828' guibg='#d5c4a1'
-highlight StatusLineNC guifg='#282828' guibg='#928374'
-" highlight Search       ctermfg=15  ctermbg=58  
-" highlight Default      ctermfg=1
-highlight GitGutterAdd          ctermfg=245 ctermbg=235 
-highlight GitGutterChange       ctermfg=245 ctermbg=235 
-highlight GitGutterDelete       ctermfg=245 ctermbg=235
-highlight GitGutterChangeDelete ctermfg=245 ctermbg=235
-" highlight EndOfBuffer           guifg='#3c3836' guibg='#282828'
-
-set statusline=%=%P\ %f\ %m
-set fillchars=vert:\ ,stl:\ ,stlnc:\ 
-set laststatus=2
-set noshowmode
+colorscheme base16-twilight
