@@ -57,20 +57,11 @@ shopt -s histappend
 # Save multi-line commands as one command
 shopt -s cmdhist
 
-# Huge history. Doesn't appear to slow things down, so why not?
-HISTSIZE=500000
-HISTFILESIZE=100000
-
 # Avoid duplicate entries
 HISTCONTROL="erasedups:ignoreboth"
 
 # Don't record uninteresting commands
 export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
-
-# Use standard ISO 8601 timestamp
-# %F equivalent to %Y-%m-%d
-# %T equivalent to %H:%M:%S (24-hour format)
-HISTTIMEFORMAT='%F %T '
 
 # Load Bash-specific startup files
 for sh in "$HOME"/.bashrc.d/*.bash ; do
