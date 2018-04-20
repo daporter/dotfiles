@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Copied from Tom Ryder's config
 # https://sanctum.geek.nz/cgit/dotfiles.git/tree/bash/bashrc.d/prompt.bash
 
@@ -49,7 +47,8 @@ prompt() {
                 if ((colors >= 16)) ; then
                     format=$(
                         # pc=${PROMPT_COLOR:-10}
-                        pc=${PROMPT_COLOR:-3}
+                        pc=${PROMPT_COLOR:-21}
+                        tput bold
                         tput setaf "$pc" ||
                         tput setaf "$pc" 0 0 ||
                         tput AF "$pc" ||
@@ -75,7 +74,7 @@ prompt() {
             PS1='${PROMPT_PREFIX}'$PS1'${PROMPT_SUFFIX}'
 
             # String it all together
-            PS1='\n\['"$format"'\]'"$PS1"'\['"$reset"'\]\n\$ '
+            PS1='\n\['"$format"'\]'"$PS1"'\n\$\['"$reset"'\] '
             PS2='> '
             PS3='? '
             PS4='+<$?> ${BASH_SOURCE:-$BASH}:${FUNCNAME[0]}:$LINENO:'
@@ -169,7 +168,7 @@ prompt() {
 
             # Print the status in brackets; add a git: prefix only if there
             # might be another VCS prompt (because PROMPT_VCS is set)
-            printf ' (%s%s%s%s)' \
+            printf ' (%s%s%s %s)' \
                 "${PROMPT_VCS:+git:}" \
                 "${name//\\/\\\\}" \
                 "${proc:+:"${proc//\\/\\\\}"}" \
