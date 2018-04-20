@@ -1691,7 +1691,7 @@
 			<key>Silence Bell</key>
 			<false/>
 			<key>Smart Cursor Color</key>
-			<true/>
+			<false/>
 			<key>Sync Title</key>
 			<true/>
 			<key>Tags</key>
