@@ -59,7 +59,7 @@ while true; do
   echo "Running postsync hooks:"
   echo
 
-  # time ~/.mutt/hooks/postsync.sh # Runs notmuch, lbdb-fetchaddr etc
+  time ~/.mutt/hooks/postsync.sh # Runs notmuch, lbdb-fetchaddr etc
 
   # echo
   # echo "Updating mailboxes listing:"
