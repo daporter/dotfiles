@@ -78,4 +78,9 @@ tap 'crisidev/homebrew-chunkwm'
 brew 'chunkwm', args: ['HEAD']
 brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
 
+# base16-manager
+tap 'chrokh/tap'
+brew 'findutils'
+brew 'base16-manager'
+
 # vim: filetype=ruby
