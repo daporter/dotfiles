@@ -10,6 +10,9 @@
 /.CFUserTextEncoding
 /.Trash
 /.atom
+/.base16-manager
+/.base16_theme
+/.vimrc_background
 /.bash_history
 /.bash_sessions
 /.bundle
