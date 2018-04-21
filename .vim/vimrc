@@ -1,9 +1,6 @@
-set nocompatible        " no need to be vi-like
-
 " If compiled with support for autocommands
 if has('autocmd')       
   filetype on           " enable file type detection
-  filetype indent on    " load filetype-specific indentation files
   filetype plugin on
 
   " Syntax of these languages is fussy over tabs Vs spaces
@@ -16,17 +13,16 @@ if has('autocmd')
   autocmd FileType javascript setlocal ts=4 sts=4 sw=4 expandtab
 endif
 
-syntax enable           " switch on syntax highlighting
 set background=dark
 
 if has('termguicolors')
   set termguicolors       " use 24-bit colour
 endif
 
+set autoindent          " new line copies previous line's indentation
+set softtabstop=4       " number of spaces pressing <Tab> counts for
+set shiftwidth=4        " number of spaces for each step of indent
 set expandtab           " use spaces instead of a tab character
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
 set number              " display line numbers
 set wildmenu            " use a menu for command-line completion
 set incsearch           " use incremental searching
@@ -34,7 +30,7 @@ set textwidth=78        " wrap lines at this column
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set laststatus=2
 set statusline=%=%P\ %f\ %m
-set fillchars=vert:\ ,stl:\ ,stlnc:\ 
+" set fillchars=vert:\ ,stl:\ ,stlnc:\ 
 
 " Spelling
 set spelllang=en_au
