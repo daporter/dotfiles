@@ -32,9 +32,7 @@ set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set laststatus=2
 set statusline=%=%P\ %f\ %m
 
-" Spelling
-set spelllang=en_au
-set spellfile=~/.vim/spell/en.utf-8.add
+set spelllang=en_au     " use the Australia language region
 
 " vim-plug
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
