@@ -2,12 +2,12 @@ cask_args appdir: '/Applications'
 
 tap 'homebrew/bundle'
 
+brew 'aria2'
 brew 'bash'
 brew 'bash-completion'
 brew 'checkbashisms'
 brew 'coreutils'
 brew 'elinks'
-brew 'emacs-mac'
 brew 'git'
 brew 'gnu-typist'
 brew 'gnupg'
