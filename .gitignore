@@ -29,6 +29,7 @@
 /.npm
 /.rvm
 /.ssh
+/.v8flags.*
 /.viminfo
 /.vim/plugged
 /.vim/spell
