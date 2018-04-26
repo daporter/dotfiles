@@ -19,6 +19,8 @@ if has('termguicolors')
   set termguicolors       " use 24-bit colour
 endif
 
+set cursorline          " highlight the screen line of the cursor
+
 set autoindent          " new line copies previous line's indentation
 set softtabstop=4       " number of spaces pressing <Tab> counts for
 set shiftwidth=4        " number of spaces for each step of indent
