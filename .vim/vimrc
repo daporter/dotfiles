@@ -26,7 +26,7 @@ set expandtab           " use spaces instead of a tab character
 set formatoptions+=n    " recognise numbered lists when formatting text
 set formatprg=par\ -w80 " use 'par' when gq is run
 set number              " display line numbers
-set wildmenu            " use a menu for command-line completion
+set wildmode=longest,list " use bash-style autocompletion
 set incsearch           " use incremental searching
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set laststatus=2
