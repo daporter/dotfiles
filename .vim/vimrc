@@ -19,20 +19,20 @@ if has('termguicolors')
   set termguicolors       " use 24-bit colour
 endif
 
-set autoindent          " new line copies previous line's indentation
-set softtabstop=4       " number of spaces pressing <Tab> counts for
-set shiftwidth=4        " number of spaces for each step of indent
-set expandtab           " use spaces instead of a tab character
-set formatoptions+=n    " recognise numbered lists when formatting text
-set formatprg=par\ -w80 " use 'par' when gq is run
-set number              " display line numbers
-set wildmode=longest,list " use bash-style autocompletion
-set incsearch           " use incremental searching
+set autoindent              " new line copies previous line's indentation
+set softtabstop=4           " number of spaces pressing <Tab> counts for
+set shiftwidth=4            " number of spaces for each step of indent
+set expandtab               " use spaces instead of a tab character
+set formatoptions+=n        " recognise numbered lists when formatting text
+set formatprg=par\ -w80     " use 'par' when gq is run
+set number                  " display line numbers
+set wildmode=longest,list   " use bash-style autocompletion
+set incsearch               " use incremental searching
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set laststatus=2
 set statusline=%=%P\ %f\ %m
 
-set spelllang=en_au     " use the Australia language region
+set spelllang=en_au         " use the Australia language region
 
 " vim-plug
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
