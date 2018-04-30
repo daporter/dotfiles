@@ -48,39 +48,16 @@ brew 'wget'
 # '--with-termguicolors' option.
 brew 'vim', args: ['--build-from-source']
 
-cask '1password'
 cask 'anki'
-cask 'atom'
-cask 'calibre'
-cask 'dash'
 cask 'dropbox'
-cask 'flux'
-cask 'font-source-code-pro'
 cask 'goldencheetah'
-cask 'google-chrome'
-cask 'iterm2'
 cask 'karabiner-elements'
-cask 'kindle'
-cask 'lastfm'
-cask 'mactex'
-cask 'musicbrainz-picard'
-cask 'next'
 cask 'omnifocus'
-cask 'quicksilver'
-cask 'skype'
-cask 'texshop'
-cask 'transmission'
-cask 'vlc'
-cask 'xld'
-
-mas 'FruitJuice', id: 671736912
-mas 'Numbers',    id: 409203825
-mas 'Pages',      id: 409201541
-mas 'Tweetbot',   id: 557168941
 
 # chunkwm
 tap 'crisidev/homebrew-chunkwm'
 brew 'chunkwm', args: ['HEAD']
+tap 'koekeishiya/formulae'
 brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
 
 # base16-manager
