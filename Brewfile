@@ -17,6 +17,7 @@ brew 'htop'
 brew 'hunspell'
 brew 'imagemagick'
 brew 'isync', args: ['with-berkeley-db']
+brew 'jq'
 brew 'jrnl'
 brew 'lockrun'
 brew 'lua'
