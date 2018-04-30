@@ -31,6 +31,7 @@
 /.ssh
 /.v8flags.*
 /.viminfo
+/.vim/.netrwhist
 /.vim/plugged
 /.vim/spell
 /.wget-hsts
