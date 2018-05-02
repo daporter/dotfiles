@@ -52,6 +52,7 @@ brew 'wget'
 brew 'vim', args: ['--build-from-source']
 
 cask 'anki'
+cask 'docker'
 cask 'dropbox'
 cask 'goldencheetah'
 cask 'karabiner-elements'
