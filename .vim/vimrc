@@ -31,7 +31,7 @@ set formatoptions+=n        " recognise numbered lists when formatting text
 set formatoptions+=t        " automatically wrap text using 'textwidth'
 set formatprg=par\ -w80     " use 'par' when gq is run
 set number                  " display line numbers
-set wildmode=longest,list:full  " use bash-style autocompletion
+set wildmode=longest,list   " use bash-style autocompletion
 set incsearch               " use incremental searching
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set laststatus=2
