@@ -63,6 +63,9 @@ HISTCONTROL="erasedups:ignoreboth"
 # Don't record uninteresting commands
 export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
 
+# Enable italics in the terminal
+export TERM=xterm-256color-italic
+
 # Load Bash-specific startup files
 for sh in "$HOME"/.bashrc.d/*.bash ; do
     [[ -e $sh ]] && source "$sh"
