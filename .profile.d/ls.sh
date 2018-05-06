@@ -9,9 +9,6 @@ function ls() {
     # -q to replace control chars with '?'
     set -- -q "$@"
 
-    # If output is to a terminal, add -x to format entries across, not down
-    [ -t 1 ] && set -- -x "$@"
-
     # Add -k to always show the filesize in kilobytes
     set -- -k "$@"
 
@@ -21,5 +18,4 @@ function ls() {
 
     # Run ls(1) with the concluded arguments
     command ls "$@"
-
 }
