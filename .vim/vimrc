@@ -57,3 +57,5 @@ cnoremap jk <ESC>
 cnoremap kj <ESC>
 
 colorscheme base16-twilight
+
+highlight Comment cterm=italic

@@ -7,6 +7,13 @@
 *.rej
 *.swp
 *~
+
+/Library/*
+!/Library/LaunchAgents/
+/Library/LaunchAgents/*
+!/Library/LaunchAgents/david.brew-update
+!/Library/LaunchAgents/david.syncmail
+
 /.CFUserTextEncoding
 /.Trash
 /.atom
@@ -43,7 +50,6 @@
 /Documents
 /Downloads
 /Dropbox
-/Library
 /Movies
 /Music
 /Pictures

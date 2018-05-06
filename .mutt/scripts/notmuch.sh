@@ -1,3 +1,4 @@
 #!/bin/sh
 
-lockrun --lockfile ~/.mutt/tmp/.notmuch.lock --quiet -- notmuch new 2> /dev/null
+/usr/local/bin/lockrun --lockfile ${HOME}/.mutt/tmp/.notmuch.lock --quiet -- \
+    /usr/local/bin/notmuch new 2> /dev/null

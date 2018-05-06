@@ -128,13 +128,13 @@ shift + alt - right : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-
 #ctrl + alt - j : chunkc tiling::window --use-insertion-point south
 #ctrl + alt - k : chunkc tiling::window --use-insertion-point north
 #ctrl + alt - l : chunkc tiling::window --use-insertion-point east
-#
-## mirror tree y-axis
-#alt - y : chunkc tiling::desktop --mirror vertical
-#
-## mirror tree x-axis
-#alt - x : chunkc tiling::desktop --mirror horizontal
-#
+
+# mirror tree y-axis
+alt - y : chunkc tiling::desktop --mirror vertical
+
+# mirror tree x-axis
+alt - x : chunkc tiling::desktop --mirror horizontal
+
 ## toggle desktop offset
 #alt - a : chunkc tiling::desktop --toggle offset
 #
