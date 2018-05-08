@@ -53,6 +53,7 @@ brew 'wget'
 brew 'vim', args: ['--build-from-source']
 
 cask 'anki'
+cask 'dash'
 cask 'docker'
 cask 'dropbox'
 cask 'goldencheetah'
