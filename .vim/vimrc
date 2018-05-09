@@ -23,8 +23,8 @@ if has('termguicolors')
 endif
 
 set cursorline              " highlight the screen line of the cursor
-
 set history=200             " increase the size of the ex command history
+set showmatch               " in insert mode, show matching paren, etc
 set autoindent              " new line copies previous line's indentation
 set softtabstop=4           " number of spaces pressing <Tab> counts for
 set shiftwidth=4            " number of spaces for each step of indent
