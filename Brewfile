@@ -25,7 +25,7 @@ brew 'mailutils'
 brew 'mas'
 brew 'mpv'
 brew 'msmtp'
-brew 'mutt'
+brew 'neomutt'
 brew 'node'
 brew 'notmuch'
 brew 'nvm'
@@ -79,6 +79,7 @@ mas 'FruitJuice', id: 671736912
 mas 'Numbers',    id: 409203825
 mas 'Pages',      id: 409201541
 mas 'Tweetbot',   id: 557168941
+mas 'Xcode',      id: 497799835
 
 # chunkwm
 tap 'crisidev/homebrew-chunkwm'
