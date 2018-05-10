@@ -1,17 +1,8 @@
-" If compiled with support for autocommands
-if has('autocmd')       
-  filetype on           " enable file type detection
-  filetype plugin on
+set encoding=utf-8
+scriptencoding utf-8
 
-  " Syntax of these languages is fussy over tabs Vs spaces
-  autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
-  autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
-
-  " Customisations based on house style (arbitrary)
-  autocmd FileType html       setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType css        setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
-endif
+" Load the matchit plugin.
+packadd! matchit
 
 set background=dark
 
@@ -20,8 +11,8 @@ if has('termguicolors')
 endif
 
 set cursorline              " highlight the screen line of the cursor
-
 set history=200             " increase the size of the ex command history
+set showmatch               " in insert mode, show matching paren, etc
 set autoindent              " new line copies previous line's indentation
 set softtabstop=4           " number of spaces pressing <Tab> counts for
 set shiftwidth=4            " number of spaces for each step of indent
@@ -39,6 +30,13 @@ set statusline=%=%P\ %f\ %m
 
 set spelllang=en_au         " use the Australia language region
 
+" Automatically display of errors in the quickfix window.
+augroup quickfix
+    autocmd!
+    autocmd QuickFixCmdPost [^l]* cwindow
+    autocmd VimEnter        *     cwindow
+augroup END
+
 " vim-plug
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
 Plug 'zhou13/vim-easyescape'
@@ -51,7 +49,7 @@ Plug 'chriskempson/base16-vim'
 call plug#end()
 
 " Enable use of both jk and kj for <ESC>.
-let g:easyescape_chars = { "j": 1, "k": 1 }
+let g:easyescape_chars = { 'j': 1, 'k': 1 }
 let g:easyescape_timeout = 100
 cnoremap jk <ESC>
 cnoremap kj <ESC>
