@@ -1,17 +1,5 @@
-" If compiled with support for autocommands
-if has('autocmd')       
-  filetype on           " enable file type detection
-  filetype plugin on
-
-  " Syntax of these languages is fussy over tabs Vs spaces
-  autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
-  autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
-
-  " Customisations based on house style (arbitrary)
-  autocmd FileType html       setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType css        setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
-endif
+set encoding=utf-8
+scriptencoding utf-8
 
 " Load the matchit plugin.
 packadd! matchit
@@ -61,7 +49,7 @@ Plug 'chriskempson/base16-vim'
 call plug#end()
 
 " Enable use of both jk and kj for <ESC>.
-let g:easyescape_chars = { "j": 1, "k": 1 }
+let g:easyescape_chars = { 'j': 1, 'k': 1 }
 let g:easyescape_timeout = 100
 cnoremap jk <ESC>
 cnoremap kj <ESC>
