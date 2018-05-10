@@ -42,6 +42,13 @@ set statusline=%=%P\ %f\ %m
 
 set spelllang=en_au         " use the Australia language region
 
+" Automatically display of errors in the quickfix window.
+augroup quickfix
+    autocmd!
+    autocmd QuickFixCmdPost [^l]* cwindow
+    autocmd VimEnter        *     cwindow
+augroup END
+
 " vim-plug
 call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
 Plug 'zhou13/vim-easyescape'
