@@ -1,7 +1,7 @@
 " Enable use of shellcheck when editing shell scripts.
 if executable('shellcheck')
     setlocal makeprg=shellcheck\ -f\ gcc\ %
-    augroup sh
+    augroup MySh
         autocmd!
         autocmd BufWritePost <buffer> silent make % | silent redraw!
     augroup END
