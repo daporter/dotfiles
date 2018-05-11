@@ -16,7 +16,6 @@ set background=dark
 set cursorline              " highlight the screen line of the cursor
 set ruler                   " show line,column of cursor in status line
 set laststatus=2            " show the status line always
-set statusline=%=%P\ %f\ %m
 set formatoptions+=n        " recognise numbered lists when formatting text
 set formatoptions+=t        " automatically wrap text using 'textwidth'
 set formatprg=par\ -w80     " use 'par' when gq is run
