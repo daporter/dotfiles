@@ -4,9 +4,9 @@ setlocal ts=2 sts=2 sw=2 expandtab
 if executable('eslint')
     setlocal errorformat=%f:\ line\ %l\\,\ col\ %c\\,\ %m,%-G%.%#
     setlocal makeprg=eslint\ --format\ compact
-    augroup javascript
+    augroup MyJavascript
         autocmd!
-        autocmd BufWritePost <buffer> silent make! % | silent redraw!
+        autocmd BufWritePost <buffer> silent make % | silent redraw!
     augroup END
 endif
 
