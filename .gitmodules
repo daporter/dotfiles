@@ -1,3 +1,18 @@
 [submodule "/Users/david/.mutt/mutt-notmuch-py"]
 	path = /Users/david/.mutt/mutt-notmuch-py
 	url = https://github.com/honza/mutt-notmuch-py.git
+[submodule ".vim/pack/dporter/start/vim-surround"]
+	path = .vim/pack/dporter/start/vim-surround
+	url = https://github.com/tpope/vim-surround.git
+[submodule ".vim/pack/dporter/start/vim-commentary"]
+	path = .vim/pack/dporter/start/vim-commentary
+	url = https://github.com/tpope/vim-commentary.git
+[submodule ".vim/pack/dporter/start/vim-lion"]
+	path = .vim/pack/dporter/start/vim-lion
+	url = https://github.com/tommcdo/vim-lion.git
+[submodule ".vim/pack/dporter/start/vim-easyescape"]
+	path = .vim/pack/dporter/start/vim-easyescape
+	url = https://github.com/zhou13/vim-lion.git
+[submodule ".vim/pack/dporter/start/vim-repeat"]
+	path = .vim/pack/dporter/start/vim-repeat
+	url = https://github.com/tpope/vim-repeat.git
