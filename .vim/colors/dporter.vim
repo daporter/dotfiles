@@ -22,8 +22,8 @@ highlight! Special                         guifg=foreground guibg=background
 
 highlight! Directory cterm=bold                  guifg=foreground guibg=background
 highlight! Todo      cterm=bold,italic,underline guifg=foreground guibg=background
-" highlight! SpecialKey cterm=bold   guifg=foreground guibg=background
-highlight! ErrorMsg   guifg=#c91b00    guibg=background
+highlight! ErrorMsg                              guifg=#c91b00    guibg=background
+highlight! SpellBad  cterm=undercurl,italic      guifg=#c91b00    guibg=background
 
 " highlight! link NonText  Comment
 " highlight! link Title    Directory
@@ -33,6 +33,7 @@ highlight! ErrorMsg   guifg=#c91b00    guibg=background
 highlight! diffLine          cterm=bold      guifg=foreground guibg=background
 highlight! diffAdded                         guifg=#73ba9b    guibg=background
 highlight! diffRemoved                       guifg=#ba2d0b    guibg=background
+highlight! gitcommitOverflow                 guifg=#c91b00    guibg=background
 
 " Vim.
 highlight! vimOption         cterm=bold      guifg=foreground guibg=background
