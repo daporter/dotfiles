@@ -23,7 +23,7 @@ highlight! Special                         guifg=foreground guibg=background
 highlight! Directory cterm=bold                  guifg=foreground guibg=background
 highlight! Todo      cterm=bold,italic,underline guifg=foreground guibg=background
 " highlight! SpecialKey cterm=bold   guifg=foreground guibg=background
-" highlight! ErrorMsg   cterm=bold   guifg=#a31621    guibg=background
+highlight! ErrorMsg   guifg=#c91b00    guibg=background
 
 " highlight! link NonText  Comment
 " highlight! link Title    Directory
