@@ -30,9 +30,14 @@ highlight! ErrorMsg   guifg=#c91b00    guibg=background
 " highlight! link MoreMsg  Comment
 " highlight! link Question Comment
 
+highlight! diffLine          cterm=bold      guifg=foreground guibg=background
+highlight! diffAdded                         guifg=#73ba9b    guibg=background
+highlight! diffRemoved                       guifg=#ba2d0b    guibg=background
+
 " Vim.
 highlight! vimOption         cterm=bold      guifg=foreground guibg=background
 highlight! vimFuncName       cterm=NONE      guifg=foreground guibg=background
+highlight! vimFunction       cterm=bold      guifg=foreground guibg=background
 highlight! vimIsCommand      cterm=bold      guifg=foreground guibg=background
 highlight! helpHyperTextJump cterm=underline guifg=foreground guibg=background
 highlight! helpHeadline      cterm=bold      guifg=foreground guibg=background
