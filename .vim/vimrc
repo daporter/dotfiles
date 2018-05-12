@@ -44,8 +44,10 @@ if has('termguicolors')
   set termguicolors         " use 24-bit colour
 endif
 
-" The following function outputs the names of the syntax group and the
-" translated syntax group of the character the cursor is on.
+" The following command displays the names of the syntax groups in the
+" hierarchy at the current cursor positon. Call it with :SS
+command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+
 function! SynGroup()                                                            
     let l:s = synID(line('.'), col('.'), 1)                                       
     echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
