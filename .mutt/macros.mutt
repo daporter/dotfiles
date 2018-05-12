@@ -2,6 +2,7 @@
 #   ! = $spoolfile (inbox)
 #   > = $mbox (archive)
 
+macro index,pager a "<save-message>><enter><enter>" "archive message"
 # macro index,pager gi "<change-folder>!<enter>" "go to inbox"
 # macro index,pager ga "<change-folder>><enter>" "go to all mail"
 # macro index,pager gs "<change-folder>=starred<enter>" "go to starred messages"
