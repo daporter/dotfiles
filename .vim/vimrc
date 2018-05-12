@@ -1,10 +1,3 @@
-set encoding=utf-8
-scriptencoding utf-8
-
-if has('termguicolors')
-  set termguicolors         " use 24-bit colour
-endif
-
 set shiftwidth=4            " number of spaces for each step of indent
 set softtabstop=4           " number of spaces pressing <Tab> counts for
 set textwidth=79            " wrap text as close to 80 chars as possible
@@ -12,16 +5,14 @@ set autoindent              " new line copies previous line's indentation
 set expandtab               " use spaces instead of a tab character
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set backspace=indent,eol,start  " proper backspace behavior
-set background=dark
-set cursorline              " highlight the screen line of the cursor
 set ruler                   " show line,column of cursor in status line
 set laststatus=2            " show the status line always
-set statusline=%=%P\ %f\ %m
 set formatoptions+=n        " recognise numbered lists when formatting text
 set formatoptions+=t        " automatically wrap text using 'textwidth'
 set formatprg=par\ -w80     " use 'par' when gq is run
 set incsearch               " use incremental searching
-set showmatch               " in insert mode, show matching paren, etc
+set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
+set laststatus=2
 set spelllang=en_au         " use the Australia language region
 set wildmode=longest,list   " use bash-style autocompletion
 
@@ -35,16 +26,30 @@ augroup END
 " Load the matchit plugin.
 packadd! matchit
 
-" vim-plug
-call plug#begin('~/.vim/plugged')       " location of vim-plug plugins
-Plug 'zhou13/vim-easyescape'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-commentary'
-Plug 'tommcdo/vim-lion'
-Plug 'airblade/vim-gitgutter'
-Plug 'chriskempson/base16-vim'
-call plug#end()
+if has('termguicolors')
+  set termguicolors         " use 24-bit colour
+endif
+
+" Automatically display of errors in the quickfix window.
+augroup MyQuickfix
+    autocmd!
+    autocmd QuickFixCmdPost [^l]* cwindow
+    autocmd VimEnter        *     cwindow
+augroup END
+
+" Load the matchit plugin.
+packadd! matchit
+
+" The following function outputs the names of the syntax group and the
+" translated syntax group of the character the cursor is on.
+"
+" To add its output to the status line, do:
+"   :set statusline+=%{SynGroup()}
+"   
+function! SynGroup()                                                            
+    let l:s = synID(line('.'), col('.'), 1)                                       
+    echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
+endfun
 
 " Enable use of both jk and kj for <ESC>.
 let g:easyescape_chars = { 'j': 1, 'k': 1 }
@@ -52,6 +57,5 @@ let g:easyescape_timeout = 100
 cnoremap jk <ESC>
 cnoremap kj <ESC>
 
-colorscheme base16-twilight
-
-highlight Comment cterm=italic
+set background=light
+colorscheme dporter
