@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+#
 # Copied from Tom Ryder's config
 # https://sanctum.geek.nz/cgit/dotfiles.git/tree/bash/bashrc.d/prompt.bash
 
@@ -46,13 +48,12 @@ prompt() {
                 # Check if we have non-bold bright green available
                 if ((colors >= 16)) ; then
                     format=$(
-                        # pc=${PROMPT_COLOR:-10}
-                        pc=${PROMPT_COLOR:-21}
+                        # pc=${PROMPT_COLOR:-21}
                         tput bold
-                        tput setaf "$pc" ||
-                        tput setaf "$pc" 0 0 ||
-                        tput AF "$pc" ||
-                        tput AF "$pc" 0 0
+                        # tput setaf "$pc" ||
+                        # tput setaf "$pc" 0 0 ||
+                        # tput AF "$pc" ||
+                        # tput AF "$pc" 0 0
                     )
 
                 # If we have only eight colors, use bold green
