@@ -26,19 +26,17 @@ augroup END
 " Load the matchit plugin.
 packadd! matchit
 
+" Enable use of both jk and kj for <ESC>.
+let g:easyescape_chars = { 'j': 1, 'k': 1 }
+let g:easyescape_timeout = 100
+cnoremap jk <ESC>
+cnoremap kj <ESC>
+
+syntax on
+
 if has('termguicolors')
   set termguicolors         " use 24-bit colour
 endif
-
-" Automatically display of errors in the quickfix window.
-augroup MyQuickfix
-    autocmd!
-    autocmd QuickFixCmdPost [^l]* cwindow
-    autocmd VimEnter        *     cwindow
-augroup END
-
-" Load the matchit plugin.
-packadd! matchit
 
 " The following function outputs the names of the syntax group and the
 " translated syntax group of the character the cursor is on.
@@ -50,12 +48,6 @@ function! SynGroup()
     let l:s = synID(line('.'), col('.'), 1)                                       
     echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
 endfun
-
-" Enable use of both jk and kj for <ESC>.
-let g:easyescape_chars = { 'j': 1, 'k': 1 }
-let g:easyescape_timeout = 100
-cnoremap jk <ESC>
-cnoremap kj <ESC>
 
 set background=light
 colorscheme dporter
