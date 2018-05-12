@@ -33,6 +33,7 @@ highlight! SpellBad  cterm=undercurl,italic      guifg=#c91b00    guibg=backgrou
 highlight! diffLine          cterm=bold      guifg=foreground guibg=background
 highlight! diffAdded                         guifg=#73ba9b    guibg=background
 highlight! diffRemoved                       guifg=#ba2d0b    guibg=background
+highlight! gitcommitOverflow                 guifg=#c91b00    guibg=background
 
 " Vim.
 highlight! vimOption         cterm=bold      guifg=foreground guibg=background
