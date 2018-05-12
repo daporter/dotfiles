@@ -1,3 +1,9 @@
+" The following two lines must be in the given order.
+set encoding=utf-8
+scriptencoding utf-8
+
+filetype plugin indent on
+
 set shiftwidth=4            " number of spaces for each step of indent
 set softtabstop=4           " number of spaces pressing <Tab> counts for
 set textwidth=79            " wrap text as close to 80 chars as possible
@@ -42,10 +48,6 @@ endif
 
 " The following function outputs the names of the syntax group and the
 " translated syntax group of the character the cursor is on.
-"
-" To add its output to the status line, do:
-"   :set statusline+=%{SynGroup()}
-"   
 function! SynGroup()                                                            
     let l:s = synID(line('.'), col('.'), 1)                                       
     echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
