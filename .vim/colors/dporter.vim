@@ -1,55 +1,50 @@
-highlight clear 
-
-highlight! Normal                       guifg=#140c01    guibg=#f8f2e4
-highlight! CursorLine   cterm=NONE      guibg=#e2dcd0
-highlight! StatusLine                   guifg=#3a362a    guibg=#e2dcd0 
-highlight! StatusLineNC                 guifg=#69645d    guibg=#cbc7bb
-highlight! Visual                       guibg=#e5d9bf
-highlight! LineNr       cterm=italic    guifg=#918877    guibg=#e2dcd0
-highlight! CursorLineNr cterm=italic    guifg=#b5b1a6    guibg=#cbc7bb
-highlight! Underlined   cterm=underline guifg=foreground guibg=background 
-
-highlight! link VertSplit StatusLineNC
-
-highlight! Statement  cterm=italic         guifg=foreground guibg=background 
-highlight! Type       cterm=bold           guifg=foreground guibg=background
-highlight! Constant                        guifg=foreground guibg=background
-highlight! Identifier cterm=bold           guifg=foreground guibg=background
-highlight! Function   cterm=bold,underline guifg=foreground guibg=background
-highlight! PreProc                         guifg=foreground guibg=background
-highlight! Comment    cterm=italic         guifg=#94908b
-highlight! Special                         guifg=foreground guibg=background
-
-highlight! Directory cterm=bold                  guifg=foreground guibg=background
-highlight! Todo      cterm=bold,italic,underline guifg=foreground guibg=background
-highlight! ErrorMsg                              guifg=#c91b00    guibg=background
-highlight! SpellBad  cterm=undercurl,italic      guifg=#c91b00    guibg=background
-
-" highlight! link NonText  Comment
-" highlight! link Title    Directory
-" highlight! link MoreMsg  Comment
-" highlight! link Question Comment
-
-highlight! diffLine          cterm=bold      guifg=foreground guibg=background
-highlight! diffAdded                         guifg=#73ba9b    guibg=background
-highlight! diffRemoved                       guifg=#ba2d0b    guibg=background
-highlight! gitcommitOverflow                 guifg=#c91b00    guibg=background
-
-" Vim.
-highlight! vimOption         cterm=bold      guifg=foreground guibg=background
-highlight! vimFuncName       cterm=NONE      guifg=foreground guibg=background
-highlight! vimFunction       cterm=bold      guifg=foreground guibg=background
-highlight! vimIsCommand      cterm=bold      guifg=foreground guibg=background
-highlight! helpHyperTextJump cterm=underline guifg=foreground guibg=background
-highlight! helpHeadline      cterm=bold      guifg=foreground guibg=background
-highlight! helpExample       cterm=italic    guifg=foreground guibg=background
-
-highlight! link helpHyperTextEntry helpHeadline
-highlight! link helpSectionDelim   helpHeadline
-highlight! link helpHeader         helpHeadline
-
-highlight! rubyDefine           cterm=italic guifg=foreground guibg=background
-highlight! rubyClass            cterm=italic guifg=foreground guibg=background
-highlight! rubyInstanceVariable              guifg=foreground guibg=background
-
 let g:colors_name = 'dporter'
+
+set background=light
+
+if exists('syntax_on')
+    syntax reset
+endif
+
+" You can see all the groups currently active with this command:
+"     :so $VIMRUNTIME/syntax/hitest.vim
+
+" Highlighting groups.
+highlight Normal                     ctermfg=0  ctermbg=7  guifg=fg      guibg=bg
+highlight CursorLine   cterm=NONE    ctermfg=fg ctermbg=9
+highlight Cursor                     ctermfg=7 ctermbg=0
+highlight StatusLine   cterm=reverse ctermfg=fg ctermbg=bg guifg=fg      guibg=bg
+highlight StatusLineNC cterm=reverse ctermfg=fg ctermbg=8  guifg=fg      guibg=bg
+highlight Visual                     ctermfg=fg ctermbg=9  guifg=fg   guibg=#e5d9bf
+highlight SpellBad  cterm=undercurl,italic      ctermfg=1 ctermbg=bg guifg=Red guibg=bg
+" highlight LineNr       cterm=italic    ctermfg=4 ctermbg=3 guifg=#918877    guibg=#e2dcd0
+" highlight CursorLineNr cterm=italic    guifg=#b5b1a6    guibg=#cbc7bb
+" highlight ErrorMsg     ctermfg=1 ctermbg=bg guifg=#c91b00    guibg=bg
+highlight Directory cterm=bold                  guifg=fg guibg=bg
+" highlight link NonText  Comment
+" highlight link Title    Directory
+highlight MoreMsg ctermfg=0 ctermbg=7 guifg=fg guibg=bg
+" highlight link Question Comment
+
+" Syntax highlighting groups.
+highlight Comment    cterm=italic                ctermfg=8
+highlight Constant                               ctermfg=fg ctermbg=bg guifg=fg guibg=bg
+highlight Identifier cterm=bold                  ctermfg=fg ctermbg=bg guifg=fg guibg=bg
+highlight Function   cterm=bold,underline        ctermfg=fg ctermbg=bg guifg=fg guibg=bg
+highlight Statement  cterm=italic                ctermfg=fg ctermbg=bg guifg=fg guibg=bg
+highlight PreProc    cterm=bold                  ctermfg=fg ctermbg=bg guifg=fg guibg=bg
+highlight Type       cterm=bold                  ctermfg=fg ctermbg=bg guifg=fg guibg=bg
+highlight Special    cterm=bold                  ctermfg=fg
+highlight Underlined                             ctermfg=fg
+highlight Ignore                                 ctermfg=8
+highlight Error                                  ctermfg=1
+highlight Todo       cterm=bold,italic,underline ctermfg=fg ctermbg=bg guifg=fg guibg=bg
+
+" highlight diffLine          cterm=bold      guifg=fg guibg=bg
+" highlight diffAdded                         guifg=#73ba9b    guibg=bg
+" highlight diffRemoved                       guifg=#ba2d0b    guibg=bg
+" highlight gitcommitOverflow                 guifg=#c91b00    guibg=bg
+
+" highlight link helpHyperTextEntry helpHeadline
+" highlight link helpSectionDelim   helpHeadline
+" highlight link helpHeader         helpHeadline
