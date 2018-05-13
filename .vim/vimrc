@@ -23,6 +23,7 @@ set laststatus=2
 set spelllang=en_au         " use the Australia language region
 set wildmode=longest,list   " use bash-style autocompletion
 set showmatch               " in insert mode, show matching paren, etc
+set dictionary+=/usr/share/dict/words   " used for keyword completion
 
 " Automatically display of errors in the quickfix window.
 augroup MyQuickfix
