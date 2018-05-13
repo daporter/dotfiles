@@ -40,20 +40,15 @@ let g:easyescape_timeout = 100
 cnoremap jk <ESC>
 cnoremap kj <ESC>
 
+" The following command displays the names of the syntax groups in the
+" hierarchy at the current cursor positon. Call it with :SS
+command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+
 syntax on
 
 if has('termguicolors')
   set termguicolors         " use 24-bit colour
 endif
-
-" The following command displays the names of the syntax groups in the
-" hierarchy at the current cursor positon. Call it with :SS
-command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-
-function! SynGroup()                                                            
-    let l:s = synID(line('.'), col('.'), 1)                                       
-    echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
-endfun
 
 set background=light
 colorscheme dporter
