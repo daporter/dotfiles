@@ -23,6 +23,7 @@ brew 'jq'
 brew 'jrnl'
 brew 'lockrun'
 brew 'lua'
+brew 'macvim', args: ['--with-override-system-vim']
 brew 'mailutils'
 brew 'mas'
 brew 'mpv'
@@ -51,7 +52,7 @@ brew 'wget'
 
 # When installing vim, remember to first edit the formula to enable the
 # '--with-termguicolors' option.
-brew 'vim', args: ['--build-from-source']
+# brew 'vim', args: ['--build-from-source']
 
 cask 'anki'
 cask 'dash'
@@ -67,10 +68,5 @@ tap 'crisidev/homebrew-chunkwm'
 brew 'chunkwm', args: ['HEAD']
 tap 'koekeishiya/formulae'
 brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
-
-# base16-manager
-tap 'chrokh/tap'
-brew 'findutils'
-brew 'base16-manager'
 
 # vim: filetype=ruby

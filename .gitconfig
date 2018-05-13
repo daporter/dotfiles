@@ -23,3 +23,9 @@
 [user]
 	name = David Porter
 	email = david.porter@data61.csiro.au
+[commit]
+	verbose = true
+[diff]
+	tool = vimdiff
+[merge]
+	tool = vimdiff
