@@ -22,7 +22,7 @@
         default = simple
 [user]
 	name = David Porter
-	email = david.porter@data61.csiro.au
+	email = david.a.porter@gmail.com
 [commit]
 	verbose = true
 [diff]
