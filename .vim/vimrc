@@ -46,9 +46,4 @@ command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
 syntax on
 
-if has('termguicolors')
-  set termguicolors         " use 24-bit colour
-endif
-
-set background=light
 colorscheme dporter
