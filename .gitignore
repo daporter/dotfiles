@@ -44,6 +44,7 @@
 /.vim/spell
 /.viminfo
 /.vimrc_background
+/.virtualenvs
 /.wget-hsts
 /.wpm.csv
 /Applications
