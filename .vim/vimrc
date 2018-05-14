@@ -5,7 +5,7 @@ scriptencoding utf-8
 filetype plugin indent on
 
 set shiftwidth=4            " number of spaces for each step of indent
-set softtabstop=4           " number of spaces pressing <Tab> counts for
+let softtabstop=&shiftwidth " number of spaces pressing <Tab> counts for
 set textwidth=79            " wrap text as close to 80 chars as possible
 set autoindent              " new line copies previous line's indentation
 set expandtab               " use spaces instead of a tab character
@@ -23,7 +23,7 @@ set laststatus=2
 set spelllang=en_au         " use the Australia language region
 set wildmode=longest,list   " use bash-style autocompletion
 set showmatch               " in insert mode, show matching paren, etc
-set dictionary+=/usr/share/dict/words   " used for keyword completion
+set dictionary+=/usr/share/dict/words   " for dictionary keyword completion
 
 " Automatically display of errors in the quickfix window.
 augroup MyQuickfix
