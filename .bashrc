@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+#
 # From https://superuser.com/questions/183870/difference-between-bashrc-and-bash-profile?answertab=active#tab-top
 #
 # ~/.bashrc is the place to put stuff that applies only to bash itself, such
@@ -19,11 +21,6 @@ shopt -s dirspell 2> /dev/null
 
 # Prepend cd to directory names automatically
 shopt -s autocd 2> /dev/null
-
-# This defines where cd looks for targets
-# Add the directories you want to have fast access to, separated by colon
-# Ex: CDPATH=".:~:~/projects" will look for targets in the current working directory, in home and in the ~/projects folder
-CDPATH=".:~:~/projects"
 
 # Prevent file overwrite on stdout redirection Use `>|` to force redirection to
 # an existing file
@@ -65,9 +62,11 @@ export TERM=xterm-256color-italic
 
 # Load Bash-specific startup files
 for sh in "$HOME"/.bashrc.d/*.bash ; do
-    [[ -e $sh ]] && source "$sh"
+    # shellcheck source=/dev/null
+    [[ -e $sh ]] && . "$sh"
 done
 unset -v sh
 
 # From Homebrew bash-completion:
+# shellcheck source=/dev/null
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
