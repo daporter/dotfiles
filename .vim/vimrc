@@ -46,5 +46,4 @@ cnoremap kj <ESC>
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
 syntax on
-
-colorscheme smyck
+colorscheme apprentice
