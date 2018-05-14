@@ -21,8 +21,7 @@ highlight Visual       cterm=none             ctermfg=none ctermbg=8
 highlight SpellBad     cterm=undercurl,italic ctermfg=1    ctermbg=none
 highlight Pmenu	       cterm=none             ctermfg=none ctermbg=9	
 highlight PmenuSel     cterm=reverse          ctermfg=none ctermbg=none
-
-" highlight LineNr       cterm=italic    ctermfg=4 ctermbg=3 guifg=#918877    guibg=#e2dcd0
+highlight LineNr       cterm=italic           ctermfg=9    ctermbg=none
 " highlight CursorLineNr cterm=italic    guifg=#b5b1a6    guibg=#cbc7bb
 " highlight ErrorMsg     ctermfg=1 ctermbg=none guifg=#c91b00    guibg=none
 highlight Directory cterm=bold                  
