@@ -47,4 +47,4 @@ command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
 syntax on
 
-colorscheme dporter
+colorscheme smyck
