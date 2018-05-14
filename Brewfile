@@ -40,6 +40,7 @@ brew 'pstree'
 brew 'python'
 brew 'readline'
 brew 'rename'
+brew 'ripgrep'
 brew 'shellcheck'
 brew 'shfmt'
 brew 'sloccount'
@@ -49,10 +50,6 @@ brew 'tmux'
 brew 'tree'
 brew 'urlview'
 brew 'wget'
-
-# When installing vim, remember to first edit the formula to enable the
-# '--with-termguicolors' option.
-# brew 'vim', args: ['--build-from-source']
 
 cask 'anki'
 cask 'dash'
