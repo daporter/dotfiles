@@ -3,6 +3,7 @@ cask_args appdir: '/Applications'
 tap 'homebrew/bundle'
 
 brew 'aria2'
+brew 'asciidoctor'
 brew 'bash'
 brew 'bash-completion'
 brew 'checkbashisms'
