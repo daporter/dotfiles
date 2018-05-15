@@ -7,18 +7,21 @@ filetype plugin indent on
 set hidden                  " allow switching away from unsaved buffers
 set shiftwidth=4            " number of spaces for each step of indent
 let &softtabstop=&shiftwidth " number of spaces pressing <Tab> counts for
-set textwidth=79            " wrap text as close to 80 chars as possible
-set autoindent              " new line copies previous line's indentation
 set expandtab               " use spaces instead of a tab character
+set autoindent              " new line copies previous line's indentation
+set textwidth=79            " wrap text as close to 80 chars as possible
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set backspace=indent,eol,start  " proper backspace behavior
 set cursorline              " highlight the screen line of the cursor
-set ruler                   " show line,column of cursor in status line
 set laststatus=2            " show the status line always
+set ruler                   " show line,column of cursor in status line
+set statusline=%<\ %f\ %m%r%y%w%=\ L:\ \%l\/\%L\ C:\ \%c\ 
 set formatoptions+=n        " recognise numbered lists when formatting text
 set formatoptions+=t        " automatically wrap text using 'textwidth'
 set formatprg=par\ -w80     " use 'par' when gq is run
 set incsearch               " use incremental searching
+set ignorecase              " make searches case-insensitive
+set smartcase               " intelligent case sensitivity in searches
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set laststatus=2
 set spelllang=en_au         " use the Australia language region
