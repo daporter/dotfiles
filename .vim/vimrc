@@ -4,8 +4,9 @@ scriptencoding utf-8
 
 filetype plugin indent on
 
+set hidden                  " allow switching away from unsaved buffers
 set shiftwidth=4            " number of spaces for each step of indent
-let softtabstop=&shiftwidth " number of spaces pressing <Tab> counts for
+let &softtabstop=&shiftwidth " number of spaces pressing <Tab> counts for
 set textwidth=79            " wrap text as close to 80 chars as possible
 set autoindent              " new line copies previous line's indentation
 set expandtab               " use spaces instead of a tab character
