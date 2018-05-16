@@ -34,13 +34,6 @@ set ttimeoutlen=100        " lower the timeout (ms) for keycodes (incl. ESC)
 " Make <C-l> remove search highlighting.
 nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
 
-" Automatically display of errors in the quickfix window.
-augroup MyQuickfix
-    autocmd!
-    autocmd QuickFixCmdPost [^l]* cwindow
-    autocmd VimEnter        *     cwindow
-augroup END
-
 " Load the matchit plugin.
 packadd! matchit
 
