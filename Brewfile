@@ -51,7 +51,6 @@ cask 'dash'
 cask 'dropbox'
 cask 'goldencheetah'
 cask 'karabiner-elements'
-cask 'noise-machine'
 cask 'omnifocus'
 
 # chunkwm
