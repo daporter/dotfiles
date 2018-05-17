@@ -1,5 +1,5 @@
-[submodule "/Users/david/.mutt/mutt-notmuch-py"]
-	path = /Users/david/.mutt/mutt-notmuch-py
+[submodule ".mutt/mutt-notmuch-py"]
+	path = .mutt/mutt-notmuch-py
 	url = https://github.com/honza/mutt-notmuch-py.git
 [submodule ".vim/pack/dporter/start/vim-surround"]
 	path = .vim/pack/dporter/start/vim-surround
@@ -12,7 +12,10 @@
 	url = https://github.com/tommcdo/vim-lion.git
 [submodule ".vim/pack/dporter/start/vim-easyescape"]
 	path = .vim/pack/dporter/start/vim-easyescape
-	url = https://github.com/zhou13/vim-lion.git
+	url = https://github.com/zhou13/vim-easyescape.git
 [submodule ".vim/pack/dporter/start/vim-repeat"]
 	path = .vim/pack/dporter/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
+[submodule ".vim/pack/dporter/start/apprentice"]
+	path = .vim/pack/dporter/start/apprentice
+	url = https://github.com/romainl/Apprentice.git

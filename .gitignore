@@ -24,6 +24,7 @@
 /.bash_sessions
 /.bundle
 /.config/*
+/.docker
 /.dropbox
 /.emacs.d
 /.exercism.json
@@ -35,6 +36,7 @@
 /.local
 /.mutt/tmp
 /.npm
+/.proselint
 /.rvm
 /.ssh
 /.v8flags.*
@@ -43,6 +45,7 @@
 /.vim/spell
 /.viminfo
 /.vimrc_background
+/.virtualenvs
 /.wget-hsts
 /.wpm.csv
 /Applications
