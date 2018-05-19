@@ -1,22 +1,31 @@
-#!/bin/sh
+#!/bin/bash
+#
+# Update all installed Homebrew packages and casks.
 
-BREW=/usr/local/bin/brew
+readonly BREW=/usr/local/bin/brew
 
-echo "*** Updating Homebrew..."
-${BREW} update
-echo
-echo "*** Outdated Homebrew packages:"
-${BREW} outdated
-echo
-echo "*** Upgrading Homebrew packages..."
-${BREW} upgrade
-echo
-echo "*** Outdated Cask packages:"
-${BREW} cask outdated
-echo
-echo "*** Upgrading Cask packages..."
-${BREW} cask upgrade
-echo
-echo "*** Cleaning up Homebrew and Cask packages..."
-${BREW} cleanup
-${BREW} cask cleanup
+err() {
+    echo "$@" >&2
+}
+
+run_cmd() {
+    local cmd="$1"
+    echo
+    echo "* Running '$cmd'..."
+    if ! $cmd; then
+        err "Unable to run '$cmd'"
+        exit 1
+    fi
+}
+
+main() {
+    run_cmd "$BREW update"
+    run_cmd "$BREW outdated"
+    run_cmd "$BREW upgrade"
+    run_cmd "$BREW cask outdated"
+    run_cmd "$BREW cask upgrade"
+    run_cmd "$BREW cleanup"
+    run_cmd "$BREW cask cleanup"
+}
+
+main
