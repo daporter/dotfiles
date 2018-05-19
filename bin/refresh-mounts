@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+#
+# Refresh the NFS mounts on beilen and alkmaar.
 
 echo "Restarting nfs-kernel-server.service"
 ssh pi@beilen 'sudo systemctl restart nfs-kernel-server.service'
