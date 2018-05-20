@@ -3,7 +3,7 @@ setlocal ts=2 sts=2 sw=2 expandtab
 " Enable use of eslint when editing javascript files.
 if executable('eslint')
     setlocal errorformat=%f:\ line\ %l\\,\ col\ %c\\,\ %m,%-G%.%#
-    setlocal makeprg=eslint\ --format\ compact
+    setlocal makeprg=eslint\ --format\ compact\ %
     augroup MyJavascript
         autocmd!
         autocmd BufWritePost <buffer> silent make % | silent redraw!
