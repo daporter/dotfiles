@@ -76,4 +76,4 @@ chunkc tiling::rule --owner Finder --name Copy --state float &
 chunkc tiling::rule --owner "App Store" --state float &
 chunkc tiling::rule --owner Anki --state tile &
 chunkc tiling::rule --owner Preview --state tile &
-chunkc tiling::rule --owner mpv --state tile &"
+chunkc tiling::rule --owner mpv --state float &"
