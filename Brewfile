@@ -60,7 +60,6 @@ cask 'dropbox'
 cask 'goldencheetah'
 cask 'karabiner-elements'
 cask 'omnifocus'
-cask 'slack'
 
 # chunkwm
 tap 'crisidev/homebrew-chunkwm'
