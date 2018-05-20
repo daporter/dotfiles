@@ -68,8 +68,12 @@ chunkc core::load tiling.so
 chunkc core::load ffm.so
 
 # Rules for the tiling plugin.
-chunkc tiling::rule --owner Finder --name Copy --state float
-chunkc tiling::rule --owner "App Store" --state float
-chunkc tiling::rule --owner Anki --state tile
-chunkc tiling::rule --owner Preview --state tile
-chunkc tiling::rule --owner mpv --state tile
+#
+# NOTE: Since version 0.3.7: "any 'chunkc' command that is run from the config
+# file that is NOT 'chunkc core::<..>' or 'chunkc set ..' MUST be put in the
+# background using &".
+chunkc tiling::rule --owner Finder --name Copy --state float &
+chunkc tiling::rule --owner "App Store" --state float &
+chunkc tiling::rule --owner Anki --state tile &
+chunkc tiling::rule --owner Preview --state tile &
+chunkc tiling::rule --owner mpv --state tile &"
