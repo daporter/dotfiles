@@ -59,7 +59,9 @@ cask 'docker'
 cask 'dropbox'
 cask 'goldencheetah'
 cask 'karabiner-elements'
+cask 'mactex'
 cask 'omnifocus'
+cask 'texshop'
 
 # chunkwm
 tap 'crisidev/homebrew-chunkwm'
