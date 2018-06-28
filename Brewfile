@@ -50,6 +50,7 @@ brew 'urlview'
 brew 'wget'
 
 cask 'anki'
+cask 'calibre'
 cask 'dash'
 cask 'docker'
 cask 'dropbox'
