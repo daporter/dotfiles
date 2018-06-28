@@ -48,6 +48,7 @@ brew 'urlview'
 brew 'wget'
 
 cask 'anki'
+cask 'calibre'
 cask 'dash'
 cask 'dropbox'
 cask 'goldencheetah'
