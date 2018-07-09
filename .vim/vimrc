@@ -36,12 +36,6 @@ nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
 " Load the matchit plugin.
 packadd! matchit
 
-" Enable use of both jk and kj for <ESC>.
-let g:easyescape_chars = { 'j': 1, 'k': 1 }
-let g:easyescape_timeout = 100
-cnoremap jk <ESC>
-cnoremap kj <ESC>
-
 " The following command displays the names of the syntax groups in the
 " hierarchy at the current cursor position. Call it with :SS
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
