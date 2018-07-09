@@ -2,6 +2,7 @@ cask_args appdir: '/Applications'
 
 tap 'homebrew/bundle'
 
+brew 'amazon-ecs-cli'
 brew 'aria2'
 brew 'asciidoctor'
 brew 'awscli'
