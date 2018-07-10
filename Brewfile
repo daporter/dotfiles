@@ -19,6 +19,7 @@ brew 'gnupg'
 brew 'gnutls'
 brew 'htop'
 brew 'hunspell'
+brew 'iftop'
 brew 'isync', args: ['with-berkeley-db']
 brew 'jq'
 brew 'jrnl'
