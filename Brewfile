@@ -63,6 +63,9 @@ cask 'mactex'
 cask 'omnifocus'
 cask 'texshop'
 
+tap 'homebrew/cask-drivers'
+cask 'logitech-options'
+
 # chunkwm
 tap 'crisidev/homebrew-chunkwm'
 brew 'chunkwm', args: ['HEAD']
