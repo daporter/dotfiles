@@ -23,6 +23,7 @@
 /.bash_history
 /.bash_sessions
 /.bundle
+/.cabal
 /.cache
 /.config/*
 /.docker
@@ -30,6 +31,7 @@
 /.emacs.d
 /.exercism.json
 /.gem
+/.ghc
 /.gnupg
 /.irb_history
 /.lesshst
