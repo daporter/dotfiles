@@ -23,12 +23,15 @@
 /.bash_history
 /.bash_sessions
 /.bundle
+/.cabal
+/.cache
 /.config/*
 /.docker
 /.dropbox
 /.emacs.d
 /.exercism.json
 /.gem
+/.ghc
 /.gnupg
 /.iTerm2
 /.irb_history
@@ -46,6 +49,7 @@
 /.viminfo
 /.vimrc_background
 /.virtualenvs
+/.vnc
 /.wget-hsts
 /.wpm.csv
 /Applications

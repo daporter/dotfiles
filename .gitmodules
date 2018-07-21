@@ -10,9 +10,6 @@
 [submodule ".vim/pack/dporter/start/vim-lion"]
 	path = .vim/pack/dporter/start/vim-lion
 	url = https://github.com/tommcdo/vim-lion.git
-[submodule ".vim/pack/dporter/start/vim-easyescape"]
-	path = .vim/pack/dporter/start/vim-easyescape
-	url = https://github.com/zhou13/vim-easyescape.git
 [submodule ".vim/pack/dporter/start/vim-repeat"]
 	path = .vim/pack/dporter/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
