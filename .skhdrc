@@ -66,7 +66,7 @@ shift + ctrl + alt - n : chunkc tiling::window --swap east
 ctrl + alt - r : chunkc tiling::desktop --rotate 90
 
 # Open applications
-ctrl - return : osascript -e 'tell application "Terminal" to do script ""'
+alt - return : osascript -e 'tell application "Terminal" to do script ""'
 hyper - a : open /Applications/Anki.app
 hyper - c : open '/Applications/Google Chrome.app'
 hyper - g : open /Applications/GoldenCheetah.app
@@ -91,16 +91,16 @@ shift + alt - z : chunkc tiling::window --send-to-desktop prev
 shift + alt - c : chunkc tiling::window --send-to-desktop next
 shift + alt - 1 : chunkc tiling::window --send-to-desktop 1
 shift + alt - 2 : chunkc tiling::window --send-to-desktop 2
-#shift + alt - 3 : chunkc tiling::window --send-to-desktop 3
-#shift + alt - 4 : chunkc tiling::window --send-to-desktop 4
+shift + alt - 3 : chunkc tiling::window --send-to-desktop 3
+shift + alt - 4 : chunkc tiling::window --send-to-desktop 4
 #shift + alt - 5 : chunkc tiling::window --send-to-desktop 5
 #shift + alt - 6 : chunkc tiling::window --send-to-desktop 6
 
 # focus monitor
-#ctrl + alt - z  : chunkc tiling::monitor -f prev
-#ctrl + alt - c  : chunkc tiling::monitor -f next
-#ctrl + alt - 1  : chunkc tiling::monitor -f 1
-#ctrl + alt - 2  : chunkc tiling::monitor -f 2
+ctrl + alt - z  : chunkc tiling::monitor -f prev
+ctrl + alt - c  : chunkc tiling::monitor -f next
+ctrl + alt - 1  : chunkc tiling::monitor -f 1
+ctrl + alt - 2  : chunkc tiling::monitor -f 2
 #ctrl + alt - 3  : chunkc tiling::monitor -f 3
 #
 ## send window to monitor and follow focus
