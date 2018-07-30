@@ -63,6 +63,7 @@ cask 'karabiner-elements'
 cask 'mactex'
 cask 'omnifocus'
 cask 'slack'
+cask 'slack'
 cask 'texshop'
 
 # chunkwm
