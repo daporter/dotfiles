@@ -68,6 +68,7 @@ cask 'google-chrome'
 cask 'karabiner-elements'
 cask 'mactex'
 cask 'omnifocus'
+cask 'slack'
 cask 'texshop'
 
 tap 'homebrew/cask-drivers'
