@@ -51,6 +51,7 @@ brew 'tree'
 brew 'urlview'
 brew 'wget'
 
+cask '1password'
 cask 'anki'
 cask 'calibre'
 cask 'dash'
