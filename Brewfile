@@ -80,4 +80,7 @@ brew 'chunkwm', args: ['HEAD']
 tap 'koekeishiya/formulae'
 brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
 
+# Mac App Store
+mas 'Xcode', id: 497799835
+
 # vim: filetype=ruby
