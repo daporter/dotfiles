@@ -81,6 +81,10 @@ brew 'chunkwm', args: ['HEAD']
 tap 'koekeishiya/formulae'
 brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
 
+# s3-edit
+tap 'tsub/s3-edit'
+brew 's3-edit'
+
 # Mac App Store
 mas 'Xcode', id: 497799835
 
