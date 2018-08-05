@@ -51,6 +51,9 @@ shopt -s histappend
 # Save multi-line commands as one command
 shopt -s cmdhist
 
+# Increase number of commands saved to history list.
+HISTSIZE=2000
+
 # Avoid duplicate entries
 HISTCONTROL="erasedups:ignoreboth"
 
