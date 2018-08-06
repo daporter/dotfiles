@@ -1,0 +1,3 @@
+gcm() {
+    git checkout master
+}
