@@ -1,3 +1,0 @@
-gmm() {
-    git merge master
-}
