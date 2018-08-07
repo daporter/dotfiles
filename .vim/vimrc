@@ -31,7 +31,8 @@ set showmatch               " in insert mode, show matching paren, etc.
 set ttimeoutlen=100        " lower the timeout (ms) for keycodes (incl. ESC)
 
 set guioptions-=rL          " remove both scrollbars
-set guifont=Iosevka\ Light:h12
+set guifont=Fura\ Code\ Medium\ Nerd\ Font\ Complete:h12
+set linespace=3
 
 " Make <C-l> remove search highlighting.
 nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
