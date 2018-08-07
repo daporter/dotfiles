@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Displays a MacOS notification after a specified amount of time.
+
+if [[ $# -ne 2 ]]; then
+    echo "Usage: $(basename "$0") <minutes> <message>" 1>&2
+    exit 1
+fi
+
+minutes="$1"
+seconds=$(("$minutes" * 60))
+message="$2"
+
+(
+    sleep $seconds
+    osascript -e "display notification with title \"$message\""
+) &
