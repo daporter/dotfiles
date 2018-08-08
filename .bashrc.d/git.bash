@@ -2,6 +2,7 @@
 
 # Git aliases.
 
+alias g='git'
 alias ga='git add'
 alias gb='git branch'
 alias gcl='git clone'
@@ -20,6 +21,7 @@ alias gst='git status'
 # Configure completions.
 
 if type -t __git_complete >/dev/null 2>&1; then
+    __git_complete g _git
     __git_complete ga _git_add
     __git_complete gb _git_branch
     __git_complete gcl _git_clone
