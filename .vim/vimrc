@@ -37,15 +37,6 @@ set linespace=3
 " Make <C-l> remove search highlighting.
 nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
 
-" Enable automatic yanking and pasting to the system clipboard.
-if has("clipboard")
-  set clipboard=unnamed " copy to the system clipboard
-
-  if has("unnamedplus") " X11 support
-    set clipboard+=unnamedplus
-  endif
-endif
-
 " Load the matchit plugin.
 packadd! matchit
 
