@@ -46,17 +46,4 @@ command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
 syntax on
 
-" Color scheme customisations. For an explanation of this approach, see:
-" https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
-function! MyHighlights() abort
-    highlight Cursor  ctermbg=208  ctermfg=NONE guibg=#ff8700 guifg=NONE    cterm=NONE gui=NONE
-    highlight Comment ctermbg=NONE ctermfg=242  guibg=NONE    guifg=#6c6c6c cterm=NONE gui=NONE
-    highlight Search  ctermbg=108  ctermfg=235  guibg=#87af87 guifg=#262626 cterm=NONE gui=NONE
-endfunction
-
-augroup MyColors
-    autocmd!
-    autocmd ColorScheme * call MyHighlights()
-augroup END
-
-colorscheme apprentice
+colorscheme wal
