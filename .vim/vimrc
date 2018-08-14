@@ -45,4 +45,17 @@ command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
 syntax on
 
+" Color scheme customisations. For an explanation of this approach, see:
+" https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
+function! MyHighlights() abort
+    highlight StatusLine   ctermbg=NONE ctermfg=2 cterm=reverse,bold
+    highlight StatusLineNC ctermbg=NONE ctermfg=8 cterm=reverse,bold
+    highlight VertSplit    ctermbg=NONE ctermfg=8 cterm=reverse
+endfunction
+
+augroup MyColors
+    autocmd!
+    autocmd ColorScheme * call MyHighlights()
+augroup END
+
 colorscheme wal
