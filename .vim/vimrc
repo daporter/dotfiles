@@ -51,6 +51,9 @@ function! MyHighlights() abort
     highlight StatusLine   ctermbg=NONE ctermfg=2 cterm=reverse,bold
     highlight StatusLineNC ctermbg=NONE ctermfg=8 cterm=reverse,bold
     highlight VertSplit    ctermbg=NONE ctermfg=8 cterm=reverse
+    highlight IncSearch    ctermbg=NONE ctermfg=7
+    highlight Search       ctermbg=3    ctermfg=0
+    highlight Visual       ctermbg=0    ctermfg=8 cterm=reverse term=reverse
 endfunction
 
 augroup MyColors
