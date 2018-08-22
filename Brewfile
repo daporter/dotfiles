@@ -94,6 +94,7 @@ tap 'tsub/s3-edit'
 brew 's3-edit'
 
 # Mac App Store
+mas 'FruitJuice', id: 671736912
 mas 'Xcode', id: 497799835
 
 # vim: filetype=ruby
