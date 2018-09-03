@@ -25,7 +25,6 @@ main() {
     run_cmd "$BREW cask outdated"
     run_cmd "$BREW cask upgrade"
     run_cmd "$BREW cleanup"
-    run_cmd "$BREW cask cleanup"
 }
 
 main
