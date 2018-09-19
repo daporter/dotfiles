@@ -35,9 +35,12 @@
 /.ghc
 /.gnupg
 /.iTerm2
+/.ipython
 /.irb_history
+/.jupyter
 /.lesshst
 /.local
+/.matplotlib
 /.mutt/tmp
 /.npm
 /.proselint
