@@ -16,7 +16,6 @@ set laststatus=2            " show the status line always
 set ruler                   " show line,column of cursor in status line
 set statusline=%<\ %f\ %m%r%y%w%=\ L:\ \%l\/\%L\ C:\ \%c\ 
 set formatoptions+=n        " recognise numbered lists when formatting text
-set formatoptions+=t        " automatically wrap text using 'textwidth'
 set formatprg=par           " use 'par' when gq is run
 set incsearch               " use incremental searching
 set ignorecase              " make searches case-insensitive
