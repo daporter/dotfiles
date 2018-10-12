@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Displays a MacOS notification after a specified amount of time.
+
+set -o nounset
+set -o errexit
+
+script_name=$(basename "$0")
+
+if [[ $# -ne 2 ]]; then
+    echo "Usage: $script_name <minutes> <message>" 1>&2
+    exit 1
+fi
+
+minutes="$1"
+message="$2"
+seconds=$(("$minutes" * 60))
+
+(
+    sleep $seconds
+    terminal-notifier -title "Time's up!" -message "$message" -group "$message" >/dev/null
+) &

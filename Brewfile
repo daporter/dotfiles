@@ -52,13 +52,21 @@ brew 'urlview'
 brew 'wget'
 
 cask '1password'
+cask 'kindle'
 cask 'anki'
 cask 'calibre'
+cask 'clipy'
 cask 'dash'
 cask 'dropbox'
 cask 'flux'
+cask 'font-fantasquesansmono-nerd-font'
+cask 'font-firacode-nerd-font'
+cask 'font-firamono-nerd-font'
+cask 'font-hack-nerd-font'
+cask 'font-iosevka-nerd-font'
 cask 'goldencheetah'
 cask 'google-chrome'
+cask 'iterm2'
 cask 'karabiner-elements'
 cask 'kindle'
 cask 'lastfm'
@@ -66,6 +74,7 @@ cask 'mactex'
 cask 'musicbrainz-picard'
 cask 'omnifocus'
 cask 'skype'
+cask 'slack'
 cask 'slack'
 cask 'texshop'
 cask 'transmission'
@@ -83,5 +92,9 @@ tap 'crisidev/homebrew-chunkwm'
 brew 'chunkwm', args: ['HEAD']
 tap 'koekeishiya/formulae'
 brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
+
+# Mac App Store
+mas 'FruitJuice', id: 671736912
+mas 'Xcode', id: 497799835
 
 # vim: filetype=ruby

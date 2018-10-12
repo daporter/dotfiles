@@ -51,6 +51,9 @@ shopt -s histappend
 # Save multi-line commands as one command
 shopt -s cmdhist
 
+# Increase number of commands saved to history list.
+HISTSIZE=2000
+
 # Avoid duplicate entries
 HISTCONTROL="erasedups:ignoreboth"
 
@@ -59,6 +62,11 @@ export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
 
 # Enable italics in the terminal
 export TERM=xterm-256color-italic
+
+# Import colorscheme from 'wal' asynchronously
+# &   # Run the process in the background.
+# ( ) # Hide shell job control messages.
+(cat ~/.cache/wal/sequences &)
 
 # Load Bash-specific startup files
 for sh in "$HOME"/.bashrc.d/*.bash ; do
