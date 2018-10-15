@@ -1,1 +1,1 @@
-export PATH=~/Library/Python/3.6/bin:$PATH
+export PATH=$(python3 -m site --user-base)/bin:$PATH
