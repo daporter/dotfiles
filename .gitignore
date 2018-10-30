@@ -48,6 +48,7 @@
 /.ssh
 /.terraform.d
 /.v8flags.*
+/.vim/black
 /.vim/.netrwhist
 /.vim/plugged
 /.vim/spell
