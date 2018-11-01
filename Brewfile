@@ -99,4 +99,6 @@ brew 's3-edit'
 mas 'FruitJuice', id: 671736912
 mas 'Xcode', id: 497799835
 mas 'Tomates Lite', id: 1250005834
+mas 'WhiteNoiseLite', id: 431364704
+
 # vim: filetype=ruby
