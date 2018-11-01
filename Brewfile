@@ -28,6 +28,7 @@ brew 'iftop'
 brew 'isync', args: ['with-berkeley-db']
 brew 'jq'
 brew 'jrnl'
+brew 'jsonlint'
 brew 'lockrun'
 brew 'macvim', args: ['--with-override-system-vim']
 brew 'mailutils'
@@ -97,5 +98,5 @@ brew 's3-edit'
 # Mac App Store
 mas 'FruitJuice', id: 671736912
 mas 'Xcode', id: 497799835
-
+mas 'Tomates Lite', id: 1250005834
 # vim: filetype=ruby
