@@ -20,7 +20,6 @@ set formatprg=par           " use 'par' when gq is run
 set incsearch               " use incremental searching
 set ignorecase              " make searches case-insensitive
 set smartcase               " intelligent case sensitivity in searches
-set hlsearch                " highlight all search matches
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set laststatus=2
 set spelllang=en_au         " use the Australia language region
@@ -32,9 +31,6 @@ set cursorline              " highlight the screen line of the cursor
 set guioptions-=rL          " remove both scrollbars
 set guifont=Fura\ Code\ Medium\ Nerd\ Font\ Complete:h12
 set linespace=3
-
-" Make <C-l> remove search highlighting.
-nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
 
 " Load the matchit plugin.
 packadd! matchit
