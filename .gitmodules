@@ -25,6 +25,3 @@
 [submodule ".vim/pack/dporter/start/compiler-pytest"]
 	path = .vim/pack/dporter/start/compiler-pytest
 	url = https://github.com/5long/pytest-vim-compiler.git
-[submodule ".vim/pack/dporter/start/python-compilers"]
-	path = .vim/pack/dporter/start/python-compilers
-	url = https://github.com/drgarcia1986/python-compilers.vim.git
