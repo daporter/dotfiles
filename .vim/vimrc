@@ -39,6 +39,8 @@ nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
 " Load the matchit plugin.
 packadd! matchit
 
+let mapleader=' '
+
 " The following command displays the names of the syntax groups in the
 " hierarchy at the current cursor position. Call it with :SS
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
