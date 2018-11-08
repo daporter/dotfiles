@@ -9,7 +9,7 @@ set shiftwidth=4            " number of spaces for each step of indent
 let &softtabstop=&shiftwidth " number of spaces pressing <Tab> counts for
 set expandtab               " use spaces instead of a tab character
 set autoindent              " new line copies previous line's indentation
-set textwidth=79            " wrap text as close to 80 chars as possible
+set linebreak               " try to wrap long lines at word boundaries
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set backspace=indent,eol,start  " proper backspace behaviour
 set laststatus=2            " show the status line always
