@@ -67,6 +67,9 @@ for sh in "$HOME"/.bashrc.d/*.bash ; do
 done
 unset -v sh
 
+# Create an alias to easily manage my dotfiles git repo.
+alias dotfiles='/usr/local/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
 # From Homebrew bash-completion:
 # shellcheck source=/dev/null
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
