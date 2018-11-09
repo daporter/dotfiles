@@ -11,6 +11,8 @@ brew 'checkbashisms'
 brew 'coreutils'
 brew 'ctags'
 brew 'elinks'
+brew 'flake8'
+brew 'gdal'
 brew 'ghc'
 brew 'git'
 brew 'gnu-typist'
@@ -37,6 +39,7 @@ brew 'onepass'
 brew 'openssl'
 brew 'pandoc'
 brew 'par'
+brew 'pipenv'
 brew 'proselint'
 brew 'pstree'
 brew 'python'
@@ -96,5 +99,7 @@ brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
 # Mac App Store
 mas 'FruitJuice', id: 671736912
 mas 'Xcode', id: 497799835
+mas 'Tomates Lite', id: 1250005834
+mas 'WhiteNoiseLite', id: 431364704
 
 # vim: filetype=ruby

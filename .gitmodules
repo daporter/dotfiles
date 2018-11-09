@@ -16,3 +16,12 @@
 [submodule ".vim/pack/dporter/start/wal"]
 	path = .vim/pack/dporter/start/wal
 	url = https://github.com/dylanaraps/wal.vim.git
+[submodule ".vim/pack/dporter/start/black"]
+	path = .vim/pack/dporter/start/black
+	url = https://github.com/ambv/black.git
+[submodule ".vim/pack/dporter/start/nord-vim"]
+	path = .vim/pack/dporter/start/nord-vim
+	url = git://github.com/arcticicestudio/nord-vim.git
+[submodule ".vim/pack/dporter/start/compiler-pytest"]
+	path = .vim/pack/dporter/start/compiler-pytest
+	url = https://github.com/5long/pytest-vim-compiler.git

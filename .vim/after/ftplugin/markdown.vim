@@ -1,7 +1,4 @@
-if executable('proselint')
-    setlocal makeprg=proselint\ %:S
-    augroup MyMarkdown
-        autocmd!
-        autocmd BufWritePost <buffer> silent make % | silent redraw!
-    augroup END
+if executable('mdl')
+    setlocal errorformat=%f:%l:\ MD%n\ %m
+    setlocal makeprg=mdl\ %:S
 endif

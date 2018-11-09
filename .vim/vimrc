@@ -20,23 +20,22 @@ set formatprg=par           " use 'par' when gq is run
 set incsearch               " use incremental searching
 set ignorecase              " make searches case-insensitive
 set smartcase               " intelligent case sensitivity in searches
-set hlsearch                " highlight all search matches
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set laststatus=2
 set spelllang=en_au         " use the Australia language region
 set wildmode=longest,list   " use bash-style autocompletion
 set showmatch               " in insert mode, show matching paren, etc.
 set ttimeoutlen=100        " lower the timeout (ms) for keycodes (incl. ESC)
+set cursorline              " highlight the screen line of the cursor
 
 set guioptions-=rL          " remove both scrollbars
 set guifont=Fura\ Code\ Medium\ Nerd\ Font\ Complete:h12
 set linespace=3
 
-" Make <C-l> remove search highlighting.
-nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
-
 " Load the matchit plugin.
 packadd! matchit
+
+let mapleader=' '
 
 " The following command displays the names of the syntax groups in the
 " hierarchy at the current cursor position. Call it with :SS
@@ -44,20 +43,9 @@ command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
 syntax on
 
-" Color scheme customisations. For an explanation of this approach, see:
-" https://gist.github.com/romainl/379904f91fa40533175dfaec4c833f2f
-function! MyHighlights() abort
-    highlight StatusLine   ctermbg=NONE ctermfg=2 cterm=reverse,bold
-    highlight StatusLineNC ctermbg=NONE ctermfg=8 cterm=reverse,bold
-    highlight VertSplit    ctermbg=NONE ctermfg=8 cterm=reverse
-    highlight IncSearch    ctermbg=NONE ctermfg=7
-    highlight Search       ctermbg=3    ctermfg=0
-    highlight Visual       ctermbg=0    ctermfg=8 cterm=reverse term=reverse
-endfunction
-
-augroup MyColors
-    autocmd!
-    autocmd ColorScheme * call MyHighlights()
-augroup END
-
-colorscheme wal
+set termguicolors
+let g:nord_italic=1
+let g:nord_underline=1
+let g:nord_italic_comments=1
+let g:nord_comment_brightness=10
+colorscheme nord
