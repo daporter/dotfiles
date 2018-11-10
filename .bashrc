@@ -22,10 +22,6 @@ shopt -s dirspell 2> /dev/null
 # Prepend cd to directory names automatically
 shopt -s autocd 2> /dev/null
 
-# Prevent file overwrite on stdout redirection Use `>|` to force redirection to
-# an existing file
-set -o noclobber
-
 # Update window size after every command
 shopt -s checkwinsize
 
