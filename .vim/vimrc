@@ -19,7 +19,7 @@ set formatoptions+=n        " recognise numbered lists when formatting text
 set formatprg=par           " use 'par' when gq is run
 set incsearch               " use incremental searching
 set ignorecase              " make searches case-insensitive
-set smartcase               " intelligent case sensitivity in searches
+set smartcase               " with one uppercase char, search is case-sensitive
 set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set laststatus=2
 set spelllang=en_au         " use the Australia language region
