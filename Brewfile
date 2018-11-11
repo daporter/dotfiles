@@ -29,6 +29,7 @@ brew 'isync', args: ['with-berkeley-db']
 brew 'jq'
 brew 'jrnl'
 brew 'jsonlint'
+brew 'liquidprompt'
 brew 'lockrun'
 brew 'macvim', args: ['--with-override-system-vim']
 brew 'mailutils'
