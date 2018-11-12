@@ -12,7 +12,6 @@ brew 'bash-completion'
 brew 'cabal-install'
 brew 'checkbashisms'
 brew 'coreutils'
-brew 'ctags'
 brew 'elinks'
 brew 'flake8'
 brew 'gdal'
@@ -60,6 +59,17 @@ brew 'tree'
 brew 'urlview'
 brew 'wget'
 
+tap 'crisidev/homebrew-chunkwm'
+brew 'chunkwm', args: ['HEAD']
+tap 'koekeishiya/formulae'
+brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
+
+tap 'tsub/s3-edit'
+brew 's3-edit'
+
+tap 'universal-ctags/universal-ctags'
+brew 'universal-ctags', args: ['HEAD'] 
+
 cask '1password'
 cask 'anki'
 cask 'calibre'
@@ -86,16 +96,6 @@ cask 'texshop'
 
 tap 'homebrew/cask-drivers'
 cask 'logitech-options'
-
-# chunkwm
-tap 'crisidev/homebrew-chunkwm'
-brew 'chunkwm', args: ['HEAD']
-tap 'koekeishiya/formulae'
-brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
-
-# s3-edit
-tap 'tsub/s3-edit'
-brew 's3-edit'
 
 # Mac App Store
 mas 'FruitJuice', id: 671736912
