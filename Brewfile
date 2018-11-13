@@ -9,7 +9,6 @@ brew 'bash-completion'
 brew 'cabal-install'
 brew 'checkbashisms'
 brew 'coreutils'
-brew 'ctags'
 brew 'elinks'
 brew 'flake8'
 brew 'gdal'
@@ -25,6 +24,8 @@ brew 'iftop'
 brew 'isync', args: ['with-berkeley-db']
 brew 'jq'
 brew 'jrnl'
+brew 'jsonlint'
+brew 'liquidprompt'
 brew 'lockrun'
 brew 'macvim', args: ['--with-override-system-vim']
 brew 'mailutils'
@@ -53,6 +54,17 @@ brew 'the_silver_searcher'
 brew 'tree'
 brew 'urlview'
 brew 'wget'
+
+tap 'crisidev/homebrew-chunkwm'
+brew 'chunkwm', args: ['HEAD']
+tap 'koekeishiya/formulae'
+brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
+
+tap 'tsub/s3-edit'
+brew 's3-edit'
+
+tap 'universal-ctags/universal-ctags'
+brew 'universal-ctags', args: ['HEAD'] 
 
 cask '1password'
 cask 'anki'
@@ -89,12 +101,6 @@ mas 'Numbers',    id: 409203825
 mas 'Pages',      id: 409201541
 mas 'Tweetbot',   id: 557168941
 mas 'Xcode',      id: 497799835
-
-# chunkwm
-tap 'crisidev/homebrew-chunkwm'
-brew 'chunkwm', args: ['HEAD']
-tap 'koekeishiya/formulae'
-brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
 
 # Mac App Store
 mas 'FruitJuice', id: 671736912
