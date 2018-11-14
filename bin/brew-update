@@ -1,17 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Update all installed Homebrew packages and casks.
 
 readonly BREW=/usr/local/bin/brew
 
 err() {
-    echo "$@" >&2
+    printf '%s\n' "$@" >&2
 }
 
 run_cmd() {
     local cmd="$1"
-    echo
-    echo "* Running '$cmd'..."
+    printf "* Running '%s'...\n" "$cmd"
     if ! $cmd; then
         err "Unable to run '$cmd'"
         exit 1
@@ -19,6 +18,7 @@ run_cmd() {
 }
 
 main() {
+    run_cmd "$BREW bundle -v"
     run_cmd "$BREW update"
     run_cmd "$BREW outdated"
     run_cmd "$BREW upgrade"
