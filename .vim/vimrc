@@ -59,3 +59,7 @@ endif
 " Display comments in italics. (This has to come after the colorscheme
 " setting.)
 highlight Comment cterm=italic
+
+" Improve the appearance of the vertical separator.
+set fillchars+=vert:│
+highlight VertSplit ctermbg=bg
