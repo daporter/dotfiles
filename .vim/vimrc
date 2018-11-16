@@ -34,7 +34,6 @@ set guifont=Fura\ Code\ Medium\ Nerd\ Font\ Complete:h12
 set linespace=3
 
 " Display special chars to indicate whitespace.
-set list
 set listchars=tab:▸\ ,eol:¬
 set listchars+=nbsp:⦸
 set listchars+=extends:»
