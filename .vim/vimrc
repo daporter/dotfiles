@@ -34,7 +34,6 @@ set guifont=Fura\ Code\ Medium\ Nerd\ Font\ Complete:h12
 set linespace=3
 
 " Display special chars to indicate whitespace.
-set list
 set listchars=tab:▸\ ,eol:¬
 set listchars+=nbsp:⦸
 set listchars+=extends:»
@@ -43,6 +42,12 @@ set listchars+=trail:•
 
 " Load the matchit plugin.
 packadd! matchit
+
+" Automatically insert a closing parenthesis/bracket/brace.
+inoremap ( ()<Esc>i
+inoremap [ []<Esc>i
+inoremap { {}<Esc>i
+inoremap {<CR> {<CR>}<Esc>O
 
 " The following command displays the names of the syntax groups in the
 " hierarchy at the current cursor position. Call it with :SS
