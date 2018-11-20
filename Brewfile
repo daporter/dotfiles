@@ -10,6 +10,7 @@ brew 'cabal-install'
 brew 'checkbashisms'
 brew 'coreutils'
 brew 'elinks'
+brew 'fd'
 brew 'flake8'
 brew 'gdal'
 brew 'ghc'
@@ -65,6 +66,9 @@ brew 's3-edit'
 
 tap 'universal-ctags/universal-ctags'
 brew 'universal-ctags', args: ['HEAD'] 
+
+tap 'sbdchd/skim'
+brew 'skim'
 
 cask '1password'
 cask 'anki'
