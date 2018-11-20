@@ -49,6 +49,17 @@ inoremap [ []<Esc>i
 inoremap { {}<Esc>i
 inoremap {<CR> {<CR>}<Esc>O
 
+" Replace Grep with Ripgrep.
+if executable('rg')
+    set grepformat^=%f:%l:%c:%m
+    set grepprg=rg\ --vimgrep
+endif
+
+augroup init
+    autocmd!
+    autocmd QuickFixCmdPost grep cwindow
+augroup END
+
 " vim-picker configuration.
 let g:picker_selector_executable = 'sk'
 let g:picker_selector_flags = '--reverse'
