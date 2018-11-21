@@ -23,11 +23,19 @@ set ignorecase              " make searches case-insensitive
 set smartcase               " with one uppercase char, search is case-sensitive
 set laststatus=2
 set spelllang=en_au         " use the Australia language region
-set wildmenu                " show options as list when switching buffers etc
-set wildmode=longest:full,full  " shell-like autocomplete to unambiguous portion
 set showmatch               " in insert mode, show matching paren, etc.
 set ttimeoutlen=100        " lower the timeout (ms) for keycodes (incl. ESC)
 set cursorline              " highlight the screen line of the cursor
+
+" wildmenu.
+set wildmenu                " show options as list when switching buffers etc
+set wildmode=list:full
+set wildignore=*.swp,*.bak
+set wildignore+=*.pyc,*.class,*.cache
+set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
+set wildignore+=tags
+set wildignore+=*.tar.*
+set wildignorecase
 
 set guioptions-=rL          " remove both scrollbars
 set guifont=Fura\ Code\ Medium\ Nerd\ Font\ Complete:h12
@@ -39,6 +47,10 @@ set listchars+=nbsp:⦸
 set listchars+=extends:»
 set listchars+=precedes:«
 set listchars+=trail:•
+
+set wildcharm=<C-z>
+nnoremap <leader>b :buffer <C-z>
+nnoremap <leader>B :sbuffer <C-z>
 
 " Load the matchit plugin.
 packadd! matchit
