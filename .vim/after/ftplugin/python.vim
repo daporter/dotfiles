@@ -9,12 +9,18 @@ setlocal autoindent
 " :find and related commands to do the right thing.
 setlocal path=.,**
 
-nnoremap <buffer> <Leader>tt :compiler pytest<cr>:make %<cr>
-nnoremap <buffer> <Leader>ta :compiler pytest<cr>:make<cr>
-
 " Neoformat configuration.
 let g:neoformat_run_all_formatters = 1
 let g:neoformat_enabled_python = ['black', 'isort', 'docformatter']
 
 " Neomake configuration.
 let g:neomake_python_enabled_makers = ['flake8', 'pydocstyle']
+
+let g:neomake_python_pytest_maker = {
+        \ 'exe': 'pytest',
+        \ 'args': ['--quiet', '--tb=line'],
+        \ 'errorformat': '%-G%.%#%.%#%%%.%#,%-G%.%#FAILURES%.%#,%f:%l:\ %m,%-G%.%#in\ %.%#\ seconds',
+        \ }
+
+nnoremap <buffer> <Leader>tt :Neomake pytest<cr>
+nnoremap <buffer> <Leader>tp :NeomakeProject pytest<cr>
