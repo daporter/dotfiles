@@ -13,9 +13,6 @@
 [submodule ".vim/pack/dporter/start/vim-repeat"]
 	path = .vim/pack/dporter/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
-[submodule ".vim/pack/dporter/start/black"]
-	path = .vim/pack/dporter/start/black
-	url = https://github.com/ambv/black.git
 [submodule ".vim/pack/dporter/start/nord-vim"]
 	path = .vim/pack/dporter/start/nord-vim
 	url = git://github.com/arcticicestudio/nord-vim.git
