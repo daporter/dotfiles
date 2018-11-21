@@ -5,6 +5,10 @@ setlocal textwidth=88
 setlocal expandtab
 setlocal autoindent
 
+" Set the path to something more suitable for Python projects. This enables
+" :find and related commands to do the right thing.
+setlocal path=.,**
+
 nnoremap <buffer> <Leader>tt :compiler pytest<cr>:make %<cr>
 nnoremap <buffer> <Leader>ta :compiler pytest<cr>:make<cr>
 
