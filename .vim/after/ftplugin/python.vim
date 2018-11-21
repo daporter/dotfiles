@@ -5,10 +5,12 @@ setlocal textwidth=88
 setlocal expandtab
 setlocal autoindent
 
-nnoremap <buffer> <Leader>f :compiler flake8<cr>:make<cr>
 nnoremap <buffer> <Leader>tt :compiler pytest<cr>:make %<cr>
 nnoremap <buffer> <Leader>ta :compiler pytest<cr>:make<cr>
 
 " Neoformat configuration.
 let g:neoformat_run_all_formatters = 1
 let g:neoformat_enabled_python = ['black', 'isort', 'docformatter']
+
+" Neomake configuration.
+let g:neomake_python_enabled_makers = ['flake8', 'pydocstyle']
