@@ -48,6 +48,10 @@ set listchars+=extends:»
 set listchars+=precedes:«
 set listchars+=trail:•
 
+set wildcharm=<C-z>
+nnoremap <leader>b :buffer <C-z>
+nnoremap <leader>B :sbuffer <C-z>
+
 " Load the matchit plugin.
 packadd! matchit
 
