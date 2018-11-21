@@ -52,6 +52,10 @@ set wildcharm=<C-z>
 nnoremap <leader>b :buffer <C-z><S-Tab>
 nnoremap <leader>B :sbuffer <C-z><S-Tab>
 
+nnoremap <leader>f :find *
+nnoremap <leader>F :sfind *
+nnoremap <leader>v :vert sfind *
+
 " Load the matchit plugin.
 packadd! matchit
 
@@ -114,7 +118,7 @@ nmap <unique> <leader>po <Plug>PickerBufferTag
 nmap <unique> <leader>ph <Plug>PickerHelp
 
 " Neoformat configuration.
-nnoremap <unique> <leader>f :Neoformat<cr>
+nnoremap <unique> <leader>nf :Neoformat<cr>
 
 " Neomake configuration.
 call neomake#configure#automake('w')  " run neomake on buffer write
