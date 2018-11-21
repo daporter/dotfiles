@@ -60,19 +60,6 @@ augroup init
     autocmd QuickFixCmdPost grep cwindow
 augroup END
 
-" vim-picker configuration.
-let g:picker_selector_executable = 'sk'
-let g:picker_selector_flags = '--reverse'
-
-nmap <unique> <leader>pe <Plug>PickerEdit
-nmap <unique> <leader>ps <Plug>PickerSplit
-nmap <unique> <leader>pv <Plug>PickerVsplit
-nmap <unique> <leader>pb <Plug>PickerBuffer
-nmap <unique> <leader>p] <Plug>PickerTag
-nmap <unique> <leader>pw <Plug>PickerStag
-nmap <unique> <leader>po <Plug>PickerBufferTag
-nmap <unique> <leader>ph <Plug>PickerHelp
-
 " The following command displays the names of the syntax groups in the
 " hierarchy at the current cursor position. Call it with :SS
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
@@ -92,3 +79,31 @@ highlight Comment cterm=italic
 " Improve the appearance of the vertical separator.
 set fillchars+=vert:│
 highlight VertSplit ctermbg=bg
+
+" Packages.
+
+" This is normally done automatically during startup, after loading your .vimrc
+" file.  With this command it can be done earlier.
+"
+" I need to do this in order to enable some of the function calls below.
+packloadall
+
+" vim-picker configuration.
+let g:picker_selector_executable = 'sk'
+let g:picker_selector_flags = '--reverse'
+
+nmap <unique> <leader>pe <Plug>PickerEdit
+nmap <unique> <leader>ps <Plug>PickerSplit
+nmap <unique> <leader>pv <Plug>PickerVsplit
+nmap <unique> <leader>pb <Plug>PickerBuffer
+nmap <unique> <leader>p] <Plug>PickerTag
+nmap <unique> <leader>pw <Plug>PickerStag
+nmap <unique> <leader>po <Plug>PickerBufferTag
+nmap <unique> <leader>ph <Plug>PickerHelp
+
+" Neoformat configuration.
+nnoremap <unique> <leader>f :Neoformat<cr>
+
+" Neomake configuration.
+call neomake#configure#automake('w')  " run neomake on buffer write
+let g:neomake_open_list = 2           " automatically open the location window
