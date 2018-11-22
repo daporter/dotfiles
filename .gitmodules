@@ -22,9 +22,6 @@
 [submodule ".vim/pack/dporter/start/vim-picker"]
 	path = .vim/pack/dporter/start/vim-picker
 	url = https://github.com/srstevenson/vim-picker
-[submodule ".vim/pack/dporter/start/neoformat"]
-	path = .vim/pack/dporter/start/neoformat
-	url = https://github.com/sbdchd/neoformat.git
 [submodule ".vim/pack/dporter/start/neomake"]
 	path = .vim/pack/dporter/start/neomake
 	url = https://github.com/neomake/neomake.git

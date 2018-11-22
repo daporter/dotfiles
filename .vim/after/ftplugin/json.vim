@@ -4,6 +4,7 @@ if executable('jsonlint')
     setlocal makeprg=jsonlint\ %\ --compact\ --quiet
 endif
 
-" Neoformat configuration.
-let g:neoformat_run_all_formatters = 0
-let g:neoformat_enabled_json = ['prettier']
+augroup my_json
+    autocmd!
+    autocmd BufWritePre *.json :silent %!prettier --parser json
+augroup END
