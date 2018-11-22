@@ -9,9 +9,11 @@ setlocal autoindent
 " :find and related commands to do the right thing.
 setlocal path=.,**
 
-" Neoformat configuration.
-let g:neoformat_run_all_formatters = 1
-let g:neoformat_enabled_python = ['black', 'isort', 'docformatter']
+" Automatically run my Python formatting script whenever the file is written.
+augroup my_python
+    autocmd!
+    autocmd BufWritePre *.py :silent %!pyformatter
+augroup END
 
 " Neomake configuration.
 let g:neomake_python_enabled_makers = ['flake8', 'pydocstyle']
