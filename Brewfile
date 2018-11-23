@@ -11,6 +11,7 @@ brew 'checkbashisms'
 brew 'coreutils'
 brew 'elinks'
 brew 'fd'
+brew 'findutils', args: ['--with-default-names']
 brew 'flake8'
 brew 'gdal'
 brew 'ghc'
