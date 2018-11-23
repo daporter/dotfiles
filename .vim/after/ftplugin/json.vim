@@ -4,7 +4,9 @@ if executable('jsonlint')
     setlocal makeprg=jsonlint\ %\ --compact\ --quiet
 endif
 
-augroup my_json
+let &l:formatprg='prettier --stdin --parser=json'
+
+augroup filetype_json
     autocmd!
-    autocmd BufWritePre *.json :silent %!prettier --parser json
+    autocmd BufWritePre <buffer> Format     " custom command defined in vimrc
 augroup END

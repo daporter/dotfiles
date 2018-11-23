@@ -96,6 +96,18 @@ highlight Comment cterm=italic
 set fillchars+=vert:│
 highlight VertSplit ctermbg=bg
 
+
+" Create a custom format command that applies formatprg to a range (defaulting
+" to the whole buffer). It restores the original cursor position and, more or
+" less, respects the indentation settings. Note that the column position
+" doesn't seem to be restored, only the line position.
+"
+" The idea is that filetype config files can use this to create autocmds.
+command! -range=% Format |
+            \ let b:view = winsaveview() |
+            \ silent execute <line1> . "," . <line2> . "!" . &l:formatprg |
+            \ call winrestview(b:view)
+
 " Packages.
 
 " This is normally done automatically during startup, after loading your .vimrc

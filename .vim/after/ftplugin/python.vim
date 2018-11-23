@@ -9,10 +9,11 @@ setlocal autoindent
 " :find and related commands to do the right thing.
 setlocal path=.,**
 
-" Automatically run my Python formatting script whenever the file is written.
-augroup my_python
+let &l:formatprg='pyformatter'
+
+augroup filetype_python
     autocmd!
-    autocmd BufWritePre *.py :silent %!pyformatter
+    autocmd BufWritePre <buffer> Format     " custom command defined in vimrc
 augroup END
 
 " Neomake configuration.

@@ -1,16 +1,16 @@
-setlocal ts=2 sts=2 sw=2 expandtab
+setlocal tabstop=2
+setlocal softtabstop=2
+setlocal shiftwidth=2
+setlocal expandtab
 
 " Enable use of eslint when editing javascript files.
-if executable('eslint')
-    setlocal errorformat=%f:\ line\ %l\\,\ col\ %c\\,\ %m,%-G%.%#
-    setlocal makeprg=eslint\ --format\ compact\ %
-    augroup MyJavascript
-        autocmd!
-        autocmd BufWritePost <buffer> silent make % | silent redraw!
-    augroup END
-endif
+let &l:errorformat='%f: line %l\, col %c\, %m,%-G%.%#'
+let &l:makeprg='eslint --format compact %'
+let &l:formatprg='prettier --stdin --parser=babylon'
 
-" Use 'prettier' to format javascript code.
-if executable('prettier')
-    let &l:formatprg='prettier --stdin --print-width 80 --single-quote --trailing-comma es5'
-endif
+" automatically run my Format command whenever the file is written.
+augroup filetype_javascript
+    autocmd!
+    autocmd BufWritePre <buffer> Format     " custom command defined in vimrc
+    autocmd BufWritePost <buffer> silent make % | silent redraw!
+augroup END

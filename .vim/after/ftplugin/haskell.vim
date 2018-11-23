@@ -4,6 +4,10 @@ setlocal shiftwidth=2
 setlocal smartindent
 setlocal autoindent
 
-if executable('hindent')
-    setlocal formatprg=hindent
-endif
+let &l:formatprg='hindent'
+
+augroup filetype_haskell
+    autocmd!
+    autocmd BufWritePre <buffer> Format     " custom command defined in vimrc
+augroup END
+
