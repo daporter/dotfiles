@@ -81,16 +81,7 @@ augroup END
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
 syntax on
-
-" Use  Base16 for the color scheme.
-if filereadable(expand('~/.vimrc_background'))
-    let base16colorspace=256
-    source ~/.vimrc_background
-endif
-
-" Display comments in italics. (This has to come after the colorscheme
-" setting.)
-highlight Comment cterm=italic
+colorscheme monotone
 
 " Improve the appearance of the vertical separator.
 set fillchars+=vert:│
