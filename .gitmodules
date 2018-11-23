@@ -25,3 +25,6 @@
 [submodule ".vim/pack/dporter/start/neomake"]
 	path = .vim/pack/dporter/start/neomake
 	url = https://github.com/neomake/neomake.git
+[submodule ".vim/pack/dporter/start/vim-monotone"]
+	path = .vim/pack/dporter/start/vim-monotone
+	url = https://gitlab.com/Lokaltog/vim-monotone.git
