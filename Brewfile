@@ -10,6 +10,7 @@ brew 'cabal-install'
 brew 'checkbashisms'
 brew 'coreutils'
 brew 'elinks'
+brew 'entr'
 brew 'fd'
 brew 'findutils', args: ['--with-default-names']
 brew 'flake8'
