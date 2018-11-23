@@ -73,6 +73,9 @@ brew 'universal-ctags', args: ['HEAD']
 tap 'sbdchd/skim'
 brew 'skim'
 
+tap 'ValeLint/vale'
+brew 'vale'
+
 cask '1password'
 cask 'anki'
 cask 'calibre'
