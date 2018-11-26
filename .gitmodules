@@ -13,12 +13,18 @@
 [submodule ".vim/pack/dporter/start/vim-repeat"]
 	path = .vim/pack/dporter/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
-[submodule ".vim/pack/dporter/start/black"]
-	path = .vim/pack/dporter/start/black
-	url = https://github.com/ambv/black.git
-[submodule ".vim/pack/dporter/start/nord-vim"]
-	path = .vim/pack/dporter/start/nord-vim
-	url = git://github.com/arcticicestudio/nord-vim.git
 [submodule ".vim/pack/dporter/start/compiler-pytest"]
 	path = .vim/pack/dporter/start/compiler-pytest
 	url = https://github.com/5long/pytest-vim-compiler.git
+[submodule ".vim/pack/dporter/start/base16-vim"]
+	path = .vim/pack/dporter/start/base16-vim
+	url = https://github.com/chriskempson/base16-vim.git
+[submodule ".vim/pack/dporter/start/vim-picker"]
+	path = .vim/pack/dporter/start/vim-picker
+	url = https://github.com/srstevenson/vim-picker
+[submodule ".vim/pack/dporter/start/neomake"]
+	path = .vim/pack/dporter/start/neomake
+	url = https://github.com/neomake/neomake.git
+[submodule ".vim/pack/dporter/start/vim-monotone"]
+	path = .vim/pack/dporter/start/vim-monotone
+	url = https://gitlab.com/Lokaltog/vim-monotone.git

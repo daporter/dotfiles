@@ -10,6 +10,9 @@ brew 'cabal-install'
 brew 'checkbashisms'
 brew 'coreutils'
 brew 'elinks'
+brew 'entr'
+brew 'fd'
+brew 'findutils', args: ['--with-default-names']
 brew 'flake8'
 brew 'gdal'
 brew 'ghc'
@@ -51,6 +54,7 @@ brew 'shellcheck'
 brew 'shfmt'
 brew 'terminal-notifier'
 brew 'the_silver_searcher'
+brew 'tig'
 brew 'tree'
 brew 'urlview'
 brew 'wget'
@@ -65,6 +69,9 @@ brew 's3-edit'
 
 tap 'universal-ctags/universal-ctags'
 brew 'universal-ctags', args: ['HEAD'] 
+
+tap 'sbdchd/skim'
+brew 'skim'
 
 cask '1password'
 cask 'anki'

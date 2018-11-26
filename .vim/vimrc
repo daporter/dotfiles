@@ -4,13 +4,14 @@ scriptencoding utf-8
 
 filetype plugin indent on
 
+let mapleader=' '
+
 set hidden                  " allow switching away from unsaved buffers
 set shiftwidth=4            " number of spaces for each step of indent
 let &softtabstop=&shiftwidth " number of spaces pressing <Tab> counts for
 set expandtab               " use spaces instead of a tab character
 set autoindent              " new line copies previous line's indentation
 set linebreak               " try to wrap long lines at word boundaries
-set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set backspace=indent,eol,start  " proper backspace behaviour
 set laststatus=2            " show the status line always
 set ruler                   " show line,column of cursor in status line
@@ -20,32 +21,108 @@ set formatprg=par           " use 'par' when gq is run
 set incsearch               " use incremental searching
 set ignorecase              " make searches case-insensitive
 set smartcase               " with one uppercase char, search is case-sensitive
-set listchars=tab:▸\ ,eol:¬     " symbols to indicate tabs and eols
 set laststatus=2
 set spelllang=en_au         " use the Australia language region
-set wildmode=longest,list   " use bash-style autocompletion
 set showmatch               " in insert mode, show matching paren, etc.
 set ttimeoutlen=100        " lower the timeout (ms) for keycodes (incl. ESC)
 set cursorline              " highlight the screen line of the cursor
+
+" wildmenu.
+set wildmenu                " show options as list when switching buffers etc
+set wildmode=list:full
+set wildignore=*.swp,*.bak
+set wildignore+=*.pyc,*.class,*.cache
+set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
+set wildignore+=tags
+set wildignore+=*.tar.*
+set wildignorecase
 
 set guioptions-=rL          " remove both scrollbars
 set guifont=Fura\ Code\ Medium\ Nerd\ Font\ Complete:h12
 set linespace=3
 
+" Display special chars to indicate whitespace.
+set listchars=tab:▸\ ,eol:¬
+set listchars+=nbsp:⦸
+set listchars+=extends:»
+set listchars+=precedes:«
+set listchars+=trail:•
+
+set wildcharm=<C-z>
+nnoremap <leader>b :buffer <C-z><S-Tab>
+nnoremap <leader>B :sbuffer <C-z><S-Tab>
+
+nnoremap <leader>f :find *
+nnoremap <leader>F :sfind *
+nnoremap <leader>v :vert sfind *
+
 " Load the matchit plugin.
 packadd! matchit
 
-let mapleader=' '
+" Automatically insert a closing parenthesis/bracket/brace.
+inoremap ( ()<Esc>i
+inoremap [ []<Esc>i
+inoremap { {}<Esc>i
+inoremap {<CR> {<CR>}<Esc>O
+
+" Replace Grep with Ripgrep.
+if executable('rg')
+    set grepformat^=%f:%l:%c:%m
+    set grepprg=rg\ --vimgrep
+endif
+
+augroup init
+    autocmd!
+    autocmd QuickFixCmdPost grep cwindow
+augroup END
 
 " The following command displays the names of the syntax groups in the
 " hierarchy at the current cursor position. Call it with :SS
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
 syntax on
+colorscheme monotone
 
-set termguicolors
-let g:nord_italic=1
-let g:nord_underline=1
-let g:nord_italic_comments=1
-let g:nord_comment_brightness=10
-colorscheme nord
+" Improve the appearance of the vertical separator.
+set fillchars+=vert:│
+highlight VertSplit ctermbg=bg
+
+
+" Create a custom format command that applies formatprg to a range (defaulting
+" to the whole buffer). It restores the original cursor position and, more or
+" less, respects the indentation settings. Note that the column position
+" doesn't seem to be restored, only the line position.
+"
+" The idea is that filetype config files can use this to create autocmds.
+command! -range=% Format |
+            \ let b:view = winsaveview() |
+            \ silent execute <line1> . "," . <line2> . "!" . &l:formatprg |
+            \ call winrestview(b:view)
+
+" Packages.
+
+" This is normally done automatically during startup, after loading your .vimrc
+" file.  With this command it can be done earlier.
+"
+" I need to do this in order to enable some of the function calls below.
+packloadall
+
+" vim-picker configuration.
+let g:picker_selector_executable = 'sk'
+let g:picker_selector_flags = '--reverse'
+
+nmap <unique> <leader>pe <Plug>PickerEdit
+nmap <unique> <leader>ps <Plug>PickerSplit
+nmap <unique> <leader>pv <Plug>PickerVsplit
+nmap <unique> <leader>pb <Plug>PickerBuffer
+nmap <unique> <leader>p] <Plug>PickerTag
+nmap <unique> <leader>pw <Plug>PickerStag
+nmap <unique> <leader>po <Plug>PickerBufferTag
+nmap <unique> <leader>ph <Plug>PickerHelp
+
+" Neoformat configuration.
+nnoremap <unique> <leader>nf :Neoformat<cr>
+
+" Neomake configuration.
+call neomake#configure#automake('w')  " run neomake on buffer write
+let g:neomake_open_list = 2           " automatically open the location window
