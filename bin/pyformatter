@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Run the sequence of formatters I prefer for formatting my Python code.
+
+isort - | docformatter - | black --quiet -
