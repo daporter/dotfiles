@@ -8,9 +8,8 @@
 # definitions.
 
 export PATH="/usr/local/sbin:$PATH"
-
-# Add ~/bin to PATH if it exists.
-[ -d "$HOME"/bin ] && PATH=$HOME/bin:$PATH
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/bin:$PATH"
 
 export LC_ALL=en_AU.UTF-8  
 export LANG=en_AU.UTF-8
