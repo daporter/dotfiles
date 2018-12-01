@@ -2,4 +2,4 @@
 
 # Run the sequence of formatters I prefer for formatting my Python code.
 
-isort - | docformatter - | black --quiet -
+isort - | docformatter - | black --quiet - 2>/dev/null
