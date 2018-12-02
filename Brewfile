@@ -58,6 +58,7 @@ brew 'the_silver_searcher'
 brew 'tig'
 brew 'tree'
 brew 'urlview'
+brew 'vis', args: ['--build-from-source', '--HEAD']
 brew 'wget'
 
 tap 'crisidev/homebrew-chunkwm'
