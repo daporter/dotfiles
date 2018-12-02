@@ -13,7 +13,7 @@ export PATH="$HOME/bin:$PATH"
 
 export LC_ALL=en_AU.UTF-8  
 export LANG=en_AU.UTF-8
-export EDITOR=vim
+export EDITOR=vise
 export MAILPATH=$HOME/mail/personal/inbox
 export EMAIL=david.a.porter@gmail.com
 
