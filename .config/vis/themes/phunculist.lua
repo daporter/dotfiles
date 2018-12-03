@@ -1,0 +1,37 @@
+-- Monotone color scheme
+local lexers = vis.lexers
+
+lexers.STYLE_DEFAULT = 'fore:#d0d0d0,back:#141210'
+lexers.STYLE_NOTHING = 'back:#141210'
+lexers.STYLE_CLASS = ''
+lexers.STYLE_COMMENT = 'fore:#797875,italics'
+lexers.STYLE_CONSTANT = ''
+lexers.STYLE_DEFINITION = ''
+lexers.STYLE_ERROR = 'fore:red'
+lexers.STYLE_FUNCTION = ''
+lexers.STYLE_KEYWORD = ''
+lexers.STYLE_LABEL = ''
+lexers.STYLE_NUMBER = ''
+lexers.STYLE_OPERATOR = ''
+lexers.STYLE_REGEX = ''
+lexers.STYLE_STRING = 'fore:#9c9a98'
+lexers.STYLE_PREPROCESSOR = ''
+lexers.STYLE_TAG = ''
+lexers.STYLE_TYPE = ''
+lexers.STYLE_VARIABLE = ''
+lexers.STYLE_WHITESPACE = ''
+lexers.STYLE_EMBEDDED = ''
+lexers.STYLE_IDENTIFIER = ''
+
+lexers.STYLE_LINENUMBER = 'fore:#555555'
+lexers.STYLE_LINENUMBER_CURSOR = lexers.STYLE_LINENUMBER
+lexers.STYLE_CURSOR = 'fore:#141210,back:#8da7be'
+lexers.STYLE_CURSOR_PRIMARY = 'reverse'
+lexers.STYLE_CURSOR_LINE = 'back:green'
+lexers.STYLE_COLOR_COLUMN = 'back:yellow'
+lexers.STYLE_SELECTION = 'back:#053b41'
+lexers.STYLE_STATUS = 'fore:#797875,underlined'
+lexers.STYLE_STATUS_FOCUSED = 'fore:#d0d0d0,underlined'
+lexers.STYLE_SEPARATOR = ''
+lexers.STYLE_INFO = lexers.STYLE_DEFAULT..',bold'
+lexers.STYLE_EOF = lexers.STYLE_COMMENT
