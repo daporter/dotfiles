@@ -19,7 +19,7 @@ presync() {
 }
 
 sync() {
-    if ! /usr/local/bin/mbsync everything; then
+    if ! /usr/local/bin/mbsync -a; then
         err "mbsync exited with status $?"
     fi
 }

@@ -14,7 +14,7 @@ export PATH="$HOME/bin:$PATH"
 export LC_ALL=en_AU.UTF-8  
 export LANG=en_AU.UTF-8
 export EDITOR=vise
-export MAILPATH=$HOME/mail/personal/inbox
+export MAILPATH="$HOME/mail/personal/inbox:$HOME/mail/data61/inbox"
 export EMAIL=david.a.porter@gmail.com
 
 # Load all supplementary scripts in ~/.profile.d

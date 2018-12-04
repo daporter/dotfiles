@@ -1,18 +1,21 @@
 # Identity
-set realname="David Porter"
+set realname = "David Porter"
+
+# Default account
+source ~/.mutt/personal.mutt
 
 # Mail format
-set mbox_type="Maildir"
-set folder="~/mail/personal"
-set spoolfile = "~/mail/personal/inbox"
-set mbox = '+archive'
-set postponed = "~/mail/personal/drafts"
-set trash = "+/trash"
-set record = "+/sent"
-set header_cache =~/.mutt/cache/headers
+set mbox_type             = "Maildir"
 set header_cache_compress = no
-set sendmail = "/usr/local/bin/msmtp -a personal"
-set mail_check = 60
+set mail_check            = 60
+
+# Enable multiple accounts.
+folder-hook "personal" "source ~/.mutt/personal.mutt"
+folder-hook "data61" "source ~/.mutt/data61.mutt"
+
+# Switch accounts with F keys
+macro index <f2> '<sync-mailbox><refresh><enter-command>source ~/.mutt/personal.mutt<enter><change-folder>!<enter>'
+macro index <f3> '<sync-mailbox><refresh><enter-command>source ~/.mutt/data61.mutt<enter><change-folder>!<enter>'
 
 # Editor
 set editor='vim +/^$ "+setlocal fo+=w spell" +noh'
