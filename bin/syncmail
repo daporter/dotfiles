@@ -1,43 +1,43 @@
-#!/bin/bash
+#!/usr/bin/env sh
 #
 # Synchronise mail, including running any pre- and post-sync hooks.
 
 set -e
 
 err() {
-    echo "$@" >&2
-    exit 1
+	echo "$@" >&2
+	exit 1
 }
 
 presync() {
-    local hook="${HOME}/.mutt/hooks/presync.sh"
-    if [[ -x "$hook" ]]; then
-        if ! $hook; then 
-            err "Presync hook exited with status $?"
-        fi
-    fi
+	hook="${HOME}/.mutt/hooks/presync.sh"
+	if [ -x "$hook" ]; then
+		if ! $hook; then
+			err "Presync hook exited with status $?"
+		fi
+	fi
 }
 
 sync() {
-    if ! /usr/local/bin/mbsync -a; then
-        err "mbsync exited with status $?"
-    fi
+	if ! /usr/local/bin/mbsync -a; then
+		err "mbsync exited with status $?"
+	fi
 }
 
 # Runs notmuch, lbdb-fetchaddr, etc.
 postsync() {
-    local hook="$HOME/.mutt/hooks/postsync.sh"
-    if [[ -x "$hook" ]]; then
-        if ! $hook; then
-            err "Postsync hook exited with status $?"
-        fi
-    fi
+	hook="$HOME/.mutt/hooks/postsync.sh"
+	if [ -x "$hook" ]; then
+		if ! $hook; then
+			err "Postsync hook exited with status $?"
+		fi
+	fi
 }
 
 main() {
-    presync
-    sync
-    postsync
+	presync
+	sync
+	postsync
 }
 
 main
