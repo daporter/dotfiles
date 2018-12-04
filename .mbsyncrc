@@ -6,7 +6,7 @@ SyncState *
 IMAPAccount personal
 Host imap.gmail.com
 User david.a.porter@gmail.com
-PassCmd "/usr/bin/security find-internet-password -w -a david.a.porter@gmail.com -s imap.gmail.com ~/Library/Keychains/login.keychain"
+PassCmd "security find-internet-password -s imap.gmail.com -a david.a.porter -w"
 SSLType IMAPS
 AuthMechs LOGIN
 
@@ -63,7 +63,7 @@ Patterns !archive
 Patterns !drafts
 Patterns !starred
  
-Group everything
+Group gmail
 Channel personal-inbox
 Channel personal-starred
 Channel personal-drafts
@@ -72,3 +72,48 @@ Channel personal-spam
 Channel personal-trash
 Channel personal-archive
 Channel personal-catchall
+
+
+# Data61
+
+IMAPAccount data61
+Host imap.csiro.au
+User por085@csiro.au
+PassCmd "security find-internet-password -s imap.csiro.au -a por085@csiro.au -w"
+SSLType IMAPS
+AuthMechs LOGIN
+
+IMAPStore data61-remote
+Account data61
+
+MaildirStore data61-local
+Path ~/mail/data61/
+Inbox ~/mail/data61/inbox
+SubFolders Verbatim
+
+Channel data61-inbox
+Master :data61-remote:INBOX
+Slave :data61-local:inbox
+
+Channel data61-drafts
+Master :data61-remote:Drafts
+Slave :data61-local:drafts
+
+Channel data61-sent
+Master :data61-remote:"Sent Items"
+Slave :data61-local:sent
+
+Channel data61-trash
+Master :data61-remote:"Deleted Items"
+Slave :data61-local:trash
+
+Channel data61-archive
+Master :data61-remote:Archive
+Slave :data61-local:archive
+
+Group data61
+Channel data61-inbox
+Channel data61-drafts
+Channel data61-sent
+Channel data61-trash
+Channel data61-archive
