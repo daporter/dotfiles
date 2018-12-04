@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 #
 # Update all installed Homebrew packages and casks.
 
@@ -9,7 +9,7 @@ err() {
 }
 
 run_cmd() {
-    local cmd="$1"
+    cmd="$1"
     printf "* Running '%s'...\n" "$cmd"
     if ! $cmd; then
         err "Unable to run '$cmd'"
