@@ -71,6 +71,7 @@ tap 'ValeLint/vale'
 brew 'vale'
 
 cask '1password'
+cask 'amethyst'
 cask 'anki'
 cask 'calibre'
 cask 'clipy'
