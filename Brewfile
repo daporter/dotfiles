@@ -58,11 +58,6 @@ brew 'urlview'
 brew 'vis', args: ['--build-from-source', '--HEAD']
 brew 'wget'
 
-tap 'crisidev/homebrew-chunkwm'
-brew 'chunkwm', args: ['HEAD']
-tap 'koekeishiya/formulae'
-brew 'koekeishiya/formulae/skhd', args: ['HEAD', 'with-logging']
-
 tap 'tsub/s3-edit'
 brew 's3-edit'
 
