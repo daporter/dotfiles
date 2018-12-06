@@ -7,20 +7,26 @@
 # programs, they go into a different file), and environment variable
 # definitions.
 
-export PATH="/usr/local/sbin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/bin:$PATH"
+PATH="$HOME/bin:$HOME/.local/bin:/usr/local/sbin:$PATH"
+export PATH
 
-export LC_ALL=en_AU.UTF-8  
-export LANG=en_AU.UTF-8
-export EDITOR=vise
-export MAILPATH="$HOME/mail/personal/inbox:$HOME/mail/data61/inbox"
-export EMAIL=david.a.porter@gmail.com
+LC_ALL=en_AU.UTF-8
+export LC_ALL
+LANG=en_AU.UTF-8
+export LANG
+
+MAILPATH="$HOME/mail/personal/inbox:$HOME/mail/data61/inbox"
+export MAILPATH
+
+EMAIL=david.a.porter@gmail.com
+export EMAIL
+
+EDITOR=vise
+export EDITOR
 
 # Load all supplementary scripts in ~/.profile.d
-for sh in "$HOME"/.profile.d/*.sh 
-do
-    # shellcheck source=/dev/null
-    [ -e "$sh" ] && . "$sh"
+for sh in "$HOME"/.profile.d/*.sh; do
+	# shellcheck source=/dev/null
+	[ -e "$sh" ] && . "$sh"
 done
 unset -v sh

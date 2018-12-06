@@ -94,6 +94,7 @@ cask 'karabiner-elements'
 cask 'mactex'
 cask 'omnifocus'
 cask 'slack'
+cask 'superduper'
 cask 'texshop'
 
 tap 'homebrew/cask-drivers'
