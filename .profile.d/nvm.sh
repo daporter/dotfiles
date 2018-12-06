@@ -1,4 +1,5 @@
 # nvm installed via Homebrew.
 
-export NVM_DIR="$HOME/.nvm"
-  . "/usr/local/opt/nvm/nvm.sh"
+NVM_DIR="$HOME/.nvm"
+export NVM_DIR
+source "/usr/local/opt/nvm/nvm.sh"

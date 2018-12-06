@@ -1,1 +1,2 @@
-export PATH=~/.cabal/bin:$PATH
+PATH=~/.cabal/bin:$PATH
+export PATH
