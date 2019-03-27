@@ -81,7 +81,7 @@ augroup END
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
 syntax on
-colorscheme monotone
+colorscheme apprentice
 
 " Improve the appearance of the vertical separator.
 set fillchars+=vert:│
