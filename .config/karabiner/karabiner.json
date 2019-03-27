@@ -600,7 +600,7 @@
                                     }
                                 },
                                 "parameters": {
-                                    "basic.simultaneous_threshold_milliseconds": 200
+                                    "basic.simultaneous_threshold_milliseconds": 100
                                 },
                                 "to": [
                                     {
