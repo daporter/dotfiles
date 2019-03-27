@@ -4,7 +4,7 @@ dotfiles() {
 	/usr/local/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"
 }
 
-d() {
+dt() {
 	if [ $# -eq 0 ]; then
 		dotfiles status
 	else
