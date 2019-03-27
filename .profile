@@ -21,7 +21,7 @@ export MAILPATH
 EMAIL=david.a.porter@gmail.com
 export EMAIL
 
-EDITOR=vise
+EDITOR=vim
 export EDITOR
 
 # Load all supplementary scripts in ~/.profile.d
