@@ -9,6 +9,8 @@ setlocal autoindent
 " :find and related commands to do the right thing.
 setlocal path=.,**
 
+setlocal define=class\\s
+
 let &l:formatprg='pyformatter'
 
 augroup filetype_python
