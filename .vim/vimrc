@@ -112,14 +112,14 @@ packloadall
 let g:picker_selector_executable = 'sk'
 let g:picker_selector_flags = '--reverse'
 
-nmap <unique> <leader>pe <Plug>PickerEdit
-nmap <unique> <leader>ps <Plug>PickerSplit
-nmap <unique> <leader>pv <Plug>PickerVsplit
-nmap <unique> <leader>pb <Plug>PickerBuffer
-nmap <unique> <leader>p] <Plug>PickerTag
-nmap <unique> <leader>pw <Plug>PickerStag
-nmap <unique> <leader>po <Plug>PickerBufferTag
-nmap <unique> <leader>ph <Plug>PickerHelp
+nmap <unique> <leader>pe <Plug>(PickerEdit)
+nmap <unique> <leader>ps <Plug>(PickerSplit)
+nmap <unique> <leader>pv <Plug>(PickerVsplit)
+nmap <unique> <leader>pb <Plug>(PickerBuffer)
+nmap <unique> <leader>p] <Plug>(PickerTag)
+nmap <unique> <leader>pw <Plug>(PickerStag)
+nmap <unique> <leader>po <Plug>(PickerBufferTag)
+nmap <unique> <leader>ph <Plug>(PickerHelp)
 
 " Neoformat configuration.
 nnoremap <unique> <leader>nf :Neoformat<cr>
