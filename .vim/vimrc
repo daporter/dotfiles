@@ -53,12 +53,13 @@ set wildcharm=<C-z>
 nnoremap <leader>b :buffer <C-z><S-Tab>
 nnoremap <leader>B :sbuffer <C-z><S-Tab>
 
-nnoremap <leader>e :edit *
-nnoremap <leader>E :split *
+nnoremap <leader>e :edit **/*<C-z><S-Tab>
+nnoremap <leader>E :split **/*<C-z><S-Tab>
+nnoremap <leader>v :vsplit **/*<C-z><S-Tab>
 
-nnoremap <leader>f :find *
-nnoremap <leader>s :sfind *
-nnoremap <leader>v :vert sfind *
+nnoremap <leader>f :find **/*<C-z><S-Tab>
+nnoremap <leader>s :sfind **/*<C-z><S-Tab>
+nnoremap <leader>V :vert sfind **/*<C-z><S-Tab>
 
 nnoremap <leader>w :write<cr>
 
