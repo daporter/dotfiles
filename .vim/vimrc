@@ -33,6 +33,7 @@ set wildmode=list:full
 set wildignore=*.swp,*.bak
 set wildignore+=*.pyc,*.class,*.cache
 set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
+set wildignore+=*/__pycache__/*
 set wildignore+=tags
 set wildignore+=*.tar.*
 set wildignorecase
