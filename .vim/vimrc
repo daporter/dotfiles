@@ -51,18 +51,26 @@ set listchars+=trail:•
 
 " Mappings for buffer- and file-opening operations.
 set wildcharm=<C-z>
-nnoremap <leader>b :buffer <C-z><S-Tab>
-nnoremap <leader>B :sbuffer <C-z><S-Tab>
+nnoremap <leader>b :buffer *<C-z><S-Tab>
+nnoremap <leader>B :sbuffer *<C-z><S-Tab>
+nnoremap <leader>vb :vert sbuffer *<C-z><S-Tab>
+
+nnoremap <leader>f :find *<C-z><S-Tab>
+nnoremap <leader>F :sfind *<C-z><S-Tab>
+nnoremap <leader>vf :vert sfind *<C-z><S-Tab>
 
 nnoremap <leader>e :edit **/*<C-z><S-Tab>
 nnoremap <leader>E :split **/*<C-z><S-Tab>
-nnoremap <leader>v :vsplit **/*<C-z><S-Tab>
+nnoremap <leader>ve :vsplit **/*<C-z><S-Tab>
 
-nnoremap <leader>f :find *<C-z><S-Tab>
-nnoremap <leader>s :sfind *<C-z><S-Tab>
-nnoremap <leader>V :vert sfind *<C-z><S-Tab>
+" This mapping uses regex search instead of whole word search so I can do
+" "leader>jba<Tab> to find tag foobarbaz()
+nnoremap <leader>j :tjump /
 
 nnoremap <leader>w :write<cr>
+
+" Format buffer, restoring buffer position.
+nnoremap <leader>gq gggqG<C-o><C-o>
 
 " Load the matchit plugin.
 packadd! matchit
