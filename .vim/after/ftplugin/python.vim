@@ -13,19 +13,29 @@ setlocal define=class\\s
 
 let &l:formatprg='pyformatter'
 
-augroup filetype_python
-    autocmd!
-    autocmd BufWritePre <buffer> Format     " custom command defined in vimrc
-augroup END
+
+" For running tests.
+nnoremap <buffer> <leader>t
+      \ :<C-U>compiler pytest \| make<CR>
+
+" For running linters.
+nnoremap <buffer> <leader>l
+      \ :<C-U>compiler pylinter \| make<CR>
+
+
+" augroup filetype_python
+"     autocmd!
+"     autocmd BufWritePre <buffer> Format     " custom command defined in vimrc
+" augroup END
 
 " Neomake configuration.
-let g:neomake_python_enabled_makers = ['flake8', 'pydocstyle']
+" let g:neomake_python_enabled_makers = ['flake8', 'pydocstyle']
 
-let g:neomake_python_pytest_maker = {
-        \ 'exe': 'pytest',
-        \ 'args': ['--quiet', '--tb=line'],
-        \ 'errorformat': '%-G%.%#%.%#%%%.%#,%-G%.%#FAILURES%.%#,%f:%l:\ %m,%-G%.%#in\ %.%#\ seconds',
-        \ }
+" let g:neomake_python_pytest_maker = {
+"         \ 'exe': 'pytest',
+"         \ 'args': ['--quiet', '--tb=line'],
+"         \ 'errorformat': '%-G%.%#%.%#%%%.%#,%-G%.%#FAILURES%.%#,%f:%l:\ %m,%-G%.%#in\ %.%#\ seconds',
+"         \ }
 
-nnoremap <buffer> <Leader>tt :Neomake pytest<cr>
-nnoremap <buffer> <Leader>tp :NeomakeProject pytest<cr>
+" nnoremap <buffer> <Leader>tt :Neomake pytest<cr>
+" nnoremap <buffer> <Leader>tp :NeomakeProject pytest<cr>
