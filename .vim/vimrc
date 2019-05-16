@@ -12,6 +12,7 @@ let &softtabstop=&shiftwidth " number of spaces pressing <Tab> counts for
 set expandtab               " use spaces instead of a tab character
 set autoindent              " new line copies previous line's indentation
 set linebreak               " try to wrap long lines at word boundaries
+set showbreak=↳\ 
 set backspace=indent,eol,start  " proper backspace behaviour
 set laststatus=2            " show the status line always
 set ruler                   " show line,column of cursor in status line
