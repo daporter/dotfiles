@@ -34,3 +34,6 @@
 [submodule ".vim/pack/dporter/start/apprentice"]
 	path = .vim/pack/dporter/start/apprentice
 	url = https://github.com/romainl/Apprentice.git
+[submodule ".vim/pack/dporter/start/vim-devdocs"]
+	path = .vim/pack/dporter/start/vim-devdocs
+	url = https://github.com/romainl/vim-devdocs.git
