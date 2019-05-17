@@ -130,10 +130,3 @@ nmap <unique> <leader>p] <Plug>(PickerTag)
 nmap <unique> <leader>pw <Plug>(PickerStag)
 nmap <unique> <leader>po <Plug>(PickerBufferTag)
 nmap <unique> <leader>ph <Plug>(PickerHelp)
-
-" Neoformat configuration.
-nnoremap <unique> <leader>nf :Neoformat<cr>
-
-" Neomake configuration.
-call neomake#configure#automake('w')  " run neomake on buffer write
-let g:neomake_open_list = 2           " automatically open the location window
