@@ -4,6 +4,7 @@ tap 'homebrew/bundle'
 
 brew 'aria2'
 brew 'asciidoctor'
+brew 'bat'
 brew 'bash'
 brew 'bash-completion'
 brew 'cabal-install'
