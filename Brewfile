@@ -13,6 +13,7 @@ brew 'dash'
 brew 'elinks'
 brew 'entr'
 brew 'exercism'
+brew 'exiftool'
 brew 'fd'
 brew 'findutils', args: ['--with-default-names']
 brew 'flake8'
