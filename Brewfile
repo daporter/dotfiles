@@ -17,6 +17,7 @@ brew 'elinks'
 brew 'entr'
 brew 'fasd'
 brew 'exercism'
+brew 'exiftool'
 brew 'fd'
 brew 'findutils', args: ['--with-default-names']
 brew 'flake8'
