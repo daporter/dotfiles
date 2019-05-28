@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+# Run the sequence of linters I prefer for my text files.
+
+if [ $# -ne 1 ]; then
+    PROGNAME=$(basename "$0")
+    printf "Usage %s <file>\n" "$PROGNAME"
+    exit 1
+fi
+
+proselint "$1"
+writegood "$1"
+
+

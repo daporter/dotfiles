@@ -1,1 +1,3 @@
-" TODO: set makeprg to: ['proselint', 'writegood']
+" For running linters.
+nnoremap <buffer> <leader>l
+      \ :<C-U>write \| compiler textlinter \| make<CR>
