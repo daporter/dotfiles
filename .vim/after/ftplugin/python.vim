@@ -14,8 +14,12 @@ setlocal define=class\\s
 let &l:formatprg='pyformatter'
 
 
-" For running tests.
-nnoremap <buffer> <leader>t
+" For running the current test file.
+nnoremap <buffer> <leader>tt
+      \ :<C-U>write \| compiler pytest \| make %<CR>
+
+" For running all tests.
+nnoremap <buffer> <leader>ta
       \ :<C-U>write \| compiler pytest \| make<CR>
 
 " For running linters.
