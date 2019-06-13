@@ -70,8 +70,8 @@ nnoremap <leader>j :tjump /
 
 nnoremap <leader>w :write<cr>
 
-" Format buffer, restoring buffer position.
-nnoremap <leader>gq gggqG<C-o><C-o>
+" Format buffer, restoring buffer position.  Sets the mark `f'.
+nnoremap <leader>gq mfgggqG`f
 
 " Load the matchit plugin.
 packadd! matchit
