@@ -13,21 +13,6 @@
 [submodule ".vim/pack/dporter/start/vim-repeat"]
 	path = .vim/pack/dporter/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
-[submodule ".vim/pack/dporter/start/compiler-pytest"]
-	path = .vim/pack/dporter/start/compiler-pytest
-	url = https://github.com/5long/pytest-vim-compiler.git
-[submodule ".vim/pack/dporter/start/base16-vim"]
-	path = .vim/pack/dporter/start/base16-vim
-	url = https://github.com/chriskempson/base16-vim.git
-[submodule ".vim/pack/dporter/start/vim-picker"]
-	path = .vim/pack/dporter/start/vim-picker
-	url = https://github.com/srstevenson/vim-picker
-[submodule ".vim/pack/dporter/start/vim-monotone"]
-	path = .vim/pack/dporter/start/vim-monotone
-	url = https://gitlab.com/Lokaltog/vim-monotone.git
-[submodule ".vim/pack/dporter/start/pythonsense"]
-	path = .vim/pack/dporter/start/pythonsense
-	url = https://github.com/jeetsukumaran/vim-pythonsense.git
 [submodule ".vim/pack/dporter/start/apprentice"]
 	path = .vim/pack/dporter/start/apprentice
 	url = https://github.com/romainl/Apprentice.git
