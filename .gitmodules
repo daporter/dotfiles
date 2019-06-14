@@ -19,9 +19,6 @@
 [submodule ".vim/pack/dporter/start/vim-monotone"]
 	path = .vim/pack/dporter/start/vim-monotone
 	url = https://gitlab.com/Lokaltog/vim-monotone.git
-[submodule ".vim/pack/dporter/start/pythonsense"]
-	path = .vim/pack/dporter/start/pythonsense
-	url = https://github.com/jeetsukumaran/vim-pythonsense.git
 [submodule ".vim/pack/dporter/start/apprentice"]
 	path = .vim/pack/dporter/start/apprentice
 	url = https://github.com/romainl/Apprentice.git
