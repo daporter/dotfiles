@@ -117,16 +117,3 @@ command! -range=% Format |
 "
 " I need to do this in order to enable some of the function calls below.
 packloadall
-
-" vim-picker configuration.
-let g:picker_selector_executable = 'sk'
-let g:picker_selector_flags = '--reverse'
-
-nmap <unique> <leader>pe <Plug>(PickerEdit)
-nmap <unique> <leader>ps <Plug>(PickerSplit)
-nmap <unique> <leader>pv <Plug>(PickerVsplit)
-nmap <unique> <leader>pb <Plug>(PickerBuffer)
-nmap <unique> <leader>p] <Plug>(PickerTag)
-nmap <unique> <leader>pw <Plug>(PickerStag)
-nmap <unique> <leader>po <Plug>(PickerBufferTag)
-nmap <unique> <leader>ph <Plug>(PickerHelp)
