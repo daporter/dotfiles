@@ -1,14 +1,12 @@
-setlocal tabstop=4
-setlocal softtabstop=4
-setlocal shiftwidth=4
-setlocal textwidth=88
-setlocal expandtab
 setlocal autoindent
+setlocal expandtab
+setlocal shiftwidth=4
+setlocal softtabstop=4
+setlocal tabstop=4
+setlocal textwidth=88
 
-" Set the path to something more suitable for Python projects. This enables
-" :find and related commands to do the right thing.
-setlocal path=.,**
-
+" This is a pattern for matching macro definitions, but it is sometimes 
+" useful to make it match class declarations.
 setlocal define=class\\s
 
 let &l:formatprg='pyformatter'
