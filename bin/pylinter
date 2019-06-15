@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# Run the sequence of linters I prefer for my text files.
+# Run the sequence of linters I prefer for my Python code.
 
 if [ $# -ne 1 ]; then
     PROGNAME=$(basename "$0")
@@ -8,5 +8,6 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-proselint "$1"
-writegood "$1"
+pylint --score=no "$1"
+flake8 "$1"
+pydocstyle "$1"
