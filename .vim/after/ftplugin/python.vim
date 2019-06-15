@@ -14,7 +14,7 @@ let &l:formatprg='pyformatter'
 
 " For running the current test file.
 nnoremap <buffer> <leader>tt
-      \ :<C-U>write \| compiler pytest \| make %<CR>
+      \ :<C-U>write \| compiler pytest \| lmake %<CR>
 
 " For running all tests.
 nnoremap <buffer> <leader>ta
@@ -22,4 +22,5 @@ nnoremap <buffer> <leader>ta
 
 " For running linters.
 nnoremap <buffer> <leader>l
-      \ :<C-U>write \| compiler pylinter \| make<CR>
+      \ :<C-U>write <bar> compiler pylinter
+      \ <bar> silent lmake <bar> redraw!<CR>
