@@ -82,9 +82,12 @@ if executable('rg')
     set grepprg=rg\ --vimgrep
 endif
 
-augroup init
+" Automatically open the quickfix/location window after :make, :grep,
+" :lvimgrep and friends if there are valid locations/errors.
+augroup vimrc
     autocmd!
-    autocmd QuickFixCmdPost grep cwindow
+    autocmd QuickFixCmdPost [^l]* cwindow 5
+    autocmd QuickFixCmdPost l*    lwindow 5
 augroup END
 
 " The following command displays the names of the syntax groups in the
