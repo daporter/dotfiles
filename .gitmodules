@@ -22,3 +22,6 @@
 [submodule ".vim/pack/dporter/start/vim-abolish"]
 	path = .vim/pack/dporter/start/vim-abolish
 	url = https://github.com/tpope/vim-abolish.git
+[submodule ".vim/pack/dporter/start/vim-apathy"]
+	path = .vim/pack/dporter/start/vim-apathy
+	url = https://github.com/tpope/vim-apathy.git
