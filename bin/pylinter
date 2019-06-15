@@ -11,3 +11,4 @@ fi
 pylint --score=no "$1"
 flake8 "$1"
 pydocstyle "$1"
+bandit --format custom --msg-template "{relpath}:{line}: {test_id}: {severity}: {msg}" "$1"
