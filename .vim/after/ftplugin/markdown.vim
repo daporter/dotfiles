@@ -1,8 +1,7 @@
 " TODO: set makeprg to: ['markdownlint', 'mdl', 'vale', 'proselint', 'writegood']
 
-let &l:formatprg='prettier --stdin --parser=markdown'
+setlocal textwidth=80
 
-augroup filetype_markdown
-    autocmd!
-    autocmd BufWritePre <buffer> Format     " custom command defined in vimrc
-augroup END
+let &l:formatprg='prettier --stdin --parser=markdown --prose-wrap=always'
+
+compiler markdownlint
