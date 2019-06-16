@@ -5,8 +5,3 @@ if executable('jsonlint')
 endif
 
 let &l:formatprg='prettier --stdin --parser=json'
-
-augroup filetype_json
-    autocmd!
-    autocmd BufWritePre <buffer> Format     " custom command defined in vimrc
-augroup END

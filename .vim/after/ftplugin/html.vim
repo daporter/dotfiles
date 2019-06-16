@@ -4,8 +4,3 @@ setlocal shiftwidth=2
 setlocal expandtab
 
 let &l:formatprg='tidy --indent yes --wrap 0 --tidy-mark no --force-output true -quiet --show-errors 0 --show-warnings 0'
-
-augroup filetype_html
-    autocmd!
-    autocmd BufWritePre <buffer> Format     " custom command defined in vimrc
-augroup END
