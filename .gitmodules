@@ -25,3 +25,9 @@
 [submodule ".vim/pack/dporter/start/vim-apathy"]
 	path = .vim/pack/dporter/start/vim-apathy
 	url = https://github.com/tpope/vim-apathy.git
+[submodule ".vim/pack/dporter/start/vim-qf"]
+	path = .vim/pack/dporter/start/vim-qf
+	url = https://github.com/romainl/vim-qf.git
+[submodule ".vim/pack/dporter/start/vim-qlist"]
+	path = .vim/pack/dporter/start/vim-qlist
+	url = https://github.com/romainl/vim-qlist.git

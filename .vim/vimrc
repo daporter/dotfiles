@@ -89,8 +89,8 @@ endif
 " :lvimgrep and friends if there are valid locations/errors.
 augroup vimrc
     autocmd!
-    autocmd QuickFixCmdPost [^l]* cwindow 5
-    autocmd QuickFixCmdPost l*    lwindow 5
+    autocmd QuickFixCmdPost [^l]* cwindow
+    autocmd QuickFixCmdPost l*    lwindow
 augroup END
 
 " The following command displays the names of the syntax groups in the
