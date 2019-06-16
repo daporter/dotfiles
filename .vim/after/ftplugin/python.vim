@@ -5,22 +5,24 @@ setlocal softtabstop=4
 setlocal tabstop=4
 setlocal textwidth=88
 
+" vim-apathy sets `path', but I'm overriding it to remove all the Python system
+" paths that vim-apathy includes.
+setlocal path=.,,
+
 " This is a pattern for matching macro definitions, but it is sometimes 
 " useful to make it match class declarations.
 setlocal define=^\\s*class\\s\\+
 
 let &l:formatprg='pyformatter'
 
-
 " For running the current test file.
 nnoremap <buffer> <leader>tt
-      \ :<C-U>write \| compiler pytest \| lmake %<CR>
+      \ :<C-U>write <bar> compiler pytest <bar> lmake %<CR>
 
 " For running all tests.
 nnoremap <buffer> <leader>ta
-      \ :<C-U>write \| compiler pytest \| make<CR>
+      \ :<C-U>write <bar> compiler pytest <bar> make<CR>
 
 " For running linters.
 nnoremap <buffer> <leader>l
-      \ :<C-U>write <bar> compiler pylinter
-      \ <bar> silent lmake <bar> redraw!<CR>
+      \ :<C-U>write <bar> compiler pylinter <bar>lmake<CR>
