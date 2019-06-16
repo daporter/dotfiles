@@ -31,3 +31,6 @@
 [submodule ".vim/pack/dporter/start/vim-qlist"]
 	path = .vim/pack/dporter/start/vim-qlist
 	url = https://github.com/romainl/vim-qlist.git
+[submodule ".vim/pack/dporter/start/fzf"]
+	path = .vim/pack/dporter/start/fzf
+	url = https://github.com/junegunn/fzf.vim.git
