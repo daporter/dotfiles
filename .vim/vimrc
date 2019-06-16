@@ -56,10 +56,6 @@ nnoremap <leader>b :buffer *<C-z><S-Tab>
 nnoremap <leader>B :sbuffer *<C-z><S-Tab>
 nnoremap <leader>vb :vert sbuffer *<C-z><S-Tab>
 
-nnoremap <leader>f :find *<C-z><S-Tab>
-nnoremap <leader>F :sfind *<C-z><S-Tab>
-nnoremap <leader>vf :vert sfind *<C-z><S-Tab>
-
 nnoremap <leader>e :edit **/*<C-z><S-Tab>
 nnoremap <leader>E :split **/*<C-z><S-Tab>
 nnoremap <leader>ve :vsplit **/*<C-z><S-Tab>
