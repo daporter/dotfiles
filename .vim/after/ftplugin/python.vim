@@ -7,7 +7,7 @@ setlocal textwidth=88
 
 " This is a pattern for matching macro definitions, but it is sometimes 
 " useful to make it match class declarations.
-setlocal define=class\\s
+setlocal define=^\\s*class\\s\\+
 
 let &l:formatprg='pyformatter'
 
