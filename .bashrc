@@ -67,12 +67,3 @@ unset -v sh
 # shellcheck source=/dev/null
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
-# tabtab source for serverless package
-# uninstall by removing these lines or running `tabtab uninstall serverless`
-[ -f /Users/por085/src/eme-monorepo/node_modules/tabtab/.completions/serverless.bash ] && . /Users/por085/src/eme-monorepo/node_modules/tabtab/.completions/serverless.bash
-# tabtab source for sls package
-# uninstall by removing these lines or running `tabtab uninstall sls`
-[ -f /Users/por085/src/eme-monorepo/node_modules/tabtab/.completions/sls.bash ] && . /Users/por085/src/eme-monorepo/node_modules/tabtab/.completions/sls.bash
-# tabtab source for slss package
-# uninstall by removing these lines or running `tabtab uninstall slss`
-[ -f /Users/por085/src/eme-monorepo/node_modules/tabtab/.completions/slss.bash ] && . /Users/por085/src/eme-monorepo/node_modules/tabtab/.completions/slss.bash
