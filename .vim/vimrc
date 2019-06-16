@@ -107,10 +107,11 @@ packloadall
 
 " Enable FZF.
 set runtimepath+=/usr/local/opt/fzf
-let g:fzf_layout = { 'down': '~40%' }
+let g:fzf_layout = { 'window': 'botright 16split' }
 
-nnoremap <silent> <leader>e :Files 
+nnoremap <leader>e :Files 
 nnoremap <silent> <leader>b :Buffers<CR>
+nnoremap <silent> <leader>' :Marks<CR>
 nnoremap <silent> <leader>] :Tags<CR>
 nnoremap <silent> <leader>c :Commands<CR>
 nnoremap <silent> <leader>r :History:<CR>
