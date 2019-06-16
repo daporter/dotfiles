@@ -57,20 +57,7 @@ set wildignore+=*/__pycache__/*
 set wildignore+=tags
 set wildignore+=*.tar.*
 
-" Mappings for buffer- and file-opening operations.
-set wildcharm=<C-z>
-nnoremap <leader>b :buffer *<C-z><S-Tab>
-nnoremap <leader>B :sbuffer *<C-z><S-Tab>
-nnoremap <leader>vb :vert sbuffer *<C-z><S-Tab>
-
-nnoremap <leader>e :edit **/*<C-z><S-Tab>
-nnoremap <leader>E :split **/*<C-z><S-Tab>
-nnoremap <leader>ve :vsplit **/*<C-z><S-Tab>
-
 nnoremap <leader>w :write<cr>
-
-" Format buffer, restoring buffer position.  Sets the mark `f'.
-nnoremap <leader>gq mfgggqG`f
 
 " This mapping uses regex search instead of whole word search so I can do
 " "leader>jba<Tab> to find tag foobarbaz()
@@ -84,14 +71,6 @@ if executable('rg')
     set grepformat^=%f:%l:%c:%m
     set grepprg=rg\ --vimgrep
 endif
-
-" Automatically open the quickfix/location window after :make, :grep,
-" :lvimgrep and friends if there are valid locations/errors.
-augroup vimrc
-    autocmd!
-    autocmd QuickFixCmdPost [^l]* cwindow
-    autocmd QuickFixCmdPost l*    lwindow
-augroup END
 
 " The following command displays the names of the syntax groups in the
 " hierarchy at the current cursor position. Call it with :SS
@@ -115,6 +94,8 @@ command! -range=% Format |
             \ let b:view = winsaveview() |
             \ silent execute <line1> . "," . <line2> . "!" . &l:formatprg |
             \ call winrestview(b:view)
+
+nnoremap <leader>gq :Format<cr>
 
 " Packages.
 
