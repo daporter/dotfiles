@@ -117,3 +117,6 @@ nnoremap <silent> <leader>c :Commands<CR>
 nnoremap <silent> <leader>r :History:<CR>
 nnoremap <silent> <leader>/ :History/<CR>
 nnoremap <silent> <leader>h :Helptags<CR>
+
+" Configure the vim-test plugin.
+let test#strategy = 'make'
