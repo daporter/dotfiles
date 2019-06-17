@@ -34,3 +34,9 @@
 [submodule ".vim/pack/dporter/start/fzf"]
 	path = .vim/pack/dporter/start/fzf
 	url = https://github.com/junegunn/fzf.vim.git
+[submodule ".vim/pack/dporter/start/vim-test"]
+	path = .vim/pack/dporter/start/vim-test
+	url = https://github.com/janko/vim-test.git
+[submodule ".vim/pack/dporter/start/vim-projectionist"]
+	path = .vim/pack/dporter/start/vim-projectionist
+	url = https://github.com/tpope/vim-projectionist.git

@@ -15,14 +15,6 @@ setlocal define=^\\s*class\\s\\+
 
 let &l:formatprg='pyformatter'
 
-" For running the current test file.
-nnoremap <buffer> <leader>tt
-      \ :<C-U>write <bar> compiler pytest <bar> lmake %<CR>
-
-" For running all tests.
-nnoremap <buffer> <leader>ta
-      \ :<C-U>write <bar> compiler pytest <bar> make<CR>
-
 " For running linters.
 nnoremap <buffer> <leader>l
       \ :<C-U>write <bar> compiler pylinter <bar>lmake<CR>
