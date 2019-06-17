@@ -33,10 +33,3 @@ CompilerSet makeprg=pytest
 
 CompilerSet errorformat=%f:%l:\ %m
 CompilerSet errorformat+=%-G%.%#
-
-
-" CompilerSet errorformat=
-"             \%-G%.%#%.%#%%%.%#,
-"             \%-G%.%#FAILURES%.%#,
-"             \%f:%l:\ %m,
-"             \%-G%.%#in\ %.%#\ seconds,
