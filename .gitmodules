@@ -40,3 +40,6 @@
 [submodule ".vim/pack/dporter/start/vim-projectionist"]
 	path = .vim/pack/dporter/start/vim-projectionist
 	url = https://github.com/tpope/vim-projectionist.git
+[submodule ".vim/pack/dporter/start/vim-dispatch"]
+	path = .vim/pack/dporter/start/vim-dispatch
+	url = https://github.com/tpope/vim-dispatch.git
