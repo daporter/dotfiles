@@ -57,11 +57,8 @@ set wildignore+=*/__pycache__/*
 set wildignore+=tags
 set wildignore+=*.tar.*
 
-nnoremap <leader>w :write<cr>
-
-" This mapping uses regex search instead of whole word search so I can do
-" "leader>jba<Tab> to find tag foobarbaz()
-nnoremap <leader>j :tjump /
+nnoremap <silent> <leader>w :write<cr>
+nnoremap <leader>f :find 
 
 " Load the matchit plugin.
 packadd! matchit
@@ -83,7 +80,6 @@ colorscheme apprentice
 set fillchars+=vert:│
 highlight VertSplit ctermbg=bg
 
-
 " Create a custom format command that applies formatprg to a range (defaulting
 " to the whole buffer). It restores the original cursor position and, more or
 " less, respects the indentation settings. Note that the column position
@@ -95,7 +91,7 @@ command! -range=% Format |
             \ silent execute <line1> . "," . <line2> . "!" . &l:formatprg |
             \ call winrestview(b:view)
 
-nnoremap <leader>gq :Format<cr>
+nnoremap <silent> <leader>gq :Format<cr>
 
 " Packages.
 
@@ -107,7 +103,7 @@ packloadall
 
 " Enable FZF.
 set runtimepath+=/usr/local/opt/fzf
-let g:fzf_layout = { 'window': 'botright 16split' }
+let g:fzf_layout = { 'down': '~40%' }
 
 nnoremap <leader>e :Files 
 nnoremap <silent> <leader>b :Buffers<CR>
