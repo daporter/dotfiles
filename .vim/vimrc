@@ -35,19 +35,8 @@ set listchars+=extends:»
 set listchars+=precedes:«
 set listchars+=trail:•
 
-set guioptions-=rL          " remove both scrollbars
-set guifont=Fura\ Code\ Medium\ Nerd\ Font\ Complete:h12
-set linespace=3
-
 set wildmenu                " enables a menu at the bottom of the window
-
-" With a walue of "list:longest,full", tab-completion in the command line
-" operates as follows:
-" 1. The first press will display a list of completions and the command will 
-"    be completed to the longest common prefix.
-" 2. The second press will display the wildmenu with all the completions that
-"    were listed in step 1.
-set wildmode=list:longest,full
+set wildmode=list:full
 
 set wildignorecase
 set wildignore=*.swp,*.bak
@@ -58,7 +47,17 @@ set wildignore+=tags
 set wildignore+=*.tar.*
 
 nnoremap <silent> <leader>w :write<cr>
-nnoremap <leader>f :find 
+
+set wildcharm=<C-z>
+nnoremap <leader>bb :buffer <C-z><S-Tab>
+nnoremap <leader>bs :sbuffer <C-z><S-Tab>
+nnoremap <leader>bv :vert sbuffer <C-z><S-Tab>
+
+nnoremap <leader>ff :find *
+nnoremap <leader>fs :sfind *
+nnoremap <leader>fv :vert sfind *
+
+nnoremap <leader>t :tjump /
 
 " Load the matchit plugin.
 packadd! matchit
@@ -73,12 +72,14 @@ endif
 " hierarchy at the current cursor position. Call it with :SS
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
+set termguicolors
 syntax on
-colorscheme apprentice
+colorscheme plan9
+
+hi VertSplit term=NONE cterm=NONE gui=NONE
 
 " Improve the appearance of the vertical separator.
 set fillchars+=vert:│
-highlight VertSplit ctermbg=bg
 
 " Create a custom format command that applies formatprg to a range (defaulting
 " to the whole buffer). It restores the original cursor position and, more or
@@ -101,14 +102,17 @@ nnoremap <silent> <leader>gq :Format<cr>
 " I need to do this in order to enable some of the function calls below.
 packloadall
 
+" Make vim-qf use the default quickfix window size.
+let g:qf_auto_resize = 0
+
 " Enable FZF.
 set runtimepath+=/usr/local/opt/fzf
 let g:fzf_layout = { 'down': '~40%' }
 
-nnoremap <leader>e :Files 
-nnoremap <silent> <leader>b :Buffers<CR>
+nnoremap <leader>e :Files<space>
+" nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap <silent> <leader>' :Marks<CR>
-nnoremap <silent> <leader>] :Tags<CR>
+" nnoremap <silent> <leader>t :Tags<CR>
 nnoremap <silent> <leader>c :Commands<CR>
 nnoremap <silent> <leader>r :History:<CR>
 nnoremap <silent> <leader>/ :History/<CR>

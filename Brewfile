@@ -7,7 +7,6 @@ brew 'aria2'
 brew 'asciidoctor'
 brew 'awscli'
 brew 'awslogs'
-brew 'bat'
 brew 'bash'
 brew 'bash-completion'
 brew 'bat'
@@ -20,6 +19,7 @@ brew 'entr'
 brew 'fasd'
 brew 'exercism'
 brew 'exiftool'
+brew 'fasd'
 brew 'fd'
 brew 'findutils', args: ['--with-default-names']
 brew 'flake8'
@@ -43,6 +43,7 @@ brew 'mailutils'
 brew 'mas'
 brew 'mpv'
 brew 'msmtp'
+brew 'neofetch'
 brew 'neomutt'
 brew 'node'
 brew 'notmuch'
@@ -74,13 +75,22 @@ tap 'tsub/s3-edit'
 brew 's3-edit'
 
 tap 'universal-ctags/universal-ctags'
-brew 'universal-ctags', args: ['HEAD'] 
+brew 'universal-ctags', args: ['HEAD']
 
 tap 'sbdchd/skim'
 brew 'skim'
 
 tap 'ValeLint/vale'
 brew 'vale'
+
+tap 'robertgzr/tap'
+brew 'iosevka', args: ['with-at-fourfold',
+                       'with-brace-straight',
+                       'with-ligset-coq',
+                       'with-numbersign-slanted',
+                       'with-tilde-high',
+                       'with-underscore-low',
+                       'with-y-straight']
 
 cask '1password'
 cask 'amethyst'
@@ -91,16 +101,17 @@ cask 'dash'
 cask 'docker'
 cask 'dropbox'
 cask 'flux'
-cask 'font-firacode-nerd-font'
-cask 'font-firamono-nerd-font'
-cask 'font-iosevka-nerd-font'
-cask 'font-latin-modern'
-cask 'font-latin-modern-math'
+cask 'font-anonymous-pro'
+cask 'font-courier-prime'
+cask 'font-cousine'
+cask 'font-dejavu-sans'
+cask 'font-source-code-pro'
 cask 'goldencheetah'
 cask 'google-chrome'
 cask 'homebrew/cask-fonts/font-merriweather'
 cask 'karabiner-elements'
 cask 'kindle'
+cask 'kitty'
 cask 'mactex'
 cask 'omnifocus'
 cask 'slack'
