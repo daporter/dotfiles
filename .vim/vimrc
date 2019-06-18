@@ -35,10 +35,6 @@ set listchars+=extends:»
 set listchars+=precedes:«
 set listchars+=trail:•
 
-set guioptions-=rL          " remove both scrollbars
-set guifont=Fura\ Code\ Medium\ Nerd\ Font\ Complete:h12
-set linespace=3
-
 set wildmenu                " enables a menu at the bottom of the window
 
 " With a walue of "list:longest,full", tab-completion in the command line
@@ -73,12 +69,14 @@ endif
 " hierarchy at the current cursor position. Call it with :SS
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
+set termguicolors
 syntax on
-colorscheme apprentice
+colorscheme plan9
+
+hi VertSplit term=NONE cterm=NONE gui=NONE
 
 " Improve the appearance of the vertical separator.
 set fillchars+=vert:│
-highlight VertSplit ctermbg=bg
 
 " Create a custom format command that applies formatprg to a range (defaulting
 " to the whole buffer). It restores the original cursor position and, more or

@@ -43,3 +43,6 @@
 [submodule ".vim/pack/dporter/start/vim-dispatch"]
 	path = .vim/pack/dporter/start/vim-dispatch
 	url = https://github.com/tpope/vim-dispatch.git
+[submodule ".vim/pack/dporter/start/vim-plan9"]
+	path = .vim/pack/dporter/start/vim-plan9
+	url = https://github.com/arzg/vim-plan9.git
