@@ -1,15 +1,13 @@
 # If applied, this commit will:
 
-
 # Why is this change needed?
 Prior to this change 
 
 # How does it address the issue?
-This change
+This change 
 
 # Provide links or keys to any relevant tickets, articles or other resources
 # Example: Github issue #23
-
 
 # --- COMMIT END ---
 # Type can be 

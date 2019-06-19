@@ -2,6 +2,8 @@
 
 setlocal textwidth=80
 
-let &l:formatprg='prettier --stdin --parser=markdown --prose-wrap=always'
+if executable('prettier')
+    let &l:formatprg='prettier --stdin --parser=markdown --prose-wrap=always'
+endif
 
 compiler markdownlint

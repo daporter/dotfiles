@@ -3,8 +3,11 @@ setlocal softtabstop=2
 setlocal shiftwidth=2
 setlocal expandtab
 
-" Enable use of eslint when editing javascript files.
-let &l:makeprg='eslint --format compact %'
-let &l:errorformat='%f: line %l\, col %c\, %m,%-G%.%#'
+if executable('js-beautify')
+    let &l:formatprg = 'js-beautify -f - -j -t -s' . &shiftwidth 
+endif
 
-let &l:formatprg='prettier --stdin --parser=babel'
+if executable('eslint')
+    let &l:makeprg='eslint --format compact %'
+    let &l:errorformat='%f: line %l\, col %c\, %m,%-G%.%#'
+endif
