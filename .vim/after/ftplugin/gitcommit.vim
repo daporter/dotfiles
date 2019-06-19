@@ -1,10 +1,15 @@
 setlocal spell
 
-setlocal makeprg=gitlint\ --msg-filename\ %
-setlocal errorformat=%l:\ %t%n\ %m
-setlocal formatprg=par\ -w72
+if executable('gitlint')
+    let &l:makeprg = 'gitlint --msg-filename %'
+    let &l:errorformat = '%l: %t%n %m'
+endif
+
+if executable('par')
+    let &l:formatprg = 'par -w72'
+endif
 
 augroup filetype_gitcommit
     autocmd!
-    autocmd BufWritePost <buffer> silent make <bar> silent redraw!
+    autocmd BufWritePost <buffer> silent make | silent redraw!
 augroup END

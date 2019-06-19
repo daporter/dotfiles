@@ -4,4 +4,6 @@ setlocal shiftwidth=2
 setlocal smartindent
 setlocal autoindent
 
-let &l:formatprg='hindent'
+if executable('hindent')
+    let &l:formatprg='hindent'
+endif

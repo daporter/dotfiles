@@ -11,9 +11,11 @@ setlocal path=.,,
 
 " This is a pattern for matching macro definitions, but it is sometimes 
 " useful to make it match class declarations.
-setlocal define=^\\s*class\\s\\+
+let &l:define='^\s*class\s\+'
 
-let &l:formatprg='pyformatter'
+if executable('pyformatter')
+    let &l:formatprg='pyformatter'
+endif
 
 " For running linters.
 nnoremap <buffer> <leader>l
