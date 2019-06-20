@@ -154,3 +154,9 @@ LP_DISABLED_VCS_PATH=""
 
 LP_PS1_PREFIX="\n"
 # vim: set et sts=4 sw=4 tw=120 ft=sh:
+
+
+### My colour customisations.
+
+LP_COLOR_ERR="$RED"
+LP_COLOR_VIRTUALENV="$YELLOW"
