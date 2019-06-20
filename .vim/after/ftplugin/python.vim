@@ -17,6 +17,8 @@ if executable('pyformatter')
     let &l:formatprg='pyformatter'
 endif
 
-" For running linters.
-nnoremap <buffer> <leader>l
-      \ :<C-U>write <bar> compiler pylinter <bar>lmake<CR>
+command! -buffer Check update | compiler py_compile | silent make % | redraw!
+command! -buffer Lint update | compiler pylinter | silent make % | redraw!
+
+nnoremap <buffer> <leader>c :Check<CR>
+nnoremap <buffer> <leader>l :Lint<CR>

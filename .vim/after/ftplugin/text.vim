@@ -1,3 +1,6 @@
-" For running linters.
-nnoremap <buffer> <leader>l
-      \ :<C-U>write \| compiler textlinter \| make<CR>
+setlocal spell
+
+command! -buffer Lint update | compiler textlinter | silent make % | redraw!
+
+nnoremap <buffer> <leader>l :Lint<CR>
+
