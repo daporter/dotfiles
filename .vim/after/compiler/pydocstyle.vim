@@ -1,4 +1,4 @@
-CompilerSet makeprg=pydocstyle\ %
+CompilerSet makeprg=pydocstyle
 
 " Look here for tips on writing an errorformat:
 " https://flukus.github.io/vim-errorformat-demystified.html

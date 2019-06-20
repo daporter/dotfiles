@@ -6,4 +6,6 @@ if executable('prettier')
     let &l:formatprg='prettier --stdin --parser=markdown --prose-wrap=always'
 endif
 
-compiler markdownlint
+command! -buffer Lint update | compiler markdownlint | silent make % | redraw!
+
+nnoremap <buffer> <leader>l :Lint<CR>

@@ -8,6 +8,10 @@ if executable('js-beautify')
 endif
 
 if executable('eslint')
-    let &l:makeprg='eslint --format compact %'
+    let &l:makeprg='eslint --format compact'
     let &l:errorformat='%f: line %l\, col %c\, %m,%-G%.%#'
 endif
+
+command! -buffer Lint update | silent make % | redraw!
+
+nnoremap <buffer> <leader>l :Lint<CR>

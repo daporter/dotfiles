@@ -1,7 +1,7 @@
 " Compiler settings for my own script that aggregates multiple text linting
 " programs.
 
-CompilerSet makeprg=~/bin/textlinter\ %
+CompilerSet makeprg=~/bin/textlinter
 
 " Look here for tips on writing an errorformat:
 " https://flukus.github.io/vim-errorformat-demystified.html
