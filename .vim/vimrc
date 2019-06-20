@@ -26,7 +26,6 @@ set laststatus=2
 set spelllang=en_au         " use the Australia language region
 set showmatch               " in insert mode, show matching paren, etc.
 set ttimeoutlen=100         " lower the timeout (ms) for keycodes (incl. ESC)
-set cursorline              " highlight the screen line of the cursor
 
 " Display special chars to indicate whitespace.
 set listchars=tab:▸\ ,eol:¬
@@ -72,9 +71,9 @@ endif
 " hierarchy at the current cursor position. Call it with :SS
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
-set termguicolors
+" set termguicolors
 syntax on
-colorscheme plan9
+colorscheme phunculist
 
 hi VertSplit term=NONE cterm=NONE gui=NONE
 
