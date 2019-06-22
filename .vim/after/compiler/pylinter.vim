@@ -22,6 +22,6 @@ CompilerSet errorformat+=%W%f:%l\ %.%#
 CompilerSet errorformat+=%Z\ %#%t%n:\ %m
 
 " bandit:
-CompilerSet errorformat+=%-G%.%#
 " tokenize.py:592: B105: LOW: Possible hardcoded password: '.'
 CompilerSet errorformat+=%f:%l:\ %t%n:\ %m
+CompilerSet errorformat+=%-G%.%#
