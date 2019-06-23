@@ -16,9 +16,9 @@ brew 'coreutils'
 brew 'dash'
 brew 'elinks'
 brew 'entr'
-brew 'fasd'
 brew 'exercism'
 brew 'exiftool'
+brew 'fasd'
 brew 'fasd'
 brew 'fd'
 brew 'findutils', args: ['--with-default-names']
@@ -69,6 +69,7 @@ brew 'terraform'
 brew 'tree'
 brew 'urlview'
 brew 'vis', args: ['--build-from-source', '--HEAD']
+brew 'watchman'
 brew 'wget'
 
 tap 'tsub/s3-edit'
