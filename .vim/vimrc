@@ -71,11 +71,8 @@ endif
 " hierarchy at the current cursor position. Call it with :SS
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
-" set termguicolors
 syntax on
-colorscheme phunculist
-
-hi VertSplit term=NONE cterm=NONE gui=NONE
+colorscheme dporter
 
 " Improve the appearance of the vertical separator.
 set fillchars+=vert:│
@@ -109,10 +106,7 @@ set runtimepath+=/usr/local/opt/fzf
 let g:fzf_layout = { 'down': '~40%' }
 
 nnoremap <leader>e :Files<space>
-" nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap <silent> <leader>' :Marks<CR>
-" nnoremap <silent> <leader>t :Tags<CR>
-nnoremap <silent> <leader>c :Commands<CR>
 nnoremap <silent> <leader>r :History:<CR>
 nnoremap <silent> <leader>/ :History/<CR>
 nnoremap <silent> <leader>h :Helptags<CR>
