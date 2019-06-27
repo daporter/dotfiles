@@ -9,23 +9,23 @@ let mapleader=' '
 set hidden                  " allow switching away from unsaved buffers
 set shiftwidth=4            " number of spaces for each step of indent
 let &softtabstop=&shiftwidth " number of spaces pressing <Tab> counts for
-set expandtab               " use spaces instead of a tab character
 set autoindent              " new line copies previous line's indentation
+set expandtab               " use spaces instead of a tab character
 set linebreak               " try to wrap long lines at word boundaries
 set showbreak=↳\ 
 set backspace=indent,eol,start  " proper backspace behaviour
-set laststatus=2            " show the status line always
-set ruler                   " show line,column of cursor in status line
-set statusline=%<\ %f\ %m%r%y%w%=\ L:\ \%l\/\%L\ C:\ \%c\ 
 set formatoptions+=n        " recognise numbered lists when formatting text
 set formatprg=par           " use 'par' when gq is run
 set incsearch               " use incremental searching
 set ignorecase              " make searches case-insensitive
-set smartcase               " with one uppercase char, search is case-sensitive
+set smartcase              " with one uppercase char, search is case-sensitive
 set laststatus=2
 set spelllang=en_au         " use the Australia language region
 set showmatch               " in insert mode, show matching paren, etc.
 set ttimeoutlen=100         " lower the timeout (ms) for keycodes (incl. ESC)
+set laststatus=2            " show the status line always
+set ruler                   " show line,column of cursor in status line
+set statusline=%<\ %f\ %m%r%y%w%=\ L:\ \%l\/\%L\ C:\ \%c\ 
 
 " Display special chars to indicate whitespace.
 set listchars=tab:▸\ ,eol:¬
@@ -45,6 +45,7 @@ set wildignore+=*/__pycache__/*
 set wildignore+=tags
 set wildignore+=*.tar.*
 
+nnoremap <leader><space> <C-^>
 nnoremap <silent> <leader>w :write<cr>
 
 set wildcharm=<C-z>
@@ -60,6 +61,7 @@ nnoremap <leader>t :tjump /
 
 " Load the matchit plugin.
 packadd! matchit
+packadd! cfilter
 
 " Replace Grep with Ripgrep.
 if executable('rg')
