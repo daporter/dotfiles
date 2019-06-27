@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 #
-# Update all installed Homebrew packages and casks.
+# Update all installed Homebrew packages and casks and any dotfiles submodules.
 
 readonly BREW=/usr/local/bin/brew
 
@@ -17,7 +17,16 @@ run_cmd() {
     fi
 }
 
+update_submodules() {
+    # Gain access to the `dotfiles' function.
+    # shellcheck source=/dev/null
+    . "$HOME"/.profile.d/dotfiles.sh
+
+    run_cmd "dotfiles submodule foreach git pull origin master"
+}
+
 main() {
+    cd "$HOME" || err "Unable to cd to $HOME"
     run_cmd "$BREW bundle -v"
     run_cmd "$BREW update"
     run_cmd "$BREW outdated"
@@ -25,6 +34,7 @@ main() {
     run_cmd "$BREW cask outdated"
     run_cmd "$BREW cask upgrade"
     run_cmd "$BREW cleanup"
+    update_submodules
 }
 
 main
