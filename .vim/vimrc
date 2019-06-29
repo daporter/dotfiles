@@ -103,15 +103,5 @@ packloadall
 " Make vim-qf use the default quickfix window size.
 let g:qf_auto_resize = 0
 
-" Enable FZF.
-set runtimepath+=/usr/local/opt/fzf
-let g:fzf_layout = { 'down': '~40%' }
-
-nnoremap <leader>e :Files<space>
-nnoremap <silent> <leader>' :Marks<CR>
-nnoremap <silent> <leader>r :History:<CR>
-nnoremap <silent> <leader>/ :History/<CR>
-nnoremap <silent> <leader>h :Helptags<CR>
-
 " Configure the vim-test plugin.
 let test#strategy = 'make'

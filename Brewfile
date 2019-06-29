@@ -35,6 +35,8 @@ brew 'isync', args: ['with-berkeley-db']
 brew 'jq'
 brew 'jrnl'
 brew 'jsonlint'
+brew 'koekeishiya/formulae/skhd'
+brew 'koekeishiya/formulae/yabai'
 brew 'liquidprompt'
 brew 'lockrun'
 brew 'macvim', args: ['--with-override-system-vim']
@@ -94,7 +96,6 @@ brew 'iosevka', args: ['with-at-fourfold',
                        'with-y-straight']
 
 cask '1password'
-cask 'amethyst'
 cask 'anki'
 cask 'calibre'
 cask 'clipy'
