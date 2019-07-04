@@ -76,9 +76,6 @@ brew 's3-edit'
 tap 'universal-ctags/universal-ctags'
 brew 'universal-ctags', args: ['HEAD']
 
-tap 'sbdchd/skim'
-brew 'skim'
-
 tap 'ValeLint/vale'
 brew 'vale'
 
