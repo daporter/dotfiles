@@ -93,6 +93,7 @@ brew 'iosevka', args: ['with-at-fourfold',
                        'with-y-straight']
 
 cask '1password'
+cask '1password-cli'
 cask 'anki'
 cask 'calibre'
 cask 'clipy'

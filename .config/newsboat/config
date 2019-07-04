@@ -1,0 +1,24 @@
+urls-source                  "inoreader"
+inoreader-login              "david.a.porter"
+inoreader-passwordeval       "~/bin/get_1password_pw Inoreader"
+inoreader-show-special-feeds no
+
+article-sort-order           date-desc
+auto-reload                  yes
+browser                      "open %u"
+delete-read-articles-on-quit yes
+feed-sort-order              lastupdated-asc
+show-read-articles           no
+show-read-feeds              no
+suppress-first-reload        yes
+
+#background white             black
+color       info              color7  color11 bold
+#color      listnormal        white   default
+color       listfocus         color0  color15
+#color      listnormal_unread default default
+color       listfocus_unread  color0  color15 bold
+#article    white             black
+
+highlight article "^(Feed|Title|Author|Date|Link):" default default bold
+highlight article "https?://[^ ]+"                  color4  default underline
