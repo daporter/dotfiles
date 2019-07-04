@@ -141,9 +141,10 @@ confidence=
 #         comprehension-escape,
 #         bad-continuation
 
-disable=missing-type-doc,
-        missing-return-type-doc,
-        bad-continuation
+disable=bad-continuation,
+        missing-type-doc,
+        missing-yield-type-doc,
+        missing-return-type-doc
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
