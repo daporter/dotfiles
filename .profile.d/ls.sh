@@ -1,21 +1,40 @@
+#!/usr/bin/env sh
+
 # I've stolen this from Tom Ryder's config at
 # https://sanctum.geek.nz/cgit/dotfiles.git/tree/sh/shrc.d/ls.sh
+#
+# I also took ideas from here:
+# https://www.topbug.net/blog/2016/11/28/a-better-ls-command/#better-color
 
-# Discard GNU ls(1) environment variables if the environment set them.
-unset -v LS_OPTIONS LS_COLORS
+eval "$(dircolors)"
+
+export COLUMNS  # Remember columns for subprocesses
 
 # Define function proper.
-function ls() {
+ls() {
     # -q to replace control chars with '?'
     set -- -q "$@"
 
     # Add -k to always show the filesize in kilobytes
     set -- -k "$@"
 
-    # Add -G if the terminal has at least 8 colors
-    [ "$({ tput colors||tput Co||echo 0; } 2>/dev/null)" -ge 8 ] &&
-        set -- -G "$@"
+    # Indicate file types
+    set -- -F "$@"
+
+    # Display human-readable file sizes
+    set -- -h "$@"
+
+    # Display files in natural order
+    set -- -v "$@"
+
+    set -- --author "$@"
+
+    set -- --time-style=long-iso "$@"
+
+    set -- --color=always "$@"
+
+    set -- -C "$@"
 
     # Run ls(1) with the concluded arguments
-    command ls "$@"
+    command ls "$@" | less -R -X -F
 }
