@@ -13,9 +13,6 @@
 [submodule ".vim/pack/dporter/start/vim-repeat"]
 	path = .vim/pack/dporter/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
-[submodule ".vim/pack/dporter/start/apprentice"]
-	path = .vim/pack/dporter/start/apprentice
-	url = https://github.com/romainl/Apprentice.git
 [submodule ".vim/pack/dporter/start/vim-devdocs"]
 	path = .vim/pack/dporter/start/vim-devdocs
 	url = https://github.com/romainl/vim-devdocs.git
@@ -40,6 +37,3 @@
 [submodule ".vim/pack/dporter/start/vim-dispatch"]
 	path = .vim/pack/dporter/start/vim-dispatch
 	url = https://github.com/tpope/vim-dispatch.git
-[submodule ".vim/pack/dporter/start/vim-plan9"]
-	path = .vim/pack/dporter/start/vim-plan9
-	url = https://github.com/arzg/vim-plan9.git
