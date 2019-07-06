@@ -37,7 +37,6 @@ brew 'jrnl'
 brew 'jsonlint'
 brew 'koekeishiya/formulae/skhd'
 brew 'koekeishiya/formulae/yabai'
-brew 'liquidprompt'
 brew 'lockrun'
 brew 'macvim', args: ['--with-override-system-vim']
 brew 'mailutils'
