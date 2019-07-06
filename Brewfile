@@ -20,7 +20,7 @@ brew 'exercism'
 brew 'exiftool'
 brew 'fasd'
 brew 'fd'
-brew 'findutils', args: ['--with-default-names']
+brew 'findutils'
 brew 'flake8'
 brew 'gdal'
 brew 'ghc'
@@ -35,8 +35,6 @@ brew 'isync', args: ['with-berkeley-db']
 brew 'jq'
 brew 'jrnl'
 brew 'jsonlint'
-brew 'koekeishiya/formulae/skhd'
-brew 'koekeishiya/formulae/yabai'
 brew 'lockrun'
 brew 'macvim', args: ['--with-override-system-vim']
 brew 'mailutils'
@@ -89,6 +87,10 @@ brew 'iosevka', args: ['with-at-fourfold',
                        'with-underscore-low',
                        'with-y-straight']
 
+tap 'koekeishiya/formulae'
+brew 'skhd'
+brew 'yabai'
+
 cask '1password'
 cask '1password-cli'
 cask 'anki'
@@ -104,7 +106,6 @@ cask 'font-cousine'
 cask 'font-dejavu-sans'
 cask 'font-source-code-pro'
 cask 'goldencheetah'
-cask 'google-chrome'
 cask 'homebrew/cask-fonts/font-merriweather'
 cask 'karabiner-elements'
 cask 'kindle'
