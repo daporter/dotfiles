@@ -124,9 +124,6 @@ cask 'texshop'
 cask 'transmission'
 cask 'virtualbox'
 
-tap 'homebrew/cask-drivers'
-cask 'logitech-options'
-
 # Mac App Store
 mas 'FruitJuice', id: 671736912
 mas 'Xcode', id: 497799835
