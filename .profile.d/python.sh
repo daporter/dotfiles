@@ -4,4 +4,4 @@
 export PYTEST_ADDOPTS="--tb=line"
 
 # Pyenv.
-eval "$(pyenv init -)"
+# eval "$(pyenv init -)"
