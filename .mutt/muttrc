@@ -6,6 +6,8 @@ set message_cachedir = ~/.mutt/cache/bodies
 set certificate_file = ~/.mutt/certificates
 set tmpdir           = ~/.mutt/tmp 
 
+folder-hook . 'push <collapse-all>'
+
 set mbox_type = Maildir
 set timeout = 3          # idle time before scanning
 
