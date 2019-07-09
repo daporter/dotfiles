@@ -30,6 +30,10 @@ Channel personal-suckless-dev
 Master :personal-remote:suckless-dev
 Slave :personal-local:suckless-dev
 
+Channel personal-yabai
+Master :personal-remote:yabai
+Slave :personal-local:yabai
+
 Channel personal-drafts
 Master :personal-remote:"[Gmail]/Drafts"
 Slave :personal-local:drafts

@@ -1,26 +1,124 @@
-# Identity
+# Paths.
+set folder           = ~/mail/personal
+set header_cache     = ~/.mutt/cache/headers
+set mailcap_path     = ~/.mutt/mailcap
+set message_cachedir = ~/.mutt/cache/bodies
+set certificate_file = ~/.mutt/certificates
+set tmpdir           = ~/.mutt/tmp 
+
+set mbox_type = Maildir
+set timeout = 3          # idle time before scanning
+
+# Messages marked for deleting will automatically be purged without prompting.
+set delete = yes
+
+# Don't prompt for confirmation when appending messages to an existing mailbox.
+unset confirmappend
+
+# Don't prompt for confirmation when quitting.
+set quit = yes
+
+# Don't mark new unread messages as old when exiting a mailbox without reading them.
+unset mark_old
+
+# Status bar
+set status_chars  = " *%A"
+set status_format = "───[ Folder: %f ]───[%r%m messages%?n? (%n new)?%?d? (%d to delete)?%?t? (%t tagged)? ]───%>─%?p?( %p postponed )?───"
+
+# Header options
+ignore *                                # ignore all headers
+unignore from: to: cc: date: subject:   # show only these
+unhdr_order *                           # some distros order things by default
+hdr_order from: to: cc: date: subject:  # and in this order
+
+# Account settings.
+set spoolfile    = "+/inbox"
+set from         = "david.a.porter@gmail.com"
+set mbox         = '+archive'
+set postponed    = "+/drafts"
+set trash        = "+/trash"
+unset record  # Gmail will save a copy of every outgoing email.
+set sendmail     = "/usr/local/bin/msmtp -a personal"
+set sendmail_wait = 0  # wait for msmtp to finish
+
+# Specify folders which can receive mail and which will be checked for new
+# messages periodically.
+mailboxes =inbox \
+          =great-conversation \
+          =suckless-dev \
+          =yabai
+
+# Index view options.
+set date_format  = "%m/%d"
+set index_format = "[%Z]  %D  %-20.20F  %2M %s"
+set sort         = threads
+set sort_re          # thread based on regex
+set uncollapse_jump  # don't collapse on an unread message
+set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
+
+# Index key bindings.
+bind index g        noop   # since 'gg' binding will alias 'g'
+bind index gg       first-entry
+bind index G        last-entry
+bind index R        group-reply
+bind index <tab>    sync-mailbox
+bind index <space>  collapse-thread
+bind index p        recall-message
+
+macro index \Cr "T~U<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all messages as read"
+
+macro index a "<tag-prefix><save-message>><enter>" "archive message"
+macro pager a "<tag-prefix><save-message>><enter>" "archive message"
+
+# Pager view options.
+set pager_index_lines = 10 # number of index lines to show
+set pager_context = 3      # number of context lines to show
+set pager_stop             # don't go to next message automatically
+set menu_scroll            # scroll in menus
+set tilde                  # show tildes like in vim
+unset markers              # no ugly plus signs
+set reflow_text  = yes
+set wrap         = 100
+
+set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
+alternative_order text/plain text/enriched text/html
+
+# Pager key bindings.
+bind pager k  previous-line
+bind pager j  next-line
+bind pager g noop
+bind pager gg top
+bind pager G  bottom
+
+bind pager R  group-reply
+
+# View attachments properly.
+bind attach <return> view-mailcap
+
+macro pager \Cu <pipe-entry>"urlview"<enter> "call urlview to open links"
+
+# Compose view options.
 set realname = "David Porter"
-
-# Default account
-source ~/.mutt/personal.mutt
-
-# Mail format
-set mbox_type             = "Maildir"
-set header_cache_compress = no
-set mail_check            = 60
-
-# Enable multiple accounts.
-folder-hook "personal" "source ~/.mutt/personal.mutt"
-folder-hook "data61" "source ~/.mutt/data61.mutt"
-
-# Switch accounts with F keys
-macro index <f2> '<sync-mailbox><refresh><enter-command>source ~/.mutt/personal.mutt<enter><change-folder>!<enter>'
-macro index <f3> '<sync-mailbox><refresh><enter-command>source ~/.mutt/data61.mutt<enter><change-folder>!<enter>'
-
-# Editor
+set envelope_from                    # which from?
+set sig_dashes                       # dashes before sig
+set edit_headers                     # show headers when composing
+set fast_reply                       # skip to compose when replying
+set askcc                            # ask for CC:
+set fcc_attach                       # save attachments with the body
+unset mime_forward                   # forward attachments as part of body
+set forward_format = "Fwd: %s"       # format of subject when forwarding
+set forward_decode                   # decode when forwarding
+set attribution = "On %d, %n wrote:" # format of quoting header
+set reply_to                         # reply to Reply to: field
+set reverse_name                     # reply as whomever it was to
+set include                          # include message in replies
+set forward_quote                    # include message in forwards
 set editor='vim +/^$ "+setlocal fo+=w spell" +noh'
-set edit_headers
 set text_flowed
+
+bind compose p postpone-message
+
+
 # set tmpdir="~/"
 
 # # Message formatting
@@ -67,9 +165,6 @@ set sort="threads"
 # unset help
 # set delete="yes"
 
-set mailcap_path = "~/.mutt/mailcap"
-
-set mail_check_recent = no
 
 # Default is: "%u%D%I %t%4n %T%.40d%> [%.7m/%.10M, %.6e%?C?, %C?, %s] "
 # set attach_format = '%u%D%I %t%4n %T%.40d%> [%.12m/%.12M, %.6e%?C?, %C?, %s] '
@@ -145,9 +240,9 @@ set mail_check_recent = no
 # # Load local config file for local overrides
 # source `x=~/.muttrc.local; if [ -e "$x" ]; then echo "$x"; fi; echo /dev/null`
 
-mailboxes =inbox =starred =drafts =sent =archive =spam =trash ~/mail/search
 
-source $HOME/.mutt/commands.mutt
-source $HOME/.mutt/bindings.mutt
-source $HOME/.mutt/macros.mutt
+
+# source $HOME/.mutt/commands.mutt
+# source $HOME/.mutt/bindings.mutt
+# source $HOME/.mutt/macros.mutt
 source $HOME/.mutt/colours.mutt
