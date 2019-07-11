@@ -8,12 +8,12 @@ color   status      brightcolor7   color0
 #color  hdrdefault  brightcolor0   color15
 color   attachment  color13        color7
 color   tree        color0         color7
-color   quoted      color12        color7
+color   quoted      color11        color7
 color   index       color13        color7   "~D"
 color   markers     color13        color7
 color   tilde       color13        color7
 #color  tilde       color7         color15
-color   signature   color12        color7
+color   signature   color11        color7
 
 color header brightcolor0 color7 "^(From)"
 color header brightcolor0 color7 "^(Subject)"

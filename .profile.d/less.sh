@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 LESS='--quit-if-one-screen' 
 LESS="$LESS --ignore-case"

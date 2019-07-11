@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 #
 # Update all installed Homebrew packages and casks and any dotfiles submodules.
 

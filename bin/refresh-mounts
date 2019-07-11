@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 #
 # Refresh the NFS mounts on beilen and alkmaar.
 

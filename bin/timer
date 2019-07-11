@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # Displays a MacOS notification after a specified amount of time.
 

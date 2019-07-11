@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # Run the sequence of linters I prefer for my text files.
 

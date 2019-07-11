@@ -1,3 +1,5 @@
+#!/bin/sh
+
 common_cmds() {
     pattern="$1"
     if [ -z "$pattern" ]; then

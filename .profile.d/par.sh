@@ -1,3 +1,5 @@
+#!/bin/sh
+#
 # Configuration for the 'par' paragraph formatter.
 
 # From the par man page:
