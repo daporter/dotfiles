@@ -69,8 +69,8 @@ bind index p        recall-message
 
 macro index \Cr "T~U<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all messages as read"
 
-macro index a "<tag-prefix><save-message>><enter>" "archive message"
-macro pager a "<tag-prefix><save-message>><enter>" "archive message"
+macro index a "<save-message>><enter>" "archive message"
+macro pager a "<save-message>><enter>" "archive message"
 
 # Pager view options.
 set pager_index_lines = 10 # number of index lines to show
