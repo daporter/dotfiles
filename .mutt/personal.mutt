@@ -1,4 +1,4 @@
-set from         = "david.a.porter@gmail.com"
+set from         = "David Porter <david.a.porter@gmail.com>"
 set folder       = "~/mail/personal"
 set spoolfile    = "+/inbox"
 set mbox         = '+archive'
