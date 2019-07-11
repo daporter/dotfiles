@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 #
 # Synchronise mail, including running any pre- and post-sync hooks.
 

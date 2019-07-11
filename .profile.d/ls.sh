@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # I've stolen this from Tom Ryder's config at
 # https://sanctum.geek.nz/cgit/dotfiles.git/tree/sh/shrc.d/ls.sh

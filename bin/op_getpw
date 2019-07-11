@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 # Use the 1Password command to get a password.
 if [ $# -ne 1 ]; then
