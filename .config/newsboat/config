@@ -9,6 +9,7 @@ save-path          "~/Downloads"
 reload-threads     20
 cleanup-on-quit    yes
 text-width         78
+max-items		   1000
 
 color info             color7 color8  bold
 color listfocus        color0 color15
