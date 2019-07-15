@@ -98,6 +98,7 @@ brew 'yabai'
 
 tap 'homebrew/cask'
 cask '1password'
+cask 'keybase'
 cask '1password-cli'
 cask 'anki'
 cask 'calibre'
