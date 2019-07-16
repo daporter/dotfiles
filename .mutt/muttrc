@@ -46,9 +46,10 @@ set sendmail_wait = 0  # wait for msmtp to finish
 # Specify folders which can receive mail and which will be checked for new
 # messages periodically.
 mailboxes =inbox \
-          =great-conversation \
-          =suckless-dev \
-          =yabai
+		  =aerc \
+		  =great-conversation \
+		  =suckless-dev \
+		  =yabai
 
 # Index view options.
 set date_format  = "%m/%d"

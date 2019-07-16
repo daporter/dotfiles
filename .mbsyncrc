@@ -22,6 +22,10 @@ Channel personal-inbox
 Master :personal-remote:INBOX
 Slave :personal-local:inbox
 
+Channel personal-aerc
+Master :personal-remote:aerc
+Slave :personal-local:aerc
+
 Channel personal-great-conversation
 Master :personal-remote:great-conversation
 Slave :personal-local:great-conversation
@@ -66,8 +70,10 @@ Master :personal-remote:
 Slave :personal-local:
 Patterns *
 Patterns !inbox
+Patterns !aerc
 Patterns !great-conversation
 Patterns !suckless-dev
+Patterns !yabai
 Patterns !search
 Patterns !sent
 Patterns !spam
@@ -79,8 +85,10 @@ Patterns !starred
  
 Group gmail
 Channel personal-inbox
+Channel personal-aerc
 Channel personal-great-conversation
 Channel personal-suckless-dev
+Channel personal-yabai
 Channel personal-starred
 Channel personal-drafts
 Channel personal-sent
