@@ -1,6 +1,5 @@
-setlocal tabstop=2
-setlocal softtabstop=2
 setlocal shiftwidth=2
+let &softtabstop = &shiftwidth
 setlocal expandtab
 
 if executable('js-beautify')
