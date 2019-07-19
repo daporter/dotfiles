@@ -1,6 +1,6 @@
-setlocal tabstop=2
-setlocal expandtab
 setlocal shiftwidth=2
+let &softtabstop = &shiftwidth
+setlocal expandtab
 setlocal smartindent
 setlocal autoindent
 

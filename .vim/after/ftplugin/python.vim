@@ -1,9 +1,11 @@
 setlocal autoindent
-setlocal expandtab
 setlocal shiftwidth=4
-setlocal softtabstop=4
-setlocal tabstop=4
+let &softtabstop = &shiftwidth
+setlocal expandtab
 setlocal textwidth=88
+
+" Turn off hard line wrapping.
+setlocal formatoptions-=t
 
 " vim-apathy sets `path', but I'm overriding it to remove all the Python system
 " paths that vim-apathy includes.
@@ -19,6 +21,13 @@ endif
 
 command! -buffer Check update | compiler py_compile | silent make % | redraw!
 command! -buffer Lint update | compiler pylinter | silent make % | redraw!
+command! -buffer Pyre update | compiler pyre | silent make | redraw!
 
 nnoremap <buffer> <leader>c :Check<CR>
 nnoremap <buffer> <leader>l :Lint<CR>
+nnoremap <buffer> <leader>p :Pyre<CR>
+
+nnoremap <buffer> <leader>tl :update \| TestLast<CR>
+nnoremap <buffer> <leader>tn :update \| TestNearest<CR>
+nnoremap <buffer> <leader>tf :update \| TestFile<CR>
+nnoremap <buffer> <leader>ts :update \| TestSuite<CR>
