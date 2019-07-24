@@ -37,3 +37,6 @@
 [submodule ".vim/pack/dporter/start/vim-dispatch"]
 	path = .vim/pack/dporter/start/vim-dispatch
 	url = https://github.com/tpope/vim-dispatch.git
+[submodule ".vim/pack/dporter/start/nord-vim"]
+	path = .vim/pack/dporter/start/nord-vim
+	url = https://github.com/arcticicestudio/nord-vim.git
