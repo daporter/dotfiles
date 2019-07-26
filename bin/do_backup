@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# Run a backup of my home directory.
+
+. "$HOME/.profile.d/restic.sh"
+
+restic --exclude-file="$HOME/restic-exclude.txt" --verbose backup "$HOME"
