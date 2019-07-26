@@ -30,6 +30,10 @@ Channel personal-great-conversation
 Master :personal-remote:great-conversation
 Slave :personal-local:great-conversation
 
+Channel personal-openbsd
+Master :personal-remote:openbsd
+Slave :personal-local:openbsd
+
 Channel personal-suckless-dev
 Master :personal-remote:suckless-dev
 Slave :personal-local:suckless-dev
@@ -72,6 +76,7 @@ Patterns *
 Patterns !inbox
 Patterns !aerc
 Patterns !great-conversation
+Patterns !openbsd
 Patterns !suckless-dev
 Patterns !yabai
 Patterns !search
@@ -87,6 +92,7 @@ Group gmail
 Channel personal-inbox
 Channel personal-aerc
 Channel personal-great-conversation
+Channel personal-openbsd
 Channel personal-suckless-dev
 Channel personal-yabai
 Channel personal-starred

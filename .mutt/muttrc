@@ -48,6 +48,7 @@ set sendmail_wait = 0  # wait for msmtp to finish
 mailboxes =inbox \
 		  =aerc \
 		  =great-conversation \
+		  =openbsd \
 		  =suckless-dev \
 		  =yabai
 
