@@ -25,7 +25,6 @@
 	email = david@daporter.net
 [commit]
 	verbose = true
-	template = /Users/por085/.git_commit_template.txt
 [diff]
 	tool = vimdiff
 [merge]
