@@ -11,9 +11,9 @@ cleanup-on-quit    yes
 text-width         78
 max-items		   1000
 
-color info             color7 color8  bold
-color listfocus        color0 color15
-color listfocus_unread color0 color15 bold
+color info             color7  color11 bold
+color listfocus        color0  color8
+color listfocus_unread color0  color8 bold
 
 highlight article "^(Feed|Title|Author|Date|Link):" default default bold
 highlight article "https?://[^ ]+"                  color4  default underline
