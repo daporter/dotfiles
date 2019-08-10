@@ -22,7 +22,7 @@
         default = simple
 [user]
 	name = David Porter
-	email = david.a.porter@gmail.com
+	email = david@daporter.net
 [commit]
 	verbose = true
 	template = /Users/por085/.git_commit_template.txt
