@@ -1,9 +1,0 @@
-set from         = "David Porter <david.a.porter@gmail.com>"
-set folder       = "~/mail/personal"
-set spoolfile    = "+/inbox"
-set mbox         = '+archive'
-set postponed    = "+/drafts"
-set trash        = "+/trash"
-set record       = "+/sent"
-set header_cache = "~/.mutt/personal/cache/headers"
-set sendmail     = "/usr/local/bin/msmtp -a personal"
