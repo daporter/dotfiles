@@ -1,9 +1,0 @@
-set from         = "david.porter@data61.csiro.au"
-set folder       = "~/mail/data61"
-set spoolfile    = "+/inbox"
-set mbox         = '+archive'
-set postponed    = "+/drafts"
-set trash        = "+/trash"
-set record       = "+/sent"
-set header_cache = "~/.mutt/data61/cache/headers"
-set sendmail     = "/usr/local/bin/msmtp -a data61"

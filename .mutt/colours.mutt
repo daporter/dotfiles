@@ -1,28 +1,23 @@
-color   normal      color0         color7
-#color  normal      color0         color15
-color   indicator   color0         color14
-#color  indicator   color0         color7
-color   status      brightcolor7   color0
-#color  status      brightcolor15  color0
-#color  hdrdefault  brightcolor11  color7
-#color  hdrdefault  brightcolor0   color15
-color   attachment  color13        color7
-color   tree        color0         color7
-color   quoted      color11        color7
-color   index       color13        color7   "~D"
-color   markers     color13        color7
-color   tilde       color13        color7
-#color  tilde       color7         color15
-color   signature   color11        color7
+color  normal      default        default
+color  status      brightcolor11  color8
+color  indicator   default        color11
+color  hdrdefault  default        default
+color  attachment  color5         default
+color  tree        default        default
+color  quoted      color6         default
+color  index       color11        default  "~D"
+color  index 	   color2         default  "~T"
+color  markers     color13        color15
+color  tilde       color8         default
+color  signature   default        default
 
-color header brightcolor0 color7 "^(From)"
-color header brightcolor0 color7 "^(Subject)"
+color  header  brightcolor15  default  "^(From)"
+color  header  brightcolor15  default  "^(Subject)"
 
-color body  color4       color7 "(https?|ftp|news|telnet|finger)://[^ \"\t\r\n]*"
-color body  color4       color7 "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
-color body  color4       color7 "mailto:[-a-z_0-9.]+@[-a-z_0-9.]+"
-color error brightcolor1 color7
-color index brightcolor0 color7 "~T" # "Tagged" (selected) messages.
+color body  color4       default "(https?|ftp|news|telnet|finger)://[^ \"\t\r\n]*"
+color body  color4       default "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
+color body  color4       default "mailto:[-a-z_0-9.]+@[-a-z_0-9.]+"
+color error brightcolor1 default
 
 # color index color7 color0 "~A" # All messages
 # color index brightcolor7 color0 "~U" # Unread messages

@@ -1,14 +1,31 @@
 # Paths.
-set folder           = ~/mail/personal
+set mbox_type        = Maildir
 set header_cache     = ~/.mutt/cache/headers
 set mailcap_path     = ~/.mutt/mailcap
 set message_cachedir = ~/.mutt/cache/bodies
 set certificate_file = ~/.mutt/certificates
 set tmpdir           = ~/.mutt/tmp 
 
+# Account settings.
+set folder     = ~/mail/migadu
+set  from      = "David Porter <david@daporter.net>"
+set  spoolfile = "+inbox"
+set  postponed = "+drafts"
+set  record    = "+sent"
+set  mbox      = "+archive"
+set  trash     = "+trash"
+set  sendmail  = "/usr/local/bin/msmtp -a migadu"
+
+# Specify folders which can receive mail and which will be checked for new
+# messages periodically.
+mailboxes =inbox \
+		  =aerc \
+		  =great-conversation \
+    	  =openbsd \
+		  =suckless-dev
+
 folder-hook . 'push <collapse-all>'
 
-set mbox_type = Maildir
 set timeout = 3          # idle time before scanning
 
 # Messages marked for deleting will automatically be purged without prompting.
@@ -33,24 +50,7 @@ unignore From To CC Bcc Subject Date Organization X-Label X-Mailer User-Agent
 unhdr_order *                           # some distros order things by default
 hdr_order from: to: cc: date: subject:  # and in this order
 
-# Account settings.
-set spoolfile    = "+/inbox"
-set from         = "David Porter <david.a.porter@gmail.com>"
-set mbox         = '+archive'
-set postponed    = "+/drafts"
-set trash        = "+/trash"
-unset record  # Gmail will save a copy of every outgoing email.
-set sendmail     = "/usr/local/bin/msmtp -a personal"
 set sendmail_wait = 0  # wait for msmtp to finish
-
-# Specify folders which can receive mail and which will be checked for new
-# messages periodically.
-mailboxes =inbox \
-		  =aerc \
-		  =great-conversation \
-		  =openbsd \
-		  =suckless-dev \
-		  =yabai
 
 # Index view options.
 set date_format  = "%m/%d"
