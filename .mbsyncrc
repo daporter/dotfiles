@@ -3,102 +3,61 @@ Create Both
 Expunge Both
 SyncState *
 
-IMAPAccount personal
-Host imap.gmail.com
-User david.a.porter@gmail.com
-PassCmd "security find-internet-password -s imap.gmail.com -a david.a.porter -w"
+IMAPAccount migadu
+Host imap.migadu.com
+User david@daporter.net
+PassCmd "security find-internet-password -s imap.migadu.com -a david -w"
 SSLType IMAPS
 AuthMechs LOGIN
 
-IMAPStore personal-remote
-Account personal
+IMAPStore migadu-remote
+Account migadu
 
-MaildirStore personal-local
-Path ~/mail/personal/
-Inbox ~/mail/personal/inbox
+MaildirStore migadu-local
+Path ~/mail/migadu/
+Inbox ~/mail/migadu/inbox
 SubFolders Verbatim
 
-Channel personal-inbox
-Master :personal-remote:INBOX
-Slave :personal-local:inbox
+Channel migadu-inbox
+Master :migadu-remote:INBOX
+Slave :migadu-local:inbox
 
-Channel personal-aerc
-Master :personal-remote:aerc
-Slave :personal-local:aerc
+Channel migadu-drafts
+Master :migadu-remote:Drafts
+Slave :migadu-local:drafts
 
-Channel personal-great-conversation
-Master :personal-remote:great-conversation
-Slave :personal-local:great-conversation
+Channel migadu-sent
+Master :migadu-remote:Sent
+Slave :migadu-local:sent
 
-Channel personal-openbsd
-Master :personal-remote:openbsd
-Slave :personal-local:openbsd
+Channel migadu-archive
+Master :migadu-remote:Archive
+Slave :migadu-local:archive
 
-Channel personal-suckless-dev
-Master :personal-remote:suckless-dev
-Slave :personal-local:suckless-dev
+Channel migadu-trash
+Master :migadu-remote:Trash
+Slave :migadu-local:trash
 
-Channel personal-yabai
-Master :personal-remote:yabai
-Slave :personal-local:yabai
+Channel migadu-junk
+Master :migadu-remote:Junk
+Slave :migadu-local:junk
 
-Channel personal-drafts
-Master :personal-remote:"[Gmail]/Drafts"
-Slave :personal-local:drafts
+Channel migadu-catchall
+Master :migadu-remote:
+Slave  :migadu-local:
+Pattern *
+Patterns !INBOX   !inbox
+Patterns !Archive !archive
+Patterns !Drafts  !drafts
+Patterns !Junk    !junk
+Patterns !Sent    !sent
+Patterns !Trash   !trash
 
-Channel personal-sent
-Master :personal-remote:"[Gmail]/Sent Mail"
-Slave :personal-local:sent
-
-Channel personal-starred
-Master :personal-remote:"[Gmail]/Starred"
-Slave :personal-local:starred
-
-Channel personal-trash
-Master :personal-remote:"[Gmail]/Trash"
-Slave :personal-local:trash
-
-Channel personal-spam
-Master :personal-remote:"[Gmail]/Spam"
-Slave :personal-local:spam
-
-Channel personal-archive
-Master :personal-remote:"[Gmail]/All Mail"
-Slave :personal-local:archive
-
-# Catch-all for everything else: note that the `Patterns` have to exclude both
-# the remote and local names for all the folders we want to exclude (except
-# "INBOX", which is special-cased, it would seem).
-Channel personal-catchall
-Master :personal-remote:
-Slave :personal-local:
-Patterns *
-Patterns !inbox
-Patterns !aerc
-Patterns !great-conversation
-Patterns !openbsd
-Patterns !suckless-dev
-Patterns !yabai
-Patterns !search
-Patterns !sent
-Patterns !spam
-Patterns !trash
-Patterns ![Gmail]*
-Patterns !archive
-Patterns !drafts
-Patterns !starred
- 
-Group gmail
-Channel personal-inbox
-Channel personal-aerc
-Channel personal-great-conversation
-Channel personal-openbsd
-Channel personal-suckless-dev
-Channel personal-yabai
-Channel personal-starred
-Channel personal-drafts
-Channel personal-sent
-Channel personal-spam
-Channel personal-trash
-Channel personal-archive
-Channel personal-catchall
+Group migadu
+Channel migadu-inbox
+Channel migadu-drafts
+Channel migadu-sent
+Channel migadu-archive
+Channel migadu-trash
+Channel migadu-junk
+Channel migadu-catchall
