@@ -66,6 +66,7 @@ brew 'rtv'
 brew 'shellcheck'
 brew 'shfmt'
 brew 'terminal-notifier'
+brew 'tmux'
 brew 'tree'
 brew 'urlview'
 brew 'vis', args: ['--build-from-source', '--HEAD']
