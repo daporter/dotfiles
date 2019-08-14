@@ -1,6 +1,6 @@
 color  normal      default        default
-color  status      brightcolor11  color8
-color  indicator   default        color11
+color  status      color15        color0
+color  indicator   default        color7
 color  hdrdefault  default        default
 color  attachment  color5         default
 color  tree        default        default
@@ -11,8 +11,8 @@ color  markers     color13        color15
 color  tilde       color8         default
 color  signature   default        default
 
-color  header  brightcolor15  default  "^(From)"
-color  header  brightcolor15  default  "^(Subject)"
+color  header  brightcolor0  default  "^(From)"
+color  header  brightcolor0  default  "^(Subject)"
 
 color body  color4       default "(https?|ftp|news|telnet|finger)://[^ \"\t\r\n]*"
 color body  color4       default "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
