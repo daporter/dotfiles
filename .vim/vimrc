@@ -7,10 +7,7 @@ filetype plugin indent on
 let mapleader=' '
 
 set hidden                  " allow switching away from unsaved buffers
-set shiftwidth=4            " number of spaces for each step of indent
-let &softtabstop=&shiftwidth " number of spaces pressing <Tab> counts for
 set autoindent              " new line copies previous line's indentation
-set expandtab               " use spaces instead of a tab character
 set linebreak               " try to wrap long lines at word boundaries
 set showbreak=↳\ 
 set backspace=indent,eol,start  " proper backspace behaviour
@@ -24,8 +21,36 @@ set spelllang=en_au         " use the Australia language region
 set showmatch               " in insert mode, show matching paren, etc.
 set ttimeoutlen=100         " lower the timeout (ms) for keycodes (incl. ESC)
 set laststatus=2            " show the status line always
-set ruler                   " show line,column of cursor in status line
-set statusline=%<\ %f\ %m%r%y%w%=\ L:\ \%l\/\%L\ C:\ \%c\ 
+set statusline=%<\ %f\ %m%r%w
+
+" Protect changes between writes. Default values of updatecount (200
+" keystrokes) and updatetime (4 seconds) are fine
+set swapfile
+set directory^=~/.vim/swap//
+
+" protect against crash-during-write
+set writebackup
+" but do not persist backup after successful write
+set nobackup
+" use rename-and-write-new method whenever safe
+set backupcopy=auto
+" patch required to honor double slash at end
+if has("patch-8.1.0251")
+	" consolidate the writebackups -- not a big
+	" deal either way, since they usually get deleted
+	set backupdir^=~/.vim/backup//
+end
+
+" persist the undo tree for each file
+set undofile
+set undodir^=~/.vim/undo//" use CTRL-G to show position
+
+set noruler
+
+" tabs for indentation, spaces for alignment
+set noexpandtab
+set tabstop=4
+set shiftwidth=4
 
 " Display special chars to indicate whitespace.
 set listchars=tab:▸\ ,eol:¬
@@ -45,19 +70,19 @@ set wildignore+=*/__pycache__/*
 set wildignore+=tags
 set wildignore+=*.tar.*
 
-nnoremap <leader><space> <C-^>
+nnoremap <BS> <C-^>
 nnoremap <silent> <leader>w :write<cr>
 
 set wildcharm=<C-z>
-nnoremap <leader>bb :buffer <C-z><S-Tab>
-nnoremap <leader>bs :sbuffer <C-z><S-Tab>
-nnoremap <leader>bv :vert sbuffer <C-z><S-Tab>
+nnoremap <leader>b :buffer <C-z><S-Tab>
+nnoremap <leader>B :sbuffer <C-z><S-Tab>
+" nnoremap <leader>bv :vert sbuffer <C-z><S-Tab>
 
-nnoremap <leader>ff :find *
-nnoremap <leader>fs :sfind *
-nnoremap <leader>fv :vert sfind *
+nnoremap <leader>f :find *
+nnoremap <leader>F :sfind *
+" nnoremap <leader>fv :vert sfind *
 
-nnoremap <leader>t :tjump /
+nnoremap <leader>j :tjump /
 
 " Load the matchit plugin.
 packadd! matchit
@@ -69,12 +94,18 @@ if executable('rg')
     set grepprg=rg\ --vimgrep
 endif
 
+" The “patience” diff algorithm often produces more human-readable output than
+" the default, “myers.”
+if has("patch-8.1.0360")
+	set diffopt+=internal,algorithm:patience
+endif
+
 " The following command displays the names of the syntax groups in the
 " hierarchy at the current cursor position. Call it with :SS
 command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 
 syntax on
-colorscheme dporter
+colorscheme dporter-plain
 
 " Improve the appearance of the vertical separator.
 set fillchars+=vert:│
