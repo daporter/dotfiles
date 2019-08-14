@@ -12,7 +12,7 @@ let colors_name = 'dporter-plain'
 
 set background=dark
 
-hi  Comment             ctermbg=NONE  ctermfg=8     cterm=italic
+hi  Comment             ctermbg=NONE  ctermfg=3     cterm=italic
 hi  Constant            ctermbg=NONE  ctermfg=6     cterm=NONE
 hi  Cursor              ctermbg=NONE  ctermfg=7     cterm=NONE
 hi  CursorLine          ctermbg=10    ctermfg=NONE  cterm=NONE
@@ -48,8 +48,8 @@ hi  SpellCap            ctermbg=NONE  ctermfg=1     cterm=underline
 hi  SpellLocal          ctermbg=NONE  ctermfg=5     cterm=underline
 hi  SpellRare           ctermbg=NONE  ctermfg=1     cterm=underline
 hi  Statement           ctermbg=NONE  ctermfg=NONE  cterm=italic
-hi  StatusLine          ctermbg=11    ctermfg=NONE  cterm=italic
-hi  StatusLineNC        ctermbg=10    ctermfg=8     cterm=italic
+hi  StatusLine          ctermbg=NONE  ctermfg=NONE  cterm=reverse,bold,italic
+hi  StatusLineNC        ctermbg=7     ctermfg=NONE  cterm=italic
 hi  StatusLineTerm      ctermbg=NONE  ctermfg=NONE  cterm=NONE
 hi  StatusLineTermNC    ctermbg=NONE  ctermfg=NONE  cterm=NONE
 hi  StatusLineTermNC    ctermbg=NONE  ctermfg=NONE  cterm=NONE
@@ -61,7 +61,7 @@ hi  Title               ctermbg=NONE  ctermfg=NONE  cterm=bold
 hi  Todo                ctermbg=NONE  ctermfg=NONE  cterm=bold,italic
 hi  Type                ctermbg=NONE  ctermfg=NONE  cterm=bold
 hi  Underlined          ctermbg=NONE  ctermfg=NONE  cterm=underline
-hi  VertSplit           ctermbg=NONE  ctermfg=11    cterm=NONE
+hi  VertSplit           ctermbg=NONE  ctermfg=0     cterm=NONE
 hi  Visual              ctermbg=11    ctermfg=NONE  cterm=NONE
 hi  VisualNOS           ctermbg=6     ctermfg=NONE  cterm=NONE
 hi  WildMenu            ctermbg=12    ctermfg=10    cterm=italic
