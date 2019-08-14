@@ -40,3 +40,6 @@
 [submodule ".vim/pack/dporter/start/vim-fugitive"]
 	path = .vim/pack/dporter/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive.git
+[submodule ".vim/pack/dporter/start/auto-pairs"]
+	path = .vim/pack/dporter/start/auto-pairs
+	url = https://github.com/jiangmiao/auto-pairs.git
