@@ -43,3 +43,6 @@
 [submodule ".vim/pack/dporter/start/auto-pairs"]
 	path = .vim/pack/dporter/start/auto-pairs
 	url = https://github.com/jiangmiao/auto-pairs.git
+[submodule ".vim/pack/dporter/start/ultisnips"]
+	path = .vim/pack/dporter/start/ultisnips
+	url = https://github.com/SirVer/ultisnips.git

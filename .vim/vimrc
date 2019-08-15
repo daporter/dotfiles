@@ -35,7 +35,7 @@ set nobackup
 " use rename-and-write-new method whenever safe
 set backupcopy=auto
 " patch required to honor double slash at end
-if has("patch-8.1.0251")
+if has('patch-8.1.0251')
 	" consolidate the writebackups -- not a big
 	" deal either way, since they usually get deleted
 	set backupdir^=~/.vim/backup//
@@ -96,7 +96,7 @@ endif
 
 " The “patience” diff algorithm often produces more human-readable output than
 " the default, “myers.”
-if has("patch-8.1.0360")
+if has('patch-8.1.0360')
 	set diffopt+=internal,algorithm:patience
 endif
 
@@ -136,3 +136,8 @@ let g:qf_auto_resize = 0
 
 " Configure the vim-test plugin.
 let test#strategy = 'make'
+
+" UltiSnips
+let g:UltiSnipsExpandTrigger='<tab>'
+let g:UltiSnipsJumpForwardTrigger='<tab>'
+let g:UltiSnipsJumpBackwardTrigger='<s-tab>'
