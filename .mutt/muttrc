@@ -21,7 +21,8 @@ set  sendmail  = "/usr/local/bin/msmtp -a migadu"
 mailboxes =inbox \
 		  =aerc \
 		  =great-conversation \
-    	  =openbsd \
+    	  =openbsd-announce \
+    	  =openbsd-misc \
 		  =suckless-dev
 
 folder-hook . 'push <collapse-all>'
