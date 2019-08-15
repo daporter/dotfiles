@@ -197,7 +197,7 @@ colors:
     # magenta: '0xb294bb'
     # cyan:    '0x8abeb7'
     # white:   '0xc5c8c6'
-    black:   '0xd9d5ba'
+    black:   '0x444444'
     red:     '0x825b69'
     green:   '0x69825b'
     yellow:  '0x82755b'
@@ -223,7 +223,7 @@ colors:
     blue:    '0xa0aabd'
     magenta: '0xb3a0bd'
     cyan:    '0xa0bdb3'
-    white:   '0xffffff'
+    white:   '0xd9d5ba'
 
   # Dim colors
   #
