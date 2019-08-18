@@ -177,7 +177,7 @@ colors:
   primary:
     # background: '0x1d1f21'
     # foreground: '0xc5c8c6'
-    background: '0xd9d5ba'
+    background: '0xdfded1'
     foreground: '0x444444'
 
   # Colors the cursor will use if `custom_cursor_colors` is true
@@ -223,7 +223,7 @@ colors:
     blue:    '0xa0aabd'
     magenta: '0xb3a0bd'
     cyan:    '0xa0bdb3'
-    white:   '0xd9d5ba'
+    white:   '0xdfded1'
 
   # Dim colors
   #
