@@ -7,7 +7,7 @@ set certificate_file = ~/.mutt/certificates
 set tmpdir           = ~/.mutt/tmp 
 
 # Account settings.
-set folder     = ~/mail/migadu
+set  folder    = ~/mail/migadu
 set  from      = "David Porter <david@daporter.net>"
 set  spoolfile = "+inbox"
 set  postponed = "+drafts"
@@ -55,11 +55,13 @@ set sendmail_wait = 0  # wait for msmtp to finish
 
 # Index view options.
 set date_format  = "%m/%d"
-set index_format = "[%Z]  %D  %-20.20F  %2M %s"
 set sort         = threads
 set sort_re          # thread based on regex
 set uncollapse_jump  # don't collapse on an unread message
 set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
+
+folder-hook .    "set index_format = \"[%Z]  %D  %-20.20f  %2M %s\""
+folder-hook sent "set index_format = \"[%Z]  %D  %-20.20F  %2M %s\""
 
 # Index key bindings.
 bind index g        noop   # since 'gg' binding will alias 'g'
