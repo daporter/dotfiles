@@ -184,7 +184,7 @@ colors:
   cursor:
     # text: '0x1d1f21'
     # cursor: '0xc5c8c6'
-    text: '0x444444'
+    text: '0xdfded1'
     cursor: '0x825b69'
 
   # Normal colors
