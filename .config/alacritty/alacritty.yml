@@ -175,54 +175,34 @@ draw_bold_text_with_bright_colors: false
 colors:
   # Default colors
   primary:
-    # background: '0x1d1f21'
-    # foreground: '0xc5c8c6'
     background: '0xdfded1'
     foreground: '0x444444'
 
   # Colors the cursor will use if `custom_cursor_colors` is true
   cursor:
-    # text: '0x1d1f21'
-    # cursor: '0xc5c8c6'
     text: '0xdfded1'
     cursor: '0x825b69'
 
   # Normal colors
   normal:
-    # black:   '0x1d1f21'
-    # red:     '0xcc6666'
-    # green:   '0xb5bd68'
-    # yellow:  '0xf0c674'
-    # blue:    '0x81a2be'
-    # magenta: '0xb294bb'
-    # cyan:    '0x8abeb7'
-    # white:   '0xc5c8c6'
     black:   '0x444444'
-    red:     '0x825b69'
-    green:   '0x69825b'
-    yellow:  '0x82755b'
-    blue:    '0x5b6982'
-    magenta: '0x755b82'
-    cyan:    '0x5b8275'
-    white:   '0xcacaca'
+    red:     '0x6f1a07'
+    green:   '0x325532'
+    yellow:  '0xa8763e'
+    blue:    '0x2f4858'
+    magenta: '0x58355e'
+    cyan:    '0x52796f'
+    white:   '0xbbbbbb'
 
   # Bright colors
   bright:
-    # black:   '0x969896'
-    # red:     '0xde935f'
-    # green:   '0x282a2e'
-    # yellow:  '0x373b41'
-    # blue:    '0xb4b7b4'
-    # magenta: '0xe0e0e0'
-    # cyan:    '0xa3685a'
-    # white:   '0xffffff'
-    black:   '0x333333'
-    red:     '0xbda0aa'
-    green:   '0xaabda0'
-    yellow:  '0xbdb3a0'
-    blue:    '0xa0aabd'
-    magenta: '0xb3a0bd'
-    cyan:    '0xa0bdb3'
+    black:   '0x888888'
+    red:     '0xbd968e'
+    green:   '0xa1b1a1'
+    yellow:  '0xcfb495'
+    blue:    '0xb3bcc2'
+    magenta: '0xc2b5c4'
+    cyan:    '0xb0c2bd'
     white:   '0xdfded1'
 
   # Dim colors

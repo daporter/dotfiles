@@ -12,9 +12,9 @@ let colors_name = 'dporter-plain'
 
 set background=dark
 
-hi  Comment             ctermbg=NONE  ctermfg=3     cterm=italic
+hi  Comment             ctermbg=NONE  ctermfg=8     cterm=italic
 hi  Constant            ctermbg=NONE  ctermfg=6     cterm=NONE
-hi  Cursor              ctermbg=NONE  ctermfg=7     cterm=NONE
+hi  Cursor              ctermbg=NONE  ctermfg=NONE  cterm=NONE
 hi  CursorLine          ctermbg=10    ctermfg=NONE  cterm=NONE
 hi  CursorLineNr        ctermbg=NONE  ctermfg=1     cterm=NONE
 hi  DiffAdd             ctermbg=2     ctermfg=0     cterm=NONE
@@ -29,7 +29,7 @@ hi  Identifier          ctermbg=NONE  ctermfg=NONE  cterm=bold
 hi  Ignore              ctermbg=NONE  ctermfg=NONE  cterm=NONE
 hi  IncSearch           ctermbg=4     ctermfg=10    cterm=bold
 hi  LineNr              ctermbg=NONE  ctermfg=14    cterm=NONE
-hi  MatchParen          ctermbg=6     ctermfg=0     cterm=NONE
+hi  MatchParen          ctermbg=6     ctermfg=15    cterm=NONE
 hi  ModeMsg             ctermbg=NONE  ctermfg=NONE  cterm=bold
 hi  MoreMsg             ctermbg=NONE  ctermfg=NONE  cterm=bold
 hi  NonText             ctermbg=NONE  ctermfg=11    cterm=NONE
@@ -62,9 +62,9 @@ hi  Todo                ctermbg=NONE  ctermfg=NONE  cterm=bold,italic
 hi  Type                ctermbg=NONE  ctermfg=NONE  cterm=bold
 hi  Underlined          ctermbg=NONE  ctermfg=NONE  cterm=underline
 hi  VertSplit           ctermbg=NONE  ctermfg=0     cterm=NONE
-hi  Visual              ctermbg=11    ctermfg=NONE  cterm=NONE
+hi  Visual              ctermbg=14    ctermfg=NONE  cterm=NONE
 hi  VisualNOS           ctermbg=6     ctermfg=NONE  cterm=NONE
-hi  WildMenu            ctermbg=12    ctermfg=10    cterm=italic
+hi  WildMenu            ctermbg=2     ctermfg=15    cterm=bold
 hi  helpHyperTextEntry  ctermbg=NONE  ctermfg=4     cterm=bold
 hi  helpHyperTextJump   ctermbg=NONE  ctermfg=4     cterm=NONE
 hi  helpLeadBlank       ctermbg=NONE  ctermfg=NONE  cterm=NONE
