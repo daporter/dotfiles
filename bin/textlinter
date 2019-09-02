@@ -9,4 +9,4 @@ if [ $# -ne 1 ]; then
 fi
 
 proselint "$1"
-writegood "$1"
+writegood --parse "$1"
