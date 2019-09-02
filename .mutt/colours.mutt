@@ -5,7 +5,7 @@ color  hdrdefault  default        default
 color  attachment  color5         default
 color  tree        default        default
 color  quoted      color6         default
-color  index       color11        default  "~D"
+color  index       color7         default  "~D"
 color  index 	   color2         default  "~T"
 color  markers     color13        color15
 color  tilde       color8         default
