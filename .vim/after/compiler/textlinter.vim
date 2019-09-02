@@ -11,11 +11,5 @@ CompilerSet makeprg=~/bin/textlinter
 CompilerSet errorformat=%f:%l:%c:\ %*[^\ ]\ %m
 
 " writegood:
-" In /tmp/email.txt
-" =============
-" The girl was hit.
-"          ^^^^^^^
-" "was hit" may be passive voice on line 8 at column 9
-CompilerSet errorformat+=%EIn\ %f
-CompilerSet errorformat+=%Z%m\ on\ line\ %l\ at\ column\ %c
-CompilerSet errorformat+=%C%.%#
+/tmp/message.txt:7:138:"are implemented" may be passive voice
+CompilerSet errorformat=%f:%l:%c:%m
