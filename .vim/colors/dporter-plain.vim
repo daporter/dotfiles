@@ -34,10 +34,10 @@ hi  ModeMsg             ctermbg=NONE  ctermfg=NONE  cterm=bold
 hi  MoreMsg             ctermbg=NONE  ctermfg=NONE  cterm=bold
 hi  NonText             ctermbg=NONE  ctermfg=11    cterm=NONE
 hi  Normal              ctermbg=NONE  ctermfg=NONE  cterm=NONE
-hi  Pmenu               ctermbg=11    ctermfg=8     cterm=NONE
-hi  PmenuSbar           ctermbg=11    ctermfg=NONE  cterm=NONE
-hi  PmenuSel            ctermbg=8     ctermfg=15    cterm=NONE
-hi  PmenuThumb          ctermbg=8     ctermfg=NONE  cterm=NONE
+hi  Pmenu               ctermbg=12    ctermfg=0     cterm=NONE
+hi  PmenuSbar           ctermbg=12    ctermfg=NONE  cterm=NONE
+hi  PmenuSel            ctermbg=4     ctermfg=15    cterm=NONE
+hi  PmenuThumb          ctermbg=4     ctermfg=NONE  cterm=NONE
 hi  PreProc             ctermbg=NONE  ctermfg=NONE  cterm=italic
 hi  QuickFixLine        ctermbg=NONE  ctermfg=NONE  cterm=bold
 hi  Search              ctermbg=2     ctermfg=7     cterm=bold
