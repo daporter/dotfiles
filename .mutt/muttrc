@@ -26,7 +26,6 @@ set mail_check_stats
 mailboxes =inbox \
 		  =aerc \
 		  =great-conversation \
-    	  =openbsd-announce \
     	  =openbsd-misc \
 		  =suckless-dev
 
