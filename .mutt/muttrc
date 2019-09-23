@@ -77,6 +77,8 @@ macro index \Cr "T~U<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "ma
 macro index a "<save-message>><enter>" "archive message"
 macro pager a "<save-message>><enter>" "archive message"
 
+macro pager S "<exit><tag-thread><tag-prefix><save-message>"
+
 # Pager view options.
 set pager_index_lines = 10 # number of index lines to show
 set pager_context = 3      # number of context lines to show
