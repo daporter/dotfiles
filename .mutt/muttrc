@@ -16,6 +16,11 @@ set  mbox      = "+archive"
 set  trash     = "+trash"
 set  sendmail  = "/usr/local/bin/msmtp -a migadu"
 
+set sidebar_visible
+set sidebar_format = "%B%?F? [%F]?%* %?N?%N?"
+set sidebar_divider_char = " │ "
+set mail_check_stats
+
 # Specify folders which can receive mail and which will be checked for new
 # messages periodically.
 mailboxes =inbox \
