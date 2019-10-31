@@ -17,9 +17,9 @@ hi  Constant            ctermbg=NONE  ctermfg=6     cterm=NONE
 hi  Cursor              ctermbg=NONE  ctermfg=7     cterm=NONE
 hi  CursorLine          ctermbg=10    ctermfg=NONE  cterm=NONE
 hi  CursorLineNr        ctermbg=NONE  ctermfg=1     cterm=NONE
-hi  DiffAdd             ctermbg=2     ctermfg=0     cterm=NONE
+hi  DiffAdd             ctermbg=10    ctermfg=0     cterm=NONE
 hi  DiffChange          ctermbg=11    ctermfg=NONE  cterm=NONE
-hi  DiffDelete          ctermbg=1     ctermfg=NONE  cterm=NONE
+hi  DiffDelete          ctermbg=9     ctermfg=NONE  cterm=NONE
 hi  DiffText            ctermbg=3     ctermfg=0     cterm=NONE
 hi  Directory           ctermbg=NONE  ctermfg=4     cterm=NONE
 hi  Error               ctermbg=NONE  ctermfg=1     cterm=bold
