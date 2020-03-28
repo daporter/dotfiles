@@ -10,3 +10,6 @@
 [submodule "vim/.vim/pack/dporter/start/vim-repeat"]
 	path = vim/.vim/pack/dporter/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
+[submodule "vim/.vim/pack/dporter/start/tempus-themes-vim"]
+	path = vim/.vim/pack/dporter/start/tempus-themes-vim
+	url = git@gitlab.com:protesilaos/tempus-themes-vim.git
