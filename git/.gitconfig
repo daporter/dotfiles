@@ -1,0 +1,27 @@
+[user]
+	name = David Porter
+	email = david@daporter.net
+[core]
+        excludesfile = ~/.gitignore
+[color]
+        diff = auto
+        status = auto
+        branch = auto
+        ui = true
+[help]
+        autocorrect = 1
+[push]
+        # See `git help config` (search for push.default)
+        # for more information on different options of the below setting.
+        #
+        # Setting to git 2.0 default to suppress warning message
+        default = simple
+[commit]
+	verbose = true
+[diff]
+	tool = vimdiff
+[merge]
+	tool = vimdiff
+	conflictstyle = diff3
+[mergetool]
+	prompt = false

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Run the sequence of linters I prefer for my Python code.
+
+if [ $# -ne 1 ]; then
+    PROGNAME=$(basename "$0")
+    printf "Usage %s <file>\\n" "$PROGNAME"
+    exit 1
+fi
+
+pylint --score=no "$1"
+
+flake8 "$1"
+
+# Disable pydocstyle for now, since it doesn't (yet?) support the Google
+# docstring convention.
+# pydocstyle "$1"
+
+darglint -m "{path}:{line} {msg_id}: {msg}" "$1"
+
+# bandit --format custom --msg-template "{relpath}:{line}: {test_id}: {severity}: {msg}" "$1"

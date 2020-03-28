@@ -1,0 +1,16 @@
+# This file controls the behaviour of line input editing for programs that use
+# the GNU Readline library.
+#
+# You can re-read the inputrc file with C-x C-r.
+
+set bell-style visible
+set blink-matching-paren on
+set colored-completion-prefix on
+set colored-stats on
+set completion-ignore-case on
+set completion-prefix-display-length 3
+set expand-tilde on
+set mark-symlinked-directories on
+set show-all-if-ambiguous on  # list completions immediately instead of ringing bell
+set show-all-if-unmodified on
+set visible-stats on

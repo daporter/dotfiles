@@ -1,0 +1,125 @@
+" The following two lines must be in the given order.
+set encoding=utf-8
+scriptencoding utf-8
+
+filetype plugin indent on
+
+let mapleader=' '
+
+set hidden                  " allow switching away from unsaved buffers
+set autoindent              " new line copies previous line's indentation
+set linebreak               " try to wrap long lines at word boundaries
+set joinspaces              " insert two spaces after puncutation marks when joining multiple lines
+set showbreak=↳\ 
+set backspace=indent,eol,start  " proper backspace behaviour
+set formatprg=par           " use 'par' when gq is run
+set incsearch               " use incremental searching
+set ignorecase              " make searches case-insensitive
+set smartcase               " with one uppercase char, search is case-sensitive
+set laststatus=2
+set spelllang=en_au,fr      " languages to check for spelling
+set spellsuggest=10         " number of suggestinos for correct spelling
+set showmatch               " in insert mode, show matching paren, etc.
+set ttimeoutlen=100         " lower the timeout (ms) for keycodes (incl. ESC)
+set laststatus=2            " show the status line always
+set statusline=%<\ %f\ %m%r%w
+
+" defines how automatic formatting should be done (see :h fo-table)
+set formatoptions-=t
+set formatoptions-=o 
+set formatoptions+=crqjnl1
+
+set noruler			" use CTRL-G to show position
+
+" tabs for indentation, spaces for alignment
+set noexpandtab
+set tabstop=4
+set shiftwidth=4
+
+" Display special chars to indicate whitespace.
+set listchars=tab:▸\ ,eol:¬
+set listchars+=nbsp:⦸
+set listchars+=extends:»
+set listchars+=precedes:«
+set listchars+=trail:•
+
+set wildmenu                " enables a menu at the bottom of the window
+set wildmode=list:full
+
+set wildignorecase
+set wildignore=*.swp,*.bak
+set wildignore+=*.pyc,*.class,*.cache
+set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
+set wildignore+=*/__pycache__/*
+set wildignore+=tags
+set wildignore+=*.tar.*
+
+nnoremap <BS> <C-^>
+nnoremap <silent> <leader>w :write<cr>
+
+set wildcharm=<C-z>
+nnoremap <leader>b :buffer <C-z><S-Tab>
+nnoremap <leader>B :sbuffer <C-z><S-Tab>
+" nnoremap <leader>bv :vert sbuffer <C-z><S-Tab>
+
+nnoremap <leader>f :find *
+nnoremap <leader>F :sfind *
+" nnoremap <leader>fv :vert sfind *
+
+nnoremap <leader>j :tjump /
+
+" Load the matchit plugin.
+packadd! matchit
+packadd! cfilter
+
+" Replace Grep with Ripgrep.
+if executable('rg')
+    set grepformat^=%f:%l:%c:%m
+    set grepprg=rg\ --vimgrep
+endif
+
+" The “patience” diff algorithm often produces more human-readable output than
+" the default, “myers.”
+if has('patch-8.1.0360')
+	set diffopt+=internal,algorithm:patience
+endif
+
+" The following command displays the names of the syntax groups in the
+" hierarchy at the current cursor position. Call it with :SS
+command! SS echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+
+" Improve the appearance of the vertical separator.
+set fillchars+=vert:│
+
+" Create a custom format command that applies formatprg to a range (defaulting
+" to the whole buffer). It restores the original cursor position and, more or
+" less, respects the indentation settings. Note that the column position
+" doesn't seem to be restored, only the line position.
+"
+" The idea is that filetype config files can use this to create autocmds.
+command! -range=% Format |
+            \ let b:view = winsaveview() |
+            \ silent execute <line1> . "," . <line2> . "!" . &l:formatprg |
+            \ call winrestview(b:view)
+
+nnoremap <silent> <leader>gq :Format<cr>
+
+" Packages.
+
+" This is normally done automatically during startup, after loading your .vimrc
+" file.  With this command it can be done earlier.
+"
+" I need to do this in order to enable some of the function calls below.
+packloadall
+
+" Make vim-qf use the default quickfix window size.
+let g:qf_auto_resize = 0
+
+" Configure the vim-test plugin.
+let test#strategy = 'make'
+
+syntax on
+
+" DO NOT EDIT MANUALLY IF YOU USE MY DOTFILES.  Themes are updated
+" programatically via my `tempus` script.
+colorscheme tempus_day
