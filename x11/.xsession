@@ -2,11 +2,11 @@
 
 # Truncate a couple of common commands that are used herein.
 _check() {
-	command -v "$1" > /dev/null
+	command -v "$1" >/dev/null
 }
 
 # Set environment variables for the session.
-. $HOME/.environment
+. "$HOME/.environment"
 
 # When the Korn shell is started interactively it reads the file named
 # by ENV.
@@ -18,17 +18,26 @@ export BASH_ENV=$HOME/.environment
 
 [ -f "$HOME/.Xdefaults" ] && xrdb -merge "$HOME/.Xdefaults"
 
-xset +dpms                     # turn off screen when idle
-xset b off                     # no bell
-xset r rate 200 45             # repeat after 200 ms, 45 char/s
+xset +dpms           # turn off screen when idle
+xset b off           # no bell
+xset r rate 200 45   # repeat after 200 ms, 45 char/s
 
 xsetroot -cursor_name left_ptr # mouse pointer
 
 # if you have a ThinkPad, the following lines enable TrackPoint
 # scrolling by dragging with the middle button.
-xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation" 1 
-xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Button" 2 
-xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Axes" 6 7 4 5 
+xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation" 1
+xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Button" 2
+xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Axes" 6 7 4 5
+
+# Load keyboard key remappings.  Swaps Caps_Lock and Control_L, and Return and
+# Control_R.
+xmodmap "$HOME/.xmodmaprc"
+
+# Adjust the behaviour of Control_L (which the above xmodmap invocation
+# assigns to the physical caps lock key) so that it generates Escape when
+# pressed alone and Control_L when used with another key.
+xcape -e 'Control_L=Escape'
 
 # Display compositor for enabling shadow effects and transparency
 # (disable it if performance is bad---also bear in mind that I do not
