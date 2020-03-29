@@ -1,29 +1,20 @@
+color indicator bold brightdefault default
+color search cyan default
+color tree default default
+color index default default .*
+color index brightdefault default ~N
+color index brightgreen default (~R|)~F
+color index brightred default ~D
+color index blue default ~X1-99
+color header cyan default .*
+color normal default default
 color status bold default default
-color indicator reverse color6 default 
-
-color index bold default default "~N"
-color index red default "~D"
-color index green default "~F"
-
-color header color2 default ".*"
+color error brightred default
+color bold default default
+color underline default default
 color quoted color7 default
-color tilde color8 default
-#color attachment lightblack default
-#color signature lightblack default
-#color index color2 default "~T"
-#color markers color13 color15
-
-color body underline blue default "(https?|ftp|news|telnet|finger)://[^ \"\t\r\n]*"
-color body underline blue default "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
-color body underline blue default "mailto:[-a-z_0-9.]+@[-a-z_0-9.]+"
-#color error brightcolor1 default
-
-
-# color message color3 color0 # Connection messages etc.
-# color prompt color3 color0
-# color quoted1 color4 color0
-# color quoted2 color5 color0
-# color sidebar_highlight color0 brightcolor2
-# color sidebar_indicator brightcolor2 color0
-
-# vim: filetype=muttrc
+color tilde brightdefault default
+color attachment yellow default
+color signature magenta default
+color body brightblue default "(https?|s?ftp)://[^ \"\t\r\n]*"
+color body brightblue default "[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}"

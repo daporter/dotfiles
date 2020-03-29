@@ -1,26 +1,19 @@
-# Paths.
-set mbox_type        = Maildir
-set header_cache     = ~/.mutt/cache/headers
+# Paths
+set mbox_type = Maildir
+set header_cache = ~/.mutt/cache/headers
 set message_cachedir = ~/.mutt/cache/bodies
 set certificate_file = ~/.mutt/certificates
 
-# Account settings.
-set  folder    = ~/mail/migadu
-set  from      = "David Porter <david@daporter.net>"
-set  spoolfile = "+inbox"
-set  postponed = "+drafts"
-set  record    = "+sent"
-set  mbox      = "+archive"
-set  trash     = "+trash"
-#set  sendmail  = "/usr/local/bin/msmtp -a migadu"
+# Account settings
+set folder = ~/mail/migadu
+set from = "David Porter <david@daporter.net>"
+set realname = "David Porter"
+set spoolfile = "+inbox"
+set postponed = "+drafts"
+set record = "+sent"
+set mbox = "+archive"
+set trash = "+trash"
 
-set sidebar_visible
-set sidebar_format = "%B%?F? [%F]?%* %?N?%N?"
-set sidebar_divider_char = " │ "
-set mail_check_stats
-
-# Specify folders which can receive mail and which will be checked for new
-# messages periodically.
 mailboxes =inbox \
 		  =aerc \
 		  =great-conversation \
@@ -28,233 +21,149 @@ mailboxes =inbox \
 		  =suckless-dev \
 		  =spam
 
-folder-hook . 'push <collapse-all>'
+# Mailcap
+auto_view text/html
+alternative_order text/plain text/enriched text/html
+set mailcap_sanitize = yes
 
-set timeout = 3          # idle time before scanning
+# Sidebar
+set sidebar_visible = no
+set sidebar_format = "%B%?F? [%F]?%* %?N?%N?"
+set sidebar_divider_char = " │ "
+set mail_check_stats = yes
 
-# Messages marked for deleting will automatically be purged without prompting.
+# Receiving
+set timeout = 3
+
+# Messages
 set delete = yes
+set confirmappend = no
+set confirmcreate = yes
+set mime_forward = no
+set resolve = no 
+set envelope_from = yes
+set fcc_attach = yes
 
-# Don't prompt for confirmation when appending messages to an existing mailbox.
-unset confirmappend
+# Header options
+ignore *
+unignore From To CC Bcc Subject Date Organization X-Label X-Mailer User-Agent
+unhdr_order *
+hdr_order from: to: cc: date: subject:
 
-# Don't prompt for confirmation when quitting.
-set quit = yes
+# Composing
+set editor = "vim +'/^$' +'setlocal textwidth=72 colorcolumn=72 formatoptions=twan12 spell' +noh"
+set abort_nosubject = no
+set askcc = no 
+set edit_headers = yes
+set text_flowed = yes
+set sig_dashes = yes
+bind editor \Cp history-up
+bind editor \Cn history-down
+bind editor <Tab> complete-query
+bind compose p postpone-message
 
-# Don't mark new unread messages as old when exiting a mailbox without reading them.
-unset mark_old
+# Replying
+set fast_reply = yes
+set reply_to = yes
+set include = ask-yes
+set reverse_name = yes
+set include = yes
+set attribution = "On %d, %n wrote:"
+
+# Forwarding
+set forward_format = "Fwd: %s"
+set forward_decode = yes
+set forward_quote = yes
 
 # Status bar
 set status_chars  = " *%A"
-set status_format = "───[ Folder: %f ]───[%r%m messages%?n? (%n new)?%?d? (%d to delete)?%?t? (%t tagged)? ]───%>─%?p?( %p postponed )?───"
+# set status_format = "───[ Folder: %f ]───[%r%m messages%?n? (%n new)?%?d? (%d to delete)?%?t? (%t tagged)? ]───%>─%?p?( %p postponed )?───"
+set status_format='───%v: %f───(%P)───%>─[Msgs:%?M?%M/?%m%?n? New:%n?%?o? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l??]───'
 
-# Header options
-ignore *                                # ignore all headers
-unignore From To CC Bcc Subject Date Organization X-Label X-Mailer User-Agent
-unhdr_order *                           # some distros order things by default
-hdr_order from: to: cc: date: subject:  # and in this order
-
-set sendmail_wait = 0  # wait for msmtp to finish
-
-# Index view options.
-set date_format  = "%d/%m/%y"
-set sort         = threads
-set sort_re          # thread based on regex
-set uncollapse_jump  # don't collapse on an unread message
+# Index view
+set arrow_cursor = yes
+set date_format = "%d/%m/%y"
+set sort = threads
+set sort_re = yes
+set uncollapse_jump = yes
 set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
-
+folder-hook . 'push <collapse-all>'
 folder-hook .    "set index_format = \"[%Z]  %D  %-20.20f  %2M %s\""
 folder-hook sent "set index_format = \"[%Z]  %D  %-20.20F  %2M %s\""
-
-# Index key bindings.
-bind index g        noop   # since 'gg' binding will alias 'g'
-bind index gg       first-entry
-bind index G        last-entry
-bind index R        group-reply
-bind index <tab>    sync-mailbox
-bind index <space>  collapse-thread
-bind index p        recall-message
-
+bind index <esc>V noop
+bind index <esc>v noop
+bind index \Cn noop
+bind index \Cp noop
+bind index g noop
+bind index gg first-entry
+bind index G last-entry
+bind index \CF next-page
+bind index \CB previous-page
+bind index \Cu half-up
+bind index \Cd half-down
+bind index n search-next
+bind index N search-opposite
+bind index R group-reply
+bind index D delete-message
+bind index P purge-message # skip trash, remove permanently
+bind index U undelete-message # also works as unpurge
+bind index F flag-message # "star" message
+bind index S save-message # TODO save where? Is this for archiving?
+bind index R group-reply
+bind index \Cl sidebar-toggle-visible
+bind index \Cp sidebar-prev
+bind index \Cn sidebar-next
+bind pager \Co sidebar-open
+bind index p recall-message
 macro index \Cr "T~U<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all messages as read"
-
 macro index a "<save-message>><enter>" "archive message"
-macro pager a "<save-message>><enter>" "archive message"
 
-macro pager S "<exit><tag-thread><tag-prefix><save-message>"
-
-# Pager view options.
-set pager_index_lines = 10 # number of index lines to show
-set pager_context = 3      # number of context lines to show
-set pager_stop             # don't go to next message automatically
-set menu_scroll            # scroll in menus
-set tilde                  # show tildes like in vim
-unset markers              # no ugly plus signs
-set reflow_text  = yes
-
+# Pager view
+set pager_index_lines = 10
+set pager_context = 3
+set pager_stop = yes
+set menu_scroll = yes
+set tilde  = yes
+set markers = no
+set reflow_text = yes
 set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
-alternative_order text/plain text/enriched text/html
-auto_view text/html
-
-# Pager key bindings.
-bind pager k  previous-line
-bind pager j  next-line
+set pager_format='───%F: %s%*─(%P)'
 bind pager g noop
 bind pager gg top
-bind pager G  bottom
-
-bind pager R  group-reply
-
-# View attachments properly.
-bind attach <return> view-mailcap
-
+bind pager G bottom
+bind pager k previous-line
+bind pager j next-line
+bind pager \CF next-page
+bind pager \CB previous-page
+bind pager \Cu half-up
+bind pager \Cd half-down
+bind pager F flag-message # "star" message
+bind pager S save-message # TODO save where? Is this for archiving?
+bind pager R group-reply
+bind pager \Cl sidebar-toggle-visible
+bind pager \Cp sidebar-prev
+bind pager \Cn sidebar-next
+bind pager \Co sidebar-open
+macro pager a "<save-message>><enter>" "archive message"
+macro pager S "<exit><tag-thread><tag-prefix><save-message>"
 macro pager \Cu <pipe-entry>extract_url<enter> "view URLs"
 
-# Compose view options.
-set realname = "David Porter"
-set envelope_from                    # which from?
-set sig_dashes                       # dashes before sig
-set edit_headers                     # show headers when composing
-set fast_reply                       # skip to compose when replying
-set askcc                            # ask for CC:
-set fcc_attach                       # save attachments with the body
-unset mime_forward                   # forward attachments as part of body
-set forward_format = "Fwd: %s"       # format of subject when forwarding
-set forward_decode                   # decode when forwarding
-set attribution = "On %d, %n wrote:" # format of quoting header
-set reply_to                         # reply to Reply to: field
-set reverse_name                     # reply as whomever it was to
-set include                          # include message in replies
-set forward_quote                    # include message in forwards
-set editor='vim +/^$ "+setlocal fo+=w spell" +noh'
-set text_flowed
+# Attachments
+bind attach <return> view-mailcap
+bind attach g noop
+bind attach gg first-entry
+bind attach \CF next-page
+bind attach \CB previous-page
+bind attach \Cu half-up
+bind attach \Cd half-down
 
-bind compose p postpone-message
+# Browser
+bind browser g noop
+bind browser gg first-entry
+bind browser G last-entry
+bind browser \CF next-page
+bind browser \CB previous-page
+bind browser \Cu half-up
+bind browser \Cd half-down
 
-
-# set tmpdir="~/"
-
-# # Message formatting
-# alternative_order text/plain text/html
-# auto_view text/html
-# set pipe_decode
-# set print_decode
-# set print_command='muttprint -P letter -F Helvetica -p TO_FILE:$HOME/mail.ps'
-
-
-# # Contact management
-# set alias_file = $HOME/.mutt/aliases.mutt
-# source $alias_file
-
-# Index interface
-# macro index,pager \\u "<enter-command>set pipe_decode = yes<enter><pipe-message>extract_url<enter><enter-command>set pipe_decode = no<enter>" "view URLs"
-# set mail_check=5
-# set timeout=10
-# unset mark_old
-# set thorough_search
-# set quit
-# set menu_scroll
-# set include
-# set fast_reply
-# bind index G last-entry
-# bind index gg first-entry
-# bind index R group-reply
-# bind index <space> collapse-thread
-# bind index V collapse-all
-# bind index \cU half-up
-# bind index \cD half-down
-# bind index \cB previous-page
-# bind index \cF next-page
-# macro index d "<save-message>=trash<enter>"
-# macro index a "<limit>~A<enter>"
-# macro index i "<limit>~U | ~F<enter>"
-# macro index I "<limit>~U<enter>"
-set sort="threads"
-# set sort_aux="reverse-last-date-received"
-# set strict_threads
-# set narrow_tree
-# unset confirmappend
-# unset collapse_unread
-# unset help
-# set delete="yes"
-
-
-# Default is: "%u%D%I %t%4n %T%.40d%> [%.7m/%.10M, %.6e%?C?, %C?, %s] "
-# set attach_format = '%u%D%I %t%4n %T%.40d%> [%.12m/%.12M, %.6e%?C?, %C?, %s] '
-
-# set folder_format = '%4C %t %f'
-
-# Default is: "%4C %Z %{{ '{%b' }} %d} %-15.15L (%?l?%4l&%4c?) %s"
-#
-# Changes:
-# - Show time in date/time.
-# - Show local date/time.
-# set index_format = "%4C %Z %[%b %d %R] %-15.15L (%?l?%4l&%4c?) %s"
-
-# Default is: "-%Z- %C/%m: %-20.20n   %s%*  -- (%P)"
-# set pager_format = '=%b %C/%m: %-20.20F   %s%*—(%P)'
-
-# set sidebar_divider_char = '│'
-# set sidebar_folder_indent = yes
-# set sidebar_format = "%B%?n?*?"
-# set sidebar_indent_string = ' '
-# set sidebar_short_path = yes
-
-# Default is: -%r-Mutt: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l? %l?]---(%s/%S)-%>-(%P)---
-# Note the "hyphens" here are actually emdashes (\u2014):
-# set status_format = "%f%r—[%?M?%M/?%m messages, %?n?%n new, ?%?d?%d deleted, ?%?F?%F important, ?%?t?%t selected, ?%?p?%p drafts, ?%l]———(%s/%S)—%>—(%P)———"
-
-# Default is: Mutt with %?m?%m messages&no messages?%?n? [%n NEW]?
-# set ts_status_format = 'mutt %m messages%?n?, %n new?'
-
-# # mu search
-# unset wait_key
-# macro index S "<save-message>"
-# macro index s "<shell-escape>mufind "
-# macro index gs "<change-folder-readonly>~/.search<enter>"
-
-# Index style
-# set date_format="%Y-%m-%d"
-# set index_format="%D %Z %-15.15L %s"
-# color index color255 color235 ~A
-# color index brightgreen color235 ~U
-# color indicator brightyellow color17
-# color tree yellow color235
-# color index brightgreen color235 "~v~(~U)"
-# color status brightgreen blue
-
-# # Message style
-# color normal color255 color235
-# color quoted color85 color235
-# color signature color245 color235
-# color hdrdefault color250 color235
-# color tilde color250 color235
-# color search black white
-
-# # Pager interface
-# set pager_stop
-# unset markers
-# bind pager gg top
-# bind pager G bottom
-# bind pager R group-reply
-# bind pager j next-line
-# bind pager k previous-line
-# bind pager \Cu half-up
-# bind pager \Cd half-down
-# bind pager \Cf next-page
-# bind pager \Cb previous-page
-# bind pager <space> next-page
-# bind pager <backspace> previous-page
-# macro pager d "<save-message>=trash<enter>"
-
-# # Editor interface
-# bind editor <space> noop
-
-# # Load local config file for local overrides
-# source `x=~/.muttrc.local; if [ -e "$x" ]; then echo "$x"; fi; echo /dev/null`
-
-
-
-# source $HOME/.mutt/commands.mutt
-# source $HOME/.mutt/bindings.mutt
-# source $HOME/.mutt/macros.mutt
 source $HOME/.mutt/colours.mutt

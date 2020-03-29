@@ -1,6 +1,0 @@
-# Automatically feed HTML emails through elinks, but only if there is no
-# alternative.
-auto_view text/html
-alternative_order text/plain text/enriched text/html
-
-# vim: filetype=muttrc
