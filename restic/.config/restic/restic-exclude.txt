@@ -1,0 +1,7 @@
+$HOME/.cache
+$HOME/.mozilla
+$HOME/.surf
+$HOME/Downloads
+$HOME/Sync
+$HOME/src
+$HOME/tmp
