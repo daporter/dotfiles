@@ -122,4 +122,6 @@ syntax on
 
 " DO NOT EDIT MANUALLY IF YOU USE MY DOTFILES.  Themes are updated
 " programatically via my `tempus` script.
-colorscheme tempus_day
+colorscheme tempus_classic
+
+highlight Comment cterm=italic
