@@ -19,6 +19,10 @@ export MAILPATH
 HISTFILE=$HOME/.sh_history
 HISTSIZE=5000
 
+# The default pager.  This is used by programs such as git.
+PAGER=less
+export PAGER
+
 # Simple prompt
 if [ -n "$SSH_CONNECTION" ]; then
 	PS1="$(tput bold)\\u@\\h:\\w [\\j] \$$(tput sgr0) "
