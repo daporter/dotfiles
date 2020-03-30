@@ -63,8 +63,8 @@ alias ....='cd ../../..'
 
 # Set some options for `less` to make it a bit more convenient to use.
 less_opts='--clear-screen --quit-if-one-screen --quit-at-eof --ignore-case'
-less_opts="$less_opts --status-column --LONG-PROMPT --RAW-CONTROL-CHARS"
-less_opts="$less_opts --HILITE-UNREAD --no-init"
+less_opts="$less_opts --LONG-PROMPT --RAW-CONTROL-CHARS --HILITE-UNREAD"
+less_opts="$less_opts --no-init"
 # shellcheck disable=SC2139
 alias less="less $less_opts"
 
