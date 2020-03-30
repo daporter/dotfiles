@@ -7,3 +7,8 @@ keysym Control_L = Caps_Lock
 keysym Caps_Lock = Control_L
 add Lock = Caps_Lock
 add Control = Control_L
+
+!
+! Reverse the mouse button behaviour as I'm using the mouse with my left hand.
+!
+pointer = 3 2 1 4 5 6 7 8 9 10
