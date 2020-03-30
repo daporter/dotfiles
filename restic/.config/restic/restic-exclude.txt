@@ -2,6 +2,7 @@ $HOME/.cache
 $HOME/.mozilla
 $HOME/.surf
 $HOME/Downloads
-$HOME/Sync
+$HOME/Sync/Calibre
+$HOME/Sync/media
 $HOME/src
 $HOME/tmp
