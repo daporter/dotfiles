@@ -19,10 +19,6 @@ export MAILPATH
 HISTFILE=$HOME/.sh_history
 HISTSIZE=5000
 
-# The default pager.  This is used by programs such as git.
-PAGER=less
-export PAGER
-
 # Simple prompt
 if [ -n "$SSH_CONNECTION" ]; then
 	PS1="$(tput bold)\\u@\\h:\\w [\\j] \$$(tput sgr0) "
@@ -71,6 +67,10 @@ less_opts="$less_opts --status-column --LONG-PROMPT --RAW-CONTROL-CHARS"
 less_opts="$less_opts --HILITE-UNREAD --no-init"
 # shellcheck disable=SC2139
 alias less="less $less_opts"
+
+# The default pager.  This is used by programs such as git.
+PAGER="less $less_opts"
+export PAGER
 
 # Enable verbose output for common utilities.
 alias cp='cp -v'
