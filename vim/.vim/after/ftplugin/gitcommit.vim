@@ -5,10 +5,10 @@ if executable('par')
 endif
 
 if executable('gitlint')
-    let &l:makeprg = 'gitlint --msg-filename'
-    let &l:errorformat = '%l: %t%n %m'
+	let &l:makeprg = 'gitlint --msg-filename % lint'
+	let &l:errorformat = '%l: %m'
 endif
 
-command! -buffer Lint update | silent make % | redraw!
+command! -buffer Lint update | silent make | redraw!
 
 nnoremap <buffer> <leader>l :Lint<CR>
