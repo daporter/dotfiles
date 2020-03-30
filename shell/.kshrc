@@ -105,6 +105,12 @@ fi
 GPG_TTY=$(tty)
 export GPG_TTY
 
+# Pash (a password manager) configuration
+PASH_KEYID=$EMAIL
+export PASH_KEYID
+PASH_LENGTH=30
+export PASH_LENGTH
+
 # Load all supplementary scripts in ~/.profile.d
 for sh in $HOME/.profile.d/*.sh; do
 	# shellcheck source=/dev/null

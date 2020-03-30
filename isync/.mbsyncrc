@@ -6,7 +6,7 @@ SyncState *
 IMAPAccount migadu
 Host imap.migadu.com
 User david@daporter.net
-PassCmd "gpg2 --quiet --for-your-eyes-only --no-tty --decrypt ~/mail/migadu.gpg" 
+PassCmd "pash show mail/migadu" 
 SSLType IMAPS
 AuthMechs LOGIN
 
