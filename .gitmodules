@@ -13,3 +13,6 @@
 [submodule "vim/.vim/pack/dporter/start/tempus-themes-vim"]
 	path = vim/.vim/pack/dporter/start/tempus-themes-vim
 	url = git@gitlab.com:protesilaos/tempus-themes-vim.git
+[submodule "x11/.local/share/my_colours/tempus-themes-xterm"]
+	path = x11/.local/share/my_colours/tempus-themes-xterm
+	url = https://gitlab.com/protesilaos/tempus-themes-xterm
