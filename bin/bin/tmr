@@ -28,9 +28,11 @@
 # Optional dependency to work inside my custom desktop session:
 # 	apt install dunst
 
-
 # Exit if `notify-send` is not available.
-[ "$(command -v notify-send 2> /dev/null)" ] || { echo "Missing notify-send."; exit 1; }
+[ "$(command -v notify-send 2>/dev/null)" ] || {
+	echo "Missing notify-send."
+	exit 1
+}
 
 # Define a help message
 _help_message() {
@@ -39,30 +41,33 @@ _help_message() {
 }
 
 # Show the help message if arguments are not equal to one.
-[ "$#" -eq 1 ] || { _help_message; exit 1; }
+[ "$#" -eq 1 ] || {
+	_help_message
+	exit 1
+}
 
 # Capture the argument.  The first variables is meant to print the exact
 # argument.  The latter is transformed into human-readable text.
 arg="$1"
 time_clean="${1%?}"
-time_set=$(date)
+time_set=$(date +%T)
 
 # Convert the argument into a string (necessary to calculate the
 # difference between the time this script starts and ends.
 case "$arg" in
-	*m)
-		seconds=$((time_clean * 60))
-		;;
-	*h)
-		seconds=$((time_clean * 60 * 60))
-		;;
-	*d)
-		# Also something to be said about the choice of capitalisation…
-		echo "TMR Mustn't be Ridiculous" && exit 1
-		;;
-	*)
-		seconds=$time_clean
-		;;
+*m)
+	seconds=$((time_clean * 60))
+	;;
+*h)
+	seconds=$((time_clean * 60 * 60))
+	;;
+*d)
+	# Also something to be said about the choice of capitalisation…
+	echo "TMR Mustn't be Ridiculous" && exit 1
+	;;
+*)
+	seconds=$time_clean
+	;;
 esac
 
 # The message to print when the timer is done.  This will echo a message
@@ -73,16 +78,16 @@ _notify() {
 
 	# time_set="$(date --date="$timer" +%T)"
 	time_now="$(date +%T)"
-	message="Time is up!  Your timer ($arg) was set at $time_set.  Now is $time_now."
+	message="Time's up!  Your timer ($arg) was set at $time_set.  It is now $time_now."
 	alarm_sound="/usr/local/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga"
 
 	echo "$message"
 	notify-send -i clock -u critical "$message"
 
-	if [ -n "$alarm_sound" ] && [ "$(command -v mpv 2> /dev/null)" ]; then
+	if [ -n "$alarm_sound" ] && [ "$(command -v mpv 2>/dev/null)" ]; then
 		mpv "$alarm_sound"
 	else
-		echo -e "\\a"
+		echo -e '\a'
 	fi
 }
 
