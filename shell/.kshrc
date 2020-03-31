@@ -19,15 +19,37 @@ export MAILPATH
 HISTFILE=$HOME/.sh_history
 HISTSIZE=5000
 
-# Simple prompt
-if [ -n "$SSH_CONNECTION" ]; then
-	PS1="$(tput bold)\\u@\\h:\\w [\\j] \$$(tput sgr0) "
-else
-	PS1="$(tput bold)\\w [\\j] \$$(tput sgr0) "
-fi
-
 # Enable emacs-like comand-line editing.
 set -o emacs
+
+# Prompt.
+#
+# As well as the hostname and working directory, this prompt also displays the
+# number of background jobs if any are running, and the exit code of the last
+# process if it failed.
+
+_jobs() {
+	njobs=$(jobs | wc -l | sed 's/ *//')
+	if [ "$njobs" != "0" ]; then
+		print "${njobs}& "
+	else
+		print ""
+	fi
+}
+
+_exit_code() {
+	code=$?
+	if [ "$code" != "0" ]; then
+		print "${code}? "
+	else
+		print ""
+	fi
+}
+
+# Note that if the PS1 value is not wrapped in single quotes then the
+# functions within it will be evaluated only once (when the file is sourced)
+# rather than on each display of the prompt.
+PS1='$(tput bold)\\h$(tput sgr0) \\w $(_jobs)$(_exit_code)\\$ '
 
 # Functions
 # =========
@@ -83,7 +105,7 @@ alias ms='mbsync -a'
 alias n='newsboat'
 
 # Git commands.
-if [ $(command -v git) ]; then
+if [ "$(command -v git)" ]; then
 	alias gs='git status'
 	alias gadd='git add -v'
 	alias gaddp='git add --patch'
