@@ -30,14 +30,8 @@ xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation" 1
 xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Button" 2
 xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Axes" 6 7 4 5
 
-# Load keyboard key remappings.  Swaps Caps_Lock and Control_L, and Return and
-# Control_R.
+# Load my keyboard mappings.
 xmodmap "$HOME/.xmodmaprc"
-
-# Adjust the behaviour of Control_L (which the above xmodmap invocation
-# assigns to the physical caps lock key) so that it generates Escape when
-# pressed alone and Control_L when used with another key.
-xcape -e 'Control_L=Escape'
 
 # Display compositor for enabling shadow effects and transparency
 # (disable it if performance is bad---also bear in mind that I do not

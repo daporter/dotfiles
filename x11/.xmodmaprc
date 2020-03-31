@@ -1,14 +1,20 @@
+! Remap modifier keys so they are arranged on the keyoard as follows:
 !
-! Swap Caps_Lock and Control_L
-!
-remove Lock = Caps_Lock
-remove Control = Control_L
-keysym Control_L = Caps_Lock
-keysym Caps_Lock = Control_L
-add Lock = Caps_Lock
-add Control = Control_L
+! Super  Meta  Ctrl  Space  Ctrl  Meta  Super
 
-!
+clear control
+clear mod1
+clear mod4
+keycode 64  = Control_L
+keycode 113 = Control_R
+keycode 115 = Alt_L Meta_L
+keycode 116 = Alt_R Meta_R
+keycode 37  = Super_L
+keycode 109 = Super_R
+add control = Control_L Control_R
+add mod1 = Alt_L Alt_R Meta_L Meta_R
+add mod4 = Super_L Super_R
+
 ! Reverse the mouse button behaviour as I'm using the mouse with my left hand.
-!
+
 pointer = 3 2 1 4 5 6 7 8 9 10
