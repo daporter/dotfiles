@@ -16,3 +16,9 @@
 [submodule "x11/.local/share/my_colours/tempus-themes-xterm"]
 	path = x11/.local/share/my_colours/tempus-themes-xterm
 	url = https://gitlab.com/protesilaos/tempus-themes-xterm
+[submodule "vim/.vim/pack/dporter/start/vim-qf"]
+	path = vim/.vim/pack/dporter/start/vim-qf
+	url = https://github.com/romainl/vim-qf.git
+[submodule "vim/.vim/pack/dporter/start/vim-qlist"]
+	path = vim/.vim/pack/dporter/start/vim-qlist
+	url = https://github.com/romainl/vim-qlist.git
