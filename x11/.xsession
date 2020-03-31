@@ -16,7 +16,7 @@ export ENV=$HOME/.kshrc
 # BASH_ENV.
 export BASH_ENV=$HOME/.environment
 
-[ -f "$HOME/.Xdefaults" ] && xrdb -merge "$HOME/.Xdefaults"
+[ -f "$HOME/.Xresources" ] && xrdb -merge "$HOME/.Xresources"
 
 xset +dpms           # turn off screen when idle
 xset b off           # no bell

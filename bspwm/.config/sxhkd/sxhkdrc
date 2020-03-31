@@ -27,7 +27,7 @@
 # p == reload melonpanel (my lemonbar script)
 # t == dmenu to choose Tempus theme
 # q == dmenu interface to log out, lock, switch users, reboot, shutdown
-# x == reload the Xdefaults file
+# x == reload the Xresources file
 super + e ; {c,d,f,s,p,t,q,x}
 	{ \
 	toggle_compton, \
@@ -37,7 +37,7 @@ super + e ; {c,d,f,s,p,t,q,x}
 	melonpanel, \
 	tempusmenu, \
 	poweroptionsmenu, \
-	xrdb -merge "$HOME/.Xdefaults" \
+	xrdb -merge "$HOME/.Xresources" \
 	}
 
 # Main programs

@@ -163,7 +163,7 @@ _x_and_shell() {
 
 	_depcheck xterm
 
-	xresources="$HOME"/.Xdefaults
+	xresources="$HOME"/.Xresources
 	if [ -f "$xresources" ]; then
 		xrdb -merge "$xresources"
 	fi
