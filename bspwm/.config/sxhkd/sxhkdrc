@@ -74,4 +74,4 @@ super + x ; 0
 # Bring up the help text for common keybindings
 super + {F1,Home}
 	xterm -class "my_float_window" \
-	-geometry '100x30' -e less "$HOME/.config/sxhkd/heatsheet_sxhkdrc.txt"
+	-geometry '100x30' -e less "$HOME/.config/sxhkd/cheatsheet_sxhkdrc.txt"
