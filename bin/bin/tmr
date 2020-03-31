@@ -82,7 +82,7 @@ _notify() {
 	alarm_sound="/usr/local/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga"
 
 	echo "$message"
-	notify-send -i clock -u critical "$message"
+	notify-send -i alarm-clock -u critical "$message"
 
 	if [ -n "$alarm_sound" ] && [ "$(command -v mpv 2>/dev/null)" ]; then
 		mpv "$alarm_sound"
