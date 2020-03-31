@@ -1,12 +1,18 @@
 #!/bin/sh
-
+#
 # Run the sequence of linters I prefer for my text files.
 
 if [ $# -ne 1 ]; then
-    PROGNAME=$(basename "$0")
-    printf "Usage %s <file>\\n" "$PROGNAME"
-    exit 1
+	PROGNAME=$(basename "$0")
+	printf 'Usage %s <file>\n' "$PROGNAME"
+	exit 1
 fi
 
-proselint "$1"
-writegood --parse "$1"
+file="$1"
+
+_check() {
+	command -v "$1" >/dev/null
+}
+
+_check proselint && proselint "$file"
+_check writegood && writegood --parse "$file"
