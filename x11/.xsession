@@ -18,7 +18,6 @@ export BASH_ENV=$HOME/.environment
 
 [ -f "$HOME/.Xresources" ] && xrdb -merge "$HOME/.Xresources"
 
-xset +dpms           # turn off screen when idle
 xset b off           # no bell
 xset r rate 200 45   # repeat after 200 ms, 45 char/s
 
@@ -44,6 +43,9 @@ _check compton && compton --config "$HOME"/.config/compton.conf &
 # works (using the Xfce desktop manager):
 # xfdesktop --sm-client-disable --disable-wm-check &
 _check feh && "$HOME"/.fehbg &
+
+# Automatically lock the screen after 5 minutes of inactivity.
+xidle -timeout 300 -program "/usr/local/bin/slock" &
 
 # Launch the Dunst notifier.
 _check dunst && dunst &
