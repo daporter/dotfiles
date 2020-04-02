@@ -32,6 +32,10 @@ xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Axes" 6 7 4 5
 # Load my keyboard mappings.
 xmodmap "$HOME/.Xmodmap"
 
+# Disable repeat for the Escape key (which xmodmap maps to the physical the
+# Caps Lock key).
+xset -r 66
+
 # Display compositor for enabling shadow effects and transparency
 # (disable it if performance is bad---also bear in mind that I do not
 # use transparent areas in any of my interfaces).
