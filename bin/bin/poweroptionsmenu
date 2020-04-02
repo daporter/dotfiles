@@ -41,8 +41,7 @@ my_dmenu() {
 
 # Possible actions (see case statement at the end for the actual
 # commands)
-# actions=('Lock screen' 'Quit session' 'Switch users' 'Reboot' 'Shutdown')
-actions=('Lock screen' 'Quit session' 'Suspend', 'Hibernate', 'Reboot' 'Shutdown')
+actions=('Lock screen' 'Quit session' Suspend Hibernate Reboot Shutdown)
 
 # List actions to choose from
 list_actions() {
