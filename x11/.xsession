@@ -31,7 +31,7 @@ xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Button" 2
 xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Axes" 6 7 4 5
 
 # Load my keyboard mappings.
-xmodmap "$HOME/.xmodmaprc"
+xmodmap "$HOME/.Xmodmap"
 
 # Display compositor for enabling shadow effects and transparency
 # (disable it if performance is bad---also bear in mind that I do not
