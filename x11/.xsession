@@ -51,4 +51,7 @@ _check dunst && dunst &
 # Launch xbanish to hide the mouse cursor when a key is pressed.
 _check xbanish && xbanish &
 
+# If an external monitor is connected, switch to it.
+"$HOME/bin/external_monitor"
+
 exec bspwm
