@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 
-    # This program is free software: you can redistribute it and/or modify
-    # it under the terms of the GNU General Public License as published by
-    # the Free Software Foundation, either version 3 of the License, or
-    # (at your option) any later version.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
-    # This program is distributed in the hope that it will be useful,
-    # but WITHOUT ANY WARRANTY; without even the implied warranty of
-    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    # GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
-    # You should have received a copy of the GNU General Public License
-    # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Description
 # -----------
@@ -26,7 +25,7 @@
 # MATE, and Xfce to set the wallpaper accordingly.
 #
 # My dots: https://gitlab.com/protesilaos/dotfiles
-# 
+#
 # Dependencies on Debian Buster:
 # 	apt install suckless-tools sxiv
 #
@@ -56,10 +55,11 @@ my_sxiv() {
 
 # Get image files that end in .{jpg,jpeg,png} from ~/pictures.
 find_pictures() {
-	if [ "$(command -v fdfind 2> /dev/null)" ]; then
-		fdfind 'jpg|jpeg|png' "$HOME/pictures/"
+	if [ "$(command -v fdfind 2>/dev/null)" ]; then
+		fdfind 'jpg|jpeg|png' "$HOME/pictures/theme"
 	else
-		find "$HOME/pictures" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \)
+		find "$HOME/pictures/theme" \
+			-type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \)
 	fi
 }
 
@@ -113,11 +113,11 @@ nbm_exec() {
 		# another sxiv interface.  Ask for input on one of them.
 		if [[ $(echo "$sxiv_output" | wc -l) -gt 1 ]]; then
 			echo 'Filtering marked images'
-			echo  "Your choices are:"
-			echo  "$sxiv_output"
+			echo "Your choices are:"
+			echo "$sxiv_output"
 			echo 'Mark just one to set as new wallpaper'
 			notify-send -i eog 'Filtering marked images' \
-			'Mark just one to set as new wallpaper'
+				'Mark just one to set as new wallpaper'
 			sxiv_output_filter="$(echo "$sxiv_output" | my_sxiv)"
 
 			# If the filtered input is still greater than one, throw an
@@ -125,7 +125,7 @@ nbm_exec() {
 			if [ -n "$sxiv_output_filter" ]; then
 				if [[ $(echo "$sxiv_output_filter" | wc -l) -gt 1 ]]; then
 					notify-send -i eog 'ERROR. Must mark only one' \
-					'You selected more than one file. Aborting...'
+						'You selected more than one file. Aborting...'
 					echo 'ERROR. Cannot set wallpaper.'
 					echo 'You selected more than one file.'
 					echo 'Aborting...'
