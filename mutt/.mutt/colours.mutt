@@ -1,4 +1,4 @@
-color indicator bold brightdefault default
+color indicator reverse bold white default
 color search cyan default
 color tree default default
 color index default default .*
@@ -13,7 +13,7 @@ color error brightred default
 color bold default default
 color underline default default
 color quoted color7 default
-color tilde brightdefault default
+color tilde color8 default
 color attachment yellow default
 color signature magenta default
 color body brightblue default "(https?|s?ftp)://[^ \"\t\r\n]*"

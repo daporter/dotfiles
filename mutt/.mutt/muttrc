@@ -81,7 +81,6 @@ set status_chars  = " *%A"
 set status_format='───%v: %f───(%P)───%>─[Msgs:%?M?%M/?%m%?n? New:%n?%?o? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l??]───'
 
 # Index view
-set arrow_cursor = yes
 set date_format = "%d/%m/%y"
 set sort = threads
 set sort_re = yes
