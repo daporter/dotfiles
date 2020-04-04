@@ -12,8 +12,7 @@ color status bold default default
 color error brightred default
 color bold default default
 color underline default default
-color quoted color7 default
-color tilde color8 default
+color quoted lightyellow default
 color attachment yellow default
 color signature magenta default
 color body brightblue default "(https?|s?ftp)://[^ \"\t\r\n]*"
