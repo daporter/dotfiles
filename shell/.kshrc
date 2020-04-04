@@ -1,16 +1,13 @@
 #!/bin/sh
 
-# This file is automatically executed by Korn interactive shells (when
-# ENV is set to point to it).
+# Korn Shell Initialisation
+# ==============================================================================
 
-# General Settings
-# ================
+# ............................................................. General settings
 
-# Source the global configuration.
 # shellcheck source=/dev/null
 . /etc/ksh.kshrc
 
-# Set necessary environment variables for the session.
 . "$HOME/.environment"
 
 MAILPATH=/var/mail/david:$HOME/mail/personal/inbox:$HOME/mail/migadu/inbox
@@ -19,14 +16,19 @@ export MAILPATH
 HISTFILE=$HOME/.sh_history
 HISTSIZE=5000
 
-# Enable emacs-like comand-line editing.
+# Enable emacs-like comand-line editing
 set -o emacs
 
-# Prompt.
-#
+# ....................................................................... Prompt
+
 # As well as the hostname and working directory, this prompt also displays the
 # number of background jobs if any are running, and the exit code of the last
 # process if it failed.
+
+red=$(tput setaf 1 1 1)
+cyan=$(tput setaf 6 6 6)
+bold=$(tput bold)
+reset=$(tput sgr0)
 
 _jobs() {
 	njobs=$(jobs | wc -l | sed 's/ *//')
@@ -40,7 +42,7 @@ _jobs() {
 _exit_code() {
 	code=$?
 	if [ "$code" != "0" ]; then
-		print "${code}? "
+		print "${red}${code}?${reset} "
 	else
 		print ""
 	fi
@@ -49,17 +51,16 @@ _exit_code() {
 # Note that if the PS1 value is not wrapped in single quotes then the
 # functions within it will be evaluated only once (when the file is sourced)
 # rather than on each display of the prompt.
-PS1='$(tput bold)\\h$(tput sgr0) \\w $(_jobs)$(_exit_code)\\$ '
+PS1='$bold\\h$reset \\w $(_jobs)$(_exit_code)${cyan}\\$${reset} '
 
-# Functions
-# =========
+# .................................................................... Functions
 
-# Enable a single "e" to spawn my preferred editor.
+# Enable a single "e" to spawn my preferred editor
 e() {
 	"$EDITOR" "$@"
 }
 
-# Show which shell commands I use most frequently.
+# Show which shell commands I use most frequently
 frequent_cmds() {
 	pattern="$1"
 	if [ -z "$pattern" ]; then
@@ -69,12 +70,11 @@ frequent_cmds() {
 	fi
 }
 
-# Aliases
-# =======
+# ...................................................................... Aliases
 
 alias ls='ls -F'
 
-# List all filenames, including any hidden files except "." and "..".
+# List all filenames, including any hidden files except "." and ".."
 alias la='ls -A'
 alias ll='ls -Al'
 
@@ -90,7 +90,7 @@ less_opts="$less_opts --no-init"
 # shellcheck disable=SC2139
 alias less="less $less_opts"
 
-# The default pager.  This is used by programs such as git.
+# The default pager used by programs such as git.
 PAGER="less $less_opts"
 export PAGER
 
@@ -123,11 +123,13 @@ if [ "$(command -v git)" ]; then
 	alias gpm='git push -u origin master'
 fi
 
+# ......................................................................... Misc
+
 # GnuPG configuration.
 GPG_TTY=$(tty)
 export GPG_TTY
 
-# Pash (a password manager) configuration
+# Pash password manager configuration
 PASH_KEYID=$EMAIL
 export PASH_KEYID
 PASH_LENGTH=30
