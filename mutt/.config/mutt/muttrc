@@ -165,4 +165,4 @@ bind browser \CB previous-page
 bind browser \Cu half-up
 bind browser \Cd half-down
 
-source $HOME/.mutt/colours.mutt
+source colours.mutt
