@@ -1,29 +1,93 @@
+! Keyboard remappings
+! ==============================================================================
+
+! .................................................................. Prior notes
+
+! To get the current status of the modifiers:
+!
+!    xmodmap -pm
+!
+! To find out the key codes that are available:
+!
+!    xmodmap -pke
+!
+! Or narrow the results, e.g.:
+!
+!    xmodmap -pke | grep -E '(Alt|Shift)'
+!
+! Alternatively, use `xev` to print the key code upon key press.
+!
+! Here are some of the most likely candidates for changes:
+!
+!    keycode 37  = Control_L
+!    keycode 50  = Shift_L
+!    keycode 62  = Shift_R
+!    keycode 64  = Alt_L
+!    keycode 66  = Caps_Lock
+!    keycode 77  = Num_Lock
+!    keycode 105 = Control_R
+!    keycode 108 = Alt_R
+!    keycode 133 = Super_L
+!    keycode 134 = Super_R
+!    keycode 135 = Menu
+
+! ............................................................ Reorder modifiers
+
 ! Remap modifier keys so they are arranged on the keyboard as follows:
 !
 !     Super Meta Ctrl Space Ctrl Meta Super
-!
+
+! Clear the affected modifiers
 clear Control
 clear Mod1
 clear Mod4
+
+! Left Control as left Super
 keycode 37  = Super_L
-keycode 115 = Alt_L Meta_L
+
+! Left Windows as left Alt
+keycode 115 = Alt_L
+
+! Left Alt as left Control
 keycode 64  = Control_L
+
+! Right Alt as right Control
 keycode 113 = Control_R
-keycode 116 = Alt_R Meta_R
-keycode 117 = Alt_R Meta_R
+
+! Right Windows as right Alt
+keycode 116 = Alt_R
+
+! Menu as right Alt
+keycode 117 = Alt_R
+
+! Right Control as right Super
 keycode 109 = Super_R
+
+! Reinstate the affected modifiers
 add Control = Control_L Control_R
-add Mod1 = Alt_L Alt_R Meta_L Meta_R
+add Mod1 = Alt_L Alt_R
 add Mod4 = Super_L Super_R
 
-! Swap Caps Lock and Escape.
+! ......................................................... Caps Lock <-> Escape
+
+! Clear the modifier
 clear Lock
+
+! Escape as Caps Lock
 keycode 9 = Caps_Lock
+
+! Caps Lock as Escape
 keycode 66 = Escape
+
+! Reinstate the modifier
 add Lock = Caps_Lock
 
-! Make F12 behave as Compose.
+! .................................................................. Compose key
+
+! F12 as Compose key
 keysym F12 = Multi_key
+
+! ........................................................................ Mouse
 
 ! Swap mouse buttons 1 and 2, since I'm using the mouse with my left hand.
 pointer = 3 2 1 4 5 6 7 8 9 10
