@@ -96,3 +96,12 @@ super + x; {w}
 # dmenu_run and passmenu using my custom colours.
 super + {d,p}
         {own_script_run_dmenu_xcolors,own_script_run_passmenu_xcolors}
+
+# ............................................................... Media controls
+
+# Raise and lower the volume in small steps
+super + Up
+	mixerctl outputs.master=+20,+20
+
+super + Down
+	mixerctl outputs.master=-20,-20
