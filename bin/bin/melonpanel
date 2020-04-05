@@ -60,7 +60,7 @@ tempus_theme="$HOME/.local/share/my_colours/active-tempus-theme.sh"
 [ -e "$tempus_theme" ] || { echo "Missing Tempus theme"; exit 1; }
 source "$tempus_theme"
 
-melonpanel_height=22 # DO NOT EDIT the name of this parameter (checked by other scripts).
+melonpanel_height=20 # DO NOT EDIT the name of this parameter (checked by other scripts).
 
 # Fonts (upstream lemonbar only supports bitmap fonts)
 # ----------------------------------------------------
@@ -115,10 +115,8 @@ melonpanel_height=22 # DO NOT EDIT the name of this parameter (checked by other 
 # corresponding Debian package, comment out the variables below and
 # adapt them to your needs.  Valid typeface names are whatever is
 # supported by fontconfig (also see my dotfiles for the relevant rules).
-# fontmain='Luxi Sans:style=regular:size=9'
-# fontbold='Luxi Sans:style=bold:size=9'
-fontmain='Noto Sans:size=10:style=condensed:weight=regular'
-fontbold='Noto Sans:size=10:style=condensed:weight=bold'
+fontmain='Noto Sans:size=10:style=SemiCondensed:weight=Regular'
+fontbold='Noto Sans:size=10:style=SemiCondensed:weight=Bold'
 
 # Panel modules
 # -------------
