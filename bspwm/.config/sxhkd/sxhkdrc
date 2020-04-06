@@ -40,6 +40,12 @@ super + e ; {c,d,f,s,p,t,q,x}
 	xrdb -merge "$HOME/.Xresources" \
 	}
 
+# Provide a hotkey to run the script for deactivating the external
+# display and activating the laptop display.
+super + BackSpace
+    extmonitor disconnect
+
+
 # Main programs
 # -------------
 
