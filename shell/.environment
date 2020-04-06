@@ -14,6 +14,12 @@ export EDITOR
 EMAIL=david@daporter.net
 export EMAIL
 
+MAIL=/var/mail/david
+export MAIL
+
+MAILPATH=$MAIL:$HOME/mail/personal/inbox:$HOME/mail/migadu/inbox
+export MAILPATH
+
 # Some programs (such as df, du, and ls) display sizes in “blocks”.  You
 # can adjust the block size and method of display to make sizes easier to
 # read.  We'll use a block size of 1kb.

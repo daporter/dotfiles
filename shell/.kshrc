@@ -10,9 +10,6 @@
 
 . "$HOME/.environment"
 
-MAILPATH=/var/mail/david:$HOME/mail/personal/inbox:$HOME/mail/migadu/inbox
-export MAILPATH
-
 HISTFILE=$HOME/.sh_history
 HISTSIZE=5000
 
