@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Simple Pomodoro timer
+# ======================================================================
+
+while true; do
+	n=0
+	while [ $n -lt 3 ]; do
+		echo "Starting 25m timer"
+		tmr 25m
+		echo "Starting 5m timer"
+		tmr 5m
+		n=$((n + 1))
+	done
+
+	echo "Starting 25m timer"
+	tmr 25m
+	echo "Starting 15m timer"
+	tmr 15m
+done
