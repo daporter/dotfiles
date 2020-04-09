@@ -18,14 +18,9 @@ set -o emacs
 
 # ....................................................................... Prompt
 
-# As well as the hostname and working directory, this prompt also displays the
-# number of background jobs if any are running, and the exit code of the last
-# process if it failed.
-
-red=$(tput setaf 1 1 1)
-cyan=$(tput setaf 6 6 6)
-bold=$(tput bold)
-reset=$(tput sgr0)
+# As well as the hostname and working directory, this prompt also
+# displays the number of background jobs if any are running, and the
+# exit code of the last process if it failed.
 
 _jobs() {
 	njobs=$(jobs | wc -l | sed 's/ *//')
@@ -39,16 +34,26 @@ _jobs() {
 _exit_code() {
 	code=$?
 	if [ "$code" != "0" ]; then
-		print "${red}${code}?${reset} "
+		print "${code}? "
 	else
 		print ""
 	fi
 }
 
 # Note that if the PS1 value is not wrapped in single quotes then the
-# functions within it will be evaluated only once (when the file is sourced)
-# rather than on each display of the prompt.
-PS1='$bold\\h$reset \\w $(_jobs)$(_exit_code)${cyan}\\$${reset} '
+# functions within it will be evaluated only once (when the file is
+# sourced) rather than on each display of the prompt.
+
+if [ "$TERM" = dumb ]; then
+	PS1='\\h \\w $(_jobs)$(_exit_code)\$ '
+else
+	red=$(tput setaf 1 1 1)
+	cyan=$(tput setaf 6 6 6)
+	bold=$(tput bold)
+	reset=$(tput sgr0)
+
+	PS1='$bold\\h$reset \\w $(_jobs)${red}$(_exit_code)${reset}${cyan}\\$${reset} '
+fi
 
 # .................................................................... Functions
 
