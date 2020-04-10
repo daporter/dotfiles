@@ -49,7 +49,7 @@ _check compton && compton &
 _check feh && "$HOME/.fehbg" &
 
 # Automatically lock the screen after 5 minutes of inactivity.
-xidle -timeout 300 -program /usr/local/bin/slock &
+xidle -timeout 300 &
 
 # Launch the Dunst notifier.
 _check dunst && dunst &
