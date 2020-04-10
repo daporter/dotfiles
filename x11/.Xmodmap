@@ -85,7 +85,7 @@ add Lock = Caps_Lock
 ! .................................................................. Compose key
 
 ! F12 as Compose key
-keysym F12 = Multi_key
+keycode 96 = Multi_key
 
 ! ........................................................................ Mouse
 
