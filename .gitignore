@@ -1,6 +1,15 @@
+*~
 /bin/bin/pash
 /bin/bin/shfmt
 /colours/.wallpaper.jpg
+/emacs/.emacs.d/auto-save-list
+/emacs/.emacs.d/elfeed
+/emacs/.emacs.d/elpa
+/emacs/.emacs.d/feeds.el.gpg
+/emacs/.emacs.d/network-security.data
+/emacs/.emacs.d/tramp
+/emacs/.emacs.d/transient
+/emacs/.emacs.d/url
 /newsboat/.config/newsboat/urls
 /vim/.vim/.netrwhist
 /vim/.vim/spell
