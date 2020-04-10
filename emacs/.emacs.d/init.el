@@ -890,3 +890,8 @@ syntax for use by the `elfeed' package."
               :map elfeed-show-mode-map
               ("v" . ambrevar/elfeed-play-with-mpv)
               ("w" . elfeed-show-yank)))
+
+;; ............................................ Emacs server and desktop
+
+(use-package server
+  :hook (after-init . server-start))

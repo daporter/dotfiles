@@ -45,9 +45,7 @@ super + e ; {c,d,f,s,p,t,q,x}
 super + BackSpace
     extmonitor disconnect
 
-
-# Main programs
-# -------------
+# ........................................................ Main programs
 
 # Terminal emulator with and without TMUX. I normally use `tmux` which
 # is ideal for working on multiple terminals, switching sessions, and
@@ -58,13 +56,22 @@ super + BackSpace
 super + {_, shift + } Return
 	{xterm -e tmux new-session -A -s 'Default', xterm}
 
+# ............................................... Commonly-used programs
+
+super + c ; m
+    emacsclient --create-frame --eval '(gnus)'
+super + c ; n
+    emacsclient --create-frame --eval '(elfeed)'
+super + c ; w
+	notify-send -i firefox "Launching Firefox" && firefox
+      
+# ......................................................... GUI programs
+
 # GUI programs. Where these are alternatives to common CLI tools they
 # are mapped to the same number as their counterparts, but prepended
 # with a `g` (mnemonic for GUI).
 super + g ; {1}
-	{ \
-	notify-send -i firefox "Launching Firefox" && firefox, \
-	}
+	notify-send -i firefox "Launching Firefox" && firefox
 
 # CLI programs. Any browser and/or file manager should be assigned the
 # numbers 1 and 2 respectively, in order to keep consistency with the
@@ -97,11 +104,11 @@ super + {F1,Home}
 
 # NOTE the keys are mnemonics for Backgrounds, Wallpapers, Tasks.
 super + x; {w}
-        {nbm}
+    {nbm}
 
 # dmenu_run and passmenu using my custom colours.
 super + {d,p}
-        {own_script_run_dmenu_xcolors,own_script_run_passmenu_xcolors}
+    {own_script_run_dmenu_xcolors,own_script_run_passmenu_xcolors}
 
 # ............................................................... Media controls
 
