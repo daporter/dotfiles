@@ -103,6 +103,16 @@ monitor-related events."
 
   :hook (after-init . dap/fonts-per-monitor))
 
+;; Backups
+
+(use-package emacs
+  :config
+  (setq-default backup-directory-alist
+                `(("" . ,(expand-file-name "backup/" user-emacs-directory)))
+                auto-save-default nil
+                backup-by-copying t
+                delete-old-versions t))
+
 ;; ..................................... Selection candidates and search methods
 
 ;; wgrep
@@ -607,7 +617,6 @@ ispell dictionaries with `dap/ispell-toggle-dictionaries'."
   (setq org-log-note-clock-out nil)
   (setq org-log-redeadline nil)
   (setq org-log-reschedule nil)
-  (setq org-reverse-note-order t)
   (setq org-read-date-prefer-future 'time))
 
 ;; ....................................................................... Email
