@@ -120,8 +120,6 @@ let test#strategy = 'make'
 
 syntax on
 
-" DO NOT EDIT MANUALLY IF YOU USE MY DOTFILES.  Themes are updated
-" programatically via my `tempus` script.
-colorscheme tempus_classic
+source ~/.vim/current_scheme
 
 highlight Comment cterm=italic

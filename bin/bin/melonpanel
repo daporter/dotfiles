@@ -54,7 +54,7 @@ pgrep -x lemonbar-xft > /dev/null && pkill -x lemonbar-xft
 # are "color{0-15}", using the standard terminal sequence, plus
 # "foreground{,alt}", "background{,alt,dim}".  For details, see the main
 # Tempus themes repo: https://gitlab.com/protesilaos/tempus-themes
-tempus_theme="$HOME/.local/share/my_colours/active-tempus-theme.sh"
+tempus_theme="$HOME/.local/share/my_colours/active-theme.sh"
 
 # Source the colour definitions if the file exists.  Else exit.
 [ -e "$tempus_theme" ] || { echo "Missing Tempus theme"; exit 1; }

@@ -28,9 +28,9 @@
 # The ANSI escape sequences are defined in this document
 # http://pod.tst.eu/http://cvs.schmorp.de/rxvt-unicode/doc/rxvt.7.pod#XTerm_Operating_System_Commands
 
-active_theme="$HOME/.local/share/my_colours/active-theme-content"
+active_theme="$HOME/.local/share/my_colours/active-theme.sh"
 
-if [ -f "$active_theme" ]; then
+if [ -r "$active_theme" ]; then
 	# capture all active colours
 	col_array="$(grep '^.*=' "$active_theme")"
 else

@@ -22,10 +22,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 # Check for dependency, else exit the given function that calls this.
 _depcheck() {
-	command -v "$1" > /dev/null || { echo "Missing dependency: $1."; return 1; }
+	command -v "$1" >/dev/null || {
+		echo "Missing dependency: $1."
+		return 1
+	}
 }
 
 _depcheck dmenu
@@ -37,9 +39,12 @@ _filesource() {
 }
 
 tempus_files="$HOME"/.local/share/my_colours
-[ -d "$tempus_files" ] || { echo "Missing path to Tempus themes."; exit 1; }
+[ -d "$tempus_files" ] || {
+	echo "Missing path to Tempus themes."
+	exit 1
+}
 
-tempus_active="$tempus_files"/active-tempus-theme.sh
+tempus_active="$tempus_files"/active-theme.sh
 tempus_shell_files="$tempus_files"/shell/
 
 dmenu_font="$HOME"/.local/share/my_custom_ui_font.sh
@@ -52,20 +57,20 @@ _themes() {
 	# /path/to/tempus_classic.sh ==> classic
 	while IFS= read -r -d $'\0' line; do
 		line="${line##[a-z/_]*tempus_}"
-		printf "%s\\n" "${line%.sh}"
+		printf '%s\n' "${line%.sh}"
 	done < <(find "$tempus_shell_files" -type f -name '*.sh' -print0 | sort -z)
 }
 
 _dmenu() {
 	dmenu -p 'Select Tempus theme' -nb "${background:-'#000000'}" -nf "${foreground:-'#ffffff'}" \
-	-sb "${color5:-'#bb6688'}" -sf "${background:-'#000000'}" -fn "${my_custom_ui_font:-'DejaVu Sans-10'}"
+		-sb "${color5:-'#bb6688'}" -sf "${background:-'#000000'}" -fn "${my_custom_ui_font:-'DejaVu Sans-10'}"
 }
 
 selection="$(_themes | _dmenu)"
 
 if [ "$?" = 0 ]; then
 	case "$selection" in
-		autumn|classic|dawn|day|dusk|fugit|future|night|past|rift|spring|summer|tempest|totus|warp|winter)
+		autumn | classic | dawn | day | dusk | fugit | future | night | past | rift | spring | summer | tempest | totus | warp | winter)
 			tempus "$selection"
 			;;
 		*)

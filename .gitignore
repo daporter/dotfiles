@@ -1,6 +1,7 @@
 *~
 /bin/bin/pash
 /bin/bin/shfmt
+/bspwm/.config/bspwm/bspwm_colours
 /colours/.wallpaper.jpg
 /emacs/.emacs.d/auto-save-list
 /emacs/.emacs.d/elfeed
@@ -11,5 +12,7 @@
 /emacs/.emacs.d/transient
 /emacs/.emacs.d/url
 /newsboat/.config/newsboat/urls
+/tmux/.tmux_colours.conf
 /vim/.vim/.netrwhist
+/vim/.vim/current_scheme
 /vim/.vim/spell

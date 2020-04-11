@@ -29,7 +29,7 @@
 # Last full review on 2019-04-11
 
 # pass custom colours to dmenu command
-source "$HOME/.local/share/my_colours/active-tempus-theme.sh"
+source "$HOME/.local/share/my_colours/active-theme.sh"
 
 # get the system-wide custom font
 source "$HOME/.local/share/my_custom_ui_font.sh"
