@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Toggle visibility of Melonpanel
+# ======================================================================
+
+if xdotool search --onlyvisible --name Melonpanel >/dev/null; then
+	panel_hide
+else
+	panel_unhide
+fi
