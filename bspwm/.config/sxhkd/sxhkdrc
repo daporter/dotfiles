@@ -114,7 +114,6 @@ super + {d,p}
 
 # Raise and lower the volume in small steps
 super + Up
-	mixerctl outputs.master=+20,+20
-
+	mixerctl -q outputs.master=+20,+20
 super + Down
-	mixerctl outputs.master=-20,-20
+	mixerctl -q outputs.master=-20,-20
