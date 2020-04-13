@@ -57,10 +57,10 @@ xterm*highlightTextColor: XtDefaultBackground
 ! a fontconfig alias that ultimately points to "DejaVu Sans Mono" (see
 ! my dotfiles fontconfig).
 ! xterm*faceName: Fira Code:size=9,Hack,Monospace
-xterm*faceName: Hack:size=9
-xterm*faceSize: 9.5
+xterm*faceName: Hack
 xterm*renderFont: true
 xterm*boldColors: false
+xterm*faceSize:  8.5
 xterm*faceSize1: 8
 xterm*faceSize2: 12
 xterm*faceSize3: 15
@@ -86,6 +86,4 @@ xterm*ttyModes: erase ^?
 
 *.internalBorder: 10
 
-! DO NOT EDIT THIS.  IT IS CONTROLLED PROGRAMMATICALLY.
-! Use my active Tempus theme.
 #include ".local/share/my_colours/active-theme.Xcolors"
