@@ -1,7 +1,7 @@
 ! Keyboard remappings
-! ==============================================================================
+! ======================================================================
 
-! .................................................................. Prior notes
+! .......................................................... Prior notes
 
 ! To get the current status of the modifiers:
 !
@@ -10,10 +10,6 @@
 ! To find out the key codes that are available:
 !
 !    xmodmap -pke
-!
-! Or narrow the results, e.g.:
-!
-!    xmodmap -pke | grep -E '(Alt|Shift)'
 !
 ! Alternatively, use `xev` to print the key code upon key press.
 !
@@ -31,63 +27,45 @@
 !    keycode 134 = Super_R
 !    keycode 135 = Menu
 
-! ............................................................ Reorder modifiers
+! .................................................... Reorder modifiers
 
-! Remap modifier keys so they are arranged on the keyboard as follows:
+! Remap the following modifier keys:
 !
-!     Super Meta Ctrl Space Ctrl Meta Super
+!   | Modifier      | Key (as printed) |
+!   |---------------+------------------|
+!   | left control  | Caps Lock        |
+!   | right control | Enter            |
+!   | left hyper    | left Ctrl        |
+!   | right hyper   | right Ctrl       |
 
 ! Clear the affected modifiers
-clear Control
-clear Mod1
-clear Mod4
+clear control
+clear lock
+clear mod3
+clear mod4
 
-! Left Control as left Super
-keycode 37  = Super_L
+! Remap the keys
+keycode 36 = Control_R NoSymbol Control_R
+keycode 37 = Hyper_L NoSymbol Hyper_L
+keycode 66 = Control_L NoSymbol Control_L
+keycode 109 = Hyper_R NoSymbol Hyper_R
 
-! Left Windows as left Alt
-keycode 115 = Alt_L
+! Save these keysyms so `xcape' can access them.
+keycode 254 = Caps_Lock NoSymbol Caps_Lock
+keycode 255 = Return NoSymbol Return
 
-! Left Alt as left Control
-keycode 64  = Control_L
+! Restore the affected modifiers
+add control = Control_L Control_R
+add lock = Caps_Lock
+add mod3 = Hyper_L Hyper_R
+add mod4 = Super_L Super_R
 
-! Right Alt as right Control
-keycode 113 = Control_R
+! .......................................................... Compose key
 
-! Right Windows as right Alt
-keycode 116 = Alt_R
+! Assign the compose key to F12
+keycode 96 = Multi_key F12 F12 F12 F12 F12 XF86Switch_VT_12
 
-! Menu as right Alt
-keycode 117 = Alt_R
-
-! Right Control as right Super
-keycode 109 = Super_R
-
-! Reinstate the affected modifiers
-add Control = Control_L Control_R
-add Mod1 = Alt_L Alt_R
-add Mod4 = Super_L Super_R
-
-! ......................................................... Caps Lock <-> Escape
-
-! Clear the modifier
-clear Lock
-
-! Escape as Caps Lock
-keycode 9 = Caps_Lock
-
-! Caps Lock as Escape
-keycode 66 = Escape
-
-! Reinstate the modifier
-add Lock = Caps_Lock
-
-! .................................................................. Compose key
-
-! F12 as Compose key
-keycode 96 = Multi_key
-
-! ........................................................................ Mouse
+! ................................................................ Mouse
 
 ! Swap mouse buttons 1 and 2, since I'm using the mouse with my left hand.
 pointer = 3 2 1 4 5 6 7 8 9 10

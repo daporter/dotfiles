@@ -29,8 +29,10 @@ xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation" 1
 xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Button" 2
 xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Axes" 6 7 4 5
 
-# Load my keyboard mappings.
+# Load my keyboard mappings.  Note that xcape depends on the xmodmap
+# mappings being in place before it is run.
 [ -r "$HOME/.Xmodmap" ] && xmodmap "$HOME/.Xmodmap"
+xcape -e 'Control_L=Caps_Lock;Control_R=Return' &
 
 # Disable repeat for the Escape key (which xmodmap maps to the physical the
 # Caps Lock key).
