@@ -53,7 +53,7 @@ _check bspwm_external_rules && _bc external_rules_command "$(command -v bspwm_ex
 
 # Load colour settings.  
 # -------
-. bspwm_colours
+. "$HOME/.config/bspwm/bspwm_colours"
 
 bspc monitor -d 1 2 3 4
 bspc desktop -f 1
