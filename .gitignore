@@ -8,6 +8,7 @@
 /emacs/.emacs.d/elpa
 /emacs/.emacs.d/feeds.el.gpg
 /emacs/.emacs.d/network-security.data
+/emacs/.emacs.d/savehist
 /emacs/.emacs.d/tramp
 /emacs/.emacs.d/transient
 /emacs/.emacs.d/url

@@ -113,7 +113,421 @@ monitor-related events."
                 backup-by-copying t
                 delete-old-versions t))
 
-;; ..................................... Selection candidates and search methods
+;; ................................................ Completion framework
+
+;; Minibuffer essentials and Icomplete
+
+(use-package minibuffer
+  :config
+  (setq completion-cycle-threshold 3)
+  (setq completion-flex-nospace nil)
+  (setq completion-pcm-complete-word-inserts-delimiters t)
+  (setq completion-pcm-word-delimiters "-_./:| ")
+  (setq completion-show-help nil)
+  (setq completion-styles '(partial-completion substring initials flex))
+  (setq completion-category-overrides
+        '((file (styles initials basic))
+          (buffer (styles initials basic))
+          (info-menu (styles basic))))
+  (setq completions-format 'vertical)   ; *Completions* buffer
+  (setq enable-recursive-minibuffers t)
+  (setq read-answer-short t)
+  (setq read-buffer-completion-ignore-case t)
+  (setq read-file-name-completion-ignore-case t)
+  (setq resize-mini-windows t)
+
+  (file-name-shadow-mode 1)
+  (minibuffer-depth-indicate-mode 1)
+  (minibuffer-electric-default-mode 1)
+
+  (defun dap/focus-minibuffer ()
+    "Focus the active minibuffer.
+
+Bind this to `completion-list-mode-map' to M-v to easily jump
+between the list of candidates present in the \\*Completions\\*
+buffer and the minibuffer (because by default M-v switches to the
+completions if invoked from inside the minibuffer."
+    (interactive)
+    (let ((mini (active-minibuffer-window)))
+      (when mini
+        (select-window mini))))
+
+  (defun dap/focus-minibuffer-or-completions ()
+    "Focus the active minibuffer or the \\*Completions\\*.
+
+If both the minibuffer and the Completions are present, this
+command will first move per invocation to the former, then the
+latter, and then continue to switch between the two.
+
+The continuous switch is essentially the same as running
+`dap/focus-minibuffer' and `switch-to-completions' in
+succession."
+    (interactive)
+    (let* ((mini (active-minibuffer-window))
+           (completions (get-buffer-window "*Completions*")))
+      (cond ((and mini
+                  (not (minibufferp)))
+             (select-window mini nil))
+            ((and completions
+                  (not (eq (selected-window)
+                           completions)))
+             (select-window completions nil)))))
+
+  ;; Technically, this is not specific to the minibuffer, but I define
+  ;; it here so that you can see how it is also used from inside the
+  ;; "Completions" buffer
+  (defun dap/describe-symbol-at-point (&optional arg)
+    "Get help (documentation) for the symbol at point.
+
+With a prefix argument, switch to the *Help* window.  If that is
+already focused, switch to the most recently used window
+instead."
+    (interactive "P")
+    (let ((symbol (symbol-at-point)))
+      (when symbol
+        (describe-symbol symbol)))
+    (when current-prefix-arg
+      (let ((help (get-buffer-window "*Help*")))
+        (when help
+          (if (not (eq (selected-window) help))
+              (select-window help)
+            (select-window (get-mru-window)))))))
+
+  ;; Defines, among others, aliases for common actions to Super-KEY.
+  ;; Normally these should go in individual package declarations, but
+  ;; their grouping here makes things easier to understand.
+  :bind (("s-f" . find-file)
+         ("s-F" . find-file-other-window)
+         ("s-d" . dired)
+         ("s-D" . dired-other-window)
+         ("s-b" . switch-to-buffer)
+         ("s-B" . switch-to-buffer-other-window)
+         ("s-h" . dap/describe-symbol-at-point)
+         ("s-H" . (lambda ()
+                    (interactive)
+                    (let ((current-prefix-arg t))
+                      (dap/describe-symbol-at-point))))
+         ("s-v" . dap/focus-minibuffer-or-completions)
+         :map completion-list-mode-map
+         ("h" . dap/describe-symbol-at-point)
+         ("n" . next-line)
+         ("p" . previous-line)
+         ("f" . next-completion)
+         ("b" . previous-completion)
+         ("M-v" . dap/focus-minibuffer)))
+
+(use-package savehist
+  :config
+  (setq savehist-file "~/.emacs.d/savehist")
+  (setq history-length 30000)
+  (setq history-delete-duplicates nil)
+  (setq savehist-save-minibuffer-history t)
+  (savehist-mode 1))
+
+(use-package icomplete
+  :demand
+  :after minibuffer
+  :config
+  (setq icomplete-delay-completions-threshold 0)
+  (setq icomplete-max-delay-chars 0)
+  (setq icomplete-compute-delay 0)
+  (setq icomplete-show-matches-on-no-input t)
+  (setq icomplete-hide-common-prefix nil)
+  (setq icomplete-prospects-height 1)
+  (setq icomplete-separator " · ")      ; mid dot
+  (setq icomplete-with-completion-tables t)
+  (setq icomplete-in-buffer nil)        ; not your job
+
+  ;; (fido-mode -1)                        ; Emacs 27.1
+  (icomplete-mode 1)
+
+  (defun dap/icomplete-force-complete-and-exit ()
+    "Complete the current icomplete match and exit the minibuffer.
+
+Contrary to `icomplete-force-complete-and-exit', this will
+confirm your choice without complaining about incomplete matches.
+
+Those incomplete matches can block you from performing legitimate
+actions, such as defining a new tag in an `org-capture' prompt.
+
+In my testing, this is necessary when the variable
+`icomplete-with-completion-tables' is non-nil, because then
+`icomplete' will be activated practically everywhere it can."
+    (interactive)
+    (icomplete-force-complete)
+    (exit-minibuffer))
+
+  (defun dap/icomplete-kill-ring-save (&optional arg)
+    "Expand and save current icomplete match to the kill ring.
+
+With a prefix argument, insert the match to the point in the
+current buffer and switch focus back to the minibuffer."
+    (interactive "*P")
+    (when (and (minibufferp)
+               (bound-and-true-p icomplete-mode))
+      (icomplete-force-complete)
+      (kill-new (field-string-no-properties))
+      (when current-prefix-arg
+        (kill-new (field-string-no-properties))
+        (select-window (get-mru-window))
+        (insert (car kill-ring))
+        (dap/focus-minibuffer))))
+
+  (defun dap/icomplete-toggle-completion-styles (&optional arg)
+    "Toggle between flex and prefix matching.
+
+With pregix ARG use basic completion instead.  These styles are
+described in `completion-styles-alist'.
+
+Bind this function in `icomplete-minibuffer-map'."
+    (interactive "*P")
+    (when (and (minibufferp)
+               (bound-and-true-p icomplete-mode))
+      (let* ((completion-styles-original completion-styles)
+             (basic '(emacs22 basic))
+             (flex '(flex initials substring partial-completion))
+             (prefix '(partial-completion substring initials flex)))
+        (if current-prefix-arg
+            (progn
+              (setq-local completion-styles basic)
+              (message "%s" (propertize "Prioritising BASIC matching" 'face 'highlight)))
+          (if (not (eq (car completion-styles) 'flex))
+              (progn
+                (setq-local completion-styles flex)
+                (message "%s" (propertize "Prioritising FLEX matching" 'face 'highlight)))
+            (setq-local completion-styles prefix)
+            (message "%s" (propertize "Prioritising PREFIX matching" 'face 'highlight)))))))
+
+  :bind (:map icomplete-minibuffer-map
+              ("C-m" . minibuffer-complete-and-exit) ; try complete + force current input
+              ("C-j" . exit-minibuffer) ; force current input more aggressively
+              ("C-n" . icomplete-forward-completions)
+              ("<right>" . icomplete-forward-completions)
+              ("<down>" . icomplete-forward-completions)
+              ("C-p" . icomplete-backward-completions)
+              ("<left>" . icomplete-backward-completions)
+              ("<up>" . icomplete-backward-completions)
+              ("<return>" . dap/icomplete-force-complete-and-exit)
+              ("M-o w" . dap/icomplete-kill-ring-save)
+              ("M-o i" . (lambda ()
+                           (interactive)
+                           (let ((current-prefix-arg t))
+                             (dap/icomplete-kill-ring-save))))
+              ("C-," . dap/icomplete-toggle-completion-styles) ; toggle flex
+              ("C-." . (lambda ()                               ; toggle basic
+                         (interactive)
+                         (let ((current-prefix-arg t))
+                           (dap/icomplete-toggle-completion-styles))))))
+
+;; Icomplete vertical mode
+
+(use-package icomplete-vertical
+  :ensure t
+  :demand
+  :after (minibuffer icomplete)
+  :config
+  (setq icomplete-vertical-prospects-height (/ (window-height) 6))
+  (icomplete-vertical-mode -1)
+
+  (defun dap/icomplete-recentf ()
+    "Open `recent-list' item in a new buffer.
+
+The user's $HOME directory is abbreviated as a tilde."
+    (interactive)
+    (icomplete-vertical-do ()
+      (let ((files (mapcar 'abbreviate-file-name recentf-list)))
+        (find-file
+         (completing-read "Open recentf entry: " files nil t)))))
+
+  (defun dap/icomplete-font-family-list ()
+    "Add item from the `font-family-list' to the `kill-ring'.
+
+This allows you to save the name of a font, which can then be
+used in commands such as `set-frame-font'."
+    (interactive)
+    (icomplete-vertical-do ()
+      (kill-new
+       (completing-read "Copy font family: "
+                        (print (font-family-list))
+                        nil t))))
+
+  (defun dap/icomplete-yank-kill-ring ()
+    "Insert the selected `kill-ring' item directly at point.
+When region is active, `delete-region'.
+
+Sorting of the `kill-ring' is disabled.  Items appear as they
+normally would when calling `yank' followed by `yank-pop'."
+    (interactive)
+    (let ((kills                    ; do not sort items
+           (lambda (string pred action)
+             (if (eq action 'metadata)
+                 '(metadata (display-sort-function . identity)
+                            (cycle-sort-function . identity))
+               (complete-with-action
+                action kill-ring string pred)))))
+      (icomplete-vertical-do
+          (:separator 'dotted-line :height (/ (window-height) 4))
+        (when (use-region-p)
+          (delete-region (region-beginning) (region-end)))
+        (insert
+         (completing-read "Yank from kill ring: " kills nil t)))))
+
+  ;; TODO can registers be inserted via completion?
+  ;; TODO can mark-ring positions be selected?
+
+  :bind (("s-y" . dap/icomplete-yank-kill-ring)
+         ("s-r" . dap/icomplete-recentf)
+         :map icomplete-minibuffer-map
+         ("C-v" . icomplete-vertical-toggle)))
+
+;; Completion for projects and directory trees
+
+(use-package project
+  :after (minibuffer icomplete icomplete-vertical)
+  :config
+  (defun dap/project-find-file ()
+    "Find a file that belongs to the current project."
+    (interactive)
+    (icomplete-vertical-do ()
+      (project-find-file)))
+
+  (defun dap/project-or-dir-find-subdirectory-recursive ()
+    "Recursive find subdirectory of project or directory.
+
+This command has the potential for infinite recursion: use it
+wisely or prepare to use \\[keyboard-quit]."
+    (interactive)
+    (let* ((project (vc-root-dir))
+           (dir (if project project default-directory))
+           (contents (directory-files-recursively dir ".*" t nil nil))
+           ;; (contents (directory-files dir t))
+           (find-directories (mapcar (lambda (dir)
+                                       (when (file-directory-p dir)
+                                         (abbreviate-file-name dir)))
+                                     contents))
+           (subdirs (delete nil find-directories)))
+      (icomplete-vertical-do ()
+        (dired
+         (completing-read "Find sub-directory: " subdirs nil t dir)))))
+
+  (defun dap/find-file-from-dir-recursive ()
+    "Find file recursively, starting from present dir."
+    (interactive)
+    (let* ((dir default-directory)
+           (files (directory-files-recursively dir ".*" nil t)))
+      (icomplete-vertical-do ()
+        (find-file
+         (completing-read "Find file recursively: " files nil t dir)))))
+
+  (defun dap/find-project ()
+    "Switch to sub-directory at ~/projects.
+
+Allows you to switch directly to the root directory of a project
+inside a given location."
+    (interactive)
+    (let* ((path "~/projects/")
+           (dotless directory-files-no-dot-files-regexp)
+           (project-list (project-combine-directories
+                          (directory-files path t dotless)))
+           (projects (mapcar 'abbreviate-file-name project-list)))
+      (icomplete-vertical-do ()
+        (dired
+         (completing-read "Find project: " projects nil t path)))))
+
+  :bind (("M-s p" . dap/find-project)
+         ("M-s f" . dap/project-find-file)
+         ("M-s z" . dap/find-file-from-dir-recursive)
+         ("M-s d" . dap/project-or-dir-find-subdirectory-recursive)
+         ("M-s l" . find-library)
+         ("M-s C-M-%" . project-query-replace-regexp)))
+
+;; ............................................... In-buffer completions
+
+;; Dabbrev (dynamic word completion)
+
+(use-package dabbrev
+  :after (minibuffer icomplete icomplete-vertical)
+  :config
+  (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
+  (setq dabbrev-abbrev-skip-leading-regexp "\\$\\|\\*\\|/\\|=")
+  (setq dabbrev-backward-only nil)
+  (setq dabbrev-case-distinction nil)
+  (setq dabbrev-case-fold-search t)
+  (setq dabbrev-case-replace nil)
+  (setq dabbrev-check-other-buffers t)
+  (setq dabbrev-eliminate-newlines nil)
+  (setq dabbrev-upcase-means-case-search t)
+
+  ;; EXPERIMENTAL This should be done by advising the original
+  ;; `dabbrev-completion', but I still do not know how to do that sort
+  ;; of thing.  It should also not kill the current text until the user
+  ;; confirms their choice (and this should then be a delete that does
+  ;; not write to the kill ring).
+  (defun dap/dabbrev-completion (&optional arg)
+    "Completion on current word.
+Like \\[dabbrev-expand] but finds all expansions in the current buffer
+and presents suggestions for completion.
+
+With a prefix argument ARG, it searches all buffers accepted by the
+function pointed out by `dabbrev-friend-buffer-function' to find the
+completions.
+
+If the prefix argument is 16 (which comes from \\[universal-argument] \\[universal-argument]),
+then it searches *all* buffers."
+    (interactive "*P")
+    (dabbrev--reset-global-variables)
+    (let* ((abbrev (dabbrev--abbrev-at-point))
+           (beg (progn (search-backward abbrev) (point)))
+           (end (progn (search-forward abbrev) (point)))
+           (ignore-case-p (dabbrev--ignore-case-p abbrev))
+           (list 'uninitialized)
+           (table
+            (lambda (s p a)
+              (if (eq a 'metadata)
+                  `(metadata (cycle-sort-function . ,#'identity)
+                             (category . dabbrev))
+                (when (eq list 'uninitialized)
+                  (save-excursion
+                    ;;--------------------------------
+                    ;; New abbreviation to expand.
+                    ;;--------------------------------
+                    (setq dabbrev--last-abbreviation abbrev)
+                    ;; Find all expansion
+                    (let ((completion-list
+                           (dabbrev--find-all-expansions abbrev ignore-case-p))
+                          (completion-ignore-case ignore-case-p))
+                      (or (consp completion-list)
+                          (user-error "No dynamic expansion for \"%s\" found%s"
+                                      abbrev
+                                      (if dabbrev--check-other-buffers
+                                          "" " in this-buffer")))
+                      (setq list
+                            (cond
+                             ((not (and ignore-case-p dabbrev-case-replace))
+                              completion-list)
+                             ((string= abbrev (upcase abbrev))
+                              (mapcar #'upcase completion-list))
+                             ((string= (substring abbrev 0 1)
+                                       (upcase (substring abbrev 0 1)))
+                              (mapcar #'capitalize completion-list))
+                             (t
+                              (mapcar #'downcase completion-list)))))))
+                (complete-with-action a list s p)))))
+      (setq dabbrev--check-other-buffers (and arg t))
+      (setq dabbrev--check-all-buffers
+            (and arg (= (prefix-numeric-value arg) 16)))
+      ;; NOT optimal, NOT safe, and needs lots of polish overall…
+      (save-excursion
+        (backward-kill-sexp)
+        (icomplete-vertical-do ()
+          (insert
+           (completing-read "Expand: " table nil t))))))
+
+  :bind (("M-/" . dabbrev-expand)
+         ("s-/" . dap/dabbrev-completion)))
+
+;; .....................................................................
+
 
 ;; wgrep
 
@@ -612,7 +1026,7 @@ ispell dictionaries with `dap/ispell-toggle-dictionaries'."
   (setq org-enforce-todo-dependencies t)
   (setq org-enforce-todo-checkbox-dependencies t)
   (setq org-track-ordered-property-with-tag t)
-    ;; log
+  ;; log
   (setq org-log-done 'time)
   (setq org-log-note-clock-out nil)
   (setq org-log-redeadline nil)
@@ -675,10 +1089,10 @@ Add this function to `message-header-setup-hook'."
 (use-package gnus
   :config
   (setq gnus-directory "~/news")
-  ;; accounts
   (setq gnus-select-method '(nnnil))
   (setq gnus-secondary-select-methods
         '((nntp "news.gwene.org")
+          (nntp "news.gmane.io")
           (nnimap "migadu"
                   (nnimap-address "imap.migadu.com"
                                   (nnimap-stream ssl)
@@ -689,13 +1103,19 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-gcc-mark-as-read t)
   (setq gnus-agent t)
   (setq gnus-novice-user nil)
-  ;; checking sources
   (setq gnus-check-new-newsgroups 'ask-server)
   (setq gnus-read-active-file 'some)
-  ;; dribble
   (setq gnus-use-dribble-file t)
   (setq gnus-always-read-dribble-file t)
-  :bind ("C-c m" . gnus))
+
+  (defun dap/archive-message ()
+    "Move the current message to the mailbox `Archive'."
+    (interactive)
+    (gnus-summary-move-article nil "nnimap+migadu:Archive"))
+  
+  :bind (("C-c m" . gnus)
+         :map gnus-summary-mode-map
+         ("C-c a" . dap/archive-message)))
 
 (use-package nnmail
   :config
@@ -851,7 +1271,7 @@ Add this function to `message-header-setup-hook'."
   (setq elfeed-use-curl t)
   (setq elfeed-curl-max-connections 10)
   (setq elfeed-db-directory "~/.emacs.d/elfeed")
-  (setq elfeed-enclosure-default-dir "~/downloads")
+  (setq elfeed-enclosure-default-dir "~/dl")
   (setq elfeed-search-clipboard-type 'CLIPBOARD)
   (setq elfeed-search-title-max-width (current-fill-column))
   (setq elfeed-search-title-max-width 100)
