@@ -9,16 +9,16 @@
 # f == bspwm focus mode
 # s == reload sxhkd
 # p == reload melonpanel (my lemonbar script)
-# t == dmenu to choose Tempus theme
 # q == dmenu interface to log out, lock, switch users, reboot, shutdown
+# t == dmenu to choose Tempus theme
 # x == reload the Xresources file
-mod3 + e ; {f,s,p,t,q,x}
+mod3 + e ; {f,s,p,q,t,x}
 	{ \
 	bspwm_focus_mode, \
-	pkill -USR1 -x sxhkd && notify-send "Reloaded key bindings", \
+	pkill -USR1 -x sxhkd && notify-send -i key_bindings "Reloaded key bindings", \
 	melonpanel, \
-	tempusmenu, \
 	poweroptionsmenu, \
+	tempusmenu, \
 	xrdb -merge "$HOME/.Xresources" \
 	}
 
@@ -32,19 +32,15 @@ mod3 + BackSpace
 mod3 + {_, shift + } Return
 	{xterm -e tmux new-session -A -s 'Default', xterm}
 
-mod3 + c ; m
-    emacsclient --create-frame --eval '(gnus)'
-mod3 + c ; n
-    emacsclient --create-frame --eval '(elfeed)'
-mod3 + c ; w
-	notify-send -i firefox "Launching Firefox" && firefox
-      
+mod3 + {x,b}
+    rofi -show {drun,window}
+
 # Bring up the help text for common keybindings
 # mod3 + {F1,Home}
 # 	xterm -class "my_float_window" \
 # 	-geometry '100x30' -e less "$HOME/.config/sxhkd/cheatsheet_sxhkdrc.txt"
 
-# ............................................................... Media controls
+# ....................................................... Media controls
 
 # Raise and lower the volume in small steps
 mod3 + Up

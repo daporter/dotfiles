@@ -1,39 +1,9 @@
 #!/usr/bin/env bash
 
-# TEMPUS --- Themes Every Meticulous Person Ultimately Seeks (yes, this
-# is a backronym).
-#
-# Handles the integration between my custom desktop session[0] and my
-# Tempus themes[1].  TEMPUS performs live theme switching, while also
-# updating the relevant configuration files.  The main use case for this
-# is as part of BSPWM, but some actions will also work in GNOME or MATE
-# (the latter being my fallback DE on Debian).
-#
-# 0: https://gitlab.com/protesilaos/dotfiles
-# 1: https://gitlab.com/protesilaos/tempus-themes (partially
-#    incorporated in my dotfiles)
-#
-# This script is the successor of own_script_update_environment_theme,
-# which has been deprecated and will be removed from future releases of
-# my dotfiles (ensures feature parity).
-#
-# Copyright (c) 2019 Protesilaos Stavrou <info@protesilaos.com>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Choose among the Tempus themes
+# ======================================================================
 
 # Error handling and help messages
-# --------------------------------
 _help_message() {
 	echo "Run this script with a single argument:"
 
@@ -47,10 +17,10 @@ _help_message() {
 	echo "This assumes you have used STOW on my 'colours' directory (part of my dotfiles)"
 }
 
-[ "$#" -eq 1 ] || {
+if [ "$#" -ne 1 ]; then
 	_help_message
 	exit 1
-}
+fi
 
 tempus_theme="$1"
 
@@ -86,61 +56,12 @@ _sed_sync() {
 
 # Check for dependency, else exit the given function that calls this.
 _depcheck() {
-	command -v "$1" >/dev/null || {
+	if ! command -v "$1" >/dev/null; then
 		echo "Missing dependency: $1."
 		return 1
-	}
+	fi
 }
 
-_x_and_shell() {
-	tempus_files="$HOME/.local/share/my_colours"
-	tempus_active_x="$tempus_files/active-theme.Xcolors"
-	tempus_active_sh="$tempus_files/active-theme.sh"
-
-	_check_tempus() {
-		[ -n "$1" ] || {
-			echo "Path for Tempus themes is unavailable."
-			return 1
-		}
-	}
-
-	ln -sf "${tempus_files}/shell/tempus_${tempus_theme}.sh" "$tempus_active_sh"
-	ln -sf "${tempus_files}/xcolors/tempus_${tempus_theme}.Xcolors" "$tempus_active_x"
-
-	own_script_update_running_terminals &
-
-	[ -f "$HOME/.Xresources" ] && xrdb -merge "$HOME/.Xresources"
-}
-
-_tmux() {
-	_depcheck tmux
-
-	. "$HOME/.local/share/my_colours/active-theme.sh"
-
-	cat <<-EOF >"$HOME/.tmux_colours.conf"
-		tempus_fg=$foreground
-		tempus_bg=$background
-		tempus_fg_alt=$foregroundalt
-		tempus_bg_alt=$backgroundalt
-		tempus_bg_dim=$backgrounddim
-	EOF
-
-	tmux source-file ~/.tmux_colours.conf
-	tmux source-file ~/.tmux.conf
-
-	tmux_update_vim &
-}
-
-# FIXME HELPME is it possible to change the Vim colorscheme from the
-# shell, so that all running Vim sessions inside the terminal switch to
-# it?  Right now, I have to close any Vim instance inside the terminal
-# when switching from a light/dark theme to its opposite.  The terminal
-# colours change, but Vim still uses the same theme it did at startup.
-# This is expected behaviour: that is what the rc file is for.  `man
-# vim` has some flags for executing commands at startup but this only
-# works for new instances of Vim.  Use something like `xdo`, perhaps?
-#
-# The above DO NOT apply to Vim instances inside of tmux.
 _vim() {
 	_depcheck vim
 
@@ -149,46 +70,44 @@ _vim() {
 	EOF
 }
 
-_dunst() {
-	_depcheck dunst
+_x_and_shell() {
+	tempus_files="$HOME/.local/share/my_colours"
+	tempus_active_x="$tempus_files/active-theme.Xcolors"
+	tempus_active_sh="$tempus_files/active-theme.sh"
 
-	dunstrc="$HOME/.config/dunst/dunstrc"
+	_check_tempus() {
+		if [ -z "$1" ]; then
+			echo "Path for Tempus themes is unavailable."
+			return 1
+		fi
+	}
 
-	# Sed actions, per line:
-	# Change the separator and frame colour
-	# Change {back,fore}ground value for urgency_low notifications
-	# Change {back,fore}ground value for urgency_normal notifications
-	# Change {back,fore}ground value for urgency_critical notifications
-	gsed --follow-symlinks -i "s/\\(^separator_color.*\\)\\(#[0-9a-zA-Z]*\\)/\\1$backgrounddim/ ; \
- s/\\(^frame_color.*\\)\\(#[0-9a-zA-Z]*\\)/\\1$backgroundalt/ ; \
- /urgency_low/,/timeout/ s/\\(^b.*\\)\\(#[0-9a-zA-Z]*\\)/\\1$backgroundalt/ ; /urgency_low/,/timeout/ s/\\(^f.*\\)\\(#[0-9a-zA-Z]*\\)/\\1$foregroundalt/ ; \
- /urgency_normal/,/timeout/ s/\\(^b.*\\)\\(#[0-9a-zA-Z]*\\)/\\1$background/ ; /urgency_normal/,/timeout/ s/\\(^f.*\\)\\(#[0-9a-zA-Z]*\\)/\\1$foreground/ ; \
- /urgency_critical/,/timeout/ s/\\(^b.*\\)\\(#[0-9a-zA-Z]*\\)/\\1$color1/ ; /urgency_critical/,/timeout/ s/\\(^f.*\\)\\(#[0-9a-zA-Z]*\\)/\\1$background/" "$dunstrc"
+	ln -sf "${tempus_files}/shell/tempus_${tempus_theme}.sh" "$tempus_active_sh"
+	ln -sf "${tempus_files}/xcolors/tempus_${tempus_theme}.Xcolors" "$tempus_active_x"
 
-	# kill and reload dunst
-	if pgrep -x "dunst" >/dev/null; then
-		pkill dunst && eval "$(dbus-launch)" &
-	fi
+	repaint_terminals &
+
+	[ -f "$HOME/.Xresources" ] && xrdb -merge "$HOME/.Xresources"
 }
 
-# This is my script for adding content to lemonbar.  Reloading it will
-# make it get the new shell colours.
-_melonpanel() {
-	_depcheck lemonbar-xft
-	_depcheck melonpanel
-
-	# if pgrep -x melonpanel > /dev/null; then
-	#  pkill -x melonpanel && melonpanel &
-	# fi
-	if pgrep -f melonpanel >/dev/null; then
-		pkill -f melonpanel && melonpanel &
-	fi
+_emacs() {
+	# Just switch to the appropriate Emacs theme.  The Modus themes are
+	# not part of Tempus, but their goal is the same.
+	#
+	# See:
+	#
+	# 1. https://protesilaos.com/dotemacs
+	# 2. https://gitlab.com/protesilaos/modus-themes
+	case "$theme_variant" in
+		l*) emacsclient -e "(dap/modus-operandi)" ;;
+		d*) emacsclient -e "(dap/modus-vivendi)" ;;
+	esac
 }
 
 _bspwm() {
-	# [ "$DESKTOP_SESSION" = 'bspwm' ] || return 1
+	_depcheck bspwm
 
-	_melonpanel
+	pgrep -x bspwm || return 1
 
 	_bc() {
 		bspc config "$@"
@@ -206,25 +125,54 @@ _bspwm() {
 
 	bspwm_colours="$HOME/.config/bspwm/bspwm_colours"
 
-	[ -f "$bspwm_colours" ] || {
+	if [ ! -f "$bspwm_colours" ]; then
 		echo "Missing bspwm_colours"
 		return 1
-	}
+	fi
 
 	case "$theme_variant" in
 		l*)
 			_sed "/^[^#].*active_border_color/ s,#[a-zA-Z0-9]*,$color1, ; \
-   /^[^#].*focused_border_color/ s,#[a-zA-Z0-9]*,$color4, ; \
-   /^[^#].*normal_border_color/ s,#[a-zA-Z0-9]*,$backgroundalt, ; \
-   /^[^#].*presel_feedback_color/ s,#[a-zA-Z0-9]*,$backgrounddim," "$bspwm_colours"
+            /^[^#].*focused_border_color/ s,#[a-zA-Z0-9]*,$color4, ; \
+            /^[^#].*normal_border_color/ s,#[a-zA-Z0-9]*,$backgroundalt, ; \
+            /^[^#].*presel_feedback_color/ s,#[a-zA-Z0-9]*,$backgrounddim," "$bspwm_colours"
 			;;
 		d*)
 			_sed "/^[^#].*active_border_color/ s,#[a-zA-Z0-9]*,$color3, ; \
-   /^[^#].*focused_border_color/ s,#[a-zA-Z0-9]*,$color6, ; \
-   /^[^#].*normal_border_color/ s,#[a-zA-Z0-9]*,$backgroundalt, ; \
-   /^[^#].*presel_feedback_color/ s,#[a-zA-Z0-9]*,$backgrounddim," "$bspwm_colours"
+            /^[^#].*focused_border_color/ s,#[a-zA-Z0-9]*,$color6, ; \
+            /^[^#].*normal_border_color/ s,#[a-zA-Z0-9]*,$backgroundalt, ; \
+            /^[^#].*presel_feedback_color/ s,#[a-zA-Z0-9]*,$backgrounddim," "$bspwm_colours"
 			;;
 	esac
+}
+
+_tmux() {
+	_depcheck tmux
+
+	. "$HOME/.local/share/my_colours/active-theme.sh"
+
+	cat <<-EOF >"$HOME/.tmux_colours.conf"
+		tempus_fg=$foreground
+		tempus_bg=$background
+		tempus_fg_alt=$foregroundalt
+		tempus_bg_alt=$backgroundalt
+		tempus_bg_dim=$backgrounddim
+	EOF
+
+	tmux source-file ~/.tmux_colours.conf
+	tmux source-file ~/.tmux.conf
+}
+
+# This is my script for adding content to lemonbar.  Reloading it will
+# make it get the new shell colours.
+_melonpanel() {
+	_depcheck lemonbar-xft
+	_depcheck melonpanel
+
+    pkill -x bspc
+    pkill -x lemonbar-xft
+	pkill -f melonpanel
+    melonpanel &
 }
 
 _wallpaper() {
@@ -262,12 +210,22 @@ _wallpaper() {
 	esac
 }
 
+_rofi() {
+	_depcheck rofi
+
+	roficonf="$HOME"/.config/rofi/config.rasi
+	if [ -f "$roficonf" ]; then
+		_sed "s/tempus_[a-z]*/tempus_${tempus_theme}/" "$roficonf"
+	fi
+}
+
 # Function call cascade
 # ---------------------
-# Do not reorder.  Not tested thoroughly.
 _x_and_shell
+_emacs
+_rofi
 _tmux
 _vim
-_dunst
 _bspwm
+_melonpanel
 _wallpaper
