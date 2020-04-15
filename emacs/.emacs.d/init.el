@@ -47,7 +47,7 @@
   :config
   (setq x-underline-at-descent-line nil)
   (setq underline-minimum-offset 0)
-  (setq line-spacing 0.1)
+  (setq line-spacing 0.15)
   
   (defconst dap/fixed-pitch-font "Hack"
     "The default fixed-pitch typeface.")
@@ -120,11 +120,12 @@ monitor-related events."
 (use-package minibuffer
   :config
   (setq completion-cycle-threshold 3)
-  (setq completion-flex-nospace nil)
+  ;;(setq completion-flex-nospace nil)
   (setq completion-pcm-complete-word-inserts-delimiters t)
   (setq completion-pcm-word-delimiters "-_./:| ")
   (setq completion-show-help nil)
-  (setq completion-styles '(partial-completion substring initials flex))
+  ;;(setq completion-styles '(partial-completion substring initials flex))
+  (setq completion-styles '(partial-completion substring initials))
   (setq completion-category-overrides
         '((file (styles initials basic))
           (buffer (styles initials basic))
@@ -238,7 +239,7 @@ instead."
   (setq icomplete-with-completion-tables t)
   (setq icomplete-in-buffer nil)        ; not your job
 
-  ;; (fido-mode -1)                        ; Emacs 27.1
+  ;;(fido-mode -1)                        ; Emacs 27.1
   (icomplete-mode 1)
 
   (defun dap/icomplete-force-complete-and-exit ()
@@ -298,6 +299,13 @@ Bind this function in `icomplete-minibuffer-map'."
             (setq-local completion-styles prefix)
             (message "%s" (propertize "Prioritising PREFIX matching" 'face 'highlight)))))))
 
+  (defun contrib/icomplete-remove-directory-path (arg)
+    "Remove sub-directory path in `find-file' or equivalent.
+
+Bind this in `minibuffer-local-filename-completion-map'."
+    (interactive "p")
+    (zap-up-to-char (- arg) ?/))
+
   :bind (:map icomplete-minibuffer-map
               ("C-m" . minibuffer-complete-and-exit) ; try complete + force current input
               ("C-j" . exit-minibuffer) ; force current input more aggressively
@@ -307,17 +315,68 @@ Bind this function in `icomplete-minibuffer-map'."
               ("C-p" . icomplete-backward-completions)
               ("<left>" . icomplete-backward-completions)
               ("<up>" . icomplete-backward-completions)
-              ("<return>" . dap/icomplete-force-complete-and-exit)
+              ;;("<return>" . dap/icomplete-force-complete-and-exit)
+              ("<C-backspace>" . contrib/icomplete-remove-directory-path)
               ("M-o w" . dap/icomplete-kill-ring-save)
               ("M-o i" . (lambda ()
                            (interactive)
                            (let ((current-prefix-arg t))
                              (dap/icomplete-kill-ring-save))))
-              ("C-," . dap/icomplete-toggle-completion-styles) ; toggle flex
-              ("C-." . (lambda ()                               ; toggle basic
-                         (interactive)
-                         (let ((current-prefix-arg t))
-                           (dap/icomplete-toggle-completion-styles))))))
+              ;;("C-," . dap/icomplete-toggle-completion-styles) ; toggle flex
+              ;;("C-." . (lambda ()                               ; toggle basic
+              ;;           (interactive)
+              ;;           (let ((current-prefix-arg t))
+              ;;             (dap/icomplete-toggle-completion-styles))))))
+              ))
+
+;; ............................................................. Recentf
+
+(use-package recentf
+  :config
+  (setq recentf-save-file "~/.emacs.d/recentf")
+  (setq recentf-max-menu-items 10)
+  (setq recentf-max-saved-items 200)
+  (setq recentf-show-file-shortcuts-flag nil)
+
+  ;; rename entries in recentf when moving files in dired
+  (defun rjs/recentf-rename-directory (oldname newname)
+    ;; oldname, newname and all entries of recentf-list should already
+    ;; be absolute and normalised so I think this can just test whether
+    ;; oldname is a prefix of the element.
+    (setq recentf-list
+          (mapcar (lambda (name)
+                    (if (string-prefix-p oldname name)
+                        (concat newname (substring name (length oldname)))
+                      name))
+                  recentf-list))
+    (recentf-cleanup))
+
+  (defun rjs/recentf-rename-file (oldname newname)
+    (setq recentf-list
+          (mapcar (lambda (name)
+                    (if (string-equal name oldname)
+                        newname
+                      oldname))
+                  recentf-list))
+    (recentf-cleanup))
+
+  (defun rjs/recentf-rename-notify (oldname newname &rest args)
+    (if (file-directory-p newname)
+        (rjs/recentf-rename-directory oldname newname)
+      (rjs/recentf-rename-file oldname newname)))
+
+  (advice-add 'dired-rename-file :after #'rjs/recentf-rename-notify)
+
+  (defun contrib/recentf-add-dired-directory ()
+    "Include Dired buffers in the `recentf' list.  Particularly
+useful when combined with a completion framework's ability to
+display virtual buffers."
+    (when (and (stringp dired-directory)
+               (equal "" (file-name-nondirectory dired-directory)))
+      (recentf-add-file dired-directory)))
+
+  :hook ((after-init . recentf-mode)
+         (dired-mode . contrib/recentf-add-dired-directory)))
 
 ;; Icomplete vertical mode
 
@@ -338,18 +397,6 @@ The user's $HOME directory is abbreviated as a tilde."
       (let ((files (mapcar 'abbreviate-file-name recentf-list)))
         (find-file
          (completing-read "Open recentf entry: " files nil t)))))
-
-  (defun dap/icomplete-font-family-list ()
-    "Add item from the `font-family-list' to the `kill-ring'.
-
-This allows you to save the name of a font, which can then be
-used in commands such as `set-frame-font'."
-    (interactive)
-    (icomplete-vertical-do ()
-      (kill-new
-       (completing-read "Copy font family: "
-                        (print (font-family-list))
-                        nil t))))
 
   (defun dap/icomplete-yank-kill-ring ()
     "Insert the selected `kill-ring' item directly at point.
@@ -399,8 +446,8 @@ wisely or prepare to use \\[keyboard-quit]."
     (interactive)
     (let* ((project (vc-root-dir))
            (dir (if project project default-directory))
-           (contents (directory-files-recursively dir ".*" t nil nil))
-           ;; (contents (directory-files dir t))
+           ;;(contents (directory-files-recursively dir ".*" t nil nil))
+           (contents (directory-files dir t))
            (find-directories (mapcar (lambda (dir)
                                        (when (file-directory-p dir)
                                          (abbreviate-file-name dir)))
@@ -414,7 +461,8 @@ wisely or prepare to use \\[keyboard-quit]."
     "Find file recursively, starting from present dir."
     (interactive)
     (let* ((dir default-directory)
-           (files (directory-files-recursively dir ".*" nil t)))
+           ;;(files (directory-files-recursively dir ".*" nil t))
+           (files (directory-files-recursively dir ".*" nil)))
       (icomplete-vertical-do ()
         (find-file
          (completing-read "Find file recursively: " files nil t dir)))))
@@ -458,76 +506,81 @@ inside a given location."
   (setq dabbrev-eliminate-newlines nil)
   (setq dabbrev-upcase-means-case-search t)
 
-  ;; EXPERIMENTAL This should be done by advising the original
-  ;; `dabbrev-completion', but I still do not know how to do that sort
-  ;; of thing.  It should also not kill the current text until the user
-  ;; confirms their choice (and this should then be a delete that does
-  ;; not write to the kill ring).
-  (defun dap/dabbrev-completion (&optional arg)
-    "Completion on current word.
-Like \\[dabbrev-expand] but finds all expansions in the current buffer
-and presents suggestions for completion.
+  :bind (("M-/" . dabbrev-expand)))
 
-With a prefix argument ARG, it searches all buffers accepted by the
-function pointed out by `dabbrev-friend-buffer-function' to find the
-completions.
+;; ............................................................. Isearch
 
-If the prefix argument is 16 (which comes from \\[universal-argument] \\[universal-argument]),
-then it searches *all* buffers."
-    (interactive "*P")
-    (dabbrev--reset-global-variables)
-    (let* ((abbrev (dabbrev--abbrev-at-point))
-           (beg (progn (search-backward abbrev) (point)))
-           (end (progn (search-forward abbrev) (point)))
-           (ignore-case-p (dabbrev--ignore-case-p abbrev))
-           (list 'uninitialized)
-           (table
-            (lambda (s p a)
-              (if (eq a 'metadata)
-                  `(metadata (cycle-sort-function . ,#'identity)
-                             (category . dabbrev))
-                (when (eq list 'uninitialized)
-                  (save-excursion
-                    ;;--------------------------------
-                    ;; New abbreviation to expand.
-                    ;;--------------------------------
-                    (setq dabbrev--last-abbreviation abbrev)
-                    ;; Find all expansion
-                    (let ((completion-list
-                           (dabbrev--find-all-expansions abbrev ignore-case-p))
-                          (completion-ignore-case ignore-case-p))
-                      (or (consp completion-list)
-                          (user-error "No dynamic expansion for \"%s\" found%s"
-                                      abbrev
-                                      (if dabbrev--check-other-buffers
-                                          "" " in this-buffer")))
-                      (setq list
-                            (cond
-                             ((not (and ignore-case-p dabbrev-case-replace))
-                              completion-list)
-                             ((string= abbrev (upcase abbrev))
-                              (mapcar #'upcase completion-list))
-                             ((string= (substring abbrev 0 1)
-                                       (upcase (substring abbrev 0 1)))
-                              (mapcar #'capitalize completion-list))
-                             (t
-                              (mapcar #'downcase completion-list)))))))
-                (complete-with-action a list s p)))))
-      (setq dabbrev--check-other-buffers (and arg t))
-      (setq dabbrev--check-all-buffers
-            (and arg (= (prefix-numeric-value arg) 16)))
-      ;; NOT optimal, NOT safe, and needs lots of polish overall…
-      (save-excursion
-        (backward-kill-sexp)
-        (icomplete-vertical-do ()
-          (insert
-           (completing-read "Expand: " table nil t))))))
+(use-package isearch
+  :delight
+  :config
+  (setq search-highlight t)
+  (setq search-whitespace-regexp ".*?")
+  (setq isearch-lax-whitespace t)
+  (setq isearch-regexp-lax-whitespace nil)
+  (setq isearch-lazy-highlight t)
+  ;; All of the following variables were introduced in Emacs 27.1.
+  ;;(setq isearch-lazy-count t)
+  ;;(setq lazy-count-prefix-format "(%s/%s) ")
+  ;;(setq lazy-count-suffix-format nil)
+  ;;(setq isearch-yank-on-move 'shift)
+  (setq isearch-allow-scroll 'unlimited)
 
-  :bind (("M-/" . dabbrev-expand)
-         ("s-/" . dap/dabbrev-completion)))
+  (defun dap/isearch-mark-and-exit ()
+    "Mark the current search string and exit the search."
+    (interactive)
+    (push-mark isearch-other-end t 'activate)
+    (setq deactivate-mark nil)
+    (isearch-done))
 
-;; .....................................................................
+  (defun dap/isearch-other-end ()
+    "End current search in the opposite side of the match.
+Particularly useful when the match does not fall within the
+confines of word boundaries (e.g. multiple words)."
+    (interactive)
+    (isearch-done)
+    (when isearch-other-end
+      (goto-char isearch-other-end)))
 
+  (defun dap/isearch-abort ()
+    "Remove non-matching `isearch' input, reverting to previous
+successful search and continuing with the search.
+
+This is a modified variant of the original `isearch-abort',
+mapped to C-g which will remove the failed match if any and only
+afterwards exit the search altogether."
+    (interactive)
+    (discard-input)
+    (while (or (not isearch-success) isearch-error)
+      (isearch-pop-state))
+    (isearch-update))
+
+  (defun dap/isearch-query-replace-symbol-at-point ()
+    "Run `query-replace-regexp' for the symbol at point."
+    (interactive)
+    (isearch-forward-symbol-at-point)
+    (isearch-query-replace-regexp))
+
+  :bind (("M-s M-o" . multi-occur)
+         ("M-s %" . dap/isearch-query-replace-symbol-at-point)
+         :map minibuffer-local-isearch-map
+         ("M-/" . isearch-complete-edit)
+         :map isearch-mode-map
+         ("M-/" . isearch-complete)
+         ("C-SPC" . dap/isearch-mark-and-exit)
+         ("DEL" . dap/isearch-abort)
+         ("<C-return>" . dap/isearch-other-end)))
+
+;; ................................................. Regular expressions
+
+(use-package re-builder
+  :config
+  (setq reb-re-syntax 'read))
+
+(use-package visual-regexp
+  :ensure t
+  :config
+  (setq vr/default-replace-preview nil)
+  (setq vr/match-separator-use-custom-face t))
 
 ;; wgrep
 
@@ -663,13 +716,13 @@ prefixed variant."
          ("s-=" . dap/describe-face))
   :hook (after-init . dap/modus-operandi))
 
-;; ................................................................... Mode line
+;; ........................................................... Mode line
 
 (use-package emacs
   :config
   (setq mode-line-percent-position '(-3 "%p"))
-  (setq mode-line-defining-kbd-macro
-        (propertize "Macro" 'face 'mode-line-emphasis))
+  ;;(setq mode-line-defining-kbd-macro
+  ;;      (propertize "Macro" 'face 'mode-line-emphasis))
   (setq-default mode-line-format
                 '("%e"
                   mode-line-front-space
@@ -707,7 +760,7 @@ prefixed variant."
   (setq display-time-default-load-average nil)
   :hook (after-init . display-time-mode))
 
-;; .............................................. Window elements and indicators
+;; ...................................... Window elements and indicators
 
 (use-package emacs
   :config
@@ -784,7 +837,7 @@ prefixed variant."
   (setq rainbow-blocks-highlight-brackets-p t)
   (setq rainbow-blocks-highlight-parens-p t))
 
-;; ........................................ Language settings for prose and code
+;; ................................................... Language settings
 
 (use-package emacs
   :config
@@ -1057,10 +1110,10 @@ ispell dictionaries with `dap/ispell-toggle-dictionaries'."
   (setq message-citation-line-format "%f [%Y-%m-%d, %R %z]:\n")
   (setq message-citation-line-function
         'message-insert-formatted-citation-line)
+  (setq message-send-mail-function 'message-send-mail-with-sendmail)
   (setq message-confirm-send nil)
   (setq message-kill-buffer-on-exit t)
   (setq message-wide-reply-confirm-recipients t)
-  (setq message-default-charset 'utf-8)
   (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
 
   (defun dap/message-header-add-gcc ()
