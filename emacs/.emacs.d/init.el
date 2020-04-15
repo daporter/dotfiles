@@ -316,6 +316,7 @@ Bind this in `minibuffer-local-filename-completion-map'."
               ("<left>" . icomplete-backward-completions)
               ("<up>" . icomplete-backward-completions)
               ;;("<return>" . dap/icomplete-force-complete-and-exit)
+              ("<return>" . icomplete-force-complete-and-exit)
               ("<C-backspace>" . contrib/icomplete-remove-directory-path)
               ("M-o w" . dap/icomplete-kill-ring-save)
               ("M-o i" . (lambda ()
@@ -1360,7 +1361,7 @@ syntax for use by the `elfeed' package."
       (start-process "elfeed-mpv" nil "mpv"
                      quality-arg (elfeed-entry-link entry))))
   
-  :hook (after-init . dap/feeds)
+  :hook (elfeed-search-mode . dap/feeds)
   :bind (:map elfeed-search-mode-map
               ("v" . (lambda ()
                        (interactive)
