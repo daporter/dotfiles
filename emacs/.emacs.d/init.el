@@ -1019,10 +1019,9 @@ ispell dictionaries with `dap/ispell-toggle-dictionaries'."
 
 (use-package flycheck
   :ensure t
-  :commands flycheck-mode
   :config
-  (setq flycheck-check-syntax-automatically
-        '(save mode-enabled)))
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  :hook (after-init . global-flycheck-mode))
 
 (use-package flycheck-indicator
   :ensure t
