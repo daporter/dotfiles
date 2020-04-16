@@ -631,7 +631,107 @@ This function is meant to be mapped to a key in `rg-mode-map'."
          ("M-n" . rg-next-file)
          ("M-p" . rg-prev-file)))
 
-;; ....................................................................... Theme
+;; ............................................................... Dired
+
+(use-package dired
+  :config
+  (setq dired-recursive-copies 'always)
+  (setq dired-recursive-deletes 'always)
+  (setq dired-listing-switches "-AFlh")
+  (setq dired-dwim-target t)
+  :hook ((dired-mode . dired-hide-details-mode)
+         (dired-mode . hl-line-mode)))
+
+(use-package dired-aux
+  :config
+  (setq dired-isearch-filenames 'dwim)
+  ;; The following variables were introduced in Emacs 27.1
+  ;;(setq dired-create-destination-dirs 'ask)
+  ;;(setq dired-vc-rename-file t)
+  :bind (:map dired-mode-map
+              ("C-+" . dired-create-empty-file)
+              ("M-s f" . nil)))
+
+(use-package find-dired
+  :after dired
+  :config
+  (setq find-ls-option '("-ls" . "-AFhl"))
+  (setq find-name-arg "-iname"))
+
+(use-package async
+  :ensure t)
+
+(use-package dired-async
+  :after (dired async)
+  :hook (dired-mode . dired-async-mode))
+
+(use-package dired-narrow
+  :ensure t
+  :after dired
+  :config
+  (setq dired-narrow-exit-when-one-left t)
+  (setq dired-narrow-enable-blinking t)
+  (setq dired-narrow-blink-time 0.3)
+  :bind (:map dired-mode-map
+              ("M-s n" . dired-narrow)))
+
+(use-package wdired
+  :after dired
+  :commands wdired-change-to-wdired-mode
+  :config
+  (setq wdired-allow-to-change-permissions t)
+  (setq wdired-create-parent-directories t))
+
+(use-package peep-dired
+  :ensure t
+  :after dired
+  :config
+  (setq peep-dired-cleanup-on-disable t)
+  (setq peep-dired-enable-on-directories nil)
+  (setq peep-dired-ignored-extensions
+        '("mkv" "webm" "mp4" "mp3" "ogg" "iso"))
+  :bind (:map dired-mode-map
+              ("P" . peep-dired)))
+
+(use-package dired-subtree
+  :ensure t
+  :after dired
+  :config
+  (setq dired-subtree-use-backgrounds nil)
+  :bind (:map dired-mode-map
+              ("<tab>" . dired-subtree-toggle)
+              ("<C-tab>" . dired-subtree-cycle)
+              ("<S-iso-lefttab>" . dired-subtree-remove)))
+
+(use-package dired-x
+  :after dired
+  :config
+  (setq dired-clean-up-buffers-too t)
+  (setq dired-clean-confirm-killing-deleted-buffers t)
+  (setq dired-x-hands-off-my-keys t)
+  (setq dired-bind-man nil)
+  (setq dired-bind-info nil)
+
+  (defun dap/kill-current-filename ()
+    "Place the current buffer's file name in the `kill-ring'."
+    (interactive)
+    (kill-new (dired-filename-at-point)))
+
+  (defun dap/insert-current-filename ()
+    "Insert at point the current buffer's file name."
+    (interactive)
+    (insert (dired-filename-at-point)))
+
+  :bind (("C-x C-j" . dired-jump)
+         ("s-j" . dired-jump)
+         ("C-x 4 C-j" . dired-jump-other-window)
+         ("s-J" . dired-jump-other-window)))
+
+(use-package diredfl
+  :ensure t
+  :hook (dired-mode . diredfl-mode))
+
+;; ............................................................... Theme
 
 ;; Disable GUI components
 (use-package emacs
