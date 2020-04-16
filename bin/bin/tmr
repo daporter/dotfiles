@@ -1,13 +1,13 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # Simple timer
 # ======================================================================
 
 # Exit if `notify-send` is not available.
-[ "$(command -v notify-send 2>/dev/null)" ] || {
+if ! command -v notify-send 2>/dev/null; then
 	echo "Missing notify-send."
 	exit 1
-}
+fi
 
 # Define a help message
 _help_message() {
@@ -16,10 +16,10 @@ _help_message() {
 }
 
 # Show the help message if arguments are not equal to one.
-[ "$#" -eq 1 ] || {
+if [ "$#" -ne 1 ]; then
 	_help_message
 	exit 1
-}
+fi
 
 # Capture the argument.  The first variables is meant to print the exact
 # argument.  The latter is transformed into human-readable text.
@@ -58,7 +58,7 @@ _notify() {
 	if [ -n "$alarm_sound" ] && [ "$(command -v mpv 2>/dev/null)" ]; then
 		mpv "$alarm_sound"
 	else
-		echo -e '\a'
+		echo '\a'
 	fi
 }
 
