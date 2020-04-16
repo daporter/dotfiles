@@ -48,7 +48,7 @@
   (setq x-underline-at-descent-line nil)
   (setq underline-minimum-offset 0)
   (setq line-spacing 0.15)
-  
+
   (defconst prot/fixed-pitch-font "Hack"
     "The default fixed-pitch typeface.")
 
@@ -1238,7 +1238,24 @@ cursor."
 (use-package flycheck
   :ensure t
   :config
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (setq flycheck-check-syntax-automatically '(mode-enabled save))
+
+  (flycheck-define-checker dap/git-commit-message
+    "A git commit message checker using `gitlint'.
+
+See URL `https://jorisroovers.com/gitlint/'."
+    :command ("gitlint" "--msg-filename" source)
+    :error-patterns
+    ((error line-start
+            line ": " (id (one-or-more (in alnum)))
+            blank
+            (message (one-or-more (not (any ":"))))
+            (minimal-match (zero-or-more anything))
+            line-end))
+    :modes vc-git-log-edit-mode)
+
+  (add-to-list 'flycheck-checkers 'dap/git-commit-message t)
+
   :hook (after-init . global-flycheck-mode))
 
 (use-package flycheck-indicator
@@ -1483,7 +1500,7 @@ Add this function to `message-header-setup-hook'."
     "Move the current message to the mailbox `Archive'."
     (interactive)
     (gnus-summary-move-article nil "nnimap+migadu:Archive"))
-  
+
   :bind (("C-c m" . gnus)
          :map gnus-summary-mode-map
          ("C-c a" . dap/archive-message)))
@@ -1677,7 +1694,7 @@ syntax for use by the `elfeed' package."
               (format "--ytdl-format=[height<=?%s]" quality-val)))
       (start-process "elfeed-mpv" nil "mpv"
                      quality-arg (elfeed-entry-link entry))))
-  
+
   :hook (elfeed-search-mode . prot/feeds)
   :bind (:map elfeed-search-mode-map
               ("v" . (lambda ()
