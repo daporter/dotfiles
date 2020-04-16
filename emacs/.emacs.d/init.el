@@ -1032,6 +1032,8 @@ Else toggle the comment status of the line at point."
          ("M-;" . comment-indent)
          ("C-x C-;" . comment-box)))
 
+;; ............................................. Spelling and dictionary
+
 (use-package flyspell
   :commands (ispell-change-dictionary
              ispell-word
@@ -1063,6 +1065,21 @@ ispell dictionaries with `dap/ispell-toggle-dictionaries'."
          ("C-M-$" . dap/ispell-toggle-dictionaries)
          :map flyspell-mode-map
          ("C-;" . nil)))
+
+(use-package emacs
+  :config
+  (defun dap/dict-lookup-en-fr ()
+    "Look up a definition in the WordRerefence.com en-fr dictionary.
+
+Uses the region if it is active, otherwise the word under the
+cursor."
+    (interactive)
+    (let ((word (if (use-region-p)
+                    (buffer-substring-no-properties
+                     (region-beginning) (region-end))
+                  (current-word))))
+      (browse-url (concat "https://www.wordreference.com/enfr/" word)))))
+
 
 (use-package flycheck
   :ensure t
