@@ -49,45 +49,45 @@
   (setq underline-minimum-offset 0)
   (setq line-spacing 0.15)
   
-  (defconst dap/fixed-pitch-font "Hack"
+  (defconst prot/fixed-pitch-font "Hack"
     "The default fixed-pitch typeface.")
 
-  (defconst dap/fixed-pitch-params ":hintstyle=hintslight"
+  (defconst prot/fixed-pitch-params ":hintstyle=hintslight"
     "Fontconfig parameters for the fixed-pitch typeface.")
 
-  (defun dap/default-font (family size)
+  (defun prot/default-font (family size)
     "Set frame font to FAMILY at SIZE."
     (set-frame-font
-     (concat family "-" (number-to-string size) dap/fixed-pitch-params) t t))
+     (concat family "-" (number-to-string size) prot/fixed-pitch-params) t t))
 
-  (defun dap/laptop-fonts ()
+  (defun prot/laptop-fonts ()
     "Fonts for the small laptop screen.
 
-Pass desired argument to `dap/font-sizes' for use on my
+Pass desired argument to `prot/font-sizes' for use on my
 small laptop monitor."
     (interactive)
     (when window-system
-      (dap/default-font dap/fixed-pitch-font 9)))
+      (prot/default-font prot/fixed-pitch-font 9)))
 
-  (defun dap/desktop-fonts ()
+  (defun prot/desktop-fonts ()
     "Fonts for the larger desktop screen.
 
-Pass desired argument to `dap/font-sizes' for use on my larger
+Pass desired argument to `prot/font-sizes' for use on my larger
  desktop monitor (external display connected to my laptop)."
     (interactive)
     (when window-system
-      (dap/default-font dap/fixed-pitch-font 9)))
+      (prot/default-font prot/fixed-pitch-font 9)))
 
-  (defun dap/reading-fonts ()
+  (defun prot/reading-fonts ()
     "Fonts for focused reading sessions."
     (interactive)
     (when window-system
-      (dap/default-font dap/fixed-pitch-font 10.5)))
+      (prot/default-font prot/fixed-pitch-font 10.5)))
 
-  (defun dap/fonts-per-monitor ()
+  (defun prot/fonts-per-monitor ()
     "Use font settings based on screen size.
 
-Choose between `dap/laptop-fonts' and `dap/desktop-fonts'
+Choose between `prot/laptop-fonts' and `prot/desktop-fonts'
 depending on the width of the monitor.  The calculation is based
 on the maximum width of my laptop's screen.  So if an external
 display is attached, then iit is considered a desktop scenario.
@@ -98,10 +98,10 @@ monitor-related events."
     (interactive)
     (when window-system
       (if (<= (display-pixel-width) 1600)
-          (dap/laptop-fonts)
-        (dap/desktop-fonts))))
+          (prot/laptop-fonts)
+        (prot/desktop-fonts))))
 
-  :hook (after-init . dap/fonts-per-monitor))
+  :hook (after-init . prot/fonts-per-monitor))
 
 ;; Backups
 
@@ -141,7 +141,7 @@ monitor-related events."
   (minibuffer-depth-indicate-mode 1)
   (minibuffer-electric-default-mode 1)
 
-  (defun dap/focus-minibuffer ()
+  (defun prot/focus-minibuffer ()
     "Focus the active minibuffer.
 
 Bind this to `completion-list-mode-map' to M-v to easily jump
@@ -153,7 +153,7 @@ completions if invoked from inside the minibuffer."
       (when mini
         (select-window mini))))
 
-  (defun dap/focus-minibuffer-or-completions ()
+  (defun prot/focus-minibuffer-or-completions ()
     "Focus the active minibuffer or the \\*Completions\\*.
 
 If both the minibuffer and the Completions are present, this
@@ -161,7 +161,7 @@ command will first move per invocation to the former, then the
 latter, and then continue to switch between the two.
 
 The continuous switch is essentially the same as running
-`dap/focus-minibuffer' and `switch-to-completions' in
+`prot/focus-minibuffer' and `switch-to-completions' in
 succession."
     (interactive)
     (let* ((mini (active-minibuffer-window))
@@ -177,7 +177,7 @@ succession."
   ;; Technically, this is not specific to the minibuffer, but I define
   ;; it here so that you can see how it is also used from inside the
   ;; "Completions" buffer
-  (defun dap/describe-symbol-at-point (&optional arg)
+  (defun prot/describe-symbol-at-point (&optional arg)
     "Get help (documentation) for the symbol at point.
 
 With a prefix argument, switch to the *Help* window.  If that is
@@ -203,19 +203,19 @@ instead."
          ("s-D" . dired-other-window)
          ("s-b" . switch-to-buffer)
          ("s-B" . switch-to-buffer-other-window)
-         ("s-h" . dap/describe-symbol-at-point)
+         ("s-h" . prot/describe-symbol-at-point)
          ("s-H" . (lambda ()
                     (interactive)
                     (let ((current-prefix-arg t))
-                      (dap/describe-symbol-at-point))))
-         ("s-v" . dap/focus-minibuffer-or-completions)
+                      (prot/describe-symbol-at-point))))
+         ("s-v" . prot/focus-minibuffer-or-completions)
          :map completion-list-mode-map
-         ("h" . dap/describe-symbol-at-point)
+         ("h" . prot/describe-symbol-at-point)
          ("n" . next-line)
          ("p" . previous-line)
          ("f" . next-completion)
          ("b" . previous-completion)
-         ("M-v" . dap/focus-minibuffer)))
+         ("M-v" . prot/focus-minibuffer)))
 
 (use-package savehist
   :config
@@ -242,7 +242,7 @@ instead."
   ;;(fido-mode -1)                        ; Emacs 27.1
   (icomplete-mode 1)
 
-  (defun dap/icomplete-force-complete-and-exit ()
+  (defun prot/icomplete-force-complete-and-exit ()
     "Complete the current icomplete match and exit the minibuffer.
 
 Contrary to `icomplete-force-complete-and-exit', this will
@@ -258,7 +258,7 @@ In my testing, this is necessary when the variable
     (icomplete-force-complete)
     (exit-minibuffer))
 
-  (defun dap/icomplete-kill-ring-save (&optional arg)
+  (defun prot/icomplete-kill-ring-save (&optional arg)
     "Expand and save current icomplete match to the kill ring.
 
 With a prefix argument, insert the match to the point in the
@@ -272,9 +272,9 @@ current buffer and switch focus back to the minibuffer."
         (kill-new (field-string-no-properties))
         (select-window (get-mru-window))
         (insert (car kill-ring))
-        (dap/focus-minibuffer))))
+        (prot/focus-minibuffer))))
 
-  (defun dap/icomplete-toggle-completion-styles (&optional arg)
+  (defun prot/icomplete-toggle-completion-styles (&optional arg)
     "Toggle between flex and prefix matching.
 
 With pregix ARG use basic completion instead.  These styles are
@@ -315,19 +315,19 @@ Bind this in `minibuffer-local-filename-completion-map'."
               ("C-p" . icomplete-backward-completions)
               ("<left>" . icomplete-backward-completions)
               ("<up>" . icomplete-backward-completions)
-              ;;("<return>" . dap/icomplete-force-complete-and-exit)
+              ;;("<return>" . prot/icomplete-force-complete-and-exit)
               ("<return>" . icomplete-force-complete-and-exit)
               ("<C-backspace>" . contrib/icomplete-remove-directory-path)
-              ("M-o w" . dap/icomplete-kill-ring-save)
+              ("M-o w" . prot/icomplete-kill-ring-save)
               ("M-o i" . (lambda ()
                            (interactive)
                            (let ((current-prefix-arg t))
-                             (dap/icomplete-kill-ring-save))))
-              ;;("C-," . dap/icomplete-toggle-completion-styles) ; toggle flex
+                             (prot/icomplete-kill-ring-save))))
+              ;;("C-," . prot/icomplete-toggle-completion-styles) ; toggle flex
               ;;("C-." . (lambda ()                               ; toggle basic
               ;;           (interactive)
               ;;           (let ((current-prefix-arg t))
-              ;;             (dap/icomplete-toggle-completion-styles))))))
+              ;;             (prot/icomplete-toggle-completion-styles))))))
               ))
 
 ;; ............................................................. Recentf
@@ -389,7 +389,7 @@ display virtual buffers."
   (setq icomplete-vertical-prospects-height (/ (window-height) 6))
   (icomplete-vertical-mode -1)
 
-  (defun dap/icomplete-recentf ()
+  (defun prot/icomplete-recentf ()
     "Open `recent-list' item in a new buffer.
 
 The user's $HOME directory is abbreviated as a tilde."
@@ -399,7 +399,7 @@ The user's $HOME directory is abbreviated as a tilde."
         (find-file
          (completing-read "Open recentf entry: " files nil t)))))
 
-  (defun dap/icomplete-yank-kill-ring ()
+  (defun prot/icomplete-yank-kill-ring ()
     "Insert the selected `kill-ring' item directly at point.
 When region is active, `delete-region'.
 
@@ -423,8 +423,8 @@ normally would when calling `yank' followed by `yank-pop'."
   ;; TODO can registers be inserted via completion?
   ;; TODO can mark-ring positions be selected?
 
-  :bind (("s-y" . dap/icomplete-yank-kill-ring)
-         ("s-r" . dap/icomplete-recentf)
+  :bind (("s-y" . prot/icomplete-yank-kill-ring)
+         ("s-r" . prot/icomplete-recentf)
          :map icomplete-minibuffer-map
          ("C-v" . icomplete-vertical-toggle)))
 
@@ -433,13 +433,13 @@ normally would when calling `yank' followed by `yank-pop'."
 (use-package project
   :after (minibuffer icomplete icomplete-vertical)
   :config
-  (defun dap/project-find-file ()
+  (defun prot/project-find-file ()
     "Find a file that belongs to the current project."
     (interactive)
     (icomplete-vertical-do ()
       (project-find-file)))
 
-  (defun dap/project-or-dir-find-subdirectory-recursive ()
+  (defun prot/project-or-dir-find-subdirectory-recursive ()
     "Recursive find subdirectory of project or directory.
 
 This command has the potential for infinite recursion: use it
@@ -458,7 +458,7 @@ wisely or prepare to use \\[keyboard-quit]."
         (dired
          (completing-read "Find sub-directory: " subdirs nil t dir)))))
 
-  (defun dap/find-file-from-dir-recursive ()
+  (defun prot/find-file-from-dir-recursive ()
     "Find file recursively, starting from present dir."
     (interactive)
     (let* ((dir default-directory)
@@ -468,7 +468,7 @@ wisely or prepare to use \\[keyboard-quit]."
         (find-file
          (completing-read "Find file recursively: " files nil t dir)))))
 
-  (defun dap/find-project ()
+  (defun prot/find-project ()
     "Switch to sub-directory at ~/projects.
 
 Allows you to switch directly to the root directory of a project
@@ -483,10 +483,10 @@ inside a given location."
         (dired
          (completing-read "Find project: " projects nil t path)))))
 
-  :bind (("M-s p" . dap/find-project)
-         ("M-s f" . dap/project-find-file)
-         ("M-s z" . dap/find-file-from-dir-recursive)
-         ("M-s d" . dap/project-or-dir-find-subdirectory-recursive)
+  :bind (("M-s p" . prot/find-project)
+         ("M-s f" . prot/project-find-file)
+         ("M-s z" . prot/find-file-from-dir-recursive)
+         ("M-s d" . prot/project-or-dir-find-subdirectory-recursive)
          ("M-s l" . find-library)
          ("M-s C-M-%" . project-query-replace-regexp)))
 
@@ -526,14 +526,14 @@ inside a given location."
   ;;(setq isearch-yank-on-move 'shift)
   (setq isearch-allow-scroll 'unlimited)
 
-  (defun dap/isearch-mark-and-exit ()
+  (defun prot/isearch-mark-and-exit ()
     "Mark the current search string and exit the search."
     (interactive)
     (push-mark isearch-other-end t 'activate)
     (setq deactivate-mark nil)
     (isearch-done))
 
-  (defun dap/isearch-other-end ()
+  (defun prot/isearch-other-end ()
     "End current search in the opposite side of the match.
 Particularly useful when the match does not fall within the
 confines of word boundaries (e.g. multiple words)."
@@ -542,7 +542,7 @@ confines of word boundaries (e.g. multiple words)."
     (when isearch-other-end
       (goto-char isearch-other-end)))
 
-  (defun dap/isearch-abort ()
+  (defun prot/isearch-abort ()
     "Remove non-matching `isearch' input, reverting to previous
 successful search and continuing with the search.
 
@@ -555,21 +555,21 @@ afterwards exit the search altogether."
       (isearch-pop-state))
     (isearch-update))
 
-  (defun dap/isearch-query-replace-symbol-at-point ()
+  (defun prot/isearch-query-replace-symbol-at-point ()
     "Run `query-replace-regexp' for the symbol at point."
     (interactive)
     (isearch-forward-symbol-at-point)
     (isearch-query-replace-regexp))
 
   :bind (("M-s M-o" . multi-occur)
-         ("M-s %" . dap/isearch-query-replace-symbol-at-point)
+         ("M-s %" . prot/isearch-query-replace-symbol-at-point)
          :map minibuffer-local-isearch-map
          ("M-/" . isearch-complete-edit)
          :map isearch-mode-map
          ("M-/" . isearch-complete)
-         ("C-SPC" . dap/isearch-mark-and-exit)
-         ("DEL" . dap/isearch-abort)
-         ("<C-return>" . dap/isearch-other-end)))
+         ("C-SPC" . prot/isearch-mark-and-exit)
+         ("DEL" . prot/isearch-abort)
+         ("<C-return>" . prot/isearch-other-end)))
 
 ;; ................................................. Regular expressions
 
@@ -604,7 +604,7 @@ afterwards exit the search altogether."
   (setq rg-custom-type-aliases nil)
   (setq rg-default-alias-fallback "all")
 
-  (rg-define-search dap/grep-vc-or-dir
+  (rg-define-search prot/grep-vc-or-dir
     :query ask
     :format regexp
     :files "everything"
@@ -615,7 +615,7 @@ afterwards exit the search altogether."
     :confirm prefix
     :flags ("--hidden -g !.git"))
 
-  (defun dap/rg-save-search-as-name ()
+  (defun prot/rg-save-search-as-name ()
     "Save `rg' buffer, naming it after the current search query.
 
 This function is meant to be mapped to a key in `rg-mode-map'."
@@ -623,9 +623,9 @@ This function is meant to be mapped to a key in `rg-mode-map'."
     (let ((pattern (car rg-pattern-history)))
       (rg-save-search-as-name (concat "«" pattern "»"))))
 
-  :bind (("M-s g" . dap/grep-vc-or-dir)
+  :bind (("M-s g" . prot/grep-vc-or-dir)
          :map rg-mode-map
-         ("s" . dap/rg-save-search-as-name)
+         ("s" . prot/rg-save-search-as-name)
          ("C-n" . next-line)
          ("C-p" . previous-line)
          ("M-n" . rg-next-file)
@@ -677,6 +677,160 @@ This function is meant to be mapped to a key in `rg-mode-map'."
   :bind (:map ibuffer-mode-map
               ("/ V" . ibuffer-vc-set-filter-groups-by-vc-root)
               ("/ <deletechar>" . ibuffer-clear-filter-groups)))
+
+;; ............................................................. Windows
+
+(use-package window
+  :init
+  (setq display-buffer-alist
+        '(;; top side window
+          ("\\*\\(Flycheck\\|Flymake\\|Package-Lint\\|vc-git :\\).*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . top)
+           (slot . 0)
+           (window-parameters . ((no-other-window . t))))
+          ("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\|Messages\\)\\*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . top)
+           (slot . 1)
+           (window-parameters . ((no-other-window . t))))
+          ;; bottom side window
+          ("\\*\\(Output\\|Register Preview\\).*"
+           (display-buffer-in-side-window)
+           (window-width . 0.16)       ; See the :hook
+           (side . bottom)
+           (slot . -1)
+           (window-parameters . ((no-other-window . t))))
+          (".*\\*Completions.*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . bottom)
+           (slot . 0)
+           (window-parameters . ((no-other-window . t))))
+          ("\\*e?shell.*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . bottom)
+           (slot . 1))
+          ;; left side window
+          ("\\*Help.*"
+           (display-buffer-in-side-window)
+           (window-width . 0.20)       ; See the :hook
+           (side . left)
+           (slot . 0)
+           (window-parameters . ((no-other-window . t))))
+          ;; right side window
+          ("\\*Faces\\*"
+           (display-buffer-in-side-window)
+           (window-width . 0.25)
+           (side . right)
+           (slot . 0)
+           (window-parameters . ((no-other-window . t)
+                                 (mode-line-format . (" "
+                                                      mode-line-buffer-identification)))))
+          ("\\*Custom.*"
+           (display-buffer-in-side-window)
+           (window-width . 0.25)
+           (side . right)
+           (slot . 1))
+          ;; bottom buffer (NOT side window)
+          ("\\*\\vc-\\(incoming\\|outgoing\\).*"
+           (display-buffer-at-bottom))))
+
+  (setq window-combination-resize t)
+  (setq even-window-sizes 'height-only)
+  (setq window-sides-vertical nil)
+
+  :hook ((help-mode . visual-line-mode)
+         (custom-mode . visual-line-mode))
+
+  :bind (("s-n" . next-buffer)
+         ("s-p" . previous-buffer)
+         ("s-o" . other-window)
+         ("s-2" . split-window-below)
+         ("s-3" . split-window-right)
+         ("s-0" . delete-window)
+         ("s-1" . delete-other-windows)
+         ("s-5" . delete-frame)
+         ("C-x +" . balance-windows-area)
+         ("s-q" . window-toggle-side-windows)))
+
+;; These are all experimental.  Just showcasing the power of passing
+;; parameters to windows or frames.
+(use-package emacs
+  :commands (prot/window-dired-vc-root-left
+             prot/make-frame-floating-with-current-buffer
+             prot/display-buffer-at-bottom)
+  :config
+  (defun prot/window-dired-vc-root-left ()
+    "Open root directory of current version-controlled repository
+or the present working directory with `dired' and bespoke window
+parameters.  This is meant as a proof-of-concept function,
+illustrating how to leverage window rules to display a buffer,
+plus a few concomitant extras."
+    (interactive)
+    (let ((dir (if (eq (vc-root-dir) nil)
+                   (dired-noselect default-directory)
+                 (dired-noselect (vc-root-dir)))))
+      (display-buffer-in-side-window
+       dir `((side . left)
+             (slot . -1)
+             (window-width . 0.16)
+             (window-parameters . ((no-other-window . t)
+                                   (no-delete-other-windows . t)
+                                   (mode-line-format . (" "
+                                                        mode-line-buffer-identification))))))
+      (with-current-buffer dir
+        (rename-buffer "*Dired-Side*")
+        (setq-local window-size-fixed 'width)))
+    (with-eval-after-load 'ace-window
+      (when (boundp 'aw-ignored-buffers)
+        (add-to-list 'aw-ignored-buffers "*Dired-Side*"))))
+
+  (defun prot/make-frame-floating-with-current-buffer ()
+    "Display the current buffer in a new floating frame.
+
+This passes certain parameters to the newly created frame:
+
+- use a different name than the default;
+- use a graphical frame;
+- do not display the minibuffer.
+
+The name is meant to be used by the external rules of my tiling
+window manager (BSPWM) to present the frame in a floating state."
+    (interactive)
+    (make-frame '((name . "my_float_window")
+                  (window-system . x)
+                  (minibuffer . nil))))
+
+  (defun prot/display-buffer-at-bottom ()
+    "Move the current buffer to the bottom of the frame.  This is
+useful to take a buffer out of a side window.
+
+The window parameters of this function are provided mostly for
+didactic purposes."
+    (interactive)
+    (let ((buffer (current-buffer)))
+      (with-current-buffer buffer
+        (delete-window)
+        (display-buffer-at-bottom
+         buffer `((window-parameters . ((mode-line-format . (" "
+                                                             mode-line-buffer-identification))))))))))
+
+(use-package winner
+  :hook (after-init . winner-mode)
+  :bind (("<s-right>" . winner-redo)
+         ("<s-left>" . winner-undo)))
+
+(use-package windmove
+  :config
+  ;;(setq windmove-create-window nil)     ; Emacs 27.1
+  :bind (("C-s-k" . windmove-up)
+         ("C-s-l" . windmove-right)
+         ("C-s-j" . windmove-down)
+         ("C-s-h" . windmove-left)))
 
 ;; ............................................................... Dired
 
@@ -759,12 +913,12 @@ This function is meant to be mapped to a key in `rg-mode-map'."
   (setq dired-bind-man nil)
   (setq dired-bind-info nil)
 
-  (defun dap/kill-current-filename ()
+  (defun prot/kill-current-filename ()
     "Place the current buffer's file name in the `kill-ring'."
     (interactive)
     (kill-new (dired-filename-at-point)))
 
-  (defun dap/insert-current-filename ()
+  (defun prot/insert-current-filename ()
     "Insert at point the current buffer's file name."
     (interactive)
     (insert (dired-filename-at-point)))
@@ -805,7 +959,7 @@ This function is meant to be mapped to a key in `rg-mode-map'."
   :config
   (setq custom-safe-themes t)
 
-  (defun dap/modus-operandi ()
+  (defun prot/modus-operandi ()
     "Enable some `modus-operandi' variables and load the theme."
     (setq modus-operandi-theme-slanted-constructs t
           modus-operandi-theme-bold-constructs nil
@@ -820,7 +974,7 @@ This function is meant to be mapped to a key in `rg-mode-map'."
           modus-operandi-theme-scale-4 1.2)
     (load-theme 'modus-operandi t))
 
-  (defun dap/modus-vivendi ()
+  (defun prot/modus-vivendi ()
     "Enable some `modus-vivendi' variables and load the theme."
     (setq modus-vivendi-theme-slanted-constructs t
           modus-vivendi-theme-bold-constructs nil
@@ -835,21 +989,21 @@ This function is meant to be mapped to a key in `rg-mode-map'."
           modus-vivendi-theme-scale-4 1.2)
     (load-theme 'modus-vivendi t))
 
-  (defcustom dap/modus-themes-toggle-hook nil
-    "Hook that runs after `dap/modus-themes-toggle' is invoked."
+  (defcustom prot/modus-themes-toggle-hook nil
+    "Hook that runs after `prot/modus-themes-toggle' is invoked."
     :type 'hook)
 
-  (defun dap/modus-themes-toggle ()
+  (defun prot/modus-themes-toggle ()
     "Toggle between `modus-operandi' and `modus-vivendi' themes.
 
-Also run `dap/modus-themes-toggle-hook'."
+Also run `prot/modus-themes-toggle-hook'."
     (interactive)
     (if (eq (car custom-enabled-themes) 'modus-operandi)
-        (dap/modus-vivendi)
-      (dap/modus-operandi))
-    (run-hooks 'dap/modus-themes-toggle-hook))
+        (prot/modus-vivendi)
+      (prot/modus-operandi))
+    (run-hooks 'prot/modus-themes-toggle-hook))
 
-  (defun dap/describe-face (pos)
+  (defun prot/describe-face (pos)
     "Print message with name of face at point.
 
 A lightweight alternative to `what-cursor-position' and its
@@ -860,9 +1014,9 @@ prefixed variant."
       (message "%s" (or face
                         "No face at point"))))
 
-  :bind (("<f5>" . dap/modus-themes-toggle)
-         ("s-=" . dap/describe-face))
-  :hook (after-init . dap/modus-operandi))
+  :bind (("<f5>" . prot/modus-themes-toggle)
+         ("s-=" . prot/describe-face))
+  :hook (after-init . prot/modus-operandi))
 
 ;; ........................................................... Mode line
 
@@ -939,21 +1093,21 @@ prefixed variant."
 
 (use-package emacs
   :config
-  (defun dap/toggle-invisibles ()
+  (defun prot/toggle-invisibles ()
     "Toggles the display of indentation and space characters."
     (interactive)
     (if (bound-and-true-p whitespace-mode)
         (whitespace-mode -1)
       (whitespace-mode)))
 
-  (defun dap/toggle-line-numbers ()
+  (defun prot/toggle-line-numbers ()
     "Toggles the display of line numbers.  Applies to all buffers."
     (interactive)
     (if (bound-and-true-p display-line-numbers-mode)
         (display-line-numbers-mode -1)
       (display-line-numbers-mode)))
-  :bind (("<f6>" . dap/toggle-invisibles)
-         ("<f7>" . dap/toggle-line-numbers)))
+  :bind (("<f6>" . prot/toggle-invisibles)
+         ("<f7>" . prot/toggle-line-numbers)))
 
 (use-package olivetti
   :ensure t
@@ -963,18 +1117,18 @@ prefixed variant."
   (setq olivetti-minimum-body-width 72)
   (setq olivetti-recall-visual-line-mode-entry-state t)
 
-  (defun dap/toggle-olivetti-mode ()
+  (defun prot/toggle-olivetti-mode ()
     "Toggle `olivetti-mode' without fringes and larger fonts."
     (interactive)
     (if olivetti-mode
         (progn
           (olivetti-mode -1)
           (fringe-mode '(8 . 8))
-          (dap/fonts-per-monitor))
+          (prot/fonts-per-monitor))
       (olivetti-mode 1)
       (fringe-mode '(0 . 0))
-      (dap/reading-fonts)))
-  :bind ("C-c o" . dap/toggle-olivetti-mode))
+      (prot/reading-fonts)))
+  :bind ("C-c o" . prot/toggle-olivetti-mode))
 
 (use-package rainbow-blocks
   :ensure t
@@ -1012,7 +1166,7 @@ prefixed variant."
   (setq comment-multi-line t)
   (setq comment-style 'multi-line)
 
-  (defun dap/comment-dwim (&optional arg)
+  (defun prot/comment-dwim (&optional arg)
     "Alternative to `comment-dwim': offers a simple wrapper
 around `comment-line' and `comment-dwim'.
 
@@ -1027,7 +1181,7 @@ Else toggle the comment status of the line at point."
       (save-excursion
         (comment-line arg))))
 
-  :bind (("C-;" . dap/comment-dwim)
+  :bind (("C-;" . prot/comment-dwim)
          ("C-:" . comment-kill)
          ("M-;" . comment-indent)
          ("C-x C-;" . comment-box)))
@@ -1053,7 +1207,7 @@ Else toggle the comment status of the line at point."
         (ispell-change-dictionary "fr")
       (ispell-change-dictionary "en")))
 
-  (defun dap/flyspell-dwim (&optional beg end)
+  (defun prot/flyspell-dwim (&optional beg end)
     "Run `flyspell-region' on the active region, else toggle the
 ispell dictionaries with `dap/ispell-toggle-dictionaries'."
     (interactive "r")
@@ -1061,7 +1215,7 @@ ispell dictionaries with `dap/ispell-toggle-dictionaries'."
         (flyspell-region beg end)
       (dap/ispell-toggle-dictionaries)))
 
-  :bind (("M-$" . dap/flyspell-dwim)
+  :bind (("M-$" . prot/flyspell-dwim)
          ("C-M-$" . dap/ispell-toggle-dictionaries)
          :map flyspell-mode-map
          ("C-;" . nil)))
@@ -1189,18 +1343,18 @@ cursor."
 
 (use-package vc-dir
   :config
-  (defun dap/vc-dir-project ()
+  (defun prot/vc-dir-project ()
     "Unconditionally display `vc-diff' for the current project."
     (interactive)
     (vc-dir (vc-root-dir)))
 
-  (defun dap/vc-dir-jump ()
+  (defun prot/vc-dir-jump ()
     "Jump to present directory in a `vc-dir' buffer."
     (interactive)
     (vc-dir default-directory))
 
-  :bind (("C-x v p" . dap/vc-dir-project)
-         ("C-x v j" . dap/vc-dir-jump))) ; similar to `dired-jump'
+  :bind (("C-x v p" . prot/vc-dir-project)
+         ("C-x v j" . prot/vc-dir-jump))) ; similar to `dired-jump'
 
 (use-package vc-git
   :config
@@ -1280,7 +1434,7 @@ cursor."
   (setq message-wide-reply-confirm-recipients t)
   (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
 
-  (defun dap/message-header-add-gcc ()
+  (defun prot/message-header-add-gcc ()
     "While `gnus' is running, add a Gcc header, if missing.
 
 The Gcc header places a copy of the outgoing message to the
@@ -1298,7 +1452,7 @@ Add this function to `message-header-setup-hook'."
             (message-add-header "Gcc: nnimap+migadu:Sent")))
       (message "Gnus is not running. No GCC field inserted.")))
 
-  :hook ((message-header-setup . dap/message-header-add-gcc)
+  :hook ((message-header-setup . prot/message-header-add-gcc)
          (message-setup . message-sort-headers)))
 
 ;; Gnus
@@ -1498,7 +1652,7 @@ Add this function to `message-header-setup-hook'."
   (setq elfeed-show-unique-buffers t)
   (setq elfeed-sort-order 'ascending)
 
-  (defun dap/feeds ()
+  (defun prot/feeds ()
     "Loads a file with RSS/Atom feeds.  This file contains valid
 syntax for use by the `elfeed' package."
     (let ((feeds "~/.emacs.d/feeds.el.gpg"))
@@ -1524,7 +1678,7 @@ syntax for use by the `elfeed' package."
       (start-process "elfeed-mpv" nil "mpv"
                      quality-arg (elfeed-entry-link entry))))
   
-  :hook (elfeed-search-mode . dap/feeds)
+  :hook (elfeed-search-mode . prot/feeds)
   :bind (:map elfeed-search-mode-map
               ("v" . (lambda ()
                        (interactive)
