@@ -1602,16 +1602,13 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-summary-ignore-duplicates t)
   (setq gnus-suppress-duplicates t)
   (setq gnus-summary-goto-unread nil)
-  (setq gnus-summary-make-false-root 'adopt)
+  (setq gnus-summary-make-false-root 'none)
   (setq gnus-summary-thread-gathering-function
-        'gnus-gather-threads-by-subject)
+        'gnus-gather-threads-by-references)
   (setq gnus-thread-sort-functions
         '(gnus-thread-sort-by-number
           gnus-thread-sort-by-date))
-  (setq gnus-subthread-sort-functions
-        'gnus-thread-sort-by-date)
-  (setq gnus-thread-hide-subtree nil)
-  (setq gnus-thread-ignore-subject nil)
+  (setq gnus-subthread-sort-functions 'gnus-thread-sort-by-date)
   (setq gnus-user-date-format-alist
         '(((gnus-seconds-today) . "Today at %R")
           ((+ 86400 (gnus-seconds-today)) . "Yesterday, %R")
@@ -1619,12 +1616,14 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-summary-line-format
         "%U%R%z %-16,16&user-date;  %4L:%-30,30f  %B%S\n")
   (setq gnus-summary-mode-line-format "%p")
-  (setq gnus-sum-thread-tree-false-root "─┬➤ ")
-  (setq gnus-sum-thread-tree-indent "  ")
+  (setq gnus-sum-thread-tree-indent          "  ")
+  (setq gnus-sum-thread-tree-root            "")
+  (setq gnus-sum-thread-tree-false-root      "")
+  (setq gnus-sum-thread-tree-single-indent   "")
   (setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
-  (setq gnus-sum-thread-tree-root "")
-  (setq gnus-sum-thread-tree-single-leaf "└─➤ ")
-  (setq gnus-sum-thread-tree-vertical "│")
+  (setq gnus-sum-thread-tree-vertical        "│ ")
+  (setq gnus-sum-thread-tree-single-leaf     "└─➤ ")
+
   :hook
   (gnus-summary-mode . hl-line-mode)
   (gnus-summary-exit-hook . gnus-topic-sort-groups-by-alphabet)
