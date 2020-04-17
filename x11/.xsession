@@ -41,8 +41,8 @@ xcape -e 'Control_L=Caps_Lock;Control_R=Return' &
 # xfdesktop --sm-client-disable --disable-wm-check &
 _check feh && "$HOME/.fehbg" &
 
-# Automatically lock the screen after 5 minutes of inactivity.
-xidle -timeout 300 &
+# Automatically lock the screen after 10 minutes of inactivity.
+xidle -timeout 600 &
 
 # Launch xbanish to hide the mouse cursor when a key is pressed.
 _check xbanish && xbanish &
