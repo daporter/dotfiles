@@ -1296,6 +1296,7 @@ ispell dictionaries with `dap/ispell-toggle-dictionaries'."
         (flyspell-region beg end)
       (dap/ispell-toggle-dictionaries)))
 
+  :hook (prog-mode . flyspell-prog-mode)
   :bind (("M-$" . prot/flyspell-dwim)
          ("C-M-$" . dap/ispell-toggle-dictionaries)
          :map flyspell-mode-map
@@ -1347,6 +1348,9 @@ See URL `https://jorisroovers.com/gitlint/'."
 (use-package eldoc
   :config
   (global-eldoc-mode -1))
+
+(use-package haskell-mode
+  :ensure t)
 
 (use-package markdown-mode
   :ensure t

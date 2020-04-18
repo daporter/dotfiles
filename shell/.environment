@@ -2,7 +2,7 @@
 
 # Environment variable settings intended to be shared by all shells.
 
-PATH=$HOME/bin:$PATH
+PATH=$HOME/bin:$HOME/.cabal/bin:$PATH
 export PATH
 
 LANG=en_AU.UTF-8
