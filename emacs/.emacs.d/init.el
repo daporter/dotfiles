@@ -932,6 +932,87 @@ didactic purposes."
   :ensure t
   :hook (dired-mode . diredfl-mode))
 
+;; ........................................................ Applications
+
+(use-package calendar
+  :config
+  (setq calendar-mark-diary-entries-flag t)
+  (setq calendar-week-start-day 1)      ; Monday
+  (setq calendar-date-style 'iso)
+  (setq calendar-holidays
+        (append holiday-general-holidays holiday-local-holidays
+                holiday-other-holidays holiday-christian-holidays
+                holiday-solar-holidays))
+  :hook (calendar-today-visible . calendar-mark-today))
+
+(use-package diary-lib
+  :config
+  (setq diary-header-line-flag nil)
+  (setq diary-mail-addr "david@daporter.net")
+  (setq diary-mail-days 3)
+  (setq diary-number-of-entries 3)
+  (setq diary-comment-start ";")
+  (setq diary-date-forms
+        '((day "/" month "[^/0-9]")
+          (day "/" month "/" year "[^0-9]")
+          (day " *" monthname " *" year "[^0-9]")
+          (monthname " *" day "[^,0-9]")
+          (monthname " *" day ", *" year "[^0-9]")
+          (year "[-/]" month "[-/]" day "[^0-9]")
+          (dayname "\\W"))))
+
+(use-package org
+  :config
+  ;; agenda and basic directory structure
+  (setq org-directory "~/org")
+  (setq org-default-notes-file "~/org/notes.org")
+  (setq org-agenda-files '("~/org" "~/.emacs.d"))
+  (setq org-deadline-warning-days 3)
+  (setq org-refile-targets
+        '((org-agenda-files . (:maxlevel . 2))
+          (nil . (:maxlevel . 2))))
+  (setq org-refile-use-outline-path t)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
+  (setq org-refile-use-cache t)
+  (setq org-fontify-done-headline t)
+  (setq org-enforce-todo-dependencies t)
+  (setq org-enforce-todo-checkbox-dependencies t)
+  (setq org-track-ordered-property-with-tag t)
+  ;; log
+  (setq org-log-done 'time)
+  (setq org-read-date-prefer-future 'time)
+  ;;
+  (setq org-special-ctrl-a/e t)
+  (setq org-catch-invisible-edits 'show)
+  (setq org-hide-emphasis-markers t)
+  (setq org-loop-over-headlines-in-active-region 'start-level)
+
+  :hook (org-mode . org-indent-mode)
+
+  :bind (("C-c l" . org-store-link)
+         :map org-mode-map
+         ("<C-return>" . nil)
+         ("<C-S-return>" . nil)))
+
+(use-package org-src
+  :after org
+  :config
+  (setq org-src-window-setup 'current-window)
+  (setq org-src-preserve-indentation t)
+  (setq org-src-tab-acts-natively t)
+  (setq org-edit-src-content-indentation 0))
+
+(use-package htmlize
+  :ensure t
+  :after org
+  (setq htmlize-ignore-face-size t))
+
+(use-package org-superstar
+  :ensure t
+  :after org
+  :config
+  (setq org-superstar-remove-leading-stars t))
+
 ;; ............................................................... Theme
 
 ;; Disable GUI components
@@ -1397,29 +1478,6 @@ See URL `https://jorisroovers.com/gitlint/'."
   (setq log-edit-keep-buffer nil)
   (setq log-edit-require-final-newline t)
   (setq log-edit-setup-add-author nil))
-
-;; .................................................................... Org mode
-
-(use-package org
-  :config
-  ;; agenda and basic directory structure
-  (setq org-directory "~/org")
-  (setq org-default-notes-file "~/org/notes.org")
-  (setq org-special-ctrl-a/e t)
-  (setq org-special-ctrl-k nil)
-  (setq org-catch-invisible-edits 'show)
-  (setq org-hide-emphasis-markers t)
-  (setq org-return-follows-link nil)
-  (setq org-fontify-done-headline t)
-  (setq org-enforce-todo-dependencies t)
-  (setq org-enforce-todo-checkbox-dependencies t)
-  (setq org-track-ordered-property-with-tag t)
-  ;; log
-  (setq org-log-done 'time)
-  (setq org-log-note-clock-out nil)
-  (setq org-log-redeadline nil)
-  (setq org-log-reschedule nil)
-  (setq org-read-date-prefer-future 'time))
 
 ;; ....................................................................... Email
 
