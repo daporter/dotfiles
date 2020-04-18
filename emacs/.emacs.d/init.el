@@ -47,7 +47,7 @@
   :config
   (setq x-underline-at-descent-line nil)
   (setq underline-minimum-offset 0)
-  (setq line-spacing 0.15)
+  (setq line-spacing 0.2)
 
   (defconst prot/fixed-pitch-font "Hack"
     "The default fixed-pitch typeface.")
@@ -1305,7 +1305,7 @@ See URL `https://jorisroovers.com/gitlint/'."
                         (electric-pair-mode -1)
                         (electric-quote-mode -1))))
 
-;; Paretheses
+;; Parentheses
 
 (use-package paren
   :config
@@ -1649,7 +1649,7 @@ Add this function to `message-header-setup-hook'."
   :after (gnus dired)
   :hook (dired-mode . gnus-dired-mode))
 
-;; Elfeed
+;; .............................................................. Elfeed
 
 (use-package elfeed
   :ensure t
