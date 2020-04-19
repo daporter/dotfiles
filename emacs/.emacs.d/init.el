@@ -1988,9 +1988,6 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-summary-ignore-duplicates t)
   (setq gnus-suppress-duplicates t)
   (setq gnus-summary-goto-unread nil)
-  (setq gnus-summary-make-false-root 'none)
-  (setq gnus-summary-thread-gathering-function
-        'gnus-gather-threads-by-references)
   (setq gnus-thread-sort-functions
         '(gnus-thread-sort-by-number
           gnus-thread-sort-by-date))
@@ -1999,18 +1996,54 @@ Add this function to `message-header-setup-hook'."
         '(((gnus-seconds-today) . "Today at %R")
           ((+ 86400 (gnus-seconds-today)) . "Yesterday, %R")
           (t . "%Y-%m-%d %R")))
-  (setq gnus-summary-line-format
-        "%U%R%z %-16,16&user-date;  %4L:%-30,30f  %B%S\n")
-  (setq gnus-summary-mode-line-format "%p")
-  (setq gnus-sum-thread-tree-indent          "  ")
-  (setq gnus-sum-thread-tree-root            "")
-  (setq gnus-sum-thread-tree-false-root      "")
-  (setq gnus-sum-thread-tree-single-indent   "")
-  (setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
-  (setq gnus-sum-thread-tree-vertical        "│ ")
-  (setq gnus-sum-thread-tree-single-leaf     "└─➤ ")
 
-  :hook
+  (setq gnus-summary-make-false-root 'dummy)
+  (setq gnus-summary-dummy-line-format
+        (concat "   "
+                "                  "
+                "                               "
+                "%S\n")
+  (setq gnus-summary-line-format
+        (concat "%0{%U%R%z%}"
+                "%1{%-16,16&user-date;%}  "
+                "%(%-30,30f %) "
+                "%B" "%s\n"))
+
+  (setq gnus-sum-thread-tree-single-indent   "• ")
+  (setq gnus-sum-thread-tree-false-root      "  ")
+  (setq gnus-sum-thread-tree-root            "• ")
+  (setq gnus-sum-thread-tree-vertical        "│ ")
+  (setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
+  (setq gnus-sum-thread-tree-single-leaf     "└─➤ ")
+  (setq gnus-sum-thread-tree-indent          "  ")
+
+  (setq gnus-summary-mode-line-format "%p")
+
+  (setq gnus-parameters
+        '(("nnimap\\+migadu:.*"
+           (gnus-summary-dummy-line-format
+            (concat "   "
+                    "                      "
+                    "                               "
+                    "%S\n"))
+           (gnus-summary-line-format
+            (concat "%0{%U%R%z%}"
+                    "%1{%-16,16&user-date;%}  "
+                    "%0{%ug%}  "
+                    "%(%-30,30f %) "
+                    "%B" "%s\n")))))
+  
+  (defun dp/extract-to-address-from-header (header)
+    (cdr (assq 'To (elt header (1- (length header))))))
+  
+  (defun gnus-user-format-function-g (header)
+    "Indicate whether HEADER contains my Gmail address."
+    (let ((to-address (dp/extract-to-address-from-header header)))
+      (if (string-match "david.a.porter@gmail.com" to-address)
+          "G"
+        " ")))
+
+   :hook
   (gnus-summary-mode . hl-line-mode)
   (gnus-summary-exit-hook . gnus-topic-sort-groups-by-alphabet)
   (gnus-summary-exit-hook . gnus-group-sort-groups-by-rank)
