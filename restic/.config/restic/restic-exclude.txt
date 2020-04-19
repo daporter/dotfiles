@@ -1,4 +1,6 @@
+$HOME/.cabal
 $HOME/.cache
+$HOME/.emacs.d/elpa
 $HOME/.mozilla
 $HOME/.surf
 $HOME/Downloads
