@@ -4,6 +4,7 @@
 /bspwm/.config/bspwm/bspwm_colours
 /colours/.wallpaper.jpg
 /emacs/.emacs.d/auto-save-list
+/emacs/.emacs.d/bookmarks
 /emacs/.emacs.d/elfeed
 /emacs/.emacs.d/elpa
 /emacs/.emacs.d/feeds.el.gpg
