@@ -2257,13 +2257,13 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-summary-make-false-root 'dummy)
   (setq gnus-summary-dummy-line-format
         (concat "   "
-                "                  "
+                "                   "
                 "                               "
-                "%S\n")
+                "• %S\n"))
   (setq gnus-summary-line-format
         (concat "%0{%U%R%z%}"
-                "%1{%-16,16&user-date;%}  "
-                "%(%-30,30f %) "
+                "%-16,16&user-date;  "
+                "%-30,30f  "
                 "%B" "%s\n"))
 
   (setq gnus-sum-thread-tree-single-indent   "• ")
@@ -2282,12 +2282,12 @@ Add this function to `message-header-setup-hook'."
             (concat "   "
                     "                      "
                     "                               "
-                    "%S\n"))
+                    "• %S\n"))
            (gnus-summary-line-format
             (concat "%0{%U%R%z%}"
-                    "%1{%-16,16&user-date;%}  "
+                    "%-16,16&user-date;  "
                     "%0{%ug%}  "
-                    "%(%-30,30f %) "
+                    "%-30,30f  "
                     "%B" "%s\n")))))
 
   (defun dp/extract-to-address-from-header (header)
@@ -2300,7 +2300,7 @@ Add this function to `message-header-setup-hook'."
           "G"
         " ")))
 
-   :hook
+  :hook
   (gnus-summary-mode . hl-line-mode)
   (gnus-summary-exit-hook . gnus-topic-sort-groups-by-alphabet)
   (gnus-summary-exit-hook . gnus-group-sort-groups-by-rank)
