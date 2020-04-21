@@ -1060,27 +1060,6 @@ Callers of this function already widen the buffer view."
             nil
           t))))
 
-  (defun bh/skip-non-stuck-projects ()
-    "Skip trees that are not stuck projects"
-    (save-restriction
-      (widen)
-      (let ((next-headline (save-excursion
-                             (or (outline-next-heading) (point-max)))))
-        (if (bh/is-project-p)
-            (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-                   (has-next ))
-              (save-excursion
-                (forward-line 1)
-                (while (and (not has-next)
-                            (< (point) subtree-end)
-                            (re-search-forward "^\\*+ NEXT " subtree-end t))
-                  (unless (member "WAITING" (org-get-tags-at))
-                    (setq has-next t))))
-              (if has-next
-                  next-headline
-                nil)) ; a stuck project, has subtasks but no next task
-          next-headline))))
-
   ;; agenda and basic directory structure
   (setq org-directory "~/org")
   (setq org-default-notes-file "~/org/refile.org")
@@ -1102,19 +1081,19 @@ Callers of this function already widen the buffer view."
           (sequence "AMOTIVATOR(MA)" "TMOTIVATOR(MT)" "CMOTIVATOR(MC)")
           (sequence "WAITING(w@/!)" "INACTIVE(i)" "SOMEDAY(s)" "|" "CANCELLED(c@/!)")))
   ;; Custom colors for the keywords
-  (setq org-todo-keyword-faces
-        '(("TODO" :foreground "red" :weight bold)
-          ("TASK" :foreground "#5C888B" :weight bold)
-          ("NEXT" :foreground "blue" :weight bold)
-          ("PROJ" :foreground "magenta" :weight bold)
-          ("AMOTIVATOR" :foreground "#F06292" :weight bold)
-          ("TMOTIVATOR" :foreground "#AB47BC" :weight bold)
-          ("CMOTIVATOR" :foreground "#5E35B1" :weight bold)
-          ("DONE" :foreground "forest green" :weight bold)
-          ("WAITING" :foreground "orange" :weight bold)
-          ("INACTIVE" :foreground "magenta" :weight bold)
-          ("SOMEDAY" :foreground "cyan" :weight bold)
-          ("CANCELLED" :foreground "forest green" :weight bold)))
+  ;; (setq org-todo-keyword-faces
+  ;;       '(("TODO" :foreground "red" :weight bold)
+  ;;         ("TASK" :foreground "#5C888B" :weight bold)
+  ;;         ("NEXT" :foreground "blue" :weight bold)
+  ;;         ("PROJ" :foreground "magenta" :weight bold)
+  ;;         ("AMOTIVATOR" :foreground "#F06292" :weight bold)
+  ;;         ("TMOTIVATOR" :foreground "#AB47BC" :weight bold)
+  ;;         ("CMOTIVATOR" :foreground "#5E35B1" :weight bold)
+  ;;         ("DONE" :foreground "forest green" :weight bold)
+  ;;         ("WAITING" :foreground "orange" :weight bold)
+  ;;         ("INACTIVE" :foreground "magenta" :weight bold)
+  ;;         ("SOMEDAY" :foreground "cyan" :weight bold)
+  ;;         ("CANCELLED" :foreground "forest green" :weight bold)))
   ;; Auto-update tags whenever the state is changed
   (setq org-todo-state-tags-triggers
         '(("CANCELLED" ("CANCELLED" . t))
@@ -1494,7 +1473,8 @@ show this warning instead."
 (use-package org-habit
   :after org
   :config
-  (setq org-habit-graph-column 44)
+  (add-to-list 'org-modules 'org-habit)
+  (setq org-habit-graph-column 60)
   (setq org-habit-show-habits-only-for-today t))
 
 (use-package org-capture
@@ -2606,7 +2586,6 @@ instead.  This command can then be followed by the standard
 (use-package shr
   :commands (eww eww-browse-url)
   :config
-  (setq browse-url-browser-function 'eww-browse-url)
   (setq shr-use-fonts nil)
   (setq shr-use-colors nil)
   (setq shr-max-image-proportion 0.7)
