@@ -28,7 +28,7 @@
 ;; ............................................................... Base settings
 
 ;; Modeline "lighters"
-(use-package delight
+(use-package diminish
   :ensure t
   :after use-package)
 
@@ -47,7 +47,7 @@
   :config
   (setq x-underline-at-descent-line nil)
   (setq underline-minimum-offset 0)
-  (setq line-spacing 0.2)
+  (setq line-spacing 0.15)
 
   (defconst prot/fixed-pitch-font "Hack"
     "The default fixed-pitch typeface.")
@@ -119,22 +119,22 @@ monitor-related events."
 
 (use-package minibuffer
   :config
+  ;; NOTE that flex completion is introduced in Emacs 27
+  (setq completion-styles
+        ;;'(partial-completion substring orderless initials flex))
+        '(partial-completion substring initials))
+
   (setq completion-cycle-threshold 3)
-  ;;(setq completion-flex-nospace nil)
+  (setq completion-flex-nospace nil)
   (setq completion-pcm-complete-word-inserts-delimiters t)
   (setq completion-pcm-word-delimiters "-_./:| ")
   (setq completion-show-help nil)
-  ;;(setq completion-styles '(partial-completion substring initials flex))
-  (setq completion-styles '(partial-completion substring initials))
-  (setq completion-category-overrides
-        '((file (styles initials basic))
-          (buffer (styles initials basic))
-          (info-menu (styles basic))))
+  (setq completion-ignore-case t)
+  (setq read-buffer-completion-ignore-case t)
+  (setq read-file-name-completion-ignore-case t)
   (setq completions-format 'vertical)   ; *Completions* buffer
   (setq enable-recursive-minibuffers t)
   (setq read-answer-short t)
-  (setq read-buffer-completion-ignore-case t)
-  (setq read-file-name-completion-ignore-case t)
   (setq resize-mini-windows t)
 
   (file-name-shadow-mode 1)
@@ -187,12 +187,20 @@ instead."
     (let ((symbol (symbol-at-point)))
       (when symbol
         (describe-symbol symbol)))
-    (when current-prefix-arg
+    (when arg
       (let ((help (get-buffer-window "*Help*")))
         (when help
           (if (not (eq (selected-window) help))
               (select-window help)
             (select-window (get-mru-window)))))))
+
+  (defun prot/completions-kill-save-symbol ()
+    "Add symbol-at-point to the kill ring.
+
+Intended for use in the \\*Completions\\* buffer.  Bind this to a
+key in `completion-list-mode-map'."
+    (interactive)
+    (kill-new (thing-at-point 'symbol)))
 
   ;; Defines, among others, aliases for common actions to Super-KEY.
   ;; Normally these should go in individual package declarations, but
@@ -206,11 +214,11 @@ instead."
          ("s-h" . prot/describe-symbol-at-point)
          ("s-H" . (lambda ()
                     (interactive)
-                    (let ((current-prefix-arg t))
-                      (prot/describe-symbol-at-point))))
+                    (prot/describe-symbol-at-point '(4))))
          ("s-v" . prot/focus-minibuffer-or-completions)
          :map completion-list-mode-map
          ("h" . prot/describe-symbol-at-point)
+         ("w" . prot/completions-kill-save-symbol)
          ("n" . next-line)
          ("p" . previous-line)
          ("f" . next-completion)
@@ -227,108 +235,99 @@ instead."
 
 (use-package icomplete
   :demand
-  :after minibuffer
+  :after minibuffer                     ; Read that section as well
   :config
-  (setq icomplete-delay-completions-threshold 0)
-  (setq icomplete-max-delay-chars 0)
-  (setq icomplete-compute-delay 0)
+  (setq icomplete-delay-completions-threshold 100)
+  (setq icomplete-max-delay-chars 2)
+  (setq icomplete-compute-delay 0.2)
   (setq icomplete-show-matches-on-no-input t)
   (setq icomplete-hide-common-prefix nil)
   (setq icomplete-prospects-height 1)
-  (setq icomplete-separator " · ")      ; mid dot
+  ;; (setq icomplete-separator " · ")
+  ;; (setq icomplete-separator " │ ")
+  ;; (setq icomplete-separator " ┊ ")
+  (setq icomplete-separator " ┆ ")
   (setq icomplete-with-completion-tables t)
-  (setq icomplete-in-buffer nil)        ; not your job
+  (setq icomplete-in-buffer t)
+  (setq icomplete-tidy-shadowed-file-names nil)
 
   ;;(fido-mode -1)                        ; Emacs 27.1
   (icomplete-mode 1)
 
-  (defun prot/icomplete-force-complete-and-exit ()
-    "Complete the current icomplete match and exit the minibuffer.
+  (defun prot/icomplete-kill-or-insert-candidate (&optional arg)
+    "Place the matching candidate to the top of the `kill-ring'.
+This will keep the minibuffer session active.
 
-Contrary to `icomplete-force-complete-and-exit', this will
-confirm your choice without complaining about incomplete matches.
+With \\[universal-argument] insert the candidate in the most
+recently used buffer, while keeping focus on the minibuffer.
 
-Those incomplete matches can block you from performing legitimate
-actions, such as defining a new tag in an `org-capture' prompt.
+With \\[universal-argument] \\[universal-argument] insert the
+candidate and immediately exit all recursive editing levels and
+active minibuffers.
 
-In my testing, this is necessary when the variable
-`icomplete-with-completion-tables' is non-nil, because then
-`icomplete' will be activated practically everywhere it can."
-    (interactive)
-    (icomplete-force-complete)
-    (exit-minibuffer))
-
-  (defun prot/icomplete-kill-ring-save (&optional arg)
-    "Expand and save current icomplete match to the kill ring.
-
-With a prefix argument, insert the match to the point in the
-current buffer and switch focus back to the minibuffer."
+Bind this function in `icomplete-minibuffer-map'."
     (interactive "*P")
-    (when (and (minibufferp)
-               (bound-and-true-p icomplete-mode))
-      (icomplete-force-complete)
-      (kill-new (field-string-no-properties))
-      (when current-prefix-arg
-        (kill-new (field-string-no-properties))
-        (select-window (get-mru-window))
-        (insert (car kill-ring))
-        (prot/focus-minibuffer))))
+    (let ((candidate (car completion-all-sorted-completions)))
+      (when (and (minibufferp)
+                 (bound-and-true-p icomplete-mode))
+        (cond ((eq arg nil)
+               (kill-new candidate))
+              ((= (prefix-numeric-value arg) 4)
+               (with-minibuffer-selected-window (insert candidate)))
+              ((= (prefix-numeric-value arg) 16)
+               (with-minibuffer-selected-window (insert candidate))
+               (top-level))))))
 
   (defun prot/icomplete-toggle-completion-styles (&optional arg)
-    "Toggle between flex and prefix matching.
+    "Toggle between flex and default completion styles.
 
-With pregix ARG use basic completion instead.  These styles are
-described in `completion-styles-alist'.
+With \\[universal-argument] use basic completion instead.  These
+styles are described in `completion-styles-alist'.
 
 Bind this function in `icomplete-minibuffer-map'."
     (interactive "*P")
     (when (and (minibufferp)
                (bound-and-true-p icomplete-mode))
-      (let* ((completion-styles-original completion-styles)
-             (basic '(emacs22 basic))
-             (flex '(flex initials substring partial-completion))
-             (prefix '(partial-completion substring initials flex)))
-        (if current-prefix-arg
+      (let* ((basic '(emacs22 basic))
+             (flex '(flex orderless initials substring partial-completion))
+             (user completion-styles)) ; use my defaults
+        (if arg ; TODO make those message persistent next to the prompt
             (progn
               (setq-local completion-styles basic)
-              (message "%s" (propertize "Prioritising BASIC matching" 'face 'highlight)))
+              (message "%s" (propertize "BASIC matching" 'face 'highlight)))
           (if (not (eq (car completion-styles) 'flex))
               (progn
                 (setq-local completion-styles flex)
-                (message "%s" (propertize "Prioritising FLEX matching" 'face 'highlight)))
-            (setq-local completion-styles prefix)
-            (message "%s" (propertize "Prioritising PREFIX matching" 'face 'highlight)))))))
+                (message "%s" (propertize "FLEX first" 'face 'highlight)))
+            (setq-local completion-styles user)
+            (message "%s" (propertize "DEFAULT matching" 'face 'highlight)))))))
 
-  (defun contrib/icomplete-remove-directory-path (arg)
-    "Remove sub-directory path in `find-file' or equivalent.
-
-Bind this in `minibuffer-local-filename-completion-map'."
-    (interactive "p")
-    (zap-up-to-char (- arg) ?/))
+  ;; TODO can registers be inserted via completion?
+  ;; TODO can mark-ring positions be selected?
 
   :bind (:map icomplete-minibuffer-map
+              ("<tab>" . icomplete-force-complete)
+              ("<return>" . icomplete-force-complete-and-exit) ; exit with completion
               ("C-m" . minibuffer-complete-and-exit) ; try complete + force current input
-              ("C-j" . exit-minibuffer) ; force current input more aggressively
+              ("C-j" . exit-minibuffer) ; force current input unconditionally
               ("C-n" . icomplete-forward-completions)
               ("<right>" . icomplete-forward-completions)
               ("<down>" . icomplete-forward-completions)
               ("C-p" . icomplete-backward-completions)
               ("<left>" . icomplete-backward-completions)
               ("<up>" . icomplete-backward-completions)
-              ;;("<return>" . prot/icomplete-force-complete-and-exit)
-              ("<return>" . icomplete-force-complete-and-exit)
-              ("<C-backspace>" . contrib/icomplete-remove-directory-path)
-              ("M-o w" . prot/icomplete-kill-ring-save)
+              ("<C-backspace>" . icomplete-fido-backward-updir) ; Emacs 27.1
+              ("M-o w" . prot/icomplete-kill-or-insert-candidate)
               ("M-o i" . (lambda ()
                            (interactive)
-                           (let ((current-prefix-arg t))
-                             (prot/icomplete-kill-ring-save))))
-              ;;("C-," . prot/icomplete-toggle-completion-styles) ; toggle flex
-              ;;("C-." . (lambda ()                               ; toggle basic
-              ;;           (interactive)
-              ;;           (let ((current-prefix-arg t))
-              ;;             (prot/icomplete-toggle-completion-styles))))))
-              ))
+                           (prot/icomplete-kill-or-insert-candidate '(4))))
+              ("M-o j" . (lambda ()
+                           (interactive)
+                           (prot/icomplete-kill-or-insert-candidate '(16))))
+              ("C-," . prot/icomplete-toggle-completion-styles) ; toggle flex
+              ("C-." . (lambda ()                               ; toggle basic
+                         (interactive)
+                         (prot/icomplete-toggle-completion-styles '(4))))))
 
 ;; ............................................................. Recentf
 
@@ -431,7 +430,7 @@ normally would when calling `yank' followed by `yank-pop'."
 ;; Completion for projects and directory trees
 
 (use-package project
-  :after (minibuffer icomplete icomplete-vertical)
+  :after (minibuffer icomplete icomplete-vertical) ; read those
   :config
   (defun prot/project-find-file ()
     "Find a file that belongs to the current project."
@@ -447,13 +446,16 @@ wisely or prepare to use \\[keyboard-quit]."
     (interactive)
     (let* ((project (vc-root-dir))
            (dir (if project project default-directory))
-           ;;(contents (directory-files-recursively dir ".*" t nil nil))
-           (contents (directory-files dir t))
+           (contents (directory-files-recursively dir ".*" t nil nil))
+           ;; (contents (directory-files dir t))
            (find-directories (mapcar (lambda (dir)
                                        (when (file-directory-p dir)
                                          (abbreviate-file-name dir)))
                                      contents))
-           (subdirs (delete nil find-directories)))
+           (subdirs (delete nil find-directories))
+           (completion-styles
+            '(flex initials orderless substring partial-completion))
+           (orderless-regexp-separator "[/ ]"))
       (icomplete-vertical-do ()
         (dired
          (completing-read "Find sub-directory: " subdirs nil t dir)))))
@@ -462,19 +464,21 @@ wisely or prepare to use \\[keyboard-quit]."
     "Find file recursively, starting from present dir."
     (interactive)
     (let* ((dir default-directory)
-           ;;(files (directory-files-recursively dir ".*" nil t))
-           (files (directory-files-recursively dir ".*" nil)))
+           (files (directory-files-recursively dir ".*" nil t))
+           (completion-styles
+            '(flex initials orderless substring partial-completion))
+           (orderless-regexp-separator "[/ ]"))
       (icomplete-vertical-do ()
         (find-file
          (completing-read "Find file recursively: " files nil t dir)))))
 
   (defun prot/find-project ()
-    "Switch to sub-directory at ~/projects.
+    "Switch to sub-directory at ~/Git/Projects.
 
 Allows you to switch directly to the root directory of a project
 inside a given location."
     (interactive)
-    (let* ((path "~/projects/")
+    (let* ((path "~/Git/Projects/")
            (dotless directory-files-no-dot-files-regexp)
            (project-list (project-combine-directories
                           (directory-files path t dotless)))
@@ -492,10 +496,35 @@ inside a given location."
 
 ;; ............................................... In-buffer completions
 
+(use-package emacs
+  :after (minibuffer icomplete icomplete-vertical) ; review those first
+  :config
+  (defun contrib/completing-read-in-region (start end collection &optional predicate)
+    "Prompt for completion of region in the minibuffer if non-unique.
+ Use as a value for `completion-in-region-function'."
+    (let* ((initial (buffer-substring-no-properties start end))
+           (all (completion-all-completions initial collection predicate
+                                            (length initial)))
+           (completion (cond
+                        ((atom all) nil)
+                        ((and (consp all) (atom (cdr all))) (car all))
+                        (t (let ((completion-in-region-function
+                                  #'completion--in-region))
+                             (icomplete-vertical-do (:height (/ (window-height) 5))
+                               (completing-read
+                                "Completion: " collection predicate t initial)))))))
+      (if (null completion)
+          (progn (message "No completion") nil)
+        (delete-region start end)
+        (insert completion)
+        t)))
+
+  (setq completion-in-region-function #'contrib/completing-read-in-region))
+
 ;; Dabbrev (dynamic word completion)
 
 (use-package dabbrev
-  :after (minibuffer icomplete icomplete-vertical)
+  :after (minibuffer icomplete icomplete-vertical) ; read those as well
   :config
   (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
   (setq dabbrev-abbrev-skip-leading-regexp "\\$\\|\\*\\|/\\|=")
@@ -506,13 +535,14 @@ inside a given location."
   (setq dabbrev-check-other-buffers t)
   (setq dabbrev-eliminate-newlines nil)
   (setq dabbrev-upcase-means-case-search t)
-
-  :bind (("M-/" . dabbrev-expand)))
+  :bind (("M-/" . dabbrev-expand)
+         ("C-M-/" . dabbrev-completion)
+         ("s-/" . dabbrev-completion)))
 
 ;; ............................................................. Isearch
 
 (use-package isearch
-  :delight
+  :diminish
   :config
   (setq search-highlight t)
   (setq search-whitespace-regexp ".*?")
@@ -523,7 +553,7 @@ inside a given location."
   ;;(setq isearch-lazy-count t)
   ;;(setq lazy-count-prefix-format "(%s/%s) ")
   ;;(setq lazy-count-suffix-format nil)
-  ;;(setq isearch-yank-on-move 'shift)
+  ;;(setq isearch-yank-on-pmove 'shift)
   (setq isearch-allow-scroll 'unlimited)
 
   (defun prot/isearch-mark-and-exit ()
@@ -709,7 +739,7 @@ This function is meant to be mapped to a key in `rg-mode-map'."
            (side . bottom)
            (slot . 0)
            (window-parameters . ((no-other-window . t))))
-          ("\\*e?shell.*"
+          ("^\\(\\*e?shell\\|vterm\\).*"
            (display-buffer-in-side-window)
            (window-height . 0.16)
            (side . bottom)
@@ -738,14 +768,11 @@ This function is meant to be mapped to a key in `rg-mode-map'."
           ;; bottom buffer (NOT side window)
           ("\\*\\vc-\\(incoming\\|outgoing\\).*"
            (display-buffer-at-bottom))))
-
   (setq window-combination-resize t)
   (setq even-window-sizes 'height-only)
   (setq window-sides-vertical nil)
-
   :hook ((help-mode . visual-line-mode)
          (custom-mode . visual-line-mode))
-
   :bind (("s-n" . next-buffer)
          ("s-p" . previous-buffer)
          ("s-o" . other-window)
@@ -826,7 +853,7 @@ didactic purposes."
 
 (use-package windmove
   :config
-  ;;(setq windmove-create-window nil)     ; Emacs 27.1
+  (setq windmove-create-window nil)
   :bind (("C-s-k" . windmove-up)
          ("C-s-l" . windmove-right)
          ("C-s-j" . windmove-down)
@@ -1119,6 +1146,8 @@ Callers of this function already widen the buffer view."
               (org-todo "TODO")))))))
 
   (setq org-fontify-done-headline t)
+  (setq org-fontify-quote-and-verse-blocks t)
+  (setq org-fontify-whole-heading-line t)
   (setq org-enforce-todo-dependencies t)
   (setq org-enforce-todo-checkbox-dependencies t)
   (setq org-track-ordered-property-with-tag t)
@@ -1458,84 +1487,6 @@ show this warning instead."
         '((org-agenda-files . (:maxlevel . 9))
           (nil . (:maxlevel . 9))))
 
-  ;; (setq org-agenda-custom-commands
-  ;;       '(("n" "Notes" tags "NOTE"
-  ;;          ((org-agenda-overriding-header "Notes")
-  ;;           (org-tags-match-list-sublevels t)))
-  ;;         ("h" "Habits" tags-todo "STYLE=\"habit\""
-  ;;          ((org-agenda-overriding-header "Habits")
-  ;;           (org-agenda-sorting-strategy
-  ;;            '(todo-state-down effort-up category-keep))))
-  ;;         (" " "Agenda"
-  ;;          ((agenda "" ((org-agenda-overriding-header "Today's Schedule:")
-  ;;                       (org-agenda-span 'day)
-  ;;                       (org-agenda-ndays 1)
-  ;;                       (org-agenda-start-on-weekday nil)
-  ;;                       (org-agenda-start-day "+0d")
-  ;;                       (org-agenda-todo-ignore-deadlines nil)))
-  ;;           (tags "REFILE-ARCHIVE-REFILE=\"nil\""
-  ;;                 ((org-agenda-overriding-header "Tasks to Refile:")
-  ;;                  (org-tags-match-list-sublevels nil)))
-  ;;           (tags-todo "-INACTIVE-CANCELLED-ARCHIVE/!NEXT"
-  ;;                      ((org-agenda-overriding-header "Next Tasks:")))
-  ;;           (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILEr/!"
-  ;;                      ((org-agenda-overriding-header "Active Projects:")
-  ;;                       (org-agenda-skip-function 'gs/select-projects)))
-  ;;           (tags "ENDOFAGENDA"
-  ;;                 ((org-agenda-overriding-header "End of Agenda")
-  ;;                  (org-tags-match-list-sublevels nil))))
-  ;;          ((org-agenda-start-with-log-mode t)
-  ;;           (org-agenda-log-mode-items '(clock))
-  ;;           (org-agenda-prefix-format
-  ;;            '((agenda . "  %-12:c%?-12t %(gs/org-agenda-add-location-string)% s")
-  ;;              (timeline . "  % s")
-  ;;              (todo . "  %-12:c %(gs/org-agenda-prefix-string) ")
-  ;;              (tags . "  %-12:c %(gs/org-agenda-prefix-string) ")
-  ;;              (search . "  %i %-12:c")))
-  ;;           (org-agenda-todo-ignore-deadlines 'near)
-  ;;           (org-agenda-todo-ignore-scheduled t)))
-  ;;         ("r" "Agenda Review"
-  ;;          ((tags "REFILE-ARCHIVE-REFILE=\"nil\""
-  ;;                 ((org-agenda-overriding-header "Tasks to Refile:")
-  ;;                  (org-tags-match-list-sublevels nil)))
-  ;;           (tags-todo "-INACTIVE-CANCELLED-ARCHIVE/!NEXT"
-  ;;                      ((org-agenda-overriding-header "Next Tasks:")))
-  ;;           (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVEr/!"
-  ;;                      ((org-agenda-overriding-header "Active Projects:")
-  ;;                       (org-agenda-skip-function 'gs/select-projects)))
-  ;;           (tags-todo "-CANCELLED/!"
-  ;;                      ((org-agenda-overriding-header "Stuck Projects")
-  ;;                       (org-agenda-skip-function 'dp/select-stuck-projects)
-  ;;                       (org-agenda-sorting-strategy
-  ;;                        '(category-keep))))
-  ;;           (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE-STYLE=\"habit\"/!-NEXT"
-  ;;                      ((org-agenda-overriding-header "Standalone Tasks:")
-  ;;                       (org-agenda-skip-function 'gs/select-standalone-tasks)))
-  ;;           (tags-todo "-INACTIVE-HOLD-CANCELLED-REFILE-ARCHIVE/!-NEXT"
-  ;;                      ((org-agenda-overriding-header "Remaining Project Tasks:")
-  ;;                       (org-agenda-skip-function 'gs/select-project-tasks)))
-  ;;           (tags-todo "-INACTIVE-CANCELLED-ARCHIVE/!WAITING"
-  ;;                      ((org-agenda-overriding-header "Waiting Tasks:")))
-  ;;           (tags "INACTIVE-ARCHIVE-CANCELLED"
-  ;;                 ((org-agenda-overriding-header "Inactive Projects and Tasks")
-  ;;                  (org-tags-match-list-sublevels nil)))
-  ;;           (tags "ENDOFAGENDA"
-  ;;                 ((org-agenda-overriding-header "End of Agenda")
-  ;;                  (org-tags-match-list-sublevels nil))))
-  ;;          ((org-agenda-start-with-log-mode t)
-  ;;           (org-agenda-log-mode-items '(clock))
-  ;;           (org-agenda-prefix-format
-  ;;            '((agenda . "  %-12:c%?-12t %(gs/org-agenda-add-location-string)% s")
-  ;;              (timeline . "  % s")
-  ;;              (todo . "  %-12:c %(gs/org-agenda-prefix-string) ")
-  ;;              (tags . "  %-12:c %(gs/org-agenda-prefix-string) ")
-  ;;              (search . "  %i %-12:c")))
-  ;;           (org-agenda-todo-ignore-deadlines 'near)
-  ;;           (org-agenda-todo-ignore-scheduled t)))))
-
-  ;; Disable the default stuck projects view since we define our own.
-  (setq org-stuck-projects (quote ("" nil nil "")))
-
   :hook
   ((org-agenda-finalize . gs/org-agenda-project-highlight-warning)
    (org-agenda-finalize . gs/remove-agenda-regions)))
@@ -1622,13 +1573,17 @@ show this warning instead."
   (setq custom-safe-themes t)
 
   (defun prot/modus-operandi ()
-    "Enable some `modus-operandi' variables and load the theme."
+    "Enable some Modus Operandi variables and load the theme.
+This is used internally by `prot/modus-themes-toggle'."
     (setq modus-operandi-theme-slanted-constructs t
-          modus-operandi-theme-bold-constructs nil
+          modus-operandi-theme-bold-constructs t
           modus-operandi-theme-visible-fringes t
+          modus-operandi-theme-3d-modeline nil
           modus-operandi-theme-subtle-diffs t
           modus-operandi-theme-distinct-org-blocks nil
           modus-operandi-theme-proportional-fonts nil
+          modus-operandi-theme-rainbow-headings t
+          modus-operandi-theme-section-headings t
           modus-operandi-theme-scale-headings t
           modus-operandi-theme-scale-1 1.05
           modus-operandi-theme-scale-2 1.1
@@ -1637,13 +1592,17 @@ show this warning instead."
     (load-theme 'modus-operandi t))
 
   (defun prot/modus-vivendi ()
-    "Enable some `modus-vivendi' variables and load the theme."
+    "Enable some Modus Vivendi variables and load the theme.
+This is used internally by `prot/modus-themes-toggle'."
     (setq modus-vivendi-theme-slanted-constructs t
-          modus-vivendi-theme-bold-constructs nil
+          modus-vivendi-theme-bold-constructs t
           modus-vivendi-theme-visible-fringes t
+          modus-vivendi-theme-3d-modeline nil
           modus-vivendi-theme-subtle-diffs t
           modus-vivendi-theme-distinct-org-blocks nil
           modus-vivendi-theme-proportional-fonts nil
+          modus-vivendi-theme-rainbow-headings t
+          modus-vivendi-theme-section-headings t
           modus-vivendi-theme-scale-headings t
           modus-vivendi-theme-scale-1 1.05
           modus-vivendi-theme-scale-2 1.1
@@ -1656,8 +1615,7 @@ show this warning instead."
     :type 'hook)
 
   (defun prot/modus-themes-toggle ()
-    "Toggle between `modus-operandi' and `modus-vivendi' themes.
-
+    "Toggle between `prot/modus-operandi' and `prot/modus-vivendi'.
 Also run `prot/modus-themes-toggle-hook'."
     (interactive)
     (if (eq (car custom-enabled-themes) 'modus-operandi)
@@ -1665,19 +1623,7 @@ Also run `prot/modus-themes-toggle-hook'."
       (prot/modus-operandi))
     (run-hooks 'prot/modus-themes-toggle-hook))
 
-  (defun prot/describe-face (pos)
-    "Print message with name of face at point.
-
-A lightweight alternative to `what-cursor-position' and its
-prefixed variant."
-    (interactive "d")
-    (let ((face (or (get-char-property pos 'face)
-                    (get-char-property pos 'read-cf-name))))
-      (message "%s" (or face
-                        "No face at point"))))
-
-  :bind (("<f5>" . prot/modus-themes-toggle)
-         ("s-=" . prot/describe-face))
+  :bind ("<f5>" . prot/modus-themes-toggle)
   :hook (after-init . prot/modus-operandi))
 
 ;; ........................................................... Mode line
@@ -1735,7 +1681,7 @@ prefixed variant."
 
 (use-package fringe
   :config
-  (fringe-mode '(8 . 8))
+  (fringe-mode nil)
   (setq-default fringes-outside-margins nil)
   (setq-default indicate-buffer-boundaries nil)
   (setq-default indicate-empty-lines nil)
@@ -1773,10 +1719,10 @@ prefixed variant."
 
 (use-package olivetti
   :ensure t
-  :delight
+  :diminish
   :config
   (setq olivetti-body-width 100)
-  (setq olivetti-minimum-body-width 72)
+  (setq olivetti-minimum-body-width 80)
   (setq olivetti-recall-visual-line-mode-entry-state t)
 
   (defun prot/toggle-olivetti-mode ()
@@ -1785,7 +1731,7 @@ prefixed variant."
     (if olivetti-mode
         (progn
           (olivetti-mode -1)
-          (fringe-mode '(8 . 8))
+          (fringe-mode nil)
           (prot/fonts-per-monitor))
       (olivetti-mode 1)
       (fringe-mode '(0 . 0))
@@ -1794,7 +1740,7 @@ prefixed variant."
 
 (use-package rainbow-blocks
   :ensure t
-  :delight
+  :diminish
   :commands rainbow-blocks-mode
   :config
   (setq rainbow-blocks-highlight-braces-p t)
@@ -1812,14 +1758,13 @@ prefixed variant."
   :hook (after-init . column-number-mode))
 
 (use-package subword
-  :delight
+  :diminish
   :hook (prog-mode . subword-mode))
 
 (use-package emacs
+  :diminish auto-fill-function
   :hook (text-mode . (lambda ()
-                       (turn-on-auto-fill)
-                       (delight 'auto-fill-function nil t)
-                       (setq adaptive-fill-mode t))))
+                       (turn-on-auto-fill))))
 
 (use-package newcomment
   :config
@@ -1926,9 +1871,24 @@ See URL `https://jorisroovers.com/gitlint/'."
   :after flycheck
   :hook (flycheck-mode . flycheck-indicator-mode))
 
-(use-package eldoc
+(use-package flymake
   :config
-  (global-eldoc-mode -1))
+  (setq flymake-fringe-indicator-position 'left-fringe)
+  (setq flymake-suppress-zero-counters t)
+  (setq flymake-start-on-flymake-mode t)
+  (setq flymake-no-changes-timeout nil)
+  (setq flymake-start-on-save-buffer t)
+  (setq flymake-proc-compilation-prevents-syntax-check t)
+  (setq flymake-wrap-around nil)
+  :bind (:map flymake-mode-map
+              ("C-c d" . flymake-show-diagnostics-buffer)
+              ("C-c n" . flymake-goto-next-error)
+              ("C-c p" . flymake-goto-prev-error)))
+
+(use-package eldoc
+  :diminish
+  :config
+  (global-eldoc-mode 1))
 
 (use-package haskell-mode
   :ensure t)
@@ -2024,20 +1984,39 @@ See URL `https://jorisroovers.com/gitlint/'."
 
 ;; VC
 
+(use-package vc
+  :config
+  (setq vc-find-revision-no-save t)
+  (require 'log-view)                   ; needed for the key bindings
+  :bind (("C-x v b" . vc-retrieve-tag)  ; "branch" switch
+         ("C-x v t" . vc-create-tag)
+         ("C-x v f" . vc-log-incoming)  ; the actual git fetch
+         ("C-x v F" . vc-update)        ; "F" because "P" is push
+         ("C-x v d" . vc-diff)
+         (:map log-view-mode-map
+               ("<tab>" . log-view-toggle-entry-display)
+               ("<return>" . log-view-find-revision)
+               ("s" . vc-log-search)
+               ("o" . vc-log-outgoing)
+               ("f" . vc-log-incoming)
+               ("F" . vc-update)
+               ("P" . vc-push))))
+
 (use-package vc-dir
   :config
   (defun prot/vc-dir-project ()
     "Unconditionally display `vc-diff' for the current project."
     (interactive)
     (vc-dir (vc-root-dir)))
-
-  (defun prot/vc-dir-jump ()
-    "Jump to present directory in a `vc-dir' buffer."
-    (interactive)
-    (vc-dir default-directory))
-
   :bind (("C-x v p" . prot/vc-dir-project)
-         ("C-x v j" . prot/vc-dir-jump))) ; similar to `dired-jump'
+         :map vc-dir-mode-map
+         ("b" . vc-retrieve-tag)
+         ("t" . vc-create-tag)
+         ("o" . vc-log-outgoing)
+         ("f" . vc-log-incoming) ; replaces `vc-dir-find-file' (use RET)
+         ("F" . vc-update)       ; symmetric with P: `vc-push'
+         ("d" . vc-diff)         ; align with D: `vc-root-diff'
+         ("k" . vc-dir-clean-files)))
 
 (use-package vc-git
   :config
@@ -2055,7 +2034,39 @@ See URL `https://jorisroovers.com/gitlint/'."
   :config
   (setq diff-default-read-only t)
   (setq diff-advance-after-apply-hunk t)
-  (setq diff-update-on-the-fly t))
+  (setq diff-update-on-the-fly t)
+  ;; The following are from Emacs 27.1
+  (setq diff-refine nil)
+  (setq diff-font-lock-prettify nil)
+  (setq diff-font-lock-syntax nil))
+
+(use-package ediff
+  :config
+  (setq ediff-keep-variants nil)
+  (setq ediff-make-buffers-readonly-at-startup nil)
+  (setq ediff-merge-revisions-with-ancestor t)
+  (setq ediff-show-clashes-only t)
+  (setq ediff-split-window-function 'split-window-horizontally)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+  ;; Tweak those for safer identification and removal
+  (setq ediff-combination-pattern
+        '("<<<<<<< prot-ediff-combine Variant A" A
+          ">>>>>>> prot-ediff-combine Variant B" B
+          "####### prot-ediff-combine Ancestor" Ancestor
+          "======= prot-ediff-combine End"))
+
+  ;; TODO automate process in a robust way, or at least offer a good key
+  ;; binding.
+  (defun prot/ediff-flush-combination-pattern ()
+    "Remove my custom `ediff-combination-pattern' markers.
+
+This is a quick-and-dirty way to get rid of the markers that are
+left behind by `smerge-ediff' when combining the output of two
+diffs.  While this could be automated via a hook, I am not yet
+sure this is a good approach."
+    (interactive)
+    (flush-lines ".*prot-ediff.*" (point-min) (point-max) nil)))
 
 (use-package log-edit
   :config
@@ -2192,7 +2203,7 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-html-frame-width 80)
   (setq gnus-html-image-automatic-caching t)
   (setq gnus-inhibit-images t)
-  (setq gnus-max-image-proportion 0.3)
+  (setq gnus-max-image-proportion 0.7)
   (setq gnus-treat-display-smileys nil)
   (setq gnus-article-mode-line-format "%G %S %m")
   (setq gnus-visible-headers
@@ -2201,6 +2212,7 @@ Add this function to `message-header-setup-hook'."
           "^X-Mailer:"))
   (setq gnus-sorted-header-list gnus-visible-headers)
   :bind (:map gnus-article-mode-map
+              ("i" . gnus-article-show-images)
               ("s" . gnus-mime-save-part)
               ("o" . gnus-mime-copy-part)))
 
@@ -2382,6 +2394,234 @@ syntax for use by the `elfeed' package."
               :map elfeed-show-mode-map
               ("v" . ambrevar/elfeed-play-with-mpv)
               ("w" . elfeed-show-yank)))
+
+;; Custom movements and motions
+
+(use-package emacs
+  :config
+  (defun prot/copy-line ()
+    "Copies the entirety of the current line."
+    (interactive)
+    (copy-region-as-kill (point-at-bol) (point-at-eol))
+    (message "Current line copied"))
+
+  (defun prot/insert-double-quotes (&optional arg)
+    "Insert a pair of double quotes or wrap ARG with them."
+    (interactive "P")
+    (insert-pair arg ?\" ?\"))
+
+  (defun prot/insert-double-smart-quotes (&optional arg)
+    "Insert a pair of double smart quotes or wrap ARG with them."
+    (interactive "P")
+    (insert-pair arg ?\“ ?\”))
+
+  (defun prot/insert-single-smart-quotes (&optional arg)
+    "Insert a pair of single smart quotes or wrap ARG with them."
+    (interactive "P")
+    (insert-pair arg ?\‘ ?\’))
+
+  (defun prot/insert-elisp-quotes (&optional arg)
+    "Insert a pair of elisp symbol quotes or wrap ARG with them."
+    (interactive "P")
+    (insert-pair arg ?\` ?\'))
+
+  (defun prot/multi-line-next ()
+    "Moves point 15 lines down."
+    (interactive)
+    (forward-line 15))
+
+  (defun prot/multi-line-prev ()
+    "Moves point 15 lines up."
+    (interactive)
+    (forward-line -15))
+
+  (defun prot/kill-line-backward ()
+    "Kill from point to the beginning of the line."
+    (interactive)
+    (kill-line 0))
+
+  (defun prot/new-line-below ()
+    "Create a new line below the current one.  Move the point to
+the absolute beginning.  Also see `prot/new-line-above'."
+    (interactive)
+    (end-of-line)
+    (newline))
+
+  (defun prot/new-line-above ()
+    "Create a new line above the current one.  Move the point to
+the absolute beginning.  Also see `prot/new-line-below'."
+    (interactive)
+    (beginning-of-line)
+    (newline)
+    (forward-line -1))
+
+  (defun contrib/rename-file-and-buffer ()
+    "Rename current buffer and if the buffer is visiting a file, rename it too."
+    (interactive)
+    (let ((filename (buffer-file-name)))
+      (if (not (and filename (file-exists-p filename)))
+          (rename-buffer (read-from-minibuffer "New name: " (buffer-name)))
+        (let* ((new-name (read-from-minibuffer "New name: " filename))
+               (containing-dir (file-name-directory new-name)))
+          (make-directory containing-dir t)
+          (cond
+           ((vc-backend filename) (vc-rename-file filename new-name))
+           (t
+            (rename-file filename new-name t)
+            (set-visited-file-name new-name t t)))))))
+
+  (defun prot/transpose-chars ()
+    "Always transposes the two characters before point.  There is
+no 'dragging' the character forward.  This is the behaviour of
+`transpose-chars' when point is at end-of-line."
+    (interactive)
+    (transpose-chars -1)
+    (forward-char))
+
+  (defun prot/transpose-or-swap-lines (arg)
+    "If region is active, swap the line at mark (region
+beginning) with the one at point (region end).  This leverages a
+facet of the built-in `transpose-lines'.  Otherwise transpose the
+current line with the one before it ('drag' line downward)."
+    (interactive "p")
+    (if (use-region-p)
+        (transpose-lines 0)
+      (transpose-lines arg)))
+
+  (defun prot/transpose-or-swap-paragraphs (arg)
+    "If region is active, swap the paragraph at mark (region
+beginning) with the one at point (region end).  This leverages a
+facet of the built-in `transpose-paragraphs'.  Otherwise
+transpose the current paragraph with the one after it ('drag'
+paragraph downward)."
+    (interactive "p")
+    (if (use-region-p)
+        (transpose-paragraphs 0)
+      (transpose-paragraphs arg)))
+
+  (defun prot/transpose-or-swap-sentences (arg)
+    "If region is active, swap the sentence at mark (region
+beginning) with the one at point (region end).  This leverages a
+facet of the built-in `transpose-sentences'.  Otherwise transpose
+the sentence before point with the one after it ('drag' sentence
+forward/downward).  Also `fill-paragraph' afterwards.
+
+Note that, by default, sentences are demarcated by two spaces."
+    (interactive "p")
+    (if (use-region-p)
+        (transpose-sentences 0)
+      (transpose-sentences arg))
+    (fill-paragraph))
+
+  (defun prot/transpose-or-swap-words (arg)
+    "If region is active, swap the word at mark (region
+beginning) with the one at point (region end).
+
+Otherwise, and while inside a sentence, this behaves as the
+built-in `transpose-words', dragging forward the word behind the
+point.  The difference lies in its behaviour at the end of a
+line, where it will always transpose the word at point with the
+one behind it (effectively the last two words).
+
+This addresses two patterns of behaviour I dislike in the
+original command:
+
+1. When a line follows, `M-t' will transpose the last word of the
+line at point with the first word of the line below.
+
+2. While at the end of the line, `M-t' will not transpose the
+last two words, but will instead move point one word backward.
+To actually transpose the last two words, you need to invoke the
+command twice."
+    (interactive "p")
+    (if (use-region-p)
+        (transpose-words 0)
+      (if (eq (point) (point-at-eol))
+          (progn
+            (backward-word 1)
+            (transpose-words 1)
+            (forward-char 1))
+        (transpose-words arg))))
+
+  (defun prot/unfill-region-or-paragraph (&optional region)
+    "Join all lines in a region, if active, while respecting any
+empty lines (so multiple paragraphs are not joined, just
+unfilled).  If no region is active, operate on the paragraph.
+The idea is to produce the opposite effect of both
+`fill-paragraph' and `fill-region'."
+    (interactive)
+    (let ((fill-column most-positive-fixnum))
+      (if (use-region-p)
+          (fill-region (region-beginning) (region-end))
+        (fill-paragraph nil region))))
+
+  (defun prot/yank-replace-line-or-region ()
+    "Replace the line at point with the contents of the last
+stretch of killed text.  If the region is active, operate over it
+instead.  This command can then be followed by the standard
+`yank-pop' (default is bound to M-y)."
+    (interactive)
+    (if (use-region-p)
+        (progn
+          (delete-region (region-beginning) (region-end))
+          (yank))
+      (delete-region (point-at-bol) (point-at-eol))
+      (yank)))
+
+  :bind (("<C-M-backspace>" . backward-kill-sexp)
+         ("M-c" . capitalize-dwim)
+         ("M-l" . downcase-dwim)        ; "lower" case
+         ("M-u" . upcase-dwim)
+         ("<C-f2>" . contrib/rename-file-and-buffer)
+         ("C-S-w" . prot/copy-line)
+         ("M-=" . count-words)
+         ("M-\"" . prot/insert-double-quotes)
+         ("C-M-\"" . prot/insert-double-smart-quotes)
+         ("C-M-'" . prot/insert-single-smart-quotes)
+         ("M-`" . prot/insert-elisp-quotes)
+         ("s-k" . kill-this-buffer)
+         ("M-k" . prot/kill-line-backward)
+         ("C-S-n" . prot/multi-line-next)
+         ("C-S-p" . prot/multi-line-prev)
+         ("<C-return>" . prot/new-line-below)
+         ("<C-S-return>" . prot/new-line-above)
+         ("M-SPC" . cycle-spacing)
+         ("M-o" . delete-blank-lines)
+         ("C-t" . prot/transpose-chars)
+         ("C-x C-t" . prot/transpose-or-swap-lines)
+         ("C-S-t" . prot/transpose-or-swap-paragraphs)
+         ("C-x M-t" . prot/transpose-or-swap-sentences)
+         ("M-t" . prot/transpose-or-swap-words)
+         ("M-Q" . prot/unfill-region-or-paragraph)
+         ("C-S-y" . prot/yank-replace-line-or-region)))
+
+(use-package beginend
+  :ensure t
+  :demand
+  :diminish beginend-global-mode
+  :config
+  (dolist (mode beginend-modes) (diminish (cdr mode)))
+  (beginend-global-mode 1))
+
+(use-package shr
+  :commands (eww eww-browse-url)
+  :config
+  (setq browse-url-browser-function 'eww-browse-url)
+  (setq shr-use-fonts nil)
+  (setq shr-use-colors nil)
+  (setq shr-max-image-proportion 0.7)
+  (setq shr-width (current-fill-column)))
+
+(use-package shr-tag-pre-highlight
+  :ensure t
+  :after shr
+  :config
+  (add-to-list 'shr-external-rendering-functions
+               '(pre . shr-tag-pre-highlight))
+  (when (version< emacs-version "26")
+    (with-eval-after-load 'eww
+      (advice-add 'eww-display-html :around
+                  'eww-display-html--override-shr-external-rendering-functions))))
 
 ;; ............................................ Emacs server and desktop
 
