@@ -473,12 +473,12 @@ wisely or prepare to use \\[keyboard-quit]."
          (completing-read "Find file recursively: " files nil t dir)))))
 
   (defun prot/find-project ()
-    "Switch to sub-directory at ~/Git/Projects.
+    "Switch to sub-directory at ~/projects.
 
 Allows you to switch directly to the root directory of a project
 inside a given location."
     (interactive)
-    (let* ((path "~/Git/Projects/")
+    (let* ((path "~/projects/")
            (dotless directory-files-no-dot-files-regexp)
            (project-list (project-combine-directories
                           (directory-files path t dotless)))
