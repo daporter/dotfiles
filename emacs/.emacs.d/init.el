@@ -2282,13 +2282,16 @@ Add this function to `message-header-setup-hook'."
                     "%-30,30f  "
                     "%B" "%s\n")))))
 
-  (defun dp/extract-to-address-from-header (header)
-    (cdr (assq 'To (elt header (1- (length header))))))
-
+  (defun dp/get-address-from-header (field header)
+    (cdr (assq field (elt header (1- (length header))))))
+  
   (defun gnus-user-format-function-g (header)
     "Indicate whether HEADER contains my Gmail address."
-    (let ((to-address (dp/extract-to-address-from-header header)))
-      (if (string-match "david.a.porter@gmail.com" to-address)
+    (let ((gmail-address "david\\.a\\.porter@gmail\\.com")
+          (to-address (dp/get-address-from-header 'To header))
+          (cc-address (dp/get-address-from-header 'Cc header)))
+      (if (or (and to-address (string-match gmail-address to-address))
+              (and cc-address (string-match gmail-address cc-address)))
           "G"
         " ")))
 
