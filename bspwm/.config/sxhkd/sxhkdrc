@@ -44,6 +44,6 @@ mod3 + {x,b}
 
 # Raise and lower the volume in small steps
 mod3 + Up
-	mixerctl -q outputs.master=+20,+20
+    sndioctl output.level=+0.1 >/dev/null
 mod3 + Down
-	mixerctl -q outputs.master=-20,-20
+    sndioctl output.level=-0.1 >/dev/null

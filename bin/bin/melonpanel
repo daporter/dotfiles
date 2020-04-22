@@ -136,7 +136,7 @@ _wifi() {
 	command -v ifconfig > /dev/null || return 1
 
 	local wifi_name
-	wifi_name=$(ifconfig iwn0 | awk '/join/ {print $3}')
+	wifi_name=$(ifconfig iwn0 | awk '/ieee80211/ {print $3}')
 
 	echo "$wifi_name"
 }
@@ -199,13 +199,13 @@ _temperature() {
 # Check the sound volume and whether it is muted or not.  Output the
 # appropriate indicators.
 _volume() {
-	command -v mixerctl > /dev/null || return 1
+	command -v sndioctl > /dev/null || return 1
 
 	local volume_status volume_level volume_label
 
 	volume_status="$(mixerctl -n outputs.master.mute)"
-	volume_level_raw="$(mixerctl -n outputs.master | cut -d, -f1)"
-	volume_level="$(echo "$volume_level_raw / 255 * 100" | bc -l | cut -d. -f1)"
+	volume_level_raw="$(sndioctl output.level | cut -d= -f2)"
+	volume_level="$(echo "$volume_level_raw * 100" | bc -l | cut -d. -f1)"
 	volume_label='V:'
 
 	case "$volume_status" in
