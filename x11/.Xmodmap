@@ -49,6 +49,7 @@ keycode 36 = Control_R NoSymbol Control_R
 keycode 37 = Hyper_L NoSymbol Hyper_L
 keycode 66 = Control_L NoSymbol Control_L
 keycode 109 = Hyper_R NoSymbol Hyper_R
+keycode 117 = Super_R NoSymbol Super_R
 
 ! Save these keysyms so `xcape' can access them.
 keycode 254 = Caps_Lock NoSymbol Caps_Lock
