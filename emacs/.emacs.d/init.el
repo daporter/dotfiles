@@ -29,7 +29,7 @@
 
 ;; Modeline "lighters"
 (use-package diminish
-  :ensure t
+  :ensure
   :after use-package)
 
 ;; Store customisation settings in a separate file
@@ -67,7 +67,7 @@ Pass desired argument to `prot/font-sizes' for use on my
 small laptop monitor."
     (interactive)
     (when window-system
-      (prot/default-font prot/fixed-pitch-font 9)))
+      (prot/default-font prot/fixed-pitch-font 7.5)))
 
   (defun prot/desktop-fonts ()
     "Fonts for the larger desktop screen.
@@ -76,13 +76,13 @@ Pass desired argument to `prot/font-sizes' for use on my larger
  desktop monitor (external display connected to my laptop)."
     (interactive)
     (when window-system
-      (prot/default-font prot/fixed-pitch-font 9)))
+      (prot/default-font prot/fixed-pitch-font 7.5)))
 
   (defun prot/reading-fonts ()
     "Fonts for focused reading sessions."
     (interactive)
     (when window-system
-      (prot/default-font prot/fixed-pitch-font 10.5)))
+      (prot/default-font prot/fixed-pitch-font 9.5)))
 
   (defun prot/fonts-per-monitor ()
     "Use font settings based on screen size.
@@ -119,11 +119,20 @@ monitor-related events."
 
 (use-package minibuffer
   :config
-  ;; NOTE that flex completion is introduced in Emacs 27
-  (setq completion-styles
-        ;;'(partial-completion substring orderless initials flex))
-        '(partial-completion substring initials))
+  ;; Aggressive completion style for out-of-order groups of matches
+  (use-package orderless
+    :ensure
+    :config
+    (setq orderless-component-matching-styles
+          '(orderless-regexp
+            orderless-flex))
+    (setq orderless-regexp-separator "[/\s_-]+")
+    :bind (:map minibuffer-local-completion-map
+                ("SPC" . nil)))         ; space should never complete
 
+  (setq completion-styles
+        '(basic partial-completion initials orderless))
+  (setq completion-category-defaults nil)
   (setq completion-cycle-threshold 3)
   (setq completion-flex-nospace nil)
   (setq completion-pcm-complete-word-inserts-delimiters t)
@@ -246,7 +255,7 @@ key in `completion-list-mode-map'."
   ;; (setq icomplete-separator " · ")
   ;; (setq icomplete-separator " │ ")
   ;; (setq icomplete-separator " ┊ ")
-  (setq icomplete-separator " ┆ ")
+  (setq icomplete-separator (propertize " ┆ " 'face 'shadow))
   (setq icomplete-with-completion-tables t)
   (setq icomplete-in-buffer t)
   (setq icomplete-tidy-shadowed-file-names nil)
@@ -278,37 +287,20 @@ Bind this function in `icomplete-minibuffer-map'."
                (with-minibuffer-selected-window (insert candidate))
                (top-level))))))
 
-  (defun prot/icomplete-toggle-completion-styles (&optional arg)
-    "Toggle between flex and default completion styles.
+  (defun prot/icomplete-minibuffer-truncate ()
+    "Truncate minibuffer lines in `icomplete-mode'.
+  This should only affect the horizontal layout and is meant to
+  enforce `icomplete-prospects-height' being set to 1.
 
-With \\[universal-argument] use basic completion instead.  These
-styles are described in `completion-styles-alist'.
-
-Bind this function in `icomplete-minibuffer-map'."
-    (interactive "*P")
+  Hook it to `icomplete-minibuffer-setup-hook'."
     (when (and (minibufferp)
                (bound-and-true-p icomplete-mode))
-      (let* ((basic '(emacs22 basic))
-             (flex '(flex orderless initials substring partial-completion))
-             (user completion-styles)) ; use my defaults
-        (if arg ; TODO make those message persistent next to the prompt
-            (progn
-              (setq-local completion-styles basic)
-              (message "%s" (propertize "BASIC matching" 'face 'highlight)))
-          (if (not (eq (car completion-styles) 'flex))
-              (progn
-                (setq-local completion-styles flex)
-                (message "%s" (propertize "FLEX first" 'face 'highlight)))
-            (setq-local completion-styles user)
-            (message "%s" (propertize "DEFAULT matching" 'face 'highlight)))))))
+      (setq truncate-lines t)))
 
-  ;; TODO can registers be inserted via completion?
-  ;; TODO can mark-ring positions be selected?
-
+  :hook (icomplete-minibuffer-setup . prot/icomplete-minibuffer-truncate)
   :bind (:map icomplete-minibuffer-map
               ("<tab>" . icomplete-force-complete)
               ("<return>" . icomplete-force-complete-and-exit) ; exit with completion
-              ("C-m" . minibuffer-complete-and-exit) ; try complete + force current input
               ("C-j" . exit-minibuffer) ; force current input unconditionally
               ("C-n" . icomplete-forward-completions)
               ("<right>" . icomplete-forward-completions)
@@ -323,11 +315,7 @@ Bind this function in `icomplete-minibuffer-map'."
                            (prot/icomplete-kill-or-insert-candidate '(4))))
               ("M-o j" . (lambda ()
                            (interactive)
-                           (prot/icomplete-kill-or-insert-candidate '(16))))
-              ("C-," . prot/icomplete-toggle-completion-styles) ; toggle flex
-              ("C-." . (lambda ()                               ; toggle basic
-                         (interactive)
-                         (prot/icomplete-toggle-completion-styles '(4))))))
+                           (prot/icomplete-kill-or-insert-candidate '(16))))))
 
 ;; ............................................................. Recentf
 
@@ -381,7 +369,7 @@ display virtual buffers."
 ;; Icomplete vertical mode
 
 (use-package icomplete-vertical
-  :ensure t
+  :ensure
   :demand
   :after (minibuffer icomplete)
   :config
@@ -608,7 +596,7 @@ afterwards exit the search altogether."
   (setq reb-re-syntax 'read))
 
 (use-package visual-regexp
-  :ensure t
+  :ensure
   :config
   (setq vr/default-replace-preview nil)
   (setq vr/match-separator-use-custom-face t))
@@ -616,7 +604,7 @@ afterwards exit the search altogether."
 ;; wgrep
 
 (use-package wgrep
-  :ensure t
+  :ensure
   :config
   (setq wgrep-auto-save-buffer t)
   (setq wgrep-change-readonly-file t))
@@ -624,7 +612,7 @@ afterwards exit the search altogether."
 ;; ripgrep
 
 (use-package rg
-  :ensure t
+  :ensure
   :after wgrep
   :config
   (setq rg-group-result t)
@@ -634,7 +622,8 @@ afterwards exit the search altogether."
   (setq rg-custom-type-aliases nil)
   (setq rg-default-alias-fallback "all")
 
-  (rg-define-search prot/grep-vc-or-dir
+  (rg-define-search prot/rg-vc-or-dir
+    "RipGrep in project root or present directory."
     :query ask
     :format regexp
     :files "everything"
@@ -642,6 +631,15 @@ afterwards exit the search altogether."
            (if vc
                vc                         ; search root project dir
              default-directory))          ; or from the current dir
+    :confirm prefix
+    :flags ("--hidden -g !.git"))
+
+  (rg-define-search prot/rg-ref-in-dir
+    "RipGrep for thing at point in present directory."
+    :query point
+    :format regexp
+    :files "everything"
+    :dir default-directory
     :confirm prefix
     :flags ("--hidden -g !.git"))
 
@@ -653,7 +651,8 @@ This function is meant to be mapped to a key in `rg-mode-map'."
     (let ((pattern (car rg-pattern-history)))
       (rg-save-search-as-name (concat "«" pattern "»"))))
 
-  :bind (("M-s g" . prot/grep-vc-or-dir)
+  :bind (("M-s g" . prot/rg-vc-or-dir)
+         ("M-s r" . prot/rg-ref-in-dir)
          :map rg-mode-map
          ("s" . prot/rg-save-search-as-name)
          ("C-n" . next-line)
@@ -702,7 +701,7 @@ This function is meant to be mapped to a key in `rg-mode-map'."
          ("/ g" . ibuffer-filter-by-content)))
 
 (use-package ibuffer-vc
-  :ensure t
+  :ensure
   :after (ibuffer vc)
   :bind (:map ibuffer-mode-map
               ("/ V" . ibuffer-vc-set-filter-groups-by-vc-root)
@@ -887,14 +886,14 @@ didactic purposes."
   (setq find-name-arg "-iname"))
 
 (use-package async
-  :ensure t)
+  :ensure)
 
 (use-package dired-async
   :after (dired async)
   :hook (dired-mode . dired-async-mode))
 
 (use-package dired-narrow
-  :ensure t
+  :ensure
   :after dired
   :config
   (setq dired-narrow-exit-when-one-left t)
@@ -911,7 +910,7 @@ didactic purposes."
   (setq wdired-create-parent-directories t))
 
 (use-package peep-dired
-  :ensure t
+  :ensure
   :after dired
   :config
   (setq peep-dired-cleanup-on-disable t)
@@ -922,7 +921,7 @@ didactic purposes."
               ("P" . peep-dired)))
 
 (use-package dired-subtree
-  :ensure t
+  :ensure
   :after dired
   :config
   (setq dired-subtree-use-backgrounds nil)
@@ -956,7 +955,7 @@ didactic purposes."
          ("s-J" . dired-jump-other-window)))
 
 (use-package diredfl
-  :ensure t
+  :ensure
   :hook (dired-mode . diredfl-mode))
 
 ;; ........................................................ Applications
@@ -1515,12 +1514,12 @@ show this warning instead."
   (setq org-edit-src-content-indentation 0))
 
 (use-package htmlize
-  :ensure t
+  :ensure
   :after org
   (setq htmlize-ignore-face-size t))
 
 (use-package org-superstar
-  :ensure t
+  :ensure
   :after org
   :config
   (setq org-superstar-remove-leading-stars t))
@@ -1543,26 +1542,24 @@ show this warning instead."
 
 ;; Themes
 (use-package modus-operandi-theme
-  :ensure t)
+  :ensure)
 
 (use-package modus-vivendi-theme
-  :ensure t)
+  :ensure)
 
 (use-package emacs
   :config
-  (setq custom-safe-themes t)
-
   (defun prot/modus-operandi ()
     "Enable some Modus Operandi variables and load the theme.
 This is used internally by `prot/modus-themes-toggle'."
-    (setq modus-operandi-theme-slanted-constructs t
-          modus-operandi-theme-bold-constructs t
+    (setq modus-operandi-theme-slanted-constructs nil
+          modus-operandi-theme-bold-constructs nil
           modus-operandi-theme-visible-fringes t
           modus-operandi-theme-3d-modeline nil
           modus-operandi-theme-subtle-diffs t
           modus-operandi-theme-distinct-org-blocks nil
           modus-operandi-theme-proportional-fonts nil
-          modus-operandi-theme-rainbow-headings t
+          modus-operandi-theme-rainbow-headings nil
           modus-operandi-theme-section-headings t
           modus-operandi-theme-scale-headings t
           modus-operandi-theme-scale-1 1.05
@@ -1574,14 +1571,14 @@ This is used internally by `prot/modus-themes-toggle'."
   (defun prot/modus-vivendi ()
     "Enable some Modus Vivendi variables and load the theme.
 This is used internally by `prot/modus-themes-toggle'."
-    (setq modus-vivendi-theme-slanted-constructs t
-          modus-vivendi-theme-bold-constructs t
+    (setq modus-vivendi-theme-slanted-constructs nil
+          modus-vivendi-theme-bold-constructs nil
           modus-vivendi-theme-visible-fringes t
           modus-vivendi-theme-3d-modeline nil
           modus-vivendi-theme-subtle-diffs t
           modus-vivendi-theme-distinct-org-blocks nil
           modus-vivendi-theme-proportional-fonts nil
-          modus-vivendi-theme-rainbow-headings t
+          modus-vivendi-theme-rainbow-headings nil
           modus-vivendi-theme-section-headings t
           modus-vivendi-theme-scale-headings t
           modus-vivendi-theme-scale-1 1.05
@@ -1668,7 +1665,7 @@ Also run `prot/modus-themes-toggle-hook'."
   (setq-default overflow-newline-into-fringe t))
 
 (use-package diff-hl
-  :ensure t
+  :ensure
   :after vc
   :config
   (setq diff-hl-draw-borders nil)
@@ -1698,7 +1695,7 @@ Also run `prot/modus-themes-toggle-hook'."
          ("<f7>" . prot/toggle-line-numbers)))
 
 (use-package olivetti
-  :ensure t
+  :ensure
   :diminish
   :config
   (setq olivetti-body-width 100)
@@ -1711,15 +1708,15 @@ Also run `prot/modus-themes-toggle-hook'."
     (if olivetti-mode
         (progn
           (olivetti-mode -1)
-          (fringe-mode nil)
+          (set-window-fringes (selected-window) nil) ; Use default width
           (prot/fonts-per-monitor))
       (olivetti-mode 1)
-      (fringe-mode '(0 . 0))
+      (set-window-fringes (selected-window) 0 0)
       (prot/reading-fonts)))
   :bind ("C-c o" . prot/toggle-olivetti-mode))
 
 (use-package rainbow-blocks
-  :ensure t
+  :ensure
   :diminish
   :commands rainbow-blocks-mode
   :config
@@ -1824,7 +1821,7 @@ cursor."
 
 
 (use-package flycheck
-  :ensure t
+  :ensure
   :config
   (setq flycheck-check-syntax-automatically '(mode-enabled save))
 
@@ -1847,7 +1844,7 @@ See URL `https://jorisroovers.com/gitlint/'."
   :hook (after-init . global-flycheck-mode))
 
 (use-package flycheck-indicator
-  :ensure t
+  :ensure
   :after flycheck
   :hook (flycheck-mode . flycheck-indicator-mode))
 
@@ -1871,14 +1868,14 @@ See URL `https://jorisroovers.com/gitlint/'."
   (global-eldoc-mode 1))
 
 (use-package haskell-mode
-  :ensure t)
+  :ensure)
 
 (use-package markdown-mode
-  :ensure t
+  :ensure
   :mode ("\\.md\\'" . markdown-mode))
 
 (use-package yaml-mode
-  :ensure t
+  :ensure
   :mode (("\\.yml\\'" . yaml-mode)
          ("\\.yaml\\'" . yaml-mode)))
 
@@ -1946,7 +1943,7 @@ See URL `https://jorisroovers.com/gitlint/'."
 ;; Mark by semantic unit
 
 (use-package expand-region
-  :ensure t
+  :ensure
   :pin gnu                              ; Prefer ELPA version
   :config
   (setq expand-region-smart-cursor t)
@@ -1957,7 +1954,7 @@ See URL `https://jorisroovers.com/gitlint/'."
 ;; Go to last change
 
 (use-package goto-last-change
-  :ensure t
+  :ensure
   :bind ("C-z" . goto-last-change))
 
 ;; ............................................................. Version control
@@ -2323,7 +2320,7 @@ Add this function to `message-header-setup-hook'."
 ;; .............................................................. Elfeed
 
 (use-package elfeed
-  :ensure t
+  :ensure
   :commands elfeed
   :config
   (setq elfeed-use-curl t)
@@ -2579,7 +2576,7 @@ instead.  This command can then be followed by the standard
          ("C-S-y" . prot/yank-replace-line-or-region)))
 
 (use-package beginend
-  :ensure t
+  :ensure
   :demand
   :diminish beginend-global-mode
   :config
@@ -2595,7 +2592,7 @@ instead.  This command can then be followed by the standard
   (setq shr-width (current-fill-column)))
 
 (use-package shr-tag-pre-highlight
-  :ensure t
+  :ensure
   :after shr
   :config
   (add-to-list 'shr-external-rendering-functions
