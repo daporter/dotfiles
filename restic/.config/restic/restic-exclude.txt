@@ -3,8 +3,8 @@ $HOME/.cache
 $HOME/.emacs.d/elpa
 $HOME/.mozilla
 $HOME/.surf
-$HOME/Downloads
 $HOME/Sync/Calibre
 $HOME/Sync/media
+$HOME/dl
 $HOME/src
 $HOME/tmp
