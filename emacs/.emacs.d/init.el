@@ -220,8 +220,8 @@ key in `completion-list-mode-map'."
          ("s-D" . dired-other-window)
          ("s-b" . switch-to-buffer)
          ("s-B" . switch-to-buffer-other-window)
-         ("s-h" . prot/describe-symbol-at-point)
-         ("s-H" . (lambda ()
+         ("C-s-h" . prot/describe-symbol-at-point)
+         ("C-s-H" . (lambda ()
                     (interactive)
                     (prot/describe-symbol-at-point '(4))))
          ("s-v" . prot/focus-minibuffer-or-completions)
@@ -853,10 +853,10 @@ didactic purposes."
 (use-package windmove
   :config
   (setq windmove-create-window nil)
-  :bind (("C-s-k" . windmove-up)
-         ("C-s-l" . windmove-right)
-         ("C-s-j" . windmove-down)
-         ("C-s-h" . windmove-left)))
+  :bind (("s-k" . windmove-up)
+         ("s-l" . windmove-right)
+         ("s-j" . windmove-down)
+         ("s-h" . windmove-left)))
 
 ;; ............................................................... Dired
 
@@ -950,9 +950,9 @@ didactic purposes."
     (insert (dired-filename-at-point)))
 
   :bind (("C-x C-j" . dired-jump)
-         ("s-j" . dired-jump)
+         ("C-s-j" . dired-jump)
          ("C-x 4 C-j" . dired-jump-other-window)
-         ("s-J" . dired-jump-other-window)))
+         ("C-s-J" . dired-jump-other-window)))
 
 (use-package diredfl
   :ensure
@@ -1131,66 +1131,30 @@ didactic purposes."
 
 ;; Themes
 (use-package modus-operandi-theme
-  :ensure)
+  :ensure
+  :init
+  (setq modus-operandi-theme-slanted-constructs t
+        modus-operandi-theme-bold-constructs t
+        modus-operandi-theme-visible-fringes t
+        modus-operandi-theme-proportional-fonts t
+        modus-operandi-theme-distinct-org-blocks t
+        modus-operandi-theme-rainbow-headings t
+        modus-operandi-theme-section-headings t
+        modus-operandi-theme-scale-headings t)
+  :config
+  (load-theme 'modus-operandi t))
 
 (use-package modus-vivendi-theme
-  :ensure)
-
-(use-package emacs
-  :config
-  (defun prot/modus-operandi ()
-    "Enable some Modus Operandi variables and load the theme.
-This is used internally by `prot/modus-themes-toggle'."
-    (setq modus-operandi-theme-slanted-constructs nil
-          modus-operandi-theme-bold-constructs nil
-          modus-operandi-theme-visible-fringes t
-          modus-operandi-theme-3d-modeline nil
-          modus-operandi-theme-subtle-diffs t
-          modus-operandi-theme-distinct-org-blocks nil
-          modus-operandi-theme-proportional-fonts nil
-          modus-operandi-theme-rainbow-headings nil
-          modus-operandi-theme-section-headings t
-          modus-operandi-theme-scale-headings t
-          modus-operandi-theme-scale-1 1.05
-          modus-operandi-theme-scale-2 1.1
-          modus-operandi-theme-scale-3 1.15
-          modus-operandi-theme-scale-4 1.2)
-    (load-theme 'modus-operandi t))
-
-  (defun prot/modus-vivendi ()
-    "Enable some Modus Vivendi variables and load the theme.
-This is used internally by `prot/modus-themes-toggle'."
-    (setq modus-vivendi-theme-slanted-constructs nil
-          modus-vivendi-theme-bold-constructs nil
-          modus-vivendi-theme-visible-fringes t
-          modus-vivendi-theme-3d-modeline nil
-          modus-vivendi-theme-subtle-diffs t
-          modus-vivendi-theme-distinct-org-blocks nil
-          modus-vivendi-theme-proportional-fonts nil
-          modus-vivendi-theme-rainbow-headings nil
-          modus-vivendi-theme-section-headings t
-          modus-vivendi-theme-scale-headings t
-          modus-vivendi-theme-scale-1 1.05
-          modus-vivendi-theme-scale-2 1.1
-          modus-vivendi-theme-scale-3 1.15
-          modus-vivendi-theme-scale-4 1.2)
-    (load-theme 'modus-vivendi t))
-
-  (defcustom prot/modus-themes-toggle-hook nil
-    "Hook that runs after `prot/modus-themes-toggle' is invoked."
-    :type 'hook)
-
-  (defun prot/modus-themes-toggle ()
-    "Toggle between `prot/modus-operandi' and `prot/modus-vivendi'.
-Also run `prot/modus-themes-toggle-hook'."
-    (interactive)
-    (if (eq (car custom-enabled-themes) 'modus-operandi)
-        (prot/modus-vivendi)
-      (prot/modus-operandi))
-    (run-hooks 'prot/modus-themes-toggle-hook))
-
-  :bind ("<f5>" . prot/modus-themes-toggle)
-  :hook (after-init . prot/modus-operandi))
+  :ensure
+  :init
+  (setq modus-vivendi-theme-slanted-constructs t
+        modus-vivendi-theme-bold-constructs t
+        modus-vivendi-theme-visible-fringes t
+        modus-vivendi-theme-proportional-fonts t
+        modus-vivendi-theme-distinct-org-blocks t
+        modus-vivendi-theme-rainbow-headings t
+        modus-vivendi-theme-section-headings t
+        modus-vivendi-theme-scale-headings t))
 
 ;; ........................................................... Mode line
 
@@ -1314,6 +1278,9 @@ Also run `prot/modus-themes-toggle-hook'."
   (setq rainbow-blocks-highlight-parens-p t))
 
 ;; ................................................... Language settings
+
+(use-package smartparens
+  :ensure)
 
 (use-package emacs
   :config
@@ -1585,6 +1552,33 @@ See URL `https://jorisroovers.com/gitlint/'."
   :bind (("C-x v a" . vc-annotate)       ; `vc-update-change-log' is not in git
          :map vc-annotate-mode-map
          ("t" . vc-annotate-toggle-annotation-visibility)))
+
+(use-package magit
+  :ensure)
+
+(use-package git-commit
+  :after magit
+  :config
+  (setq git-commit-summary-max-length 50)
+  (setq git-commit-known-pseudo-headers
+        '("Signed-off-by"
+          "Acked-by"
+          "Modified-by"
+          "Cc"
+          "Suggested-by"
+          "Reported-by"
+          "Tested-by"
+          "Reviewed-by"))
+  (setq git-commit-style-convention-checks
+        '(non-empty-second-line
+          overlong-summary-line)))
+
+(use-package magit-diff
+  :after magit
+  :config
+  ;; In the fucused hunk, highlight changes within a line, not just the
+  ;; line itself.
+  (setq magit-diff-refine-hunk t))
 
 (use-package diff
   :config
@@ -2139,7 +2133,7 @@ instead.  This command can then be followed by the standard
          ("C-M-\"" . prot/insert-double-smart-quotes)
          ("C-M-'" . prot/insert-single-smart-quotes)
          ("M-`" . prot/insert-elisp-quotes)
-         ("s-k" . kill-this-buffer)
+         ("C-s-k" . kill-this-buffer)
          ("M-k" . prot/kill-line-backward)
          ("C-S-n" . prot/multi-line-next)
          ("C-S-p" . prot/multi-line-prev)
