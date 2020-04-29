@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-	# This program is free software: you can redistribute it and/or modify
-	# it under the terms of the GNU General Public License as published by
-	# the Free Software Foundation, either version 3 of the License, or
-	# (at your option) any later version.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
-	# This program is distributed in the hope that it will be useful,
-	# but WITHOUT ANY WARRANTY; without even the implied warranty of
-	# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	# GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
-	# You should have received a copy of the GNU General Public License
-	# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Description
 # -----------
@@ -38,7 +38,10 @@
 
 # Check for dependencies.  Fail if unmet.
 _checkdep() {
-	command -v "$1" > /dev/null || { echo "Missing dependency: $1"; exit 1; }
+	command -v "$1" >/dev/null || {
+		echo "Missing dependency: $1"
+		exit 1
+	}
 }
 
 _checkdep bspwm
@@ -46,7 +49,7 @@ _checkdep lemonbar-xft
 # _checkdep xdo
 
 # Kill any running lemonbar-xft
-pgrep -x lemonbar-xft > /dev/null && pkill -x lemonbar-xft
+pgrep -x lemonbar-xft >/dev/null && pkill -x lemonbar-xft
 
 # Add colours from current Tempus theme.  That file is used in other
 # places as well to offer a convenient way of styling multiple tools in
@@ -57,7 +60,10 @@ pgrep -x lemonbar-xft > /dev/null && pkill -x lemonbar-xft
 tempus_theme="$HOME/.local/share/my_colours/active-theme.sh"
 
 # Source the colour definitions if the file exists.  Else exit.
-[ -e "$tempus_theme" ] || { echo "Missing Tempus theme"; exit 1; }
+[ -e "$tempus_theme" ] || {
+	echo "Missing Tempus theme"
+	exit 1
+}
 source "$tempus_theme"
 
 melonpanel_height=18 # DO NOT EDIT the name of this parameter (checked by other scripts).
@@ -133,7 +139,7 @@ fontbold='Noto Sans:size=8.5:style=SemiCondensed:weight=Bold'
 
 # Current wifi network.
 _wifi() {
-	command -v ifconfig > /dev/null || return 1
+	command -v ifconfig >/dev/null || return 1
 
 	local wifi_name
 	wifi_name=$(ifconfig iwn0 | awk '/ieee80211/ {print $3}')
@@ -143,7 +149,7 @@ _wifi() {
 
 # Battery status.
 _battery() {
-	command -v apm > /dev/null || return 1
+	command -v apm >/dev/null || return 1
 
 	local battery_label battery_charging battery_output
 
@@ -173,7 +179,7 @@ _battery() {
 
 # Core temperature.
 _temperature() {
-	command -v sysctl > /dev/null || return 1
+	command -v sysctl >/dev/null || return 1
 
 	local therm_label therm_status
 
@@ -199,20 +205,20 @@ _temperature() {
 # Check the sound volume and whether it is muted or not.  Output the
 # appropriate indicators.
 _volume() {
-	command -v sndioctl > /dev/null || return 1
+	command -v sndioctl >/dev/null || return 1
 
-	local volume_status volume_level volume_label
+	local mute_status volume_level volume_label
 
-	volume_status="$(mixerctl -n outputs.master.mute)"
+	mute_status="$(sndioctl output.mute | cut -d= -f2)"
 	volume_level_raw="$(sndioctl output.level | cut -d= -f2)"
 	volume_level="$(echo "$volume_level_raw * 100" | bc -l | cut -d. -f1)"
 	volume_label='V:'
 
-	case "$volume_status" in
-		'on')
+	case "$mute_status" in
+		1)
 			echo "$volume_label$volume_level% (Muted)"
 			;;
-		'off')
+		0)
 			echo "$volume_label$volume_level%"
 			;;
 	esac
@@ -249,7 +255,6 @@ _datetime() {
 	echo "$dt_status"
 }
 
-
 # Include all modules in a single infinite loop that iterates every
 # second (adjust interval accordingly, as it can be taxing on system
 # resources).
@@ -281,8 +286,8 @@ melonpanel_fifo='/tmp/melonpanel.fifo'
 mkfifo "$melonpanel_fifo"
 
 # pipe the output of the modules to the fifo
-_modules > "$melonpanel_fifo" &
-bspc subscribe report > "$melonpanel_fifo" &
+_modules >"$melonpanel_fifo" &
+bspc subscribe report >"$melonpanel_fifo" &
 
 # Read the content of the fifo file.  We differantiate between modules
 # based on the majuscule (letter A-Z) they piped into melonpanel_fifo
@@ -293,7 +298,7 @@ _melonpanel() {
 
 	laptop_external_monitor="$(xrandr --query | grep 'VGA1 connected')"
 
-	while read -r line ; do
+	while read -r line; do
 		case $line in
 			N*)
 				# wifi network
@@ -323,7 +328,7 @@ _melonpanel() {
 				# bspwm's state
 				wm=
 				line=${line#?}
-				for item in ${line//:/ } ; do
+				for item in ${line//:/ }; do
 					name="${item#?}"
 					case "$item" in
 						[mMfFoOuULG]*)
@@ -364,7 +369,7 @@ _melonpanel() {
 									name="${name/*/ $name\#}"
 									;;
 								# desktop layout for monocle and node flags
-								LM|G*?)
+								LM | G*?)
 									FG="$foreground"
 									name="${name/*/ $name }"
 									;;
@@ -377,6 +382,7 @@ _melonpanel() {
 							;;
 					esac
 				done
+				;;
 		esac
 
 		_panel_layout() {
@@ -397,8 +403,8 @@ _melonpanel() {
 # NOTE the syntax for the background value.  If you want transparency,
 # just replace "ff" with a lower value: "00" means no opacity.  This is
 # hexadecimal notation: 0-9, a-f, A-F.
-_melonpanel < "$melonpanel_fifo" | lemonbar-xft -u 1 -p -g "x${melonpanel_height}" \
--F "$foreground" -B "#ff${background:1}" -f "$fontmain" -f "$fontbold" -n "Melonpanel" &
+_melonpanel <"$melonpanel_fifo" | lemonbar-xft -u 1 -p -g "x${melonpanel_height}" \
+	-F "$foreground" -B "#ff${background:1}" -f "$fontmain" -f "$fontbold" -n "Melonpanel" &
 
 # Hide panel when windows are in full screen mode.  This does not work
 # all the time, especially with lower `sleep` values, requiring a
