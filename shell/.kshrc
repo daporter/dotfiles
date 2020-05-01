@@ -10,6 +10,9 @@
 
 . "$HOME/.environment"
 
+# Don't create core dumps
+ulimit -c 0
+
 HISTFILE=$HOME/.sh_history
 HISTSIZE=5000
 
