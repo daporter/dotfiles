@@ -99,8 +99,8 @@ _emacs() {
 	# 1. https://protesilaos.com/dotemacs
 	# 2. https://gitlab.com/protesilaos/modus-themes
 	case "$theme_variant" in
-		l*) emacsclient -e "(prot/modus-operandi)" ;;
-		d*) emacsclient -e "(prot/modus-vivendi)" ;;
+		l*) emacsclient -e "(load-theme 'modus-operandi t)" ;;
+		d*) emacsclient -e "(load-theme 'modus-vivendi t)" ;;
 	esac
 }
 
