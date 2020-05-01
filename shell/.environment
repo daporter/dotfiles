@@ -8,8 +8,10 @@ export PATH
 LANG=en_AU.UTF-8
 export LANG
 
-EDITOR=vim
+EDITOR="emacsclient --tty --alternate-editor=vim"
 export EDITOR
+VISUAL="emacsclient --create-frame --alternate-editor=vim"
+export VISUAL
 
 EMAIL=david@daporter.net
 export EMAIL
