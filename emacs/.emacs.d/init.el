@@ -1388,9 +1388,7 @@ See URL `https://jorisroovers.com/gitlint/'."
             line-end))
     :modes vc-git-log-edit-mode)
 
-  (add-to-list 'flycheck-checkers 'dp/git-commit-message t)
-
-  :hook (after-init . global-flycheck-mode))
+  (add-to-list 'flycheck-checkers 'dp/git-commit-message t))
 
 (use-package flycheck-indicator
   :ensure
