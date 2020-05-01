@@ -9,18 +9,24 @@
              '("melpa" . "https://melpa.org/packages/"))
 (unless package--initialized (package-initialize))
 
-;; Set up `use-package'
+;; Make sure `use-package' is available.
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 
-;; Should set before loading `use-package'
+;; Configure `use-package' prior to loading it.
 (eval-and-compile
   (setq use-package-always-ensure nil)
   (setq use-package-always-defer nil)
   (setq use-package-always-demand nil)
   (setq use-package-expand-minimally nil)
-  (setq use-package-enable-imenu-support t))
+  (setq use-package-enable-imenu-support t)
+  ;; The following is VERY IMPORTANT.  Write hooks using their real name
+  ;; instead of a shorter version: after-init ==> `after-init-hook'.
+  ;;
+  ;; This is to empower help commands with their contextual awareness,
+  ;; such as `describe-symbol'.
+  (setq use-package-hook-name-suffix nil))
 
 (eval-when-compile
   (require 'use-package))
@@ -52,13 +58,9 @@
   (defconst prot/fixed-pitch-font "Hack"
     "The default fixed-pitch typeface.")
 
-  (defconst prot/fixed-pitch-params ":hintstyle=hintslight"
-    "Fontconfig parameters for the fixed-pitch typeface.")
-
   (defun prot/default-font (family size)
-    "Set frame font to FAMILY at SIZE."
-    (set-frame-font
-     (concat family "-" (number-to-string size) prot/fixed-pitch-params) t t))
+    "Set `default' face font to FAMILY at SIZE."
+    (set-face-attribute 'default nil :family family :height size))
 
   (defun prot/laptop-fonts ()
     "Fonts for the small laptop screen.
@@ -67,7 +69,7 @@ Pass desired argument to `prot/font-sizes' for use on my
 small laptop monitor."
     (interactive)
     (when window-system
-      (prot/default-font prot/fixed-pitch-font 7.5)))
+      (prot/default-font prot/fixed-pitch-font 75)))
 
   (defun prot/desktop-fonts ()
     "Fonts for the larger desktop screen.
@@ -76,13 +78,13 @@ Pass desired argument to `prot/font-sizes' for use on my larger
  desktop monitor (external display connected to my laptop)."
     (interactive)
     (when window-system
-      (prot/default-font prot/fixed-pitch-font 7.5)))
+      (prot/default-font prot/fixed-pitch-font 75)))
 
   (defun prot/reading-fonts ()
     "Fonts for focused reading sessions."
     (interactive)
     (when window-system
-      (prot/default-font prot/fixed-pitch-font 9.5)))
+      (prot/default-font prot/fixed-pitch-font 95)))
 
   (defun prot/fonts-per-monitor ()
     "Use font settings based on screen size.
@@ -101,7 +103,34 @@ monitor-related events."
           (prot/laptop-fonts)
         (prot/desktop-fonts))))
 
-  :hook (after-init . prot/fonts-per-monitor))
+  :hook (after-init-hook . prot/fonts-per-monitor))
+
+(use-package emacs
+  :config
+  (defconst prot/variable-pitch-font "DejaVu Sans Condensed"
+    "The default variable-pitch typeface.")
+
+  (set-face-attribute 'variable-pitch nil :family prot/variable-pitch-font :height 1.0)
+  (set-face-attribute 'fixed-pitch nil :family prot/fixed-pitch-font :height 1.0))
+
+(use-package face-remap
+  :diminish buffer-face-mode            ; the actual mode
+  :config
+  (defun prot/variable-pitch-mode (&rest size)
+    "Toggle `variable-pitch-mode' and additional parameters.
+SIZE is intented for one of my functions for setting the primary
+font size.
+
+Example: (prot/variable-pitch-mode (prot/screencast-fonts))"
+    (interactive)
+    (if (bound-and-true-p buffer-face-mode)
+        (progn
+          (variable-pitch-mode -1)
+          (setq-local cursor-type 'box)   ; TODO better restore original value
+          (prot/fonts-per-monitor))
+      (variable-pitch-mode 1)
+      (setq-local cursor-type 'bar)
+      size)))
 
 ;; Backups
 
@@ -222,8 +251,8 @@ key in `completion-list-mode-map'."
          ("s-B" . switch-to-buffer-other-window)
          ("C-s-h" . prot/describe-symbol-at-point)
          ("C-s-H" . (lambda ()
-                    (interactive)
-                    (prot/describe-symbol-at-point '(4))))
+                      (interactive)
+                      (prot/describe-symbol-at-point '(4))))
          ("s-v" . prot/focus-minibuffer-or-completions)
          :map completion-list-mode-map
          ("h" . prot/describe-symbol-at-point)
@@ -297,7 +326,7 @@ Bind this function in `icomplete-minibuffer-map'."
                (bound-and-true-p icomplete-mode))
       (setq truncate-lines t)))
 
-  :hook (icomplete-minibuffer-setup . prot/icomplete-minibuffer-truncate)
+  :hook (icomplete-minibuffer-setup-hook . prot/icomplete-minibuffer-truncate)
   :bind (:map icomplete-minibuffer-map
               ("<tab>" . icomplete-force-complete)
               ("<return>" . icomplete-force-complete-and-exit) ; exit with completion
@@ -363,8 +392,8 @@ display virtual buffers."
                (equal "" (file-name-nondirectory dired-directory)))
       (recentf-add-file dired-directory)))
 
-  :hook ((after-init . recentf-mode)
-         (dired-mode . contrib/recentf-add-dired-directory)))
+  :hook ((after-init-hook . recentf-mode)
+         (dired-mode-hook . contrib/recentf-add-dired-directory)))
 
 ;; Icomplete vertical mode
 
@@ -426,6 +455,8 @@ normally would when calling `yank' followed by `yank-pop'."
     (icomplete-vertical-do ()
       (project-find-file)))
 
+  (declare-function cl-remove-if "cl-seq")
+
   (defun prot/project-or-dir-find-subdirectory-recursive ()
     "Recursive find subdirectory of project or directory.
 
@@ -441,24 +472,20 @@ wisely or prepare to use \\[keyboard-quit]."
                                          (abbreviate-file-name dir)))
                                      contents))
            (subdirs (delete nil find-directories))
-           (completion-styles
-            '(flex initials orderless substring partial-completion))
-           (orderless-regexp-separator "[/ ]"))
+           (cands (cl-remove-if (lambda (x) (string-match-p "\\.git" x)) subdirs)))
       (icomplete-vertical-do ()
         (dired
-         (completing-read "Find sub-directory: " subdirs nil t dir)))))
+         (completing-read "Find sub-directory: " cands nil t dir)))))
 
   (defun prot/find-file-from-dir-recursive ()
     "Find file recursively, starting from present dir."
     (interactive)
     (let* ((dir default-directory)
            (files (directory-files-recursively dir ".*" nil t))
-           (completion-styles
-            '(flex initials orderless substring partial-completion))
-           (orderless-regexp-separator "[/ ]"))
+           (cands (cl-remove-if (lambda (x) (string-match-p "\\.git" x)) files)))
       (icomplete-vertical-do ()
         (find-file
-         (completing-read "Find file recursively: " files nil t dir)))))
+         (completing-read "Find file recursively: " cands nil t dir)))))
 
   (defun prot/find-project ()
     "Switch to sub-directory at ~/projects.
@@ -507,7 +534,9 @@ inside a given location."
         (insert completion)
         t)))
 
-  (setq completion-in-region-function #'contrib/completing-read-in-region))
+  (setq completion-in-region-function #'contrib/completing-read-in-region)
+  :bind (:map minibuffer-local-completion-map
+              ("<tab>" . minibuffer-force-complete)))
 
 ;; Dabbrev (dynamic word completion)
 
@@ -690,8 +719,7 @@ This function is meant to be mapped to a key in `rg-mode-map'."
                 (name 16 -1)
                 " " filename)))
   (setq ibuffer-saved-filter-groups nil)
-  :hook
-  (ibuffer-mode . hl-line-mode)
+  :hook (ibuffer-mode-hook . hl-line-mode)
   :bind (("C-x C-b" . ibuffer)
          :map ibuffer-mode-map
          ("* f" . ibuffer-mark-by-file-name-regexp)
@@ -770,8 +798,8 @@ This function is meant to be mapped to a key in `rg-mode-map'."
   (setq window-combination-resize t)
   (setq even-window-sizes 'height-only)
   (setq window-sides-vertical nil)
-  :hook ((help-mode . visual-line-mode)
-         (custom-mode . visual-line-mode))
+  :hook ((help-mode-hook . visual-line-mode)
+         (custom-mode-hook . visual-line-mode))
   :bind (("s-n" . next-buffer)
          ("s-p" . previous-buffer)
          ("s-o" . other-window)
@@ -846,7 +874,7 @@ didactic purposes."
                                                              mode-line-buffer-identification))))))))))
 
 (use-package winner
-  :hook (after-init . winner-mode)
+  :hook (after-init-hook . winner-mode)
   :bind (("<s-right>" . winner-redo)
          ("<s-left>" . winner-undo)))
 
@@ -866,8 +894,8 @@ didactic purposes."
   (setq dired-recursive-deletes 'always)
   (setq dired-listing-switches "-AFlh")
   (setq dired-dwim-target t)
-  :hook ((dired-mode . dired-hide-details-mode)
-         (dired-mode . hl-line-mode)))
+  :hook ((dired-mode-hook . dired-hide-details-mode)
+         (dired-mode-hook . hl-line-mode)))
 
 (use-package dired-aux
   :config
@@ -890,7 +918,7 @@ didactic purposes."
 
 (use-package dired-async
   :after (dired async)
-  :hook (dired-mode . dired-async-mode))
+  :hook (dired-mode-hook . dired-async-mode))
 
 (use-package dired-narrow
   :ensure
@@ -956,7 +984,7 @@ didactic purposes."
 
 (use-package diredfl
   :ensure
-  :hook (dired-mode . diredfl-mode))
+  :hook (dired-mode-hook . diredfl-mode))
 
 ;; ........................................................ Applications
 
@@ -970,7 +998,7 @@ didactic purposes."
                                   holiday-other-holidays
                                   holiday-christian-holidays
                                   holiday-solar-holidays))
-  :hook (calendar-today-visible . calendar-mark-today))
+  :hook (calendar-today-visible-hook . calendar-mark-today))
 
 (use-package diary-lib
   :config
@@ -1025,7 +1053,7 @@ didactic purposes."
   (setq org-catch-invisible-edits 'show)
   (setq org-loop-over-headlines-in-active-region 'start-level)
 
-  :hook (org-mode . org-indent-mode)
+  :hook (org-mode-hook . org-indent-mode)
   :bind (("C-c l" . org-store-link)
          :map org-mode-map
          ("<C-return>" . nil)
@@ -1123,19 +1151,6 @@ didactic purposes."
   (global-unset-key (kbd "C-h h")))
 
 ;; Themes
-(use-package modus-operandi-theme
-  :ensure
-  :init
-  (setq modus-operandi-theme-slanted-constructs t
-        modus-operandi-theme-bold-constructs t
-        modus-operandi-theme-visible-fringes t
-        modus-operandi-theme-proportional-fonts t
-        modus-operandi-theme-distinct-org-blocks t
-        modus-operandi-theme-rainbow-headings t
-        modus-operandi-theme-section-headings t
-        modus-operandi-theme-scale-headings t)
-  :config
-  (load-theme 'modus-operandi t))
 
 (use-package modus-vivendi-theme
   :ensure
@@ -1146,8 +1161,20 @@ didactic purposes."
         modus-vivendi-theme-proportional-fonts t
         modus-vivendi-theme-distinct-org-blocks t
         modus-vivendi-theme-rainbow-headings t
-        modus-vivendi-theme-section-headings t
         modus-vivendi-theme-scale-headings t))
+
+(use-package modus-operandi-theme
+  :ensure
+  :init
+  (setq modus-operandi-theme-slanted-constructs t
+        modus-operandi-theme-bold-constructs t
+        modus-operandi-theme-visible-fringes t
+        modus-operandi-theme-proportional-fonts t
+        modus-operandi-theme-distinct-org-blocks t
+        modus-operandi-theme-rainbow-headings t
+        modus-operandi-theme-scale-headings t)
+  :config
+  (load-theme 'modus-operandi t))
 
 ;; ........................................................... Mode line
 
@@ -1180,7 +1207,7 @@ didactic purposes."
   (setq battery-update-interval 180)
   (setq battery-load-low 20)
   (setq battery-load-critical 10)
-  :hook (after-init . display-battery-mode))
+  :hook (after-init-hook . display-battery-mode))
 
 (use-package time
   :config
@@ -1191,7 +1218,7 @@ didactic purposes."
   (setq display-time-interval 60)
   (setq display-time-mail-directory nil)
   (setq display-time-default-load-average nil)
-  :hook (after-init . display-time-mode))
+  :hook (after-init-hook . display-time-mode))
 
 ;; ...................................... Window elements and indicators
 
@@ -1200,7 +1227,7 @@ didactic purposes."
   (setq window-divider-default-right-width 1)
   (setq window-divider-default-bottom-width 1)
   (setq window-divider-default-places 'right-only)
-  :hook (after-init . window-divider-mode))
+  :hook (after-init-hook . window-divider-mode))
 
 (use-package fringe
   :config
@@ -1216,13 +1243,13 @@ didactic purposes."
   :config
   (setq diff-hl-draw-borders nil)
   (setq diff-hl-side 'left)
-  :hook ((after-init . global-diff-hl-mode)))
+  :hook ((after-init-hook . global-diff-hl-mode)))
 
 (use-package hl-line
   :config
   (setq hl-line-sticky-flag nil))
 
-(use-package emacs
+(use-package whitespace
   :config
   (defun prot/toggle-invisibles ()
     "Toggles the display of indentation and space characters."
@@ -1230,15 +1257,17 @@ didactic purposes."
     (if (bound-and-true-p whitespace-mode)
         (whitespace-mode -1)
       (whitespace-mode)))
+  :bind ("<f6>" . prot/toggle-invisibles))
 
+(use-package display-line-numbers
+  :config
   (defun prot/toggle-line-numbers ()
     "Toggles the display of line numbers.  Applies to all buffers."
     (interactive)
     (if (bound-and-true-p display-line-numbers-mode)
         (display-line-numbers-mode -1)
       (display-line-numbers-mode)))
-  :bind (("<f6>" . prot/toggle-invisibles)
-         ("<f7>" . prot/toggle-line-numbers)))
+  :bind ("<f7>" . prot/toggle-line-numbers))
 
 (use-package olivetti
   :ensure
@@ -1248,18 +1277,20 @@ didactic purposes."
   (setq olivetti-minimum-body-width 80)
   (setq olivetti-recall-visual-line-mode-entry-state t)
 
-  (defun prot/toggle-olivetti-mode ()
-    "Toggle `olivetti-mode' without fringes and larger fonts."
+  (defun prot/olivetti-mode ()
+    "Toggle `olivetti-mode' with additional parameters.
+Fringes are disabled for the current window.  For the
+font-related changes see `prot/variable-pitch-mode'."
     (interactive)
-    (if olivetti-mode
+    (if (bound-and-true-p olivetti-mode)
         (progn
           (olivetti-mode -1)
           (set-window-fringes (selected-window) nil) ; Use default width
-          (prot/fonts-per-monitor))
+          (prot/variable-pitch-mode))
       (olivetti-mode 1)
       (set-window-fringes (selected-window) 0 0)
-      (prot/reading-fonts)))
-  :bind ("C-c o" . prot/toggle-olivetti-mode))
+      (prot/variable-pitch-mode (prot/reading-fonts))))
+  :bind ("C-c o" . prot/olivetti-mode))
 
 (use-package rainbow-blocks
   :ensure
@@ -1281,16 +1312,16 @@ didactic purposes."
   (setq sentence-end-double-space t)
   (setq sentence-end-without-period nil)
   (setq colon-double-space nil)
-  :hook (after-init . column-number-mode))
+  :hook (after-init-hook . column-number-mode))
 
 (use-package subword
   :diminish
-  :hook (prog-mode . subword-mode))
+  :hook (prog-mode-hook . subword-mode))
 
 (use-package emacs
   :diminish auto-fill-function
-  :hook (text-mode . (lambda ()
-                       (turn-on-auto-fill))))
+  :hook (text-mode-hook . (lambda ()
+                            (turn-on-auto-fill))))
 
 (use-package newcomment
   :config
@@ -1383,7 +1414,7 @@ See URL `https://jorisroovers.com/gitlint/'."
 (use-package flycheck-indicator
   :ensure
   :after flycheck
-  :hook (flycheck-mode . flycheck-indicator-mode))
+  :hook (flycheck-mode-hook . flycheck-indicator-mode))
 
 (use-package flymake
   :config
@@ -1440,10 +1471,10 @@ See URL `https://jorisroovers.com/gitlint/'."
   (setq electric-quote-paragraph t)
   (setq electric-quote-string nil)
   (setq electric-quote-replace-double t)
-  :hook (after-init . (lambda ()
-                        (electric-indent-mode 1)
-                        (electric-pair-mode -1)
-                        (electric-quote-mode -1))))
+  :hook (after-init-hook . (lambda ()
+                             (electric-indent-mode 1)
+                             (electric-pair-mode -1)
+                             (electric-quote-mode -1))))
 
 ;; Parentheses
 
@@ -1452,7 +1483,7 @@ See URL `https://jorisroovers.com/gitlint/'."
   (setq show-paren-style 'parenthesis)
   (setq show-paren-when-point-in-periphery t)
   (setq show-paren-when-point-inside-paren nil)
-  :hook (after-init . show-paren-mode))
+  :hook (after-init-hook . show-paren-mode))
 
 ;; Tabs, indentation, and the TAB key
 
@@ -1493,6 +1524,75 @@ See URL `https://jorisroovers.com/gitlint/'."
 (use-package goto-last-change
   :ensure
   :bind ("C-z" . goto-last-change))
+
+(use-package goto-last-change
+  :ensure
+  :bind ("C-z" . goto-last-change))
+
+;; ................................................... Cursor and mouse settings
+
+(use-package emacs
+  :config
+  (setq-default cursor-type 'box)
+  (setq-default cursor-in-non-selected-windows '(bar . 2))
+  (setq-default blink-cursor-blinks 50)
+  (setq-default blink-cursor-interval 0.75)
+  (setq-default blink-cursor-delay 0.2)
+  :hook (after-init-hook . blink-cursor-mode))
+
+(use-package mouse
+  :config
+  ;; In Emacs 27, use Control + mouse wheel to scale text.
+  (setq mouse-wheel-scroll-amount
+        '(1
+          ((shift) . 5)
+          ((meta) . 0.5)
+          ((control) . text-scale)))
+  (setq mouse-drag-copy-region t)
+  (setq make-pointer-invisible t)
+  (setq mouse-wheel-progressive-speed t)
+  (setq mouse-wheel-follow-mouse t)
+  :hook (after-init-hook . mouse-wheel-mode))
+
+(use-package emacs
+  :config
+  (setq scroll-preserve-screen-position t)
+  (setq scroll-conservatively 1)        ; affects `scroll-step'
+  (setq scroll-margin 0))
+
+(use-package tooltip
+  :config
+  (setq tooltip-delay 0.5)
+  (setq tooltip-short-delay 0.5)
+  (setq x-gtk-use-system-tooltips nil)
+  :hook (after-init-hook . tooltip-mode))
+
+(use-package autorevert
+  :diminish
+  :config
+  (setq auto-revert-verbose t)
+  :hook (after-init-hook . global-auto-revert-mode))
+
+(use-package emacs
+  :config
+  (setq save-interprogram-paste-before-kill t))
+
+(use-package emacs
+  :config
+  (setq frame-title-format '("%b"))
+  (setq echo-keystrokes 0.25)
+  (setq ring-bell-function 'ignore)
+
+  (defalias 'yes-or-no-p 'y-or-n-p)
+  (put 'narrow-to-region 'disabled nil)
+  (put 'upcase-region 'disabled nil)
+  (put 'downcase-region 'disabled nil)
+  (put 'dired-find-alternate-file 'disabled nil)
+  (put 'overwrite-mode 'disabled t))
+
+(use-package emacs
+  :config
+  (setq mode-require-final-newline 'visit-save))
 
 ;; ............................................................. Version control
 
@@ -1628,7 +1728,7 @@ sure this is a good approach."
 
 (use-package epa-file
   :config
-  (setq epa-file-cache-passphrase-for-symmetric-encryption t)
+  (setq epa-file-cache-passphrase-for-symmetric-encryption nil)
   (setq epa-pinentry-mode 'loopback))
 
 (use-package message
@@ -1647,7 +1747,7 @@ sure this is a good approach."
   (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
 
   (defun prot/message-header-add-gcc ()
-    "While `gnus' is running, add a Gcc header, if missing.
+    "While `gnus' is running, add pre-populated Gcc header.
 
 The Gcc header places a copy of the outgoing message to the
 appropriate maildir directory.
@@ -1660,12 +1760,12 @@ Add this function to `message-header-setup-hook'."
     (if (gnus-alive-p)
         (progn
           (when (message-fetch-field "Gcc")
-            (message-remove-header "Gcc")
-            (message-add-header "Gcc: nnimap+migadu:Sent")))
+            (message-remove-header "Gcc"))
+          (message-add-header "Gcc: nnimap+migadu:Sent"))
       (message "Gnus is not running. No GCC field inserted.")))
 
-  :hook ((message-header-setup . prot/message-header-add-gcc)
-         (message-setup . message-sort-headers)))
+  :hook ((message-header-setup-hook . prot/message-header-add-gcc)
+         (message-setup-hook . message-sort-headers)))
 
 ;; Gnus
 
@@ -1778,7 +1878,7 @@ Add this function to `message-header-setup-hook'."
           (gnus-group-sort-by-rank)))
   (setq gnus-group-mode-line-format "%%b")
   :hook
-  (gnus-group-mode . hl-line-mode)
+  (gnus-group-mode-hook . hl-line-mode)
   (gnus-select-group-hook . gnus-group-set-timestamp)
   :bind (:map gnus-agent-group-mode-map
               ("M-n" . gnus-topic-goto-next-topic)
@@ -1789,7 +1889,7 @@ Add this function to `message-header-setup-hook'."
   :config
   (setq gnus-topic-display-empty-topics nil)
   :hook
-  (gnus-group-mode . gnus-topic-mode))
+  (gnus-group-mode-hook . gnus-topic-mode))
 
 (use-package gnus-sum
   :after (gnus gnus-group)
@@ -1857,10 +1957,7 @@ Add this function to `message-header-setup-hook'."
           "G"
         " ")))
 
-  :hook
-  (gnus-summary-mode . hl-line-mode)
-  (gnus-summary-exit-hook . gnus-topic-sort-groups-by-alphabet)
-  (gnus-summary-exit-hook . gnus-group-sort-groups-by-rank)
+  :hook (gnus-summary-mode-hook . hl-line-mode)
   :bind (:map gnus-agent-summary-mode-map
               ("<delete>" . gnus-summary-delete-article)
               ("n" . gnus-summary-next-article)
@@ -1876,11 +1973,11 @@ Add this function to `message-header-setup-hook'."
 (use-package gnus-srvr
   :after gnus
   :hook
-  ((gnus-browse-mode gnus-server-mode) . hl-line-mode))
+  ((gnus-browse-mode-hook gnus-server-mode-hook) . hl-line-mode))
 
 (use-package gnus-dired
   :after (gnus dired)
-  :hook (dired-mode . gnus-dired-mode))
+  :hook (dired-mode-hook . gnus-dired-mode))
 
 ;; .............................................................. Elfeed
 
@@ -1927,7 +2024,7 @@ syntax for use by the `elfeed' package."
       (start-process "elfeed-mpv" nil "mpv"
                      quality-arg (elfeed-entry-link entry))))
 
-  :hook (elfeed-search-mode . prot/feeds)
+  :hook (elfeed-search-mode-hook . prot/feeds)
   :bind (:map elfeed-search-mode-map
               ("v" . (lambda ()
                        (interactive)
@@ -2170,4 +2267,4 @@ instead.  This command can then be followed by the standard
 ;; ............................................ Emacs server and desktop
 
 (use-package server
-  :hook (after-init . server-start))
+  :hook (after-init-hook . server-start))
