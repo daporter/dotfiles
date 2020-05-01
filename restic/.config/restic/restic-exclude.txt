@@ -1,10 +1,11 @@
+*.core
 $HOME/.cabal
 $HOME/.cache
-$HOME/.emacs.d/elpa
 $HOME/.mozilla
 $HOME/.surf
 $HOME/Sync/Calibre
 $HOME/Sync/media
 $HOME/dl
+$HOME/dotfiles/emacs/.emacs.d/elpa
 $HOME/src
 $HOME/tmp
