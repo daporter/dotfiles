@@ -1044,7 +1044,7 @@ didactic purposes."
           ("~/gtd/maybe.org" :level . 1)
           ("~/gtd/tickler.org" :maxlevel . 2)))
   
-  (setq org-agenda-custom-commands 
+  (setq org-agenda-custom-commands
         '(("n" nil
            todo "TODO"
            ((org-agenda-overriding-header "Next tasks:")
@@ -1064,7 +1064,10 @@ didactic purposes."
             (goto-char (point-max))))))
   
   (defun dp/org-current-is-todo ()
-    (string= "TODO" (org-get-todo-state))))
+    (string= "TODO" (org-get-todo-state)))
+
+  :bind (("C-c a" . org-agenda)
+         ("s-a" . org-agenda)))
 
 (use-package org-habit
   :after org
