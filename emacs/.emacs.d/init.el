@@ -1043,28 +1043,18 @@ didactic purposes."
         '(("~/gtd/projects.org" :maxlevel . 3)
           ("~/gtd/maybe.org" :level . 1)
           ("~/gtd/tickler.org" :maxlevel . 2)))
-  
-  (setq org-agenda-custom-commands
-        '(("n" nil
-           todo "TODO"
-           ((org-agenda-overriding-header "Next tasks:")
-            (org-agenda-skip-function #'dp/org-agenda-skip-all-siblings-but-first)))))
 
-  (defun dp/org-agenda-skip-all-siblings-but-first ()
-    "Skip all but the first non-done entry."
-    (let (should-skip-entry)
-      (unless (dp/org-current-is-todo)
-        (setq should-skip-entry t))
-      (save-excursion
-        (while (and (not should-skip-entry) (org-goto-sibling t))
-          (when (dp/org-current-is-todo)
-            (setq should-skip-entry t))))
-      (when should-skip-entry
-        (or (outline-next-heading)
-            (goto-char (point-max))))))
-  
-  (defun dp/org-current-is-todo ()
-    (string= "TODO" (org-get-todo-state)))
+  ;; Show the daily agenda by default instead of the weekly one.
+  (setq org-agenda-span 'day)
+
+  ;; Make the global TODO list into a list of tasks available for
+  ;; scheduling.
+  (setq org-agenda-todo-ignore-scheduled t)
+  (setq org-agenda-todo-ignore-timestamp t)
+
+  (setq org-agenda-custom-commands
+        '(("n" nil todo "TODO"
+           ((org-agenda-overriding-header "Next tasks:")))))
 
   :bind (("C-c a" . org-agenda)
          ("s-a" . org-agenda)))
