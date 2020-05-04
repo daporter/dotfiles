@@ -148,19 +148,35 @@ Example: (prot/variable-pitch-mode (prot/screencast-fonts))"
 
 (use-package minibuffer
   :config
-  ;; Aggressive completion style for out-of-order groups of matches
+
+  ;; Super-powerful completion style for out-of-order groups of matches
+  ;; using a comprehensive set of matching styles.
   (use-package orderless
     :ensure
     :config
-    (setq orderless-component-matching-styles
-          '(orderless-regexp
-            orderless-flex))
     (setq orderless-regexp-separator "[/\s_-]+")
+    (setq orderless-matching-styles
+          '(orderless-flex
+            orderless-strict-leading-initialism
+            orderless-regexp
+            orderless-prefixes
+            orderless-literal))
+
+    (defun prot/orderless-literal-dispatcher (pattern _index _total)
+      (when (string-suffix-p "=" pattern)
+        `(orderless-literal . ,(substring pattern 0 -1))))
+
+    (defun prot/orderless-initialism-dispatcher (pattern _index _total)
+      (when (string-suffix-p "," pattern)
+        `(orderless-strict-leading-initialism . ,(substring pattern 0 -1))))
+
+    (setq orderless-style-dispatchers '(prot/orderless-literal-dispatcher
+                                        prot/orderless-initialism-dispatcher))
     :bind (:map minibuffer-local-completion-map
                 ("SPC" . nil)))         ; space should never complete
 
   (setq completion-styles
-        '(basic partial-completion initials orderless))
+        '(orderless partial-completion))
   (setq completion-category-defaults nil)
   (setq completion-cycle-threshold 3)
   (setq completion-flex-nospace nil)
@@ -254,6 +270,9 @@ key in `completion-list-mode-map'."
                       (interactive)
                       (prot/describe-symbol-at-point '(4))))
          ("s-v" . prot/focus-minibuffer-or-completions)
+         :map minibuffer-local-completion-map
+         ("<return>" . minibuffer-force-complete-and-exit)
+         ("C-j" . exit-minibuffer)
          :map completion-list-mode-map
          ("h" . prot/describe-symbol-at-point)
          ("w" . prot/completions-kill-save-symbol)
@@ -292,30 +311,6 @@ key in `completion-list-mode-map'."
   ;;(fido-mode -1)                        ; Emacs 27.1
   (icomplete-mode 1)
 
-  (defun prot/icomplete-kill-or-insert-candidate (&optional arg)
-    "Place the matching candidate to the top of the `kill-ring'.
-This will keep the minibuffer session active.
-
-With \\[universal-argument] insert the candidate in the most
-recently used buffer, while keeping focus on the minibuffer.
-
-With \\[universal-argument] \\[universal-argument] insert the
-candidate and immediately exit all recursive editing levels and
-active minibuffers.
-
-Bind this function in `icomplete-minibuffer-map'."
-    (interactive "*P")
-    (let ((candidate (car completion-all-sorted-completions)))
-      (when (and (minibufferp)
-                 (bound-and-true-p icomplete-mode))
-        (cond ((eq arg nil)
-               (kill-new candidate))
-              ((= (prefix-numeric-value arg) 4)
-               (with-minibuffer-selected-window (insert candidate)))
-              ((= (prefix-numeric-value arg) 16)
-               (with-minibuffer-selected-window (insert candidate))
-               (top-level))))))
-
   (defun prot/icomplete-minibuffer-truncate ()
     "Truncate minibuffer lines in `icomplete-mode'.
   This should only affect the horizontal layout and is meant to
@@ -337,63 +332,64 @@ Bind this function in `icomplete-minibuffer-map'."
               ("C-p" . icomplete-backward-completions)
               ("<left>" . icomplete-backward-completions)
               ("<up>" . icomplete-backward-completions)
-              ("<C-backspace>" . icomplete-fido-backward-updir) ; Emacs 27.1
-              ("M-o w" . prot/icomplete-kill-or-insert-candidate)
-              ("M-o i" . (lambda ()
-                           (interactive)
-                           (prot/icomplete-kill-or-insert-candidate '(4))))
-              ("M-o j" . (lambda ()
-                           (interactive)
-                           (prot/icomplete-kill-or-insert-candidate '(16))))))
+              ("<C-backspace>" . icomplete-fido-backward-updir))) ; Emacs 27.1
 
 ;; ............................................................. Recentf
 
 (use-package recentf
   :config
   (setq recentf-save-file "~/.emacs.d/recentf")
-  (setq recentf-max-menu-items 10)
   (setq recentf-max-saved-items 200)
-  (setq recentf-show-file-shortcuts-flag nil)
+  (setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/doas:"))
 
-  ;; rename entries in recentf when moving files in dired
-  (defun rjs/recentf-rename-directory (oldname newname)
-    ;; oldname, newname and all entries of recentf-list should already
-    ;; be absolute and normalised so I think this can just test whether
-    ;; oldname is a prefix of the element.
-    (setq recentf-list
-          (mapcar (lambda (name)
-                    (if (string-prefix-p oldname name)
-                        (concat newname (substring name (length oldname)))
-                      name))
-                  recentf-list))
-    (recentf-cleanup))
+  (defun prot/recentf-keep-predicate (file)
+    "Additional conditions for saving in `recentf-list'.
+Add this function to `recentf-keep'.
 
-  (defun rjs/recentf-rename-file (oldname newname)
-    (setq recentf-list
-          (mapcar (lambda (name)
-                    (if (string-equal name oldname)
-                        newname
-                      oldname))
-                  recentf-list))
-    (recentf-cleanup))
+NEEDS REVIEW."
+    (cond
+     ((file-directory-p file) (file-readable-p file))))
+  (add-to-list 'recentf-keep 'prot/recentf-keep-default-predicate)
 
-  (defun rjs/recentf-rename-notify (oldname newname &rest args)
-    (if (file-directory-p newname)
-        (rjs/recentf-rename-directory oldname newname)
-      (rjs/recentf-rename-file oldname newname)))
+  (defun prot/recentf ()
+    "Select item from `recentf-list' using completion.
+The user's $HOME directory is abbreviated as a tilde."
+    (interactive)
+    (icomplete-vertical-do ()
+      (let ((files (mapcar 'abbreviate-file-name recentf-list)))
+        (find-file
+         (completing-read "Open recentf entry: " files nil t)))))
 
-  (advice-add 'dired-rename-file :after #'rjs/recentf-rename-notify)
+  (defun prot/recentf-dirs (&optional arg)
+    "Select directory from `recentf-list' using completion.
+With \\[universal-argument] present the list in a `dired' buffer.
+This buffer is meant to be reused by subsequent invocations of
+this command (otherwise you need to remove the `when' expression.
 
-  (defun contrib/recentf-add-dired-directory ()
-    "Include Dired buffers in the `recentf' list.  Particularly
-useful when combined with a completion framework's ability to
-display virtual buffers."
-    (when (and (stringp dired-directory)
-               (equal "" (file-name-nondirectory dired-directory)))
-      (recentf-add-file dired-directory)))
+Without \\[universal-argument], the user's $HOME directory is
+abbreviated as a tilde.  In the Dired buffer paths are absolute."
+    (interactive "P")
+    (let* ((list (mapcar 'abbreviate-file-name recentf-list))
+           (dirs (delete-dups
+                  (mapcar (lambda (file)
+                            (if (file-directory-p file)
+                                (directory-file-name file)
+                              (substring (file-name-directory file) 0 -1)))
+                          list)))
+           (buf "*Recentf Dired*")
+           (default-directory "~"))
+      (when (get-buffer buf)
+        (kill-buffer buf))
+      (if arg
+          (dired (cons (generate-new-buffer-name buf) dirs))
+        (icomplete-vertical-do ()
+          (find-file
+           (completing-read "Recent dirs: " dirs nil t))))))
 
-  :hook ((after-init-hook . recentf-mode)
-         (dired-mode-hook . contrib/recentf-add-dired-directory)))
+  
+  :hook (after-init-hook . recentf-mode)
+  :bind (("s-r" . prot/recentf)
+         ("C-x C-r" . prot/recentf-dirs)))
 
 ;; Icomplete vertical mode
 
@@ -404,16 +400,6 @@ display virtual buffers."
   :config
   (setq icomplete-vertical-prospects-height (/ (window-height) 6))
   (icomplete-vertical-mode -1)
-
-  (defun prot/icomplete-recentf ()
-    "Open `recent-list' item in a new buffer.
-
-The user's $HOME directory is abbreviated as a tilde."
-    (interactive)
-    (icomplete-vertical-do ()
-      (let ((files (mapcar 'abbreviate-file-name recentf-list)))
-        (find-file
-         (completing-read "Open recentf entry: " files nil t)))))
 
   (defun prot/icomplete-yank-kill-ring ()
     "Insert the selected `kill-ring' item directly at point.
@@ -436,11 +422,7 @@ normally would when calling `yank' followed by `yank-pop'."
         (insert
          (completing-read "Yank from kill ring: " kills nil t)))))
 
-  ;; TODO can registers be inserted via completion?
-  ;; TODO can mark-ring positions be selected?
-
   :bind (("s-y" . prot/icomplete-yank-kill-ring)
-         ("s-r" . prot/icomplete-recentf)
          :map icomplete-minibuffer-map
          ("C-v" . icomplete-vertical-toggle)))
 
@@ -516,23 +498,24 @@ inside a given location."
   :config
   (defun contrib/completing-read-in-region (start end collection &optional predicate)
     "Prompt for completion of region in the minibuffer if non-unique.
- Use as a value for `completion-in-region-function'."
-    (let* ((initial (buffer-substring-no-properties start end))
-           (all (completion-all-completions initial collection predicate
-                                            (length initial)))
-           (completion (cond
-                        ((atom all) nil)
-                        ((and (consp all) (atom (cdr all))) (car all))
-                        (t (let ((completion-in-region-function
-                                  #'completion--in-region))
-                             (icomplete-vertical-do (:height (/ (window-height) 5))
-                               (completing-read
-                                "Completion: " collection predicate t initial)))))))
-      (if (null completion)
-          (progn (message "No completion") nil)
-        (delete-region start end)
-        (insert completion)
-        t)))
+Use as a value for `completion-in-region-function'."
+    (if (and (minibufferp) (not (string= (minibuffer-prompt) "Eval: ")))
+        (completion--in-region start end collection predicate)
+      (let* ((initial (buffer-substring-no-properties start end))
+             (limit (car (completion-boundaries initial collection predicate "")))
+             (all (completion-all-completions initial collection predicate
+                                              (length initial)))
+             (completion (cond
+                          ((atom all) nil)
+                          ((and (consp all) (atom (cdr all)))
+                           (concat (substring initial 0 limit) (car all)))
+                          (t (completing-read
+                              "Completion: " collection predicate t initial)))))
+        (if (null completion)
+            (progn (message "No completion") nil)
+          (delete-region start end)
+          (insert completion)
+          t))))
 
   (setq completion-in-region-function #'contrib/completing-read-in-region)
   :bind (:map minibuffer-local-completion-map
@@ -1990,7 +1973,6 @@ Add this function to `message-header-setup-hook'."
   (setq elfeed-db-directory "~/.emacs.d/elfeed")
   (setq elfeed-enclosure-default-dir "~/dl")
   (setq elfeed-search-clipboard-type 'CLIPBOARD)
-  (setq elfeed-search-title-max-width (current-fill-column))
   (setq elfeed-search-title-max-width 100)
   (setq elfeed-search-title-min-width 30)
   (setq elfeed-search-trailing-width 16)
@@ -1998,43 +1980,19 @@ Add this function to `message-header-setup-hook'."
   (setq elfeed-show-unique-buffers t)
   (setq elfeed-sort-order 'ascending)
 
-  (defun prot/feeds ()
+  (defun prot/elfeed-feeds ()
     "Loads a file with RSS/Atom feeds.  This file contains valid
 syntax for use by the `elfeed' package."
     (let ((feeds "~/.emacs.d/feeds.el.gpg"))
       (when (file-exists-p feeds)
-        (message "* loading feeds")
         (load-file feeds))))
 
-  (defun ambrevar/elfeed-play-with-mpv ()
-    "Play entry link with mpv."
-    (interactive)
-    (let ((entry (if (eq major-mode 'elfeed-show-mode)
-                     elfeed-show-entry (elfeed-search-selected :single)))
-          (quality-arg "")
-          (quality-val (completing-read "Resolution: "
-                                        '("480" "720" "1080")
-                                        nil nil)))
-      (setq quality-val (string-to-number quality-val))
-      (message "Opening %s with height≤%s..."
-               (elfeed-entry-link entry) quality-val)
-      (when (< 0 quality-val)
-        (setq quality-arg
-              (format "--ytdl-format=[height<=?%s]" quality-val)))
-      (start-process "elfeed-mpv" nil "mpv"
-                     quality-arg (elfeed-entry-link entry))))
-
-  :hook (elfeed-search-mode-hook . prot/feeds)
+  :hook (elfeed-search-mode-hook . prot/elfeed-feeds)
   :bind (:map elfeed-search-mode-map
-              ("v" . (lambda ()
-                       (interactive)
-                       (ambrevar/elfeed-play-with-mpv)
-                       (elfeed-search-untag-all-unread)))
               ("w" . elfeed-search-yank)
               ("g" . elfeed-update)
               ("G" . elfeed-search-update--force)
               :map elfeed-show-mode-map
-              ("v" . ambrevar/elfeed-play-with-mpv)
               ("w" . elfeed-show-yank)))
 
 ;; Custom movements and motions
@@ -2246,7 +2204,6 @@ instead.  This command can then be followed by the standard
   (beginend-global-mode 1))
 
 (use-package shr
-  :commands (eww eww-browse-url)
   :config
   (setq shr-use-fonts nil)
   (setq shr-use-colors nil)
