@@ -1065,8 +1065,14 @@ didactic purposes."
   (setq org-agenda-todo-ignore-timestamp t)
 
   (setq org-agenda-custom-commands
-        '(("n" nil todo "TODO"
-           ((org-agenda-overriding-header "Next tasks:")))))
+        '(("A" "Agenda"
+           ((agenda "")
+            (todo "TODO"
+                  ((org-agenda-overriding-header "To Refile:")
+                   (org-agenda-files '("~/gtd/inbox.org"))))))
+          ("n" "Next tasks"
+           ((todo "TODO"
+                  ((org-agenda-overriding-header "Next tasks:")))))))
 
   :bind (("C-c a" . org-agenda)
          ("s-a" . org-agenda)))
