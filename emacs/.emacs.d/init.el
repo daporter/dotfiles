@@ -1089,8 +1089,10 @@ didactic purposes."
   :after org
   :bind ("C-c y l" . org-cliplink))
 
+(use-package org-protocol
+  :demand)
+
 (use-package org-capture
-  :after (org org-cliplink)
   :config
   (setq org-capture-templates
         '(("t" "Todo" entry (file "~/gtd/inbox.org")
@@ -1102,6 +1104,8 @@ didactic purposes."
            "* TODO %(org-cliplink-capture)" :immediate-finish t)
           ("n" "Note" entry (file org-default-notes-file)
            "* %? :NOTE:\n%U\n%a\n")
+          ("c" "org-protocol-capture" entry (file "~/gtd/inbox.org")
+           "* TODO [[%:link][%:description]]\n%:initial" :immediate-finish t)
           ("T" "Tickler" entry
            (file+headline "~/gtd/tickler.org" "Tickler")
            "* %i%? \n %U")))
