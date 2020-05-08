@@ -69,7 +69,7 @@ Pass desired argument to `prot/font-sizes' for use on my
 small laptop monitor."
     (interactive)
     (when window-system
-      (prot/default-font prot/fixed-pitch-font 75)))
+      (prot/default-font prot/fixed-pitch-font 85)))
 
   (defun prot/desktop-fonts ()
     "Fonts for the larger desktop screen.
