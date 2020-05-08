@@ -1000,6 +1000,7 @@ didactic purposes."
           (dayname "\\W"))))
 
 (use-package org
+  :ensure
   :config
   ;; agenda and basic directory structure
   (setq org-directory "~/org/")
@@ -1077,15 +1078,22 @@ didactic purposes."
   (setq org-habit-graph-column 80)
   (setq org-habit-show-habits-only-for-today t))
 
-(use-package org-capture
+(use-package org-cliplink
+  :ensure
   :after org
+  :bind ("C-c y l" . org-cliplink))
+
+(use-package org-capture
+  :after (org org-cliplink)
   :config
   (setq org-capture-templates
         '(("t" "Todo" entry (file "~/gtd/inbox.org")
            "* TODO %?\n%U\n%a\n")
-          ("r" "Reply to an email" entry (file "~/gtd/inbox.org")
-           "* NEXT Reply to %:from on  %:subject\n SCHEDULED: %t\n%U\n%a\n"
+          ("r" "Reply to an email" entry (file+headline "~/gtd/inbox.org")
+           "* TODO Reply to %:from on  %:subject\n SCHEDULED: %t\n%U\n%a\n"
            :immediate-finish t)
+          ("l" "link" entry (file "~/gtd/inbox.org")
+           "* TODO %(org-cliplink-capture)" :immediate-finish t)
           ("n" "Note" entry (file org-default-notes-file)
            "* %? :NOTE:\n%U\n%a\n")
           ("T" "Tickler" entry
