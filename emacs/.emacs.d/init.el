@@ -1048,13 +1048,11 @@ didactic purposes."
   :config
   (setq org-agenda-files
         '("~/gtd/inbox.org"
-          "~/gtd/projects.org"
-          "~/gtd/tickler.org"))
+          "~/gtd/projects.org"))
   
   (setq org-refile-targets
         '(("~/gtd/projects.org" :maxlevel . 3)
-          ("~/gtd/maybe.org" :level . 1)
-          ("~/gtd/tickler.org" :maxlevel . 2)))
+          ("~/gtd/maybe.org" :level . 1)))
 
   ;; Show the daily agenda by default instead of the weekly one.
   (setq org-agenda-span 'day)
@@ -1105,10 +1103,7 @@ didactic purposes."
           ("n" "Note" entry (file org-default-notes-file)
            "* %? :NOTE:\n%U\n%a\n")
           ("c" "org-protocol-capture" entry (file "~/gtd/inbox.org")
-           "* TODO [[%:link][%:description]]\n%:initial" :immediate-finish t)
-          ("T" "Tickler" entry
-           (file+headline "~/gtd/tickler.org" "Tickler")
-           "* %i%? \n %U")))
+           "* TODO [[%:link][%:description]]\n%:initial" :immediate-finish t)))
 
   (setq org-capture-templates-contexts
         '(("r" ((in-mode . "gnus2-article-mode")
