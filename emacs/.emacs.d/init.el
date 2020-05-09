@@ -1127,14 +1127,6 @@ didactic purposes."
   :config
   (setq org-superstar-remove-leading-stars t))
 
-(use-package org-journal
-  :ensure
-  :after org
-  :custom
-  (org-journal-dir (concat org-directory "journal/"))
-  (org-journal-date-format "%A, %d %B %Y")
-  :bind ("C-c j" . org-journal-new-entry))
-
 (use-package org-roam
   :ensure
   :custom
@@ -1147,6 +1139,28 @@ didactic purposes."
                ("C-c n b" . org-roam-switch-to-buffer))
               :map org-mode-map
               (("C-c n i" . org-roam-insert))))
+
+(use-package org-journal
+  :ensure
+  :after org-roam
+  :custom
+  (org-journal-date-prefix "#+TITLE: ")
+  (org-journal-file-format "%Y-%m-%d.org")
+  (org-journal-dir org-roam-directory)
+  (org-journal-date-format "%A, %d %B %Y")
+  :bind
+  ("C-c n j" . org-journal-new-entry))
+
+(use-package deft
+  :ensure
+  :after org-roam
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory org-roam-directory)
+  :bind
+  ("C-c n d" . deft))
 
 ;; ............................................................... Theme
 
