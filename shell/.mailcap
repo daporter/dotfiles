@@ -1,2 +1,3 @@
 text/html; firefox %s
+application/pdf; mupdf %s
 image/*; sxiv %s
