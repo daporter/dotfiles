@@ -1004,7 +1004,6 @@ didactic purposes."
   :config
   ;; agenda and basic directory structure
   (setq org-directory "~/org/")
-  (setq org-default-notes-file (concat org-directory "notes.org"))
   (setq org-archive-location "archive/%s_archive::")
   (setq org-archive-file-header-format
         "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n")
@@ -1100,8 +1099,6 @@ didactic purposes."
            :immediate-finish t)
           ("l" "link" entry (file "~/gtd/inbox.org")
            "* TODO %(org-cliplink-capture)" :immediate-finish t)
-          ("n" "Note" entry (file org-default-notes-file)
-           "* %? :NOTE:\n%U\n%a\n")
           ("c" "org-protocol-capture" entry (file "~/gtd/inbox.org")
            "* TODO [[%:link][%:description]]\n%:initial" :immediate-finish t)))
 
@@ -1137,6 +1134,19 @@ didactic purposes."
   (org-journal-dir (concat org-directory "journal/"))
   (org-journal-date-format "%A, %d %B %Y")
   :bind ("C-c j" . org-journal-new-entry))
+
+(use-package org-roam
+  :ensure
+  :custom
+  (org-roam-directory "~/Sync/notes/")
+  :hook
+  (after-init-hook . org-roam-mode)
+  :bind (:map org-roam-mode-map
+              (("C-c n l" . org-roam)
+               ("C-c n f" . org-roam-find-file)
+               ("C-c n b" . org-roam-switch-to-buffer))
+              :map org-mode-map
+              (("C-c n i" . org-roam-insert))))
 
 ;; ............................................................... Theme
 
