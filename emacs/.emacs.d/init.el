@@ -1130,6 +1130,14 @@ didactic purposes."
   :config
   (setq org-superstar-remove-leading-stars t))
 
+(use-package org-journal
+  :ensure
+  :after org
+  :custom
+  (org-journal-dir (concat org-directory "journal/"))
+  (org-journal-date-format "%A, %d %B %Y")
+  :bind ("C-c j" . org-journal-new-entry))
+
 ;; ............................................................... Theme
 
 ;; Disable GUI components

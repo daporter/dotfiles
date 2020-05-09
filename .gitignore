@@ -10,6 +10,7 @@
 /emacs/.emacs.d/elpa
 /emacs/.emacs.d/feeds.el.gpg
 /emacs/.emacs.d/network-security.data
+/emacs/.emacs.d/org-journal.cache
 /emacs/.emacs.d/recentf
 /emacs/.emacs.d/savehist
 /emacs/.emacs.d/tramp
