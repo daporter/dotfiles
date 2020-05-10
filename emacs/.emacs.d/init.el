@@ -979,11 +979,7 @@ didactic purposes."
   (setq calendar-mark-diary-entries-flag t)
   (setq calendar-week-start-day 1)      ; Monday
   (setq calendar-date-style 'iso)
-  (setq calendar-holidays (append holiday-general-holidays
-                                  holiday-local-holidays
-                                  holiday-other-holidays
-                                  holiday-christian-holidays
-                                  holiday-solar-holidays))
+
   :hook (calendar-today-visible-hook . calendar-mark-today))
 
 (use-package diary-lib
@@ -1004,40 +1000,40 @@ didactic purposes."
 
 (use-package org-plus-contrib
   :ensure
-  :config
+  :custom
   ;; agenda and basic directory structure
-  (setq org-directory "~/org/")
-  (setq org-archive-location "archive/%s_archive::")
-  (setq org-archive-file-header-format
-        "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n")
-  (setq org-deadline-warning-days 3)
-  (setq org-refile-use-outline-path 'file)
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-refile-allow-creating-parent-nodes 'confirm)
+  (org-directory "~/org/")
+  (org-archive-location "archive/%s_archive::")
+  (org-archive-file-header-format
+   "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n")
+  (org-deadline-warning-days 3)
+  (org-refile-use-outline-path 'file)
+  (org-outline-path-complete-in-steps nil)
+  (org-refile-allow-creating-parent-nodes 'confirm)
 
   ;; Include the todo keywords
-  (setq org-fast-tag-selection-include-todo t)
-  (setq org-use-fast-todo-selection t)
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d)" "CANCELLED(c@/!)")))
+  (org-fast-tag-selection-include-todo t)
+  (org-use-fast-todo-selection t)
+  (org-todo-keywords
+   '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d)" "CANCELLED(c@/!)")))
 
-  (setq org-fontify-done-headline t)
-  (setq org-fontify-quote-and-verse-blocks t)
-  (setq org-fontify-whole-heading-line t)
-  (setq org-enforce-todo-dependencies t)
-  (setq org-enforce-todo-checkbox-dependencies t)
-  (setq org-track-ordered-property-with-tag t)
+  (org-fontify-done-headline t)
+  (org-fontify-quote-and-verse-blocks t)
+  (org-fontify-whole-heading-line t)
+  (org-enforce-todo-dependencies t)
+  (org-enforce-todo-checkbox-dependencies t)
+  (org-track-ordered-property-with-tag t)
   ;; log
-  (setq org-log-done 'time)
-  (setq org-log-note-clock-out nil)
-  (setq org-log-redeadline nil)
-  (setq org-log-reschedule nil)
-  (setq org-read-date-prefer-future 'time)
+  (org-log-done 'time)
+  (org-log-note-clock-out nil)
+  (org-log-redeadline nil)
+  (org-log-reschedule nil)
+  (org-read-date-prefer-future 'time)
   ;; general
-  (setq org-special-ctrl-a/e t)
-  (setq org-hide-emphasis-markers t)
-  (setq org-catch-invisible-edits 'show)
-  (setq org-loop-over-headlines-in-active-region 'start-level)
+  (org-special-ctrl-a/e t)
+  (org-hide-emphasis-markers t)
+  (org-catch-invisible-edits 'show)
+  (org-loop-over-headlines-in-active-region 'start-level)
 
   :init
   (require 'org-checklist)
@@ -1049,33 +1045,29 @@ didactic purposes."
          ("<C-S-return>" . nil)))
 
 (use-package org-agenda
-  :after org-plus-contrib
-  :config
-  (setq org-agenda-files
-        '("~/gtd/inbox.org"
-          "~/gtd/projects.org"))
-  
-  (setq org-refile-targets
-        '(("~/gtd/projects.org" :maxlevel . 3)
-          ("~/gtd/maybe.org" :level . 1)))
-
+  :custom
   ;; Show the daily agenda by default instead of the weekly one.
-  (setq org-agenda-span 'day)
-
   ;; Make the global TODO list into a list of tasks available for
   ;; scheduling.
-  (setq org-agenda-todo-ignore-scheduled t)
-  (setq org-agenda-todo-ignore-timestamp t)
-
-  (setq org-agenda-custom-commands
-        '(("A" "Agenda"
-           ((agenda "")
-            (todo "TODO"
-                  ((org-agenda-overriding-header "To Refile:")
-                   (org-agenda-files '("~/gtd/inbox.org"))))))
-          ("n" "Next tasks"
-           ((todo "TODO"
-                  ((org-agenda-overriding-header "Next tasks:")))))))
+  (org-agenda-span 'day)
+  (org-agenda-todo-ignore-scheduled t)
+  (org-agenda-todo-ignore-timestamp t)
+  
+  (org-refile-targets
+   '(("~/gtd/projects.org" :maxlevel . 3)
+     ("~/gtd/maybe.org" :level . 1)))
+  (org-agenda-files
+   '("~/gtd/inbox.org"
+     "~/gtd/projects.org"))
+  (org-agenda-custom-commands
+   '(("A" "Agenda"
+      ((agenda "")
+       (todo "TODO"
+             ((org-agenda-overriding-header "To Refile:")
+              (org-agenda-files '("~/gtd/inbox.org"))))))
+     ("n" "Next tasks"
+      ((todo "TODO"
+             ((org-agenda-overriding-header "Next tasks:")))))))
 
   :bind (("C-c a" . org-agenda)
          ("s-a" . org-agenda)))
