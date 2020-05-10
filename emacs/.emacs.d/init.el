@@ -7,6 +7,9 @@
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("org" . "https://orgmode.org/elpa/"))
+
 (unless package--initialized (package-initialize))
 
 ;; Make sure `use-package' is available.
@@ -999,7 +1002,7 @@ didactic purposes."
           (year "[-/]" month "[-/]" day "[^0-9]")
           (dayname "\\W"))))
 
-(use-package org
+(use-package org-plus-contrib
   :ensure
   :config
   ;; agenda and basic directory structure
@@ -1036,6 +1039,9 @@ didactic purposes."
   (setq org-catch-invisible-edits 'show)
   (setq org-loop-over-headlines-in-active-region 'start-level)
 
+  :init
+  (require 'org-checklist)
+  
   :hook (org-mode-hook . org-indent-mode)
   :bind (("C-c l" . org-store-link)
          :map org-mode-map
@@ -1043,7 +1049,7 @@ didactic purposes."
          ("<C-S-return>" . nil)))
 
 (use-package org-agenda
-  :after org
+  :after org-plus-contrib
   :config
   (setq org-agenda-files
         '("~/gtd/inbox.org"
@@ -1075,7 +1081,7 @@ didactic purposes."
          ("s-a" . org-agenda)))
 
 (use-package org-habit
-  :after org
+  :after org-plus-contrib
   :config
   (add-to-list 'org-modules 'org-habit)
   (setq org-habit-graph-column 80)
@@ -1083,7 +1089,8 @@ didactic purposes."
 
 (use-package org-cliplink
   :ensure
-  :after org
+  :after org-plus-contrib
+  :demand
   :bind ("C-c y l" . org-cliplink))
 
 (use-package org-protocol
@@ -1109,7 +1116,7 @@ didactic purposes."
   :bind ("C-c c" . org-capture))
 
 (use-package org-src
-  :after org
+  :after org-plus-contrib
   :config
   (setq org-src-window-setup 'current-window)
   (setq org-src-preserve-indentation t)
@@ -1118,12 +1125,12 @@ didactic purposes."
 
 (use-package htmlize
   :ensure
-  :after org
+  :after org-plus-contrib
   (setq htmlize-ignore-face-size t))
 
 (use-package org-superstar
   :ensure
-  :after org
+  :after org-plus-contrib
   :config
   (setq org-superstar-remove-leading-stars t))
 
