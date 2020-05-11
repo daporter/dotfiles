@@ -2267,6 +2267,7 @@ instead.  This command can then be followed by the standard
   (setq shr-max-image-proportion 0.7)
   (setq shr-width (current-fill-column)))
 
+;; Support the HTML pre tag with proper syntax highlighting.
 (use-package shr-tag-pre-highlight
   :ensure
   :after shr
@@ -2277,6 +2278,37 @@ instead.  This command can then be followed by the standard
     (with-eval-after-load 'eww
       (advice-add 'eww-display-html :around
                   'eww-display-html--override-shr-external-rendering-functions))))
+
+(use-package eww
+  :commands (eww
+             eww-browse-url
+             eww-search-words
+             eww-open-in-new-buffer
+             eww-open-file
+             prot/eww-visit-history)
+  :config
+  (setq eww-restore-desktop t)
+  (setq eww-header-line-format "%u")
+
+  (defun prot/eww-visit-history ()
+    "Revisit `eww' history using completion."
+    (interactive)
+    (let ((history eww-prompt-history))
+      (icomplete-vertical-do ()
+        (eww
+         (completing-read "Visit website from history: " history nil t)))))
+
+  (defvar prot/eww-global-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "s" 'eww-search-words)
+      (define-key map "o" 'eww-open-in-new-buffer)
+      (define-key map "f" 'eww-open-file)
+      (define-key map "w" 'prot/eww-visit-history)
+      map)
+    "Key map to scope `eww' bindings for global usage.
+The idea is to bind this to a prefix key, so that its defined
+keys follow the pattern of <PREFIX> <KEY>.")
+  :bind-keymap ("C-c w" . prot/eww-global-map))
 
 ;; ............................................ Emacs server and desktop
 
