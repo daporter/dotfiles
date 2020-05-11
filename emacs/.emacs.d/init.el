@@ -1150,6 +1150,14 @@ didactic purposes."
   :bind
   ("C-c n j" . org-journal-new-entry))
 
+(use-package org-ref
+  :ensure
+  :config
+  (setq reftex-default-bibliography '("~/Sync/bibliography/references.bib"))
+  (setq org-ref-default-bibliography reftex-default-bibliography)
+  (setq org-ref-bibliography-notes "~/Sync/bibliography/notes.org")
+  (setq org-ref-pdf-directory "~/Sync/bibliography/bibtex-pdfs/"))
+
 (use-package deft
   :ensure
   :after org-roam
