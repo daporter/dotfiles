@@ -1169,6 +1169,11 @@ didactic purposes."
   :bind
   ("C-c n d" . deft))
 
+(use-package pdf-tools
+  :ensure
+  :config
+  (pdf-tools-install))
+
 ;; ............................................................... Theme
 
 ;; Disable GUI components
