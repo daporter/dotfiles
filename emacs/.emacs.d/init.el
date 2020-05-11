@@ -110,7 +110,7 @@ monitor-related events."
 
 (use-package emacs
   :config
-  (defconst prot/variable-pitch-font "DejaVu Sans Condensed"
+  (defconst prot/variable-pitch-font "Noto Serif"
     "The default variable-pitch typeface.")
 
   (set-face-attribute 'variable-pitch nil :family prot/variable-pitch-font :height 1.0)
