@@ -1393,28 +1393,30 @@ Else toggle the comment status of the line at point."
 
 ;; ............................................. Spelling and dictionary
 
+(use-package ispell
+  :config
+  (setq ispell-program-name "aspell")
+  (setq ispell-dictionary "british-ise-w_accents")
+
+  (defun dp/ispell-toggle-dictionaries ()
+    "Toggle between English and French dictionaries."
+    (interactive)
+    (if (string= ispell-current-dictionary "british-ise-w_accents")
+        (ispell-change-dictionary "francais-lrg")
+      (ispell-change-dictionary "british-ise-w_accents")))
+
+  :bind ("C-M-$" . dp/ispell-toggle-dictionaries))
+  
 (use-package flyspell
-  :commands (ispell-change-dictionary
-             ispell-word
-             flyspell-buffer
+  :commands (flyspell-buffer
              flyspell-mode
              flyspell-region)
   :config
   (setq flyspell-issue-message-flag nil)
   (setq flyspell-issue-welcome-flag nil)
-  (setq ispell-program-name "aspell")
-  (setq ispell-dictionary "en_GB")
-
-  (defun dp/ispell-toggle-dictionaries ()
-    "Toggle between English and French dictionaries."
-    (interactive)
-    (if (string= ispell-current-dictionary "en")
-        (ispell-change-dictionary "fr")
-      (ispell-change-dictionary "en")))
-
-  :bind (("C-M-$" . dp/ispell-toggle-dictionaries)
-         :map flyspell-mode-map
-         ("C-;" . nil)))
+  
+  :bind (:map flyspell-mode-map
+              ("C-;" . nil)))
 
 (use-package emacs
   :config
