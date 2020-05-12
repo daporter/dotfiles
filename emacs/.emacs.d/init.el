@@ -1128,6 +1128,7 @@ didactic purposes."
 
 (use-package org-roam
   :ensure
+  :diminish
   :custom
   (org-roam-directory "~/Sync/notes/")
   :hook
