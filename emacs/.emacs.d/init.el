@@ -616,6 +616,15 @@ afterwards exit the search altogether."
   (setq vr/default-replace-preview nil)
   (setq vr/match-separator-use-custom-face t))
 
+(use-package replace
+  :config
+  (setq list-matching-lines-jump-to-current-line t)
+  (setq list-matching-lines-buffer-name-face
+        '(:inherit modus-theme-intense-neutral :weight bold))
+  (setq list-matching-lines-current-line-face
+        '(:inherit modus-theme-special-mild))
+  :hook (occur-mode-hook . hl-line-mode))
+
 ;; wgrep
 
 (use-package wgrep
@@ -899,8 +908,7 @@ didactic purposes."
   (setq find-ls-option '("-ls" . "-AFhl"))
   (setq find-name-arg "-iname"))
 
-(use-package async
-  :ensure)
+(use-package async :ensure)
 
 (use-package dired-async
   :after (dired async)
@@ -1460,6 +1468,7 @@ See URL `https://jorisroovers.com/gitlint/'."
   :hook (flycheck-mode-hook . flycheck-indicator-mode))
 
 (use-package flymake
+  :commands flymake-mode
   :config
   (setq flymake-fringe-indicator-position 'left-fringe)
   (setq flymake-suppress-zero-counters t)
