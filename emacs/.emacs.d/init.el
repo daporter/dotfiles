@@ -58,13 +58,19 @@
   (setq underline-minimum-offset 0)
   (setq line-spacing 0.15)
 
-  (defconst prot/fixed-pitch-font "Hack"
+  (defconst prot/default-font "Iosevka Curly"
+    "The default typeface.")
+
+  (defconst prot/font-params "autohint=false:hintstyle=hintslight:embeddedbitmap=false"
     "The default fixed-pitch typeface.")
 
-  (defun prot/default-font (family size)
+  (defun prot/set-face-attribute-font (family size)
     "Set `default' face font to FAMILY at SIZE."
-    (set-face-attribute 'default nil :family family :height size))
-
+    (set-face-attribute 'default nil :font (concat family
+                                                   "-"
+                                                   (number-to-string size)
+                                                   ":"
+                                                   prot/font-params)))
   (defun prot/laptop-fonts ()
     "Fonts for the small laptop screen.
 
@@ -72,7 +78,7 @@ Pass desired argument to `prot/font-sizes' for use on my
 small laptop monitor."
     (interactive)
     (when window-system
-      (prot/default-font prot/fixed-pitch-font 85)))
+	  (prot/set-face-attribute-font prot/default-font 8.5)))
 
   (defun prot/desktop-fonts ()
     "Fonts for the larger desktop screen.
@@ -81,13 +87,7 @@ Pass desired argument to `prot/font-sizes' for use on my larger
  desktop monitor (external display connected to my laptop)."
     (interactive)
     (when window-system
-      (prot/default-font prot/fixed-pitch-font 75)))
-
-  (defun prot/reading-fonts ()
-    "Fonts for focused reading sessions."
-    (interactive)
-    (when window-system
-      (prot/default-font prot/fixed-pitch-font 95)))
+	  (prot/set-face-attribute-font prot/default-font 9.5)))
 
   (defun prot/fonts-per-monitor ()
     "Use font settings based on screen size.
@@ -110,16 +110,16 @@ monitor-related events."
 
 (use-package emacs
   :config
-  (defconst prot/variable-pitch-font "Noto Serif"
+  (defconst prot/variable-pitch-font "Iosevka Sparkle"
     "The default variable-pitch typeface.")
 
   (set-face-attribute 'variable-pitch nil :family prot/variable-pitch-font :height 1.0)
-  (set-face-attribute 'fixed-pitch nil :family prot/fixed-pitch-font :height 1.0))
+  (set-face-attribute 'fixed-pitch nil :family prot/default-font :height 1.0))
 
 (use-package face-remap
   :diminish buffer-face-mode            ; the actual mode
   :config
-  (defun prot/variable-pitch-mode (&rest size)
+  (defun prot/variable-pitch-mode (&optional size)
     "Toggle `variable-pitch-mode' and additional parameters.
 SIZE is intented for one of my functions for setting the primary
 font size.
@@ -130,10 +130,12 @@ Example: (prot/variable-pitch-mode (prot/screencast-fonts))"
         (progn
           (variable-pitch-mode -1)
           (setq-local cursor-type 'box)   ; TODO better restore original value
-          (prot/fonts-per-monitor))
+          (when size                      ; TODO restore previous value
+            (prot/fonts-per-monitor)))
       (variable-pitch-mode 1)
       (setq-local cursor-type 'bar)
-      size)))
+      (when size
+        size))))
 
 ;; Backups
 
@@ -335,7 +337,7 @@ key in `completion-list-mode-map'."
               ("C-p" . icomplete-backward-completions)
               ("<left>" . icomplete-backward-completions)
               ("<up>" . icomplete-backward-completions)
-              ("<C-backspace>" . icomplete-fido-backward-updir))) ; Emacs 27.1
+              ("<C-backspace>" . icomplete-fido-backward-updir)))
 
 ;; ............................................................. Recentf
 
@@ -401,7 +403,7 @@ abbreviated as a tilde.  In the Dired buffer paths are absolute."
   :demand
   :after (minibuffer icomplete)
   :config
-  (setq icomplete-vertical-prospects-height (/ (window-height) 6))
+  (setq icomplete-vertical-prospects-height (/ (frame-height) 6))
   (icomplete-vertical-mode -1)
 
   (defun prot/icomplete-yank-kill-ring ()
@@ -419,7 +421,7 @@ normally would when calling `yank' followed by `yank-pop'."
                (complete-with-action
                 action kill-ring string pred)))))
       (icomplete-vertical-do
-          (:separator 'dotted-line :height (/ (window-height) 4))
+          (:separator 'dotted-line :height (/ (frame-height) 4))
         (when (use-region-p)
           (delete-region (region-beginning) (region-end)))
         (insert
@@ -554,8 +556,8 @@ Use as a value for `completion-in-region-function'."
   (setq isearch-lazy-highlight t)
   ;; All of the following variables were introduced in Emacs 27.1.
   ;;(setq isearch-lazy-count t)
-  ;;(setq lazy-count-prefix-format "(%s/%s) ")
-  ;;(setq lazy-count-suffix-format nil)
+  ;;(setq lazy-count-prefix-format nil)
+  ;;(setq lazy-count-suffix-format " (%s/%s)")
   ;;(setq isearch-yank-on-pmove 'shift)
   (setq isearch-allow-scroll 'unlimited)
 
@@ -575,20 +577,24 @@ confines of word boundaries (e.g. multiple words)."
     (when isearch-other-end
       (goto-char isearch-other-end)))
 
-  (defun prot/isearch-abort ()
-    "Remove non-matching `isearch' input, reverting to previous
-successful search and continuing with the search.
+  (defun prot/isearch-abort-dwim ()
+    "Delete failed `isearch' input, single char, or cancel search.
 
-This is a modified variant of the original `isearch-abort',
-mapped to C-g which will remove the failed match if any and only
-afterwards exit the search altogether."
+This is a modified variant of `isearch-abort' that allows us to
+perform the following, based on the specifics of the case: (i)
+delete the entirety of a non-matching part, when present; (ii)
+delete a single character, when possible; (iii) exit current
+search if no character is present and go back to point where the
+search started."
     (interactive)
-    (discard-input)
-    (while (or (not isearch-success) isearch-error)
-      (isearch-pop-state))
+    (if (eq (length isearch-string) 0)
+        (isearch-cancel)
+      (isearch-del-char)
+      (while (or (not isearch-success) isearch-error)
+        (isearch-pop-state)))
     (isearch-update))
 
-  (defun prot/isearch-query-replace-symbol-at-point ()
+    (defun prot/isearch-query-replace-symbol-at-point ()
     "Run `query-replace-regexp' for the symbol at point."
     (interactive)
     (isearch-forward-symbol-at-point)
@@ -599,9 +605,10 @@ afterwards exit the search altogether."
          :map minibuffer-local-isearch-map
          ("M-/" . isearch-complete-edit)
          :map isearch-mode-map
+         ("C-g" . isearch-cancel)       ; instead of `isearch-abort'
          ("M-/" . isearch-complete)
          ("C-SPC" . prot/isearch-mark-and-exit)
-         ("DEL" . prot/isearch-abort)
+         ("<backspace>" . prot/isearch-abort-dwim)
          ("<C-return>" . prot/isearch-other-end)))
 
 ;; ................................................. Regular expressions
@@ -714,8 +721,51 @@ This function is meant to be mapped to a key in `rg-mode-map'."
                 (name 16 -1)
                 " " filename)))
   (setq ibuffer-saved-filter-groups nil)
+
+  (defun prot/buffers-major-mode (&optional arg)
+    "Select buffers that match the current buffer's major mode.
+With \\[universal-argument] produce an `ibuffer' filtered
+accordingly.  Else use standard completion."
+    (interactive "P")
+    (let* ((major major-mode)
+           (prompt "Buffers for ")
+           (mode-string (format "%s" major))
+           (mode-string-pretty (propertize mode-string 'face 'success)))
+      (if arg
+          (ibuffer t (concat "*" prompt mode-string "*")
+                   (list (cons 'used-mode major)))
+        (switch-to-buffer
+         (read-buffer
+          (concat prompt mode-string-pretty ": ") nil t
+          (lambda (pair) ; pair is (name-string . buffer-object)
+            (with-current-buffer (cdr pair) (derived-mode-p major))))))))
+
+  (defun prot/buffers-vc-root (&optional arg)
+    "Select buffers that match the present `vc-root-dir'.
+With \\[universal-argument] produce an `ibuffer' filtered
+accordingly.  Else use standard completion.
+
+When no VC root is available, use standard `switch-to-buffer'."
+    (interactive "P")
+    (let* ((root (vc-root-dir))
+           (prompt "Buffers for VC ")
+           (vc-string (format "%s" root))
+           (vc-string-pretty (propertize vc-string 'face 'success)))
+      (if root
+          (if arg
+              (ibuffer t (concat "*" prompt vc-string "*")
+                       (list (cons 'filename (expand-file-name root))))
+            (switch-to-buffer
+             (read-buffer
+              (concat prompt vc-string-pretty ": ") nil t
+              (lambda (pair) ; pair is (name-string . buffer-object)
+                (with-current-buffer (cdr pair) (string= (vc-root-dir) root))))))
+        (call-interactively 'switch-to-buffer))))
+  
   :hook (ibuffer-mode-hook . hl-line-mode)
-  :bind (("C-x C-b" . ibuffer)
+  :bind (("M-s b" . prot/buffers-major-mode)
+         ("M-s v" . prot/buffers-vc-root)
+         ("C-x C-b" . ibuffer)
          :map ibuffer-mode-map
          ("* f" . ibuffer-mark-by-file-name-regexp)
          ("* g" . ibuffer-mark-by-content-regexp) ; "g" is for "grep"
@@ -742,11 +792,17 @@ This function is meant to be mapped to a key in `rg-mode-map'."
            (side . top)
            (slot . 0)
            (window-parameters . ((no-other-window . t))))
-          ("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\|Messages\\)\\*"
+          ("\\*Messages.*"
            (display-buffer-in-side-window)
            (window-height . 0.16)
            (side . top)
            (slot . 1)
+           (window-parameters . ((no-other-window . t))))
+          ("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\)\\*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . top)
+           (slot . 2)
            (window-parameters . ((no-other-window . t))))
           ;; bottom side window
           ("\\*\\(Output\\|Register Preview\\).*"
@@ -922,7 +978,7 @@ didactic purposes."
   (setq dired-narrow-enable-blinking t)
   (setq dired-narrow-blink-time 0.3)
   :bind (:map dired-mode-map
-              ("M-s n" . dired-narrow)))
+              ("/" . dired-narrow-regexp)))
 
 (use-package wdired
   :after dired
@@ -1115,6 +1171,10 @@ didactic purposes."
 
   :bind ("C-c c" . org-capture))
 
+(use-package org-list
+  :config
+  (setq org-list-allow-alphabetical t))
+
 (use-package org-src
   :after org-plus-contrib
   :config
@@ -1182,6 +1242,10 @@ didactic purposes."
   :ensure
   :config
   (pdf-tools-install))
+
+(use-package nov
+  :ensure
+  :mode ("\\.epub\\'" . nov-mode))
 
 ;; ............................................................... Theme
 
@@ -1338,7 +1402,7 @@ font-related changes see `prot/variable-pitch-mode'."
           (prot/variable-pitch-mode))
       (olivetti-mode 1)
       (set-window-fringes (selected-window) 0 0)
-      (prot/variable-pitch-mode (prot/reading-fonts))))
+      (prot/variable-pitch-mode)))
   :bind ("C-c o" . prot/olivetti-mode))
 
 (use-package rainbow-blocks
@@ -1731,7 +1795,46 @@ See URL `https://jorisroovers.com/gitlint/'."
   ;; The following are from Emacs 27.1
   (setq diff-refine nil)
   (setq diff-font-lock-prettify nil)
-  (setq diff-font-lock-syntax nil))
+  (setq diff-font-lock-syntax nil)
+
+  (defun prot/diff-buffer-with-file (&optional arg)
+    "Compare buffer to its file, else run `vc-diff'.
+With \\[universal-argument] also enable highlighting of word-wise
+changes, local to the current buffer."
+    (interactive "P")
+    (let ((buf nil))     ; this method will "fail" if multi diff buffers
+      (if (buffer-modified-p)
+          (progn
+            (diff-buffer-with-file (current-buffer))
+            (setq buf "*Diff*"))
+        (vc-diff)
+        (setq buf "*vc-diff*"))
+      (when arg
+        (with-current-buffer (get-buffer buf)
+          (setq-local diff-refine 'font-lock)))))
+
+  (defun prot/diff-restrict-view-dwim (&optional arg)
+    "Use `diff-restrict-view', or widen when already narrowed.
+By default the narrowing effect applies to the focused diff hunk.
+With \\[universal-argument] do it for the current file instead."
+    (interactive "P")
+    (when (derived-mode-p 'diff-mode)
+      (if (buffer-narrowed-p)
+          (progn
+            (widen)
+            (message "Widened the view"))
+        (if arg
+            (progn
+              (diff-restrict-view arg)
+              (message "Narrowed to file"))
+          (diff-restrict-view)
+          (message "Narrowed to diff hunk")))))
+
+  ;; `prot/diff-buffer-with-file' replaces the default for `vc-diff'
+  ;; (which I bind to another key---see previous section).
+  :bind (("C-x v =" . prot/diff-buffer-with-file)
+         :map diff-mode-map
+         ("C-c C-n" . prot/diff-restrict-view-dwim)))
 
 (use-package ediff
   :config
@@ -1960,6 +2063,13 @@ Add this function to `message-header-setup-hook'."
           ((+ 86400 (gnus-seconds-today)) . "Yesterday, %R")
           (t . "%Y-%m-%d %R")))
 
+  ;; When the %f specifier in `gnus-summary-line-format' matches my
+  ;; name, this will use the contents of the "To:" field, prefixed by
+  ;; the string I specify.  Useful when checking your "Sent" summary.
+  (setq gnus-ignored-from-addresses "David Porter")
+  (setq gnus-summary-to-prefix "To: ")
+
+
   (setq gnus-summary-make-false-root 'dummy)
   (setq gnus-summary-dummy-line-format
         (concat "   "
@@ -1976,8 +2086,10 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-sum-thread-tree-false-root      "  ")
   (setq gnus-sum-thread-tree-root            "• ")
   (setq gnus-sum-thread-tree-vertical        "│ ")
-  (setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
-  (setq gnus-sum-thread-tree-single-leaf     "└─➤ ")
+  ;;(setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
+  ;;(setq gnus-sum-thread-tree-single-leaf     "└─➤ ")
+  (setq gnus-sum-thread-tree-leaf-with-other "├─> ")
+  (setq gnus-sum-thread-tree-single-leaf     "└─> ")
   (setq gnus-sum-thread-tree-indent          "  ")
 
   (setq gnus-summary-mode-line-format "%p")
