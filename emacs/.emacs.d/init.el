@@ -54,16 +54,16 @@
 ;; Base typeface configurations
 (use-package emacs
   :config
-  (setq x-underline-at-descent-line nil)
+  (setq x-underline-at-descent-line t)
   (setq underline-minimum-offset 0)
   (setq line-spacing 0.15)
 
-  (defconst prot/default-font "Iosevka Curly"
+  (defconst prot/default-font "Hack"
     "The default typeface.")
 
-  (defconst prot/font-params "autohint=false:hintstyle=hintslight:embeddedbitmap=false"
+  (defconst prot/font-params "autohint=false:hintstyle=hintfull:embeddedbitmap=true"
     "The default fixed-pitch typeface.")
-
+  
   (defun prot/set-face-attribute-font (family size)
     "Set `default' face font to FAMILY at SIZE."
     (set-face-attribute 'default nil :font (concat family
@@ -78,7 +78,7 @@ Pass desired argument to `prot/font-sizes' for use on my
 small laptop monitor."
     (interactive)
     (when window-system
-	  (prot/set-face-attribute-font prot/default-font 8.5)))
+      (prot/set-face-attribute-font prot/default-font 8.5)))
 
   (defun prot/desktop-fonts ()
     "Fonts for the larger desktop screen.
@@ -87,7 +87,7 @@ Pass desired argument to `prot/font-sizes' for use on my larger
  desktop monitor (external display connected to my laptop)."
     (interactive)
     (when window-system
-	  (prot/set-face-attribute-font prot/default-font 9.5)))
+      (prot/set-face-attribute-font prot/default-font 9.5)))
 
   (defun prot/fonts-per-monitor ()
     "Use font settings based on screen size.
@@ -110,7 +110,7 @@ monitor-related events."
 
 (use-package emacs
   :config
-  (defconst prot/variable-pitch-font "Iosevka Sparkle"
+  (defconst prot/variable-pitch-font "DejaVu Sans Condensed"
     "The default variable-pitch typeface.")
 
   (set-face-attribute 'variable-pitch nil :family prot/variable-pitch-font :height 1.0)
@@ -287,6 +287,72 @@ key in `completion-list-mode-map'."
          ("b" . previous-completion)
          ("M-v" . prot/focus-minibuffer)))
 
+(use-package imenu
+  :config
+  (setq imenu-use-markers t)
+  (setq imenu-auto-rescan t)
+  (setq imenu-auto-rescan-maxout 600000)
+  (setq imenu-max-item-length 100)
+  (setq imenu-use-popup-menu nil)
+  (setq imenu-eager-completion-buffer t)
+  (setq imenu-space-replacement " ")
+  (setq imenu-level-separator "/")
+
+  (defun prot/imenu-vertical ()
+    "Use a vertical Icomplete layout for `imenu'.
+Also configure the value of `orderless-matching-styles' to avoid
+aggressive fuzzy-style matching for this particular command."
+    (interactive)
+    (let ((orderless-matching-styles    ; make sure to check `orderless'
+           '(orderless-literal
+             orderless-regexp
+             orderless-prefixes)))
+      (icomplete-vertical-do (:height (/ (frame-height) 4))
+        (call-interactively 'imenu))))
+
+  (defun prot/imenu-recenter-pulse ()
+    "Recent `imenu' position at the top with subtle feedback.
+Add this to `imenu-after-jump-hook'."
+    (let ((pulse-delay .05))
+      (recenter 0)
+      (pulse-momentary-highlight-one-line (point) 'modus-theme-intense-red)))
+
+  :hook ((imenu-after-jump-hook . prot/imenu-recenter-pulse)
+         (imenu-after-jump-hook . (lambda ()
+                                    (when (and (eq major-mode 'org-mode)
+                                               (org-at-heading-p))
+                                      (org-show-entry)
+                                      (org-reveal t)))))
+  :bind ("C-." . prot/imenu-vertical))
+
+(use-package imenu-list
+  :ensure
+  :defer
+  :config
+  (defun prot/imenu-list-dwim (&optional arg)
+    "Convenience wrapper for `imenu-list'.
+Move between the current buffer and a dedicated window with the
+contents of `imenu'.
+
+The dedicated window is created if it does not exist, while it is
+updated once it is focused again through this command.
+
+With \\[universal-argument] toggle the display of the window."
+    (interactive "P")
+    (if arg
+        (imenu-list-smart-toggle)
+      (with-current-buffer
+          (if (eq major-mode 'imenu-list-major-mode)
+              (pop-to-buffer (other-buffer (current-buffer) t))
+            (imenu-list)))))
+
+  :bind ("C-," . prot/imenu-list-dwim))
+
+(use-package flimenu
+  :ensure
+  :config
+  (flimenu-global-mode 1))
+
 (use-package savehist
   :config
   (setq savehist-file "~/.emacs.d/savehist")
@@ -436,65 +502,57 @@ normally would when calling `yank' followed by `yank-pop'."
 (use-package project
   :after (minibuffer icomplete icomplete-vertical) ; read those
   :config
-  (defun prot/project-find-file ()
-    "Find a file that belongs to the current project."
-    (interactive)
-    (icomplete-vertical-do ()
-      (project-find-file)))
+  (defun prot/find-file-vc-or-dir (&optional arg)
+    "Find file by name that belongs to the current project or dir.
+With \\[universal-argument] match files by contents.  This
+requires the command-line executable called 'rg' or 'ripgrep'."
+    (interactive "P")
+    (let* ((default-directory (file-name-directory
+                               (or (locate-dominating-file "." ".git" )
+                                   default-directory))))
+      (if arg
+          (let* ((regexp (read-regexp
+                          (concat "File contents matching REGEXP in "
+                                  (propertize default-directory 'face 'bold)
+                                  ": ")))
+                 (results (process-lines "rg" "-l" "--hidden" "-m" "1" "-M" "120" regexp)))
+            (find-file
+             (icomplete-vertical-do ()
+               (completing-read (concat
+                                 "Files with contents matching "
+                                 (propertize regexp 'face 'success)
+                                 (format " (%s)" (length results))
+                                 ": ")
+                                results nil t))))
+        (let* ((filenames-all (directory-files-recursively default-directory ".*" nil t))
+               (filenames (cl-remove-if (lambda (x)
+                                          (string-match-p "\\.git" x))
+                                        filenames-all)))
+          (icomplete-vertical-do ()
+            (find-file
+             (completing-read "Find file recursively: " filenames nil t)))))))
 
-  (declare-function cl-remove-if "cl-seq")
-
-  (defun prot/project-or-dir-find-subdirectory-recursive ()
-    "Recursive find subdirectory of project or directory.
-
-This command has the potential for infinite recursion: use it
-wisely or prepare to use \\[keyboard-quit]."
-    (interactive)
-    (let* ((project (vc-root-dir))
-           (dir (if project project default-directory))
-           (contents (directory-files-recursively dir ".*" t nil nil))
-           ;; (contents (directory-files dir t))
-           (find-directories (mapcar (lambda (dir)
-                                       (when (file-directory-p dir)
-                                         (abbreviate-file-name dir)))
-                                     contents))
-           (subdirs (delete nil find-directories))
-           (cands (cl-remove-if (lambda (x) (string-match-p "\\.git" x)) subdirs)))
-      (icomplete-vertical-do ()
-        (dired
-         (completing-read "Find sub-directory: " cands nil t dir)))))
-
-  (defun prot/find-file-from-dir-recursive ()
-    "Find file recursively, starting from present dir."
-    (interactive)
-    (let* ((dir default-directory)
-           (files (directory-files-recursively dir ".*" nil t))
-           (cands (cl-remove-if (lambda (x) (string-match-p "\\.git" x)) files)))
-      (icomplete-vertical-do ()
-        (find-file
-         (completing-read "Find file recursively: " cands nil t dir)))))
-
-  (defun prot/find-project ()
-    "Switch to sub-directory at ~/projects.
-
-Allows you to switch directly to the root directory of a project
-inside a given location."
-    (interactive)
-    (let* ((path "~/projects/")
+  (defun prot/find-project (&optional arg)
+    "Switch to sub-directory at the specified locations.
+With \\[universal-argument] produce a `dired' buffer instead with
+all the possible candidates."
+    (interactive "P")
+    (let* ((dirs (list "~/Git/Projects/" "~/.emacs.d/prot-dev/"))
            (dotless directory-files-no-dot-files-regexp)
-           (project-list (project-combine-directories
-                          (directory-files path t dotless)))
-           (projects (mapcar 'abbreviate-file-name project-list)))
-      (icomplete-vertical-do ()
-        (dired
-         (completing-read "Find project: " projects nil t path)))))
+           (cands (mapcan (lambda (d)
+                            (directory-files d t dotless))
+                          dirs))
+           (projects (mapcar 'abbreviate-file-name cands))
+           (buf "*Projects Dired*"))
+      (if arg
+          (dired (cons (generate-new-buffer-name buf) projects))
+        (icomplete-vertical-do ()
+          (dired
+           (completing-read "Find project: " projects nil t))))))
 
   :bind (("M-s p" . prot/find-project)
-         ("M-s f" . prot/project-find-file)
-         ("M-s z" . prot/find-file-from-dir-recursive)
-         ("M-s d" . prot/project-or-dir-find-subdirectory-recursive)
-         ("M-s l" . find-library)
-         ("M-s C-M-%" . project-query-replace-regexp)))
+         ("M-s f" . prot/find-file-vc-or-dir)
+         ("M-s l" . find-library)))
 
 ;; ............................................... In-buffer completions
 
@@ -555,10 +613,10 @@ Use as a value for `completion-in-region-function'."
   (setq isearch-regexp-lax-whitespace nil)
   (setq isearch-lazy-highlight t)
   ;; All of the following variables were introduced in Emacs 27.1.
-  ;;(setq isearch-lazy-count t)
-  ;;(setq lazy-count-prefix-format nil)
-  ;;(setq lazy-count-suffix-format " (%s/%s)")
-  ;;(setq isearch-yank-on-pmove 'shift)
+  (setq isearch-lazy-count t)
+  (setq lazy-count-prefix-format nil)
+  (setq lazy-count-suffix-format " (%s/%s)")
+  (setq isearch-yank-on-move 'shift)
   (setq isearch-allow-scroll 'unlimited)
 
   (defun prot/isearch-mark-and-exit ()
@@ -594,14 +652,14 @@ search started."
         (isearch-pop-state)))
     (isearch-update))
 
-    (defun prot/isearch-query-replace-symbol-at-point ()
+  (defun prot/isearch-query-replace-symbol-at-point ()
     "Run `query-replace-regexp' for the symbol at point."
     (interactive)
     (isearch-forward-symbol-at-point)
     (isearch-query-replace-regexp))
 
-  :bind (("M-s M-o" . multi-occur)
-         ("M-s %" . prot/isearch-query-replace-symbol-at-point)
+  :bind (("M-s %" . prot/isearch-query-replace-symbol-at-point)
+         ("s-s" . prot/isearch-for-region)
          :map minibuffer-local-isearch-map
          ("M-/" . isearch-complete-edit)
          :map isearch-mode-map
@@ -626,11 +684,17 @@ search started."
 (use-package replace
   :config
   (setq list-matching-lines-jump-to-current-line t)
+  ;; See my "Modus themes" for these inherited faces
   (setq list-matching-lines-buffer-name-face
         '(:inherit modus-theme-intense-neutral :weight bold))
   (setq list-matching-lines-current-line-face
         '(:inherit modus-theme-special-mild))
-  :hook (occur-mode-hook . hl-line-mode))
+  :hook ((occur-mode-hook . hl-line-mode)
+         (occur-mode-hook . (lambda ()
+                              (toggle-truncate-lines t))))
+  :bind (("M-s M-o" . multi-occur)
+         :map occur-mode-map
+         ("t" . toggle-truncate-lines)))
 
 ;; wgrep
 
@@ -781,6 +845,24 @@ When no VC root is available, use standard `switch-to-buffer'."
               ("/ <deletechar>" . ibuffer-clear-filter-groups)))
 
 ;; ............................................................. Windows
+
+(use-package emacs
+  :config
+  (defvar prot/window-configuration nil
+    "Current window configuration.
+Intended for use by `prot/window-monocle'.")
+
+  (defun prot/window-single-toggle ()
+    "Toggle between multiple windows and single window.
+This is the equivalent of maximising a window.  Tiling window
+managers such as DWM, BSPWM refer to this state as 'monocle'."
+    (interactive)
+    (if (one-window-p)
+        (when prot/window-configuration
+          (set-window-configuration prot/window-configuration))
+      (setq prot/window-configuration (current-window-configuration))
+      (delete-other-windows)))
+  :bind ("s-m" . prot/window-single-toggle))
 
 (use-package window
   :init
@@ -952,11 +1034,87 @@ didactic purposes."
   :config
   (setq dired-isearch-filenames 'dwim)
   ;; The following variables were introduced in Emacs 27.1
-  ;;(setq dired-create-destination-dirs 'ask)
-  ;;(setq dired-vc-rename-file t)
-  :bind (:map dired-mode-map
-              ("C-+" . dired-create-empty-file)
-              ("M-s f" . nil)))
+  (setq dired-create-destination-dirs 'ask)
+  (setq dired-vc-rename-file t)
+
+  ;; TODO defmacro to avoid duplication of code in `fd' functions
+  ;; TODO how can a defmacro produce named functions that are then
+  ;; mapped to keys?
+  (defun prot/dired-fd-dirs (&optional arg)
+    "Search for directories in VC root or PWD.
+With \\[universal-argument] put the results in a `dired' buffer.
+This relies on the external 'fd' executable."
+    (interactive "P")
+    (let* ((vc (vc-root-dir))
+           (dir (expand-file-name (if vc vc default-directory)))
+           (regexp (read-regexp
+                    (concat "Subdirectories matching REGEXP in "
+                            (propertize dir 'face 'bold)
+                            ": ")))
+           (names (process-lines "fd" "-i" "-H" "-a" "-t" "d" "-c" "never" regexp dir))
+           (buf "*FD Dired*"))
+      (if names
+          (if arg
+              (dired (cons (generate-new-buffer-name buf) names))
+            (icomplete-vertical-do ()
+              (find-file
+               (completing-read (concat
+                                 "Files or directories matching "
+                                 (propertize regexp 'face 'success)
+                                 (format " (%s)" (length names))
+                                 ": ")
+                                names nil t)))))
+      (user-error (concat "No matches for " "«" regexp "»" " in " dir))))
+
+  (defun prot/dired-fd-files-and-dirs (&optional arg)
+    "Search for files and directories in VC root or PWD.
+With \\[universal-argument] put the results in a `dired' buffer.
+This relies on the external 'fd' executable."
+    (interactive "P")
+    (let* ((vc (vc-root-dir))
+           (dir (expand-file-name (if vc vc default-directory)))
+           (regexp (read-regexp
+                    (concat "Files and dirs matching REGEXP in "
+                            (propertize dir 'face 'bold)
+                            ": ")))
+           (names (process-lines "fd" "-i" "-H" "-a" "-t" "d" "-t" "f" "-c" "never" regexp dir))
+           (buf "*FD Dired*"))
+      (if names
+          (if arg
+              (dired (cons (generate-new-buffer-name buf) names))
+            (icomplete-vertical-do ()
+              (find-file
+               (completing-read (concat
+                                 "Files and directories matching "
+                                 (propertize regexp 'face 'success)
+                                 (format " (%s)" (length names))
+                                 ": ")
+                                names nil t)))))
+      (user-error (concat "No matches for " "«" regexp "»" " in " dir))))
+
+  (defun contrib/cdb--bookmarked-directories ()
+    (bookmark-maybe-load-default-file)
+    (cl-loop for (name . props) in bookmark-alist
+             for fn = (cdr (assq 'filename props))
+             when (and fn (string-suffix-p "/" fn))
+             collect (cons name fn)))
+
+  (defun contrib/cd-bookmark (bm)
+    "Insert the path of a bookmarked directory."
+    (interactive
+     (list (let ((enable-recursive-minibuffers t))
+             (completing-read
+              "Directory: " (contrib/cdb--bookmarked-directories) nil t))))
+    (when (minibufferp)
+      (delete-region (minibuffer-prompt-end) (point-max)))
+    (insert (cdr (assoc bm (contrib/cdb--bookmarked-directories)))))
+  :bind (("M-s d" .  prot/dired-fd-dirs)
+         ("M-s z" . prot/dired-fd-files-and-dirs)
+         :map dired-mode-map
+         ("C-+" . dired-create-empty-file)
+         ("M-s f" . nil)
+         :map minibuffer-local-filename-completion-map
+         ("C-c d" . contrib/cd-bookmark)))
 
 (use-package find-dired
   :after dired
@@ -992,6 +1150,7 @@ didactic purposes."
   :after dired
   :config
   (setq peep-dired-cleanup-on-disable t)
+  (setq peep-dired-cleanup-eagerly t)
   (setq peep-dired-enable-on-directories nil)
   (setq peep-dired-ignored-extensions
         '("mkv" "webm" "mp4" "mp3" "ogg" "iso"))
@@ -1017,20 +1176,34 @@ didactic purposes."
   (setq dired-bind-man nil)
   (setq dired-bind-info nil)
 
-  (defun prot/kill-current-filename ()
-    "Place the current buffer's file name in the `kill-ring'."
-    (interactive)
-    (kill-new (dired-filename-at-point)))
-
-  (defun prot/insert-current-filename ()
-    "Insert at point the current buffer's file name."
-    (interactive)
-    (insert (dired-filename-at-point)))
-
-  :bind (("C-x C-j" . dired-jump)
-         ("C-s-j" . dired-jump)
+  (defun prot/dired-jump-extra (&optional arg)
+    "Switch directories comprising context and bookmarks.
+NEEDS REVIEW."
+    (interactive "P")
+    (let* ((vc (vc-root-dir))
+           (buf-name (buffer-file-name))
+           (path (if buf-name
+                     buf-name
+                   default-directory))
+           (file (abbreviate-file-name path))
+           (bookmarks (mapcar (lambda (b)
+                                (cdr b))
+                              (contrib/cdb--bookmarked-directories)))
+           (collection (append bookmarks
+                               (list (file-name-directory file)
+                                     (when vc vc))))
+           (files (cl-remove-if (lambda (f)
+                                  (eq f nil))
+                                collection)))
+      (icomplete-vertical-do ()
+        (dired
+         (completing-read "Jump to context or bookmark: " files nil t)))))
+  
+  :bind (("C-c j" . prot/dired-jump-extra)
+         ("C-x C-j" . dired-jump)
+         ("s-j" . dired-jump)
          ("C-x 4 C-j" . dired-jump-other-window)
-         ("C-s-J" . dired-jump-other-window)))
+         ("s-J" . dired-jump-other-window)))
 
 (use-package diredfl
   :ensure
@@ -1083,7 +1256,7 @@ didactic purposes."
 
   (org-fontify-done-headline t)
   (org-fontify-quote-and-verse-blocks t)
-  (org-fontify-whole-heading-line t)
+  (org-fontify-whole-heading-line nil)
   (org-enforce-todo-dependencies t)
   (org-enforce-todo-checkbox-dependencies t)
   (org-track-ordered-property-with-tag t)
@@ -1098,15 +1271,23 @@ didactic purposes."
   (org-hide-emphasis-markers t)
   (org-catch-invisible-edits 'show)
   (org-loop-over-headlines-in-active-region 'start-level)
+  (org-imenu-depth 7)
 
   :init
   (require 'org-checklist)
   
   :hook (org-mode-hook . org-indent-mode)
-  :bind (("C-c l" . org-store-link)
-         :map org-mode-map
-         ("<C-return>" . nil)
-         ("<C-S-return>" . nil)))
+  :bind (:map org-mode-map
+              ("<C-return>" . nil)
+              ("<C-S-return>" . nil)))
+
+(use-package ol
+  :config
+  (setq org-link-keep-stored-after-insertion t)
+  :bind (:map org-mode-map
+              ("C-c l" . org-store-link)
+              ("C-c S-l" . org-toggle-link-display)
+              ("C-c C-S-l" . org-insert-last-stored-link)))
 
 (use-package org-agenda
   :custom
@@ -1257,7 +1438,7 @@ didactic purposes."
   (scroll-bar-mode -1)
   :config
   (setq use-file-dialog nil)
-  (setq use-dialog-box t)		; only for mouse events
+  (setq use-dialog-box t)       ; only for mouse events
   (setq inhibit-splash-screen t)
   (global-unset-key (kbd "C-z"))
   (global-unset-key (kbd "C-x C-z"))
@@ -1370,7 +1551,8 @@ didactic purposes."
     (if (bound-and-true-p whitespace-mode)
         (whitespace-mode -1)
       (whitespace-mode)))
-  :bind ("<f6>" . prot/toggle-invisibles))
+  :bind (("<f6>" . prot/toggle-invisibles)
+         ("C-c z" . delete-trailing-whitespace)))
 
 (use-package display-line-numbers
   :config
@@ -1478,7 +1660,7 @@ Else toggle the comment status of the line at point."
       (ispell-change-dictionary "british-ise-w_accents")))
 
   :bind ("C-M-$" . dp/ispell-toggle-dictionaries))
-  
+
 (use-package flyspell
   :commands (flyspell-buffer
              flyspell-mode
@@ -1556,7 +1738,9 @@ See URL `https://jorisroovers.com/gitlint/'."
 
 (use-package markdown-mode
   :ensure
-  :mode ("\\.md\\'" . markdown-mode))
+  :config
+  (setq markdown-fontify-code-blocks-natively t)
+  :mode ("\\.md$" . markdown-mode))
 
 (use-package yaml-mode
   :ensure
@@ -1655,6 +1839,15 @@ See URL `https://jorisroovers.com/gitlint/'."
   (setq-default blink-cursor-interval 0.75)
   (setq-default blink-cursor-delay 0.2)
   :hook (after-init-hook . blink-cursor-mode))
+
+(use-package pulse
+  :config
+  (defun prot/pulse-line ()
+    "Temporarily highlight the current line."
+    (interactive)
+    (let ((pulse-delay .06))
+      (pulse-momentary-highlight-one-line (point) 'modus-theme-intense-red)))
+  :bind ("<s-escape>" . prot/pulse-line))
 
 (use-package mouse
   :config
