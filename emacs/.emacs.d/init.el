@@ -524,7 +524,7 @@ requires the command-line executable called 'rg' or 'ripgrep'."
                                  (format " (%s)" (length results))
                                  ": ")
                                 results nil t))))
-        (let* ((filenames-all (directory-files-recursively default-directory ".*" nil t))
+        (let* ((filenames-all (directory-files-recursively default-directory ".*" t))
                (filenames (cl-remove-if (lambda (x)
                                           (string-match-p "\\.git" x))
                                         filenames-all)))
@@ -537,7 +537,7 @@ requires the command-line executable called 'rg' or 'ripgrep'."
 With \\[universal-argument] produce a `dired' buffer instead with
 all the possible candidates."
     (interactive "P")
-    (let* ((dirs (list "~/Git/Projects/" "~/.emacs.d/prot-dev/"))
+    (let* ((dirs (list "~/projects/"))
            (dotless directory-files-no-dot-files-regexp)
            (cands (mapcan (lambda (d)
                             (directory-files d t dotless))
