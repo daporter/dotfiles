@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# Hide Melonpanel
-# ======================================================================
-
-xdotool search --name Melonpanel windowunmap

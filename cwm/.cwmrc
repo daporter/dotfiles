@@ -1,0 +1,23 @@
+command emacs   emacs
+command firefox firefox
+command htop    "xterm -e htop"
+
+unbind-key all
+
+bind-key M-Tab    window-cycle
+bind-key MS-Tab   window-rcycle
+bind-key 4-f      window-fullscreen
+bind-key 4-t      window-vtile
+bind-key 4-x      window-close
+bind-key 4-Return terminal
+bind-key 4-c      menu-cmd
+bind-key 4-e      menu-exec
+bind-key 4-period menu-ssh
+bind-key 4-r      restart
+bind-key 4-Delete lock
+bind-key C4S-q    quit
+
+unbind-mouse all
+
+bind-mouse 4-1 window-move
+bind-mouse 4-3 window-resize

@@ -53,4 +53,4 @@ xcompmgr -r 2.8 -o 0.55 -l 2 -t 2 -D 5 -cCfF &
 # Check for an external monitor; if found, switch to it.
 extmonitor connect
 
-exec bspwm
+exec cwm
