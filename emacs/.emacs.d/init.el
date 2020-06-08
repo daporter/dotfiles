@@ -868,6 +868,11 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
   :init
   (setq display-buffer-alist
         '(;; top side window
+          ("\\*elfeed-mpv-output.*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . top)
+           (slot . -1))
           ("\\*\\(Flycheck\\|Flymake\\|Package-Lint\\|vc-git :\\).*"
            (display-buffer-in-side-window)
            (window-height . 0.16)
@@ -1214,8 +1219,22 @@ NEEDS REVIEW."
 (use-package calendar
   :config
   (setq calendar-mark-diary-entries-flag t)
+  (setq calendar-time-display-form
+        '(24-hours ":" minutes
+                   (when time-zone
+                     (concat " (" time-zone ")"))))
   (setq calendar-week-start-day 1)      ; Monday
   (setq calendar-date-style 'iso)
+  (setq calendar-holidays
+        (append holiday-general-holidays holiday-local-holidays
+                holiday-other-holidays holiday-christian-holidays
+                holiday-islamic-holidays holiday-oriental-holidays
+                holiday-solar-holidays))
+
+  (use-package solar
+    :config
+    (setq calendar-latitude 48.85
+          calendar-longitude 2.29))
 
   :hook (calendar-today-visible-hook . calendar-mark-today))
 
@@ -1368,12 +1387,6 @@ NEEDS REVIEW."
   :ensure
   :after org-plus-contrib
   (setq htmlize-ignore-face-size t))
-
-(use-package org-superstar
-  :ensure
-  :after org-plus-contrib
-  :config
-  (setq org-superstar-remove-leading-stars t))
 
 (use-package org-roam
   :ensure
@@ -1842,11 +1855,15 @@ See URL `https://jorisroovers.com/gitlint/'."
 
 (use-package pulse
   :config
-  (defun prot/pulse-line ()
+  (defun prot/pulse-line (&optional face)
     "Temporarily highlight the current line."
     (interactive)
-    (let ((pulse-delay .06))
-      (pulse-momentary-highlight-one-line (point) 'modus-theme-intense-red)))
+    (let ((pulse-delay .06)
+          (face
+           (if face
+               face
+             'modus-theme-intense-red)))
+      (pulse-momentary-highlight-one-line (point) face)))
   :bind ("<s-escape>" . prot/pulse-line))
 
 (use-package mouse
@@ -2219,6 +2236,7 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-level-subscribed 6)
   (setq gnus-level-unsubscribed 7)
   (setq gnus-level-zombie 8)
+  (setq gnus-activate-level 4)
   (setq gnus-list-groups-with-ticked-articles nil)
   (setq gnus-group-sort-function
         '((gnus-group-sort-by-unread)
@@ -2279,10 +2297,10 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-sum-thread-tree-false-root      "  ")
   (setq gnus-sum-thread-tree-root            "• ")
   (setq gnus-sum-thread-tree-vertical        "│ ")
-  ;;(setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
-  ;;(setq gnus-sum-thread-tree-single-leaf     "└─➤ ")
-  (setq gnus-sum-thread-tree-leaf-with-other "├─> ")
-  (setq gnus-sum-thread-tree-single-leaf     "└─> ")
+  (setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
+  (setq gnus-sum-thread-tree-single-leaf     "└─➤ ")
+  ;;(setq gnus-sum-thread-tree-leaf-with-other "├─> ")
+  ;;(setq gnus-sum-thread-tree-single-leaf     "└─> ")
   (setq gnus-sum-thread-tree-indent          "  ")
 
   (setq gnus-summary-mode-line-format "%p")
@@ -2335,39 +2353,6 @@ Add this function to `message-header-setup-hook'."
 (use-package gnus-dired
   :after (gnus dired)
   :hook (dired-mode-hook . gnus-dired-mode))
-
-;; .............................................................. Elfeed
-
-(use-package elfeed
-  :ensure
-  :commands elfeed
-  :config
-  (setq elfeed-use-curl t)
-  (setq elfeed-curl-max-connections 10)
-  (setq elfeed-db-directory "~/.emacs.d/elfeed")
-  (setq elfeed-enclosure-default-dir "~/dl")
-  (setq elfeed-search-clipboard-type 'CLIPBOARD)
-  (setq elfeed-search-title-max-width 100)
-  (setq elfeed-search-title-min-width 30)
-  (setq elfeed-search-trailing-width 16)
-  (setq elfeed-show-truncate-long-urls t)
-  (setq elfeed-show-unique-buffers t)
-  (setq elfeed-sort-order 'ascending)
-
-  (defun prot/elfeed-feeds ()
-    "Loads a file with RSS/Atom feeds.  This file contains valid
-syntax for use by the `elfeed' package."
-    (let ((feeds "~/.emacs.d/feeds.el.gpg"))
-      (when (file-exists-p feeds)
-        (load-file feeds))))
-
-  :hook (elfeed-search-mode-hook . prot/elfeed-feeds)
-  :bind (:map elfeed-search-mode-map
-              ("w" . elfeed-search-yank)
-              ("g" . elfeed-update)
-              ("G" . elfeed-search-update--force)
-              :map elfeed-show-mode-map
-              ("w" . elfeed-show-yank)))
 
 ;; Custom movements and motions
 
@@ -2576,6 +2561,208 @@ instead.  This command can then be followed by the standard
   :config
   (dolist (mode beginend-modes) (diminish (cdr mode)))
   (beginend-global-mode 1))
+
+(use-package elfeed
+  :ensure
+  :config
+  (setq elfeed-use-curl t)
+  (setq elfeed-curl-max-connections 10)
+  (setq elfeed-db-directory "~/.emacs.d/elfeed/")
+  (setq elfeed-enclosure-default-dir "~/Downloads/")
+  (setq elfeed-search-filter "@4-months-ago +unread")
+  (setq elfeed-sort-order 'ascending)
+  (setq elfeed-search-clipboard-type 'CLIPBOARD)
+  (setq elfeed-search-title-max-width 100)
+  (setq elfeed-search-title-min-width 30)
+  (setq elfeed-search-trailing-width 25)
+  (setq elfeed-show-truncate-long-urls t)
+  (setq elfeed-show-unique-buffers t)
+
+  (defun prot/elfeed-feeds ()
+    "Load file containing the `elfeed-feeds' list.
+Add this to `elfeed-search-mode-hook'."
+    (let ((feeds "~/.emacs.d/feeds.el.gpg"))
+      (if (file-exists-p feeds)
+          (load-file feeds)
+        (user-error "Missing feeds' file"))))
+
+  (defun prot/elfeed-show-eww (&optional link)
+    "Browse current `elfeed' entry link in `eww'.
+Only show the readable part once the website loads.  This can
+fail on poorly-designed websites."
+    (interactive)
+    (let* ((entry (if (eq major-mode 'elfeed-show-mode)
+                      elfeed-show-entry
+                    (elfeed-search-selected :ignore-region)))
+           (link (if link link (elfeed-entry-link entry))))
+      (eww link)
+      (add-hook 'eww-after-render-hook 'eww-readable nil t)))
+
+  (defun prot/elfeed-search-other-window (&optional arg)
+    "Browse `elfeed' entry in the other window.
+With \\[universal-argument] browse the entry in `eww' using the
+`prot/elfeed-show-eww' wrapper."
+    (interactive "P")
+    (let* ((entry (if (eq major-mode 'elfeed-show-mode)
+                      elfeed-show-entry
+                    (elfeed-search-selected :ignore-region)))
+           (link (elfeed-entry-link entry))
+           (win (selected-window)))
+      (with-current-buffer (get-buffer "*elfeed-search*")
+        (unless (one-window-p)              ; experimental
+          (delete-other-windows win))
+        (split-window win (/ (frame-height) 3) 'below)
+        (other-window 1)
+        (if arg
+            (progn
+              (when (eq major-mode 'elfeed-search-mode)
+                (elfeed-search-untag-all-unread))
+              (prot/elfeed-show-eww link))
+          (elfeed-search-show-entry entry)))))
+
+  (defun prot/elfeed-kill-buffer-close-window-dwim ()
+    "Do-what-I-mean way to handle `elfeed' windows and buffers.
+
+When in an entry buffer, kill the buffer and return to the Elfeed
+Search view.  If the entry is in its own window, delete it as
+well.
+
+When in the search view, close all other windows.  Else just kill
+the buffer."
+    (interactive)
+    (let ((win (selected-window)))
+      (cond ((eq major-mode 'elfeed-show-mode)
+             (elfeed-kill-buffer)
+             (unless (one-window-p) (delete-window win))
+             (switch-to-buffer "*elfeed-search*"))
+            ((eq major-mode 'elfeed-search-mode)
+             (if (one-window-p)
+                 (elfeed-search-quit-window)
+               (delete-other-windows win))))))
+
+  (defvar prot/elfeed-mpv-hook nil
+    "Hook called before `prot/elfeed-mpv-dwim'.")
+
+  ;; TODO make this buffer more useful, such as running it in a
+  ;; shell-aware mode.
+  (defun prot/elfeed-mpv-buffer ()
+    "Prepare \"*elfeed-mpv-output*\" buffer.
+For use by `prot/elfeed-mpv-dwim'.  To be called from
+`prot/elfeed-mpv-hook'."
+    (let ((buf (get-buffer "*elfeed-mpv-output*"))
+          (inhibit-read-only t))
+      (with-current-buffer buf
+        (delete-region (point-min) (point)))))
+
+  (defun prot/elfeed-mpv-dwim ()
+    "Play entry link with external `mpv' program.
+When there is an audio enclosure (podcast), play just the audio.
+Else spawn a video player at a resolution that accounts for the
+current monitor's width."
+    (interactive)
+    (let* ((entry (if (eq major-mode 'elfeed-show-mode)
+                      elfeed-show-entry
+                    (elfeed-search-selected :ignore-region)))
+           (link (elfeed-entry-link entry))
+           (enclosure (elt (car (elfeed-entry-enclosures entry)) 0)) ; fragile?
+           (audio "--no-video")
+           ;; Here the display width checks if I am on the laptop
+           (height (if (<= (display-pixel-width ) 1366) "720" "1080"))
+           (video (concat "--ytdl-format=[height<=?" height "]"))
+           (buf (pop-to-buffer "*elfeed-mpv-output*")))
+      (run-hooks 'prot/elfeed-mpv-hook)
+      (if enclosure              ; make this its own parametrised function
+          (progn
+            (start-process "audio-mpv" buf "mpv" audio enclosure)
+            (message (concat "Launching MPV for " (propertize enclosure 'face 'success))))
+        (start-process "video-mpv" buf "mpv" hd link)
+        (message (concat "Launching MPV for " (propertize link 'face 'success))))))
+
+  ;; TODO review and combine the next/prev into a single function
+  (defun prot/elfeed-show-next-search-update ()
+    "Update `elfeed-search-buffer' to match current entry."
+    (interactive)
+    (let* ((entry (if (eq major-mode 'elfeed-show-mode)
+                      elfeed-show-entry
+                    (elfeed-search-selected :ignore-region)))
+           (title (elfeed-entry-title entry)))
+      (elfeed-show-next)
+      (when (window-live-p (get-buffer-window "*elfeed-search*"))
+        (with-current-buffer (get-buffer "*elfeed-search*")
+          (goto-char (point-min)) ; Elfeed way to find entry window?
+          (search-forward (format "%s" title))
+          (next-line 1)
+          (prot/pulse-line 'modus-theme-subtle-cyan)))))
+
+  ;; TODO review and combine the next/prev into a single function
+  ;; even the to-do got duplicated here…
+  (defun prot/elfeed-show-prev-search-update ()
+    "Update `elfeed-search-buffer' to match current entry."
+    (interactive)
+    (let* ((entry (if (eq major-mode 'elfeed-show-mode)
+                      elfeed-show-entry
+                    (elfeed-search-selected :ignore-region)))
+           (title (elfeed-entry-title entry)))
+      (elfeed-show-prev)
+      (when (window-live-p (get-buffer-window "*elfeed-search*"))
+        (with-current-buffer (get-buffer "*elfeed-search*")
+          (goto-char (point-min)) ; Elfeed way to find entry window?
+          (search-forward (format "%s" title))
+          (previous-line 1)
+          (prot/pulse-line 'modus-theme-subtle-cyan)))))
+
+  (defun prot/elfeed-search-tag-filter ()
+    "Filter `elfeed' by tags using completion.
+
+Arbitrary input is also possible, but you may need to exit the
+minibuffer with `exit-minibuffer' (I bind it to C-j in
+`minibuffer-local-completion-map')."
+    (interactive)
+    (unwind-protect
+        (elfeed-search-clear-filter)
+      ;; NOTE for the `crm-separator' to work with just a space, you
+      ;; need to make SPC self-insert in the minibuffer (the default is
+      ;; to behave like tab-completion).
+      (let* ((crm-separator " ")
+             (elfeed-search-filter-active :live)
+             (db-tags (elfeed-db-get-all-tags))
+             (plus-tags (delete-dups
+                         (mapcar (lambda (x)
+                                   (concat "+" (format "%s" x)))
+                                 db-tags)))
+             (minus-tags (delete-dups
+                          (mapcar (lambda (x)
+                                    (concat "-" (format "%s" x)))
+                                  db-tags)))
+             (all-tags (append plus-tags minus-tags))
+             (tags (completing-read-multiple
+                    "Apply tag: "
+                    all-tags nil t))
+             (input (cons elfeed-search-filter tags)))
+        (setq elfeed-search-filter
+              ;; How to unlist properly (remove parentheses)?  Keeping
+              ;; this inelegant form until I find that…
+              (substring (format "%s" input) 1 -1)))
+      (elfeed-search-update :force)))
+
+  :hook ((elfeed-search-mode-hook . prot/elfeed-feeds)
+         (prot/elfeed-mpv-hook . prot/elfeed-mpv-buffer))
+  :bind (("C-c f" . elfeed)
+         :map elfeed-search-mode-map
+         ("s" . prot/elfeed-search-tag-filter)
+         ("w" . elfeed-search-yank)
+         ("g" . elfeed-update)
+         ("G" . elfeed-search-update--force)
+         ("o" . prot/elfeed-search-other-window)
+         ("v" . prot/elfeed-mpv-dwim)
+         ("q" . prot/elfeed-kill-buffer-close-window-dwim)
+         :map elfeed-show-mode-map
+         ("e" . prot/elfeed-show-eww)
+         ("n" . prot/elfeed-show-next-search-update)
+         ("p" . prot/elfeed-show-prev-search-update)
+         ("q" . prot/elfeed-kill-buffer-close-window-dwim)
+         ("v" . prot/elfeed-mpv-dwim)
+         ("w" . elfeed-show-yank)))
 
 (use-package shr
   :config
