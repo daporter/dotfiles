@@ -1,6 +1,7 @@
 command emacs   emacs
 command firefox firefox
 command htop    "xterm -e htop"
+command calibre calibre
 
 unbind-key all
 
