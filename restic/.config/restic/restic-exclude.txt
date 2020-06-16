@@ -3,7 +3,6 @@ $HOME/.cabal
 $HOME/.cache
 $HOME/.mozilla
 $HOME/.surf
-$HOME/Sync/Calibre
 $HOME/Sync/media
 $HOME/dl
 $HOME/dotfiles/emacs/.emacs.d/elpa
