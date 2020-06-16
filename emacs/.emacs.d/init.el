@@ -53,60 +53,88 @@
 
 ;; Base typeface configurations
 (use-package emacs
+  :commands (prot/font-line-spacing
+             prot/font-fonts-per-monitor)
   :config
-  (setq x-underline-at-descent-line t)
+  (setq x-underline-at-descent-line nil)
   (setq underline-minimum-offset 0)
-  (setq line-spacing 0.15)
 
-  (defconst prot/default-font "Hack"
-    "The default typeface.")
+  (defconst prot/font-default-font-family "Hack"
+    "The default typeface.
+This is meant to be applied to the `default' and `fixed-pitch'
+faces.")
 
-  (defconst prot/font-params "autohint=false:hintstyle=hintfull:embeddedbitmap=true"
-    "The default fixed-pitch typeface.")
-  
-  (defun prot/set-face-attribute-font (family size)
-    "Set `default' face font to FAMILY at SIZE."
-    (set-face-attribute 'default nil :font (concat family
-                                                   "-"
-                                                   (number-to-string size)
-                                                   ":"
-                                                   prot/font-params)))
-  (defun prot/laptop-fonts ()
-    "Fonts for the small laptop screen.
+  ;; The continuation of Fira Sans (I wish Fira Mono had italics,
+  ;; because I like it even more than Hack).
+  (defconst prot/font-variable-pitch-font-family "FiraGO"
+    "The default proportionately-spaced typeface.
+This is meant to be applied to the `variable-pitch' face.")
 
-Pass desired argument to `prot/font-sizes' for use on my
-small laptop monitor."
+  (defconst prot/font-fontconfig-parameters
+    "autohint=true:hintstyle=hintfull:embeddedbitmap=false"
+    "Additional parameters for the given font family.
+These are specific to the fontconfig backend for GNU/Linux systems.")
+
+  (defvar prot/font-switch-fonts-hook nil
+    "Hook that is called from `prot/font-set-fonts-completion'.")
+
+  (defconst prot/font-sizes-alist
+    '(("laptop" . 8.5)
+      ("desktop" . 9.5))
+    "Alist of desired font point sizes.")
+
+  (defun prot/set-face-attribute-font (face family size &optional parameters)
+    "Set FACE font to FAMILY at SIZE with optional PARAMETERS."
+    (let ((params (if parameters
+                      parameters
+                    prot/font-fontconfig-parameters)))
+      (set-face-attribute
+       `,face nil :font
+       (concat family "-" (number-to-string size) ":" params))))
+
+  (defun prot/font-set-fonts-completion (&optional points font-mono font-var)
+    "Set default font size using presets or in specified POINTS."
     (interactive)
-    (when window-system
-      (prot/set-face-attribute-font prot/default-font 8.5)))
+    (let* ((displays (mapcar #'car prot/font-sizes-alist))
+           (choice (unless points
+                     (completing-read "Pick font size: " displays nil t)))
+           (size (if points
+                     points
+                   (cdr (assoc `,choice prot/font-sizes-alist))))
+           (mono (if font-mono font-mono prot/font-default-font-family))
+           (var (if font-var font-var prot/font-variable-pitch-font-family)))
+      (when window-system
+        (prot/set-face-attribute-font 'default mono size)
+        (prot/set-face-attribute-font 'fixed-pitch mono size)
+        ;; Increasing the size on this to account for the innate
+        ;; difference between the families I use.  Maybe there is some
+        ;; more flexible way of creating visual harmony between
+        ;; typefaces with distinct inherent heights.
+        ;;
+        ;; TODO normalise multi-font heights?
+        (prot/set-face-attribute-font 'variable-pitch var (+ size 1))))
+    (run-hooks 'prot/font-switch-fonts-hook))
 
-  (defun prot/desktop-fonts ()
-    "Fonts for the larger desktop screen.
+  ;; TODO a better approach would be to check for a list of fonts that
+  ;; are known to require further tweaks and which I might want to use.
+  (defun prot/font-line-spacing ()
+    "Determine desirable `line-spacing', based on font family.
+Add this to `prot/font-switch-fonts-hook'."
+    (if (string= (face-attribute 'default :family) "Source Code Pro")
+        (setq-default line-spacing 1)
+      (setq-default line-spacing nil)))
 
-Pass desired argument to `prot/font-sizes' for use on my larger
- desktop monitor (external display connected to my laptop)."
-    (interactive)
-    (when window-system
-      (prot/set-face-attribute-font prot/default-font 9.5)))
+  (defun prot/font-fonts-per-monitor (&optional font)
+    "Use font settings based on screen size."
+    (if (<= (display-pixel-width) 1600)
+        (prot/font-set-fonts-completion 8.5)
+      (prot/font-set-fonts-completion 9.5)))
 
-  (defun prot/fonts-per-monitor ()
-    "Use font settings based on screen size.
-
-Choose between `prot/laptop-fonts' and `prot/desktop-fonts'
-depending on the width of the monitor.  The calculation is based
-on the maximum width of my laptop's screen.  So if an external
-display is attached, then iit is considered a desktop scenario.
-
-While this function is interactive, it is best to run it with the
-`after-init-hook' or perhaps some other event that tracks
-monitor-related events."
-    (interactive)
-    (when window-system
-      (if (<= (display-pixel-width) 1600)
-          (prot/laptop-fonts)
-        (prot/desktop-fonts))))
-
-  :hook (after-init-hook . prot/fonts-per-monitor))
+  :hook ((after-init-hook . prot/font-fonts-per-monitor)
+         (prot/font-switch-fonts-hook . prot/font-line-spacing))
+  ;; Awkward key because I do not need it very often.  Maybe once a day.
+  ;; The "C-c f" is used elsewhere.
+  :bind ("C-c F" . prot/font-set-fonts-completion))
 
 (use-package emacs
   :config
@@ -119,23 +147,15 @@ monitor-related events."
 (use-package face-remap
   :diminish buffer-face-mode            ; the actual mode
   :config
-  (defun prot/variable-pitch-mode (&optional size)
-    "Toggle `variable-pitch-mode' and additional parameters.
-SIZE is intented for one of my functions for setting the primary
-font size.
-
-Example: (prot/variable-pitch-mode (prot/screencast-fonts))"
+  (defun prot/variable-pitch-mode ()
+    "Toggle `variable-pitch-mode' and additional parameters."
     (interactive)
     (if (bound-and-true-p buffer-face-mode)
         (progn
           (variable-pitch-mode -1)
-          (setq-local cursor-type 'box)   ; TODO better restore original value
-          (when size                      ; TODO restore previous value
-            (prot/fonts-per-monitor)))
+          (setq-local cursor-type 'box))   ; TODO better restore original value
       (variable-pitch-mode 1)
-      (setq-local cursor-type 'bar)
-      (when size
-        size))))
+      (setq-local cursor-type 'bar))))
 
 ;; Backups
 
@@ -178,7 +198,9 @@ Example: (prot/variable-pitch-mode (prot/screencast-fonts))"
     (setq orderless-style-dispatchers '(prot/orderless-literal-dispatcher
                                         prot/orderless-initialism-dispatcher))
     :bind (:map minibuffer-local-completion-map
-                ("SPC" . nil)))         ; space should never complete
+                ("SPC" . nil)         ; space should never complete
+                ("?" . nil)))         ; valid regexp character
+
 
   (setq completion-styles
         '(orderless partial-completion))
@@ -472,7 +494,7 @@ abbreviated as a tilde.  In the Dired buffer paths are absolute."
   (setq icomplete-vertical-prospects-height (/ (frame-height) 6))
   (icomplete-vertical-mode -1)
 
-  (defun prot/icomplete-yank-kill-ring ()
+  (defun prot/kill-ring-yank-complete ()
     "Insert the selected `kill-ring' item directly at point.
 When region is active, `delete-region'.
 
@@ -493,7 +515,7 @@ normally would when calling `yank' followed by `yank-pop'."
         (insert
          (completing-read "Yank from kill ring: " kills nil t)))))
 
-  :bind (("s-y" . prot/icomplete-yank-kill-ring)
+  :bind (("s-y" . prot/kill-ring-yank-complete)
          :map icomplete-minibuffer-map
          ("C-v" . icomplete-vertical-toggle)))
 
@@ -936,6 +958,7 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
   (setq window-combination-resize t)
   (setq even-window-sizes 'height-only)
   (setq window-sides-vertical nil)
+  (setq switch-to-buffer-in-dedicated-window 'pop)
   :hook ((help-mode-hook . visual-line-mode)
          (custom-mode-hook . visual-line-mode))
   :bind (("s-n" . next-buffer)
@@ -1212,6 +1235,8 @@ NEEDS REVIEW."
 
 (use-package diredfl
   :ensure
+  :config
+  (setq diredfl-ignore-compressed-flag nil)
   :hook (dired-mode-hook . diredfl-mode))
 
 ;; ........................................................ Applications
@@ -1273,7 +1298,7 @@ NEEDS REVIEW."
   (org-todo-keywords
    '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d)" "CANCELLED(c@/!)")))
 
-  (org-fontify-done-headline t)
+  (org-fontify-done-headline nil)
   (org-fontify-quote-and-verse-blocks t)
   (org-fontify-whole-heading-line nil)
   (org-enforce-todo-dependencies t)
@@ -1486,6 +1511,7 @@ NEEDS REVIEW."
 ;; ........................................................... Mode line
 
 (use-package emacs
+  :commands contrib/toggle-mode-line
   :config
   (setq mode-line-percent-position '(-3 "%p"))
   ;;(setq mode-line-defining-kbd-macro
@@ -1505,7 +1531,14 @@ NEEDS REVIEW."
                   mode-line-modes
                   " "
                   mode-line-misc-info
-                  mode-line-end-spaces)))
+                  mode-line-end-spaces))
+
+  (defun contrib/toggle-mode-line ()
+    "Toggle modeline visibility in the current buffer."
+    (interactive)
+    (if mode-line-format
+        (setq-local mode-line-format nil)
+      (kill-local-variable 'mode-line-format))))
 
 (use-package battery
   :config
@@ -1594,10 +1627,12 @@ font-related changes see `prot/variable-pitch-mode'."
         (progn
           (olivetti-mode -1)
           (set-window-fringes (selected-window) nil) ; Use default width
-          (prot/variable-pitch-mode))
+          (prot/variable-pitch-mode)
+          (contrib/toggle-mode-line))
       (olivetti-mode 1)
       (set-window-fringes (selected-window) 0 0)
-      (prot/variable-pitch-mode)))
+      (prot/variable-pitch-mode)
+      (contrib/toggle-mode-line)))
   :bind ("C-c o" . prot/olivetti-mode))
 
 (use-package rainbow-blocks
@@ -2570,7 +2605,7 @@ instead.  This command can then be followed by the standard
   (setq elfeed-db-directory "~/.emacs.d/elfeed/")
   (setq elfeed-enclosure-default-dir "~/Downloads/")
   (setq elfeed-search-filter "@4-months-ago +unread")
-  (setq elfeed-sort-order 'ascending)
+  (setq elfeed-sort-order 'descending)
   (setq elfeed-search-clipboard-type 'CLIPBOARD)
   (setq elfeed-search-title-max-width 100)
   (setq elfeed-search-title-min-width 30)
@@ -2652,7 +2687,7 @@ For use by `prot/elfeed-mpv-dwim'.  To be called from
     (let ((buf (get-buffer "*elfeed-mpv-output*"))
           (inhibit-read-only t))
       (with-current-buffer buf
-        (delete-region (point-min) (point)))))
+        (erase-buffer))))
 
   (defun prot/elfeed-mpv-dwim ()
     "Play entry link with external `mpv' program.
@@ -2667,48 +2702,42 @@ current monitor's width."
            (enclosure (elt (car (elfeed-entry-enclosures entry)) 0)) ; fragile?
            (audio "--no-video")
            ;; Here the display width checks if I am on the laptop
-           (height (if (<= (display-pixel-width ) 1366) "720" "1080"))
-           (video (concat "--ytdl-format=[height<=?" height "]"))
+           (height (if (<= (display-pixel-width ) 1366) 720 1080))
+           (video (format "--ytdl-format=[height<=?%s]" height))
            (buf (pop-to-buffer "*elfeed-mpv-output*")))
       (run-hooks 'prot/elfeed-mpv-hook)
       (if enclosure              ; make this its own parametrised function
           (progn
             (start-process "audio-mpv" buf "mpv" audio enclosure)
             (message (concat "Launching MPV for " (propertize enclosure 'face 'success))))
-        (start-process "video-mpv" buf "mpv" hd link)
+        (start-process "video-mpv" buf "mpv" video link)
         (message (concat "Launching MPV for " (propertize link 'face 'success))))))
 
-  ;; TODO review and combine the next/prev into a single function
-  (defun prot/elfeed-show-next-search-update ()
-    "Update `elfeed-search-buffer' to match current entry."
-    (interactive)
-    (let* ((entry (if (eq major-mode 'elfeed-show-mode)
-                      elfeed-show-entry
-                    (elfeed-search-selected :ignore-region)))
-           (title (elfeed-entry-title entry)))
-      (elfeed-show-next)
-      (when (window-live-p (get-buffer-window "*elfeed-search*"))
-        (with-current-buffer (get-buffer "*elfeed-search*")
-          (goto-char (point-min)) ; Elfeed way to find entry window?
-          (search-forward (format "%s" title))
-          (next-line 1)
-          (prot/pulse-line 'modus-theme-subtle-cyan)))))
+  (defun prot/elfeed-show-search-update (direction)
+    "Update `elfeed-search-buffer' to match entry in DIRECTION.
 
-  ;; TODO review and combine the next/prev into a single function
-  ;; even the to-do got duplicated here…
-  (defun prot/elfeed-show-prev-search-update ()
-    "Update `elfeed-search-buffer' to match current entry."
-    (interactive)
+This is useful when Elfeed is split in two windows, with the
+search buffer on one side and an entry buffer on the other.  The
+user is changing entries while in the latter, while the former
+gets updated to put point on the current item.
+
+EXPERIMENTAL."
+    (interactive "s")
     (let* ((entry (if (eq major-mode 'elfeed-show-mode)
                       elfeed-show-entry
                     (elfeed-search-selected :ignore-region)))
-           (title (elfeed-entry-title entry)))
-      (elfeed-show-prev)
-      (when (window-live-p (get-buffer-window "*elfeed-search*"))
-        (with-current-buffer (get-buffer "*elfeed-search*")
+           (title (elfeed-entry-title entry))
+           (es "*elfeed-search*")
+           (buf (get-buffer es))
+           (win (get-buffer-window buf)))
+      (funcall (intern (concat "elfeed-show-"
+                               (substring `,direction 0 4))))
+      (when (window-live-p win)
+        (with-current-buffer buf
           (goto-char (point-min)) ; Elfeed way to find entry window?
           (search-forward (format "%s" title))
-          (previous-line 1)
+          (funcall (intern (concat `,direction "-line")))
+          (set-window-point win (point-at-bol))
           (prot/pulse-line 'modus-theme-subtle-cyan)))))
 
   (defun prot/elfeed-search-tag-filter ()
@@ -2738,11 +2767,8 @@ minibuffer with `exit-minibuffer' (I bind it to C-j in
              (tags (completing-read-multiple
                     "Apply tag: "
                     all-tags nil t))
-             (input (cons elfeed-search-filter tags)))
-        (setq elfeed-search-filter
-              ;; How to unlist properly (remove parentheses)?  Keeping
-              ;; this inelegant form until I find that…
-              (substring (format "%s" input) 1 -1)))
+             (input (string-join `(,elfeed-search-filter ,@tags) " ")))
+        (setq elfeed-search-filter input))
       (elfeed-search-update :force)))
 
   :hook ((elfeed-search-mode-hook . prot/elfeed-feeds)
@@ -2757,9 +2783,14 @@ minibuffer with `exit-minibuffer' (I bind it to C-j in
          ("v" . prot/elfeed-mpv-dwim)
          ("q" . prot/elfeed-kill-buffer-close-window-dwim)
          :map elfeed-show-mode-map
+         ;; TODO any way to do this without lambda?
+         ("n" . (lambda ()
+                  (interactive)
+                  (prot/elfeed-show-search-update "next")))
+         ("p" . (lambda ()
+                  (interactive)
+                  (prot/elfeed-show-search-update "previous")))
          ("e" . prot/elfeed-show-eww)
-         ("n" . prot/elfeed-show-next-search-update)
-         ("p" . prot/elfeed-show-prev-search-update)
          ("q" . prot/elfeed-kill-buffer-close-window-dwim)
          ("v" . prot/elfeed-mpv-dwim)
          ("w" . elfeed-show-yank)))
@@ -2769,6 +2800,7 @@ minibuffer with `exit-minibuffer' (I bind it to C-j in
   (setq shr-use-fonts nil)
   (setq shr-use-colors nil)
   (setq shr-max-image-proportion 0.7)
+  (setq shr-image-animate nil)
   (setq shr-width (current-fill-column)))
 
 ;; Support the HTML pre tag with proper syntax highlighting.
