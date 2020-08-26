@@ -36,6 +36,15 @@
 
 ;; ............................................................... Base settings
 
+;; On OpenBSD, Emacs sometimes freezes when interacting with the
+;; secondary selection.  This happens often when invoking
+;; 'org-capture'.  The workaround is to set a short timeout for
+;; accessing the secondary selection.  More info here:
+;; https://omecha.info/blog/org-capture-freezes-emacs.html
+(use-package emacs
+	     :config
+	     (setq x-selection-timeout 10))
+
 ;; Modeline "lighters"
 (use-package diminish
   :ensure
