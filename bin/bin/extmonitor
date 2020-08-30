@@ -12,16 +12,6 @@ _is_connected() {
 _switch() {
 	_is_connected "$1" && xrandr --output "$1" --off
 	xrandr --output "$2" --auto --primary
-
-	if bspc query --monitors --names | grep "$1" >/dev/null; then
-		bspc monitor "$1" --remove
-	fi
-	bspc monitor "$2" --reset-desktops 1 2 3 4
-	bspc wm --adopt-orphans
-
-	# Restart panel and desktop wallpaper so they pick up the new screen
-	# resolution.
-	melonpanel
 	"$HOME/.fehbg"
 }
 
