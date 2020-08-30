@@ -47,6 +47,8 @@ _check xbanish && xbanish &
 # Start the simple display compositor.  See `xcompmgr --help'.
 xcompmgr -r 2.8 -o 0.55 -l 2 -t 2 -D 5 -cCfF &
 
+xidle &
+
 # Check for an external monitor; if found, switch to it.
 extmonitor connect
 
