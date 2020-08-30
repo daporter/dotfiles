@@ -7,8 +7,6 @@
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives
-             '("org" . "https://orgmode.org/elpa/"))
 
 (unless package--initialized (package-initialize))
 
@@ -42,8 +40,8 @@
 ;; accessing the secondary selection.  More info here:
 ;; https://omecha.info/blog/org-capture-freezes-emacs.html
 (use-package emacs
-	     :config
-	     (setq x-selection-timeout 10))
+  :config
+  (setq x-selection-timeout 10))
 
 ;; Modeline "lighters"
 (use-package diminish
@@ -61,120 +59,219 @@
   (load custom-file))
 
 ;; Base typeface configurations
+
 (use-package emacs
-  :commands (prot/font-line-spacing
-             prot/font-fonts-per-monitor)
+  :defines (prot/font-set-fonts-hook
+            prot/font-monospaced-fonts-list
+            prot/font-fonts-line-spacing-alist
+            prot/font-fonts-bold-weight-alist)
+  :functions (prot/font-adjustment
+              prot/font-line-spacing
+              prot/font-bold-face
+              prot/font-fonts-per-monitor)
+  :commands (prot/font-set-face-attribute
+             prot/font-set-fonts
+             prot/font-set-font-size-family
+             prot/font-fonts-dwim)
   :config
-  (setq x-underline-at-descent-line nil)
-  (setq underline-minimum-offset 0)
+  (setq x-underline-at-descent-line t)
+  (setq underline-minimum-offset 1)
 
-  (defconst prot/font-default-font-family "Hack"
-    "The default typeface.
-This is meant to be applied to the `default' and `fixed-pitch'
-faces.")
-
-  ;; The continuation of Fira Sans (I wish Fira Mono had italics,
-  ;; because I like it even more than Hack).
-  (defconst prot/font-variable-pitch-font-family "FiraGO"
-    "The default proportionately-spaced typeface.
-This is meant to be applied to the `variable-pitch' face.")
-
-  (defconst prot/font-fontconfig-parameters
-    "autohint=true:hintstyle=hintfull:embeddedbitmap=false"
+  (defconst prot/font-fontconfig-params
+    "embeddedbitmap=false:autohint=false:hintstyle=hintslight"
     "Additional parameters for the given font family.
-These are specific to the fontconfig backend for GNU/Linux systems.")
-
+ These are specific to the fontconfig backend for GNU/Linux systems.")
+  
   (defvar prot/font-switch-fonts-hook nil
-    "Hook that is called from `prot/font-set-fonts-completion'.")
+    "Hook that is called after setting fonts.
+See, for example, `prot/font-set-fonts'.")
 
-  (defconst prot/font-sizes-alist
-    '(("laptop" . 8.5)
-      ("desktop" . 9.5))
-    "Alist of desired font point sizes.")
+  (defconst prot/font-sizes-families-alist
+    ;; '(("laptop" . (8.5 "Hack" "Noto Serif" 1))
+    ;;   ("desktop" . (10 "Hack" "Noto Serif" 1)))
+    '(("laptop" . (8.5 "Hack" "FiraGO" 1.5))
+      ("desktop" . (10 "Hack" "FiraGO" 1.5)))
+    "Alist of desired typefaces and their point sizes.
 
-  (defun prot/set-face-attribute-font (face family size &optional parameters)
-    "Set FACE font to FAMILY at SIZE with optional PARAMETERS."
-    (let ((params (if parameters
-                      parameters
-                    prot/font-fontconfig-parameters)))
+Each association consists of a display type mapped to a point
+size, followed by monospaced and proportionately spaced font
+names, and a possible increase in desired size between the latter
+two to account for their innate differences in proportions.
+
+The monospaced typeface is meant to be applied to the `default'
+and `fixed-pitch' faces.  The proportionately space font is
+intended for the `variable-pitch' face.")
+
+  (defun prot/font-set-face-attribute (face family size &optional params)
+    "Set FACE font to FAMILY at SIZE with optional PARAMS."
+    (let ((params (if params
+                      params
+                    prot/font-fontconfig-params)))
       (set-face-attribute
        `,face nil :font
-       (concat family "-" (number-to-string size) ":" params))))
+       (format "%s-%s:%s" family (number-to-string size) params))))
 
-  (defun prot/font-set-fonts-completion (&optional points font-mono font-var)
-    "Set default font size using presets or in specified POINTS."
+  (defun prot/font-set-fonts (&optional points font-mono font-var)
+    "Set default font size using presets.
+
+POINTS is the font's point size, represented as either '10' or
+'10.5'.  FONT-MONO should be a monospaced typeface, due to the
+alignment requirements of the `fixed-pitch' face.  FONT-VAR could
+be a proportionately spaced typeface or even a monospaced one,
+since the `variable-pitch' it applies to is not supposed to be
+spacing-sensitive.  Both families must be represented as a string
+holding the family's name."
     (interactive)
-    (let* ((displays (mapcar #'car prot/font-sizes-alist))
-           (choice (unless points
-                     (completing-read "Pick font size: " displays nil t)))
+    (let* ((data prot/font-sizes-families-alist)
+           (displays (mapcar #'car data))
+           (choice (if points
+                       points
+                     (completing-read "Pick display size: " displays nil t)))
            (size (if points
                      points
-                   (cdr (assoc `,choice prot/font-sizes-alist))))
-           (mono (if font-mono font-mono prot/font-default-font-family))
-           (var (if font-var font-var prot/font-variable-pitch-font-family)))
+                   (nth 1 (assoc `,choice data))))
+           (mono (if font-mono
+                     font-mono
+                   (if (member choice displays)
+                       (nth 2 (assoc `,choice data))
+                     nil)))
+           (var (if font-var
+                    font-var
+                  (if (member choice displays)
+                      (nth 3 (assoc `,choice data))
+                    nil)))
+           (adjust (nth 4 (assoc `,choice data))))
       (when window-system
-        (prot/set-face-attribute-font 'default mono size)
-        (prot/set-face-attribute-font 'fixed-pitch mono size)
-        ;; Increasing the size on this to account for the innate
-        ;; difference between the families I use.  Maybe there is some
-        ;; more flexible way of creating visual harmony between
-        ;; typefaces with distinct inherent heights.
-        ;;
-        ;; TODO normalise multi-font heights?
-        (prot/set-face-attribute-font 'variable-pitch var (+ size 1))))
-    (run-hooks 'prot/font-switch-fonts-hook))
+        (dolist (face '(default fixed-pitch))
+          (prot/font-set-face-attribute `,face mono size))
+        (prot/font-set-face-attribute 'variable-pitch var (+ size adjust))))
+    (run-hooks 'prot/font-set-fonts-hook))
 
-  ;; TODO a better approach would be to check for a list of fonts that
-  ;; are known to require further tweaks and which I might want to use.
-  (defun prot/font-line-spacing ()
-    "Determine desirable `line-spacing', based on font family.
-Add this to `prot/font-switch-fonts-hook'."
-    (if (string= (face-attribute 'default :family) "Source Code Pro")
-        (setq-default line-spacing 1)
-      (setq-default line-spacing nil)))
+  (defvar prot/font-monospaced-fonts-list
+    '("Hack" "Iosevka Slab" "Source Code Pro"
+      "Ubuntu Mono" "Fantasque Sans Mono" "DejaVu Sans Mono"
+      "Fira Code" "Roboto Mono")
+    "List of typefaces for coding.
+See `prot/font-set-font-size-family' for how this is used
+code-wise.")
 
-  (defun prot/font-fonts-per-monitor (&optional font)
-    "Use font settings based on screen size."
-    (if (<= (display-pixel-width) 1600)
-        (prot/font-set-fonts-completion 8.5)
-      (prot/font-set-fonts-completion 9.5)))
+  (defun prot/font-set-font-size-family ()
+    "set point size and main typeface.
+this command is intended for testing various font families at
+some common point sizes.
+
+see `prot/font-set-fonts' for the function i would normally use
+or `prot/font-fonts-dwim' which just wraps this one with that."
+    (interactive)
+    (let* ((fonts prot/font-monospaced-fonts-list)
+           (font (completing-read "select main font: " fonts nil t))
+           (nums (list 10 11 12 13))
+           (sizes (mapcar 'number-to-string nums))
+           (size (completing-read "select or insert number: " sizes nil))
+           (var (face-attribute 'variable-pitch :family)))
+      (dolist (face '(default fixed-pitch))
+        (prot/font-set-face-attribute face font (string-to-number size)))
+      (prot/font-set-face-attribute 'variable-pitch var (string-to-number size))
+      (run-hooks 'prot/font-set-fonts-hook)))
+
+  (defun prot/font-fonts-dwim (&optional arg)
+    "Set fonts interactively.
+This is just a wrapper around `prot/font-set-fonts' and
+`prot/font-set-font-size-family', whose sole purpose is to
+economise on dedicated key bindings."
+    (interactive "P")
+    (if arg
+        (prot/font-set-font-size-family)
+      (prot/font-set-fonts)))
+
+  (defvar prot/font-fonts-line-spacing-alist
+    '(("Hack" . 1)
+      ("Source Code Pro" . 1)
+      ("Ubuntu Mono" . 2))
+    "Font families in need of extra `line-spacing'.
+See `prot/font-line-spacing' for how this is used.")
+
+  (defvar prot/font-fonts-bold-weight-alist
+    '(("Hack" . semibold)
+      ("Iosevka Comfy" . semibold)
+      ("Source Code Pro" . semibold))
+    "Font families in need of a variegated weight for `bold'.
+See `prot/font-bold-face' for how this is used.")
+
+  (defmacro prot/font-adjustment (fn doc alist cond1 cond2)
+    "Macro for functions that employ `prot/font-switch-fonts-hook'.
+NAME is the name of the resulting function.  DOC is its
+docstring.  ALIST is an assosiation list of cons cells.  COND1
+and COND2 is the body of an `if' statement's 'if' and 'then' part
+respectively."
+    `(defun ,fn ()
+       ,doc
+       (let* ((data ,alist)
+              (fonts (mapcar #'car data))
+              ;; REVIEW This should be adjusted to account for the
+              ;; possibility of a distinct font family for the `bold'
+              ;; face.
+              (font (face-attribute 'default :family))
+              (x (cdr (assoc font data))))
+         (if (member font fonts)
+             ,cond1
+           ,cond2))))
+
+  (prot/font-adjustment
+   prot/font-line-spacing
+   "Determine desirable `line-spacing', based on font family."
+   prot/font-fonts-line-spacing-alist
+   (setq-default line-spacing `,x)
+   (setq-default line-spacing nil))
+
+  ;; XXX This will not work with every theme, but only those that
+  ;; inherit the `bold' face instead of specifying a weight property.
+  ;; The intent is to configure this once and have it propagate wherever
+  ;; a heavier weight is displayed.  My Modus themes handle this
+  ;; properly.
+  (prot/font-adjustment
+   prot/font-bold-face
+   "Determine weight for the `bold' face, based on font family."
+   prot/font-fonts-bold-weight-alist
+   (set-face-attribute 'bold nil :weight `,x)
+   (set-face-attribute 'bold nil :weight 'bold))
+
+  (defun prot/font-fonts-per-monitor ()
+    "Use font settings based on screen size.
+Meant to be used at some early initialisation stage, such as with
+`after-init-hook'."
+    (let* ((display (if (<= (display-pixel-width) 1600)
+                        "laptop"
+                      "desktop"))
+           (data prot/font-sizes-families-alist)
+           (size (cadr (assoc `,display data)))
+           (mono (nth 2 (assoc `,display data)))
+           (var (nth 3 (assoc `,display data)))
+           (adjust (nth 4 (assoc `,display data))))
+      (dolist (face '(default fixed-pitch))
+        (prot/font-set-face-attribute face mono size))
+      (prot/font-set-face-attribute 'variable-pitch var (+ size adjust))
+      (run-hooks 'prot/font-switch-fonts-hook)))
 
   :hook ((after-init-hook . prot/font-fonts-per-monitor)
-         (prot/font-switch-fonts-hook . prot/font-line-spacing))
+         (prot/font-set-fonts-hook . prot/font-line-spacing)
+         (prot/font-set-fonts-hook . prot/font-bold-face))
   ;; Awkward key because I do not need it very often.  Maybe once a day.
   ;; The "C-c f" is used elsewhere.
-  :bind ("C-c F" . prot/font-set-fonts-completion))
-
-(use-package emacs
-  :config
-  (defconst prot/variable-pitch-font "DejaVu Sans Condensed"
-    "The default variable-pitch typeface.")
-
-  (set-face-attribute 'variable-pitch nil :family prot/variable-pitch-font :height 1.0)
-  (set-face-attribute 'fixed-pitch nil :family prot/default-font :height 1.0))
+  :bind ("C-c F" . prot/font-fonts-dwim))
 
 (use-package face-remap
   :diminish buffer-face-mode            ; the actual mode
+  :commands prot/variable-pitch-mode
   :config
-  (defun prot/variable-pitch-mode ()
-    "Toggle `variable-pitch-mode' and additional parameters."
-    (interactive)
-    (if (bound-and-true-p buffer-face-mode)
-        (progn
-          (variable-pitch-mode -1)
-          (setq-local cursor-type 'box))   ; TODO better restore original value
-      (variable-pitch-mode 1)
-      (setq-local cursor-type 'bar))))
-
-;; Backups
-
-(use-package emacs
-  :config
-  (setq-default backup-directory-alist
-                `(("" . ,(expand-file-name "backup/" user-emacs-directory)))
-                auto-save-default nil
-                backup-by-copying t
-                delete-old-versions t))
+  (define-minor-mode prot/variable-pitch-mode
+    "Toggle `variable-pitch-mode', except for `prog-mode'."
+    :init-value nil
+    :global nil
+    (if prot/variable-pitch-mode
+        (unless (derived-mode-p 'prog-mode)
+          (variable-pitch-mode 1))
+      (variable-pitch-mode -1))))
 
 ;; ................................................ Completion framework
 
@@ -204,12 +301,12 @@ Add this to `prot/font-switch-fonts-hook'."
       (when (string-suffix-p "," pattern)
         `(orderless-strict-leading-initialism . ,(substring pattern 0 -1))))
 
-    (setq orderless-style-dispatchers '(prot/orderless-literal-dispatcher
-                                        prot/orderless-initialism-dispatcher))
+    (setq orderless-style-dispatchers
+          '(prot/orderless-literal-dispatcher
+            prot/orderless-initialism-dispatcher))
     :bind (:map minibuffer-local-completion-map
                 ("SPC" . nil)         ; space should never complete
                 ("?" . nil)))         ; valid regexp character
-
 
   (setq completion-styles
         '(orderless partial-completion))
@@ -318,6 +415,400 @@ key in `completion-list-mode-map'."
          ("b" . previous-completion)
          ("M-v" . prot/focus-minibuffer)))
 
+;; Custom movements and motions
+
+(use-package emacs
+  :config
+  (defun prot/new-line-below (&optional arg)
+    "Create an empty line below the current one.
+Move the point to the absolute beginning.  Adapt indentation by
+passing \\[universal-argument].  Also see `prot/new-line-above'."
+    (interactive "P")
+    (end-of-line)
+    (if arg
+        (newline-and-indent)
+      (newline)))
+
+  (defun prot/new-line-above (&optional arg)
+    "Create an empty line above the current one.
+Move the point to the absolute beginning.  Adapt indentation by
+passing \\[universal-argument]."
+    (interactive "P")
+    (let ((indent (if arg arg nil)))
+      (if (bobp)
+          (progn
+            (beginning-of-line)
+            (newline)
+            (forward-line -1))
+        (forward-line -1)
+        (prot/new-line-below indent))))
+
+  (defun prot/copy-line-or-region (&optional arg)
+    "Kill-save the current line or active region.
+With \\[universal-argument] duplicate the target instead.  When
+region is active, also apply context-aware indentation while
+duplicating."
+    (interactive "P")
+    (let* ((rbeg (region-beginning))
+           (rend (region-end))
+           (pbol (point-at-bol))
+           (peol (point-at-eol))
+           (indent (if (eq (or rbeg rend) pbol) nil arg)))
+      (if arg
+          (progn
+            (if (use-region-p)
+                (progn
+                  (copy-region-as-kill rbeg rend)
+                  (when (eq (point) rbeg)
+                    (exchange-point-and-mark))
+                  (prot/new-line-below indent))
+              (copy-region-as-kill pbol peol)
+              (prot/new-line-below))
+            (yank))
+        (copy-region-as-kill pbol peol)
+        (message "Current line copied"))))
+
+  (defun prot/yank-replace-line-or-region ()
+    "Replace line or region with latest kill.
+This command can then be followed by the standard
+`yank-pop' (default is bound to \\[yank-pop])."
+    (interactive)
+    (if (use-region-p)
+        (delete-region (region-beginning) (region-end))
+      (delete-region (point-at-bol) (point-at-eol)))
+    (yank))
+
+  (defun prot/multi-line-next ()
+    "Move point 15 lines down."
+    (interactive)
+    (forward-line 15))
+
+  (defun prot/multi-line-prev ()
+    "Move point 15 lines up."
+    (interactive)
+    (forward-line -15))
+
+  (defun prot/kill-line-backward ()
+    "Kill from point to the beginning of the line."
+    (interactive)
+    (kill-line 0))
+
+  ;; Based on `org--line-empty-p'.
+  (defmacro prot/line-p (name regexp)
+    "Make NAME function to match REGEXP on line n from point."
+    `(defun ,name (n)
+       (save-excursion
+         (and (not (bobp))
+	          (or (beginning-of-line n) t)
+	          (save-match-data
+	            (looking-at ,regexp))))))
+
+  (prot/line-p
+   prot/empty-line-p
+   "[\s\t]*$")
+
+  (prot/line-p
+   prot/indent-line-p
+   "^[\s\t]+")
+
+  (prot/line-p
+   prot/non-empty-line-p
+   "^.*$")
+
+  (prot/line-p
+   prot/text-list-line-p
+   "^\\([\s\t#*+]+\\|[0-9]+[).]+\\)")
+
+  (prot/line-p
+   prot/text-heading-line-p
+   "^[=-]+")
+
+  :bind (("C-S-w" . prot/copy-line-or-region)
+         ("C-S-y" . prot/yank-replace-line-or-region)
+         ("M-SPC" . cycle-spacing)
+         ("M-o" . delete-blank-lines)   ; alias for C-x C-o
+         ("M-k" . prot/kill-line-backward)
+         ("C-S-n" . prot/multi-line-next)
+         ("C-S-p" . prot/multi-line-prev)
+         ("<C-return>" . prot/new-line-below)
+         ("<C-S-return>" . prot/new-line-above)))
+
+(use-package emacs
+  :config
+  ;; Got those numbers from `string-to-char'
+  (defconst prot/insert-pair-alist
+    '(("' Single quote" . (39 39))           ; ' '
+      ("\" Double quotes" . (34 34))         ; " "
+      ("` Elisp quote" . (96 39))            ; ` '
+      ("‘ Single apostrophe" . (8216 8217))  ; ‘ ’
+      ("“ Double apostrophes" . (8220 8221)) ; “ ”
+      ("( Parentheses" . (40 41))            ; ( )
+      ("{ Curly brackets" . (123 125))       ; { }
+      ("[ Square brackets" . (91 93))        ; [ ]
+      ("< Angled brackets" . (60 62))        ; < >
+      ("« Εισαγωγικά Gr quote" . (171 187))  ; « »
+      ("= Equals signs" . (61 61))           ; = =
+      ("* Asterisks" . (42 42))              ; * *
+      ("_ underscores" . (95 95)))           ; _ _
+    "Alist of pairs for use with `prot/insert-pair-completion'.")
+
+  (defun prot/insert-pair-completion (&optional arg)
+    "Insert pair from `prot/insert-pair-alist'."
+    (interactive "P")
+    (let* ((data prot/insert-pair-alist)
+           (chars (mapcar #'car data))
+           (choice (completing-read "Select character: " chars nil t))
+           (left (cadr (assoc choice data)))
+           (right (caddr (assoc choice data))))
+      (insert-pair arg left right)))
+
+  (defun prot/text-mode-heading (&optional arg)
+    "Insert equal length heading delimiter below current line.
+
+A heading delimiter is drawn as a series of dashes (-).  With
+optional ARG, i.e. by prefixing \\[universal-argument], draw the
+heading delimiter with equals signs (=).  The latter is
+considered a heading level 1, while the former is level 2.
+
+A heading delimiter is inserted only when that would not mess up
+with existing headings or lists.  In such cases, point will move
+to the next line.  For the purposes of this command, text that
+starts with a number and no further delimiter is not consider a
+list element.
+
+This command is meant to be used in `text-mode' buffers and
+derivatives, such as `markdown-mode', though not in `org-mode'."
+    (interactive "P")
+    (cond
+     ((eq major-mode 'org-mode)
+      (user-error "Do not use `prot/text-mode-heading' in `org-mode'!"))
+     ((derived-mode-p 'text-mode)
+      (let* ((count (- (point-at-eol) (point-at-bol)))
+             (char (string-to-char (if arg "=" "-"))))
+        (cond
+         ((and (eobp)
+               (or (prot/text-list-line-p 1)
+                   (prot/text-heading-line-p 1)
+                   (prot/empty-line-p 1)
+                   (prot/indent-line-p 1)))
+          (newline 1))
+         ((or (prot/empty-line-p 1)
+              (prot/indent-line-p 1))
+          (prot/new-line-below))
+         ((or (prot/text-list-line-p 1)
+              (prot/text-heading-line-p 2))
+          (if (prot/empty-line-p 3)
+              (beginning-of-line 3)
+            (prot/new-line-below)))
+         (t
+          (prot/new-line-below)
+          (insert-char char count nil)
+          (newline 2)))))))
+
+  :bind (("C-'" . prot/insert-pair-completion)
+         ("M-'" . prot/insert-pair-completion)
+         ("<C-M-backspace>" . backward-kill-sexp)
+         ("M-c" . capitalize-dwim)
+         ("M-l" . downcase-dwim)        ; "lower" case
+         ("M-u" . upcase-dwim)
+         :map text-mode-map
+         ("<M-return>" . prot/text-mode-heading)))
+
+(use-package emacs
+  :commands (prot/transpose-chars
+             prot/transpose-lines
+             prot/transpose-paragraphs
+             prot/transpose-sentences
+             prot/transpose-sexps
+             prot/transpose-words)
+  :config
+  (defmacro prot/transpose (name scope &optional doc)
+    "Macro to produce transposition functions.
+NAME is the function's symbol.  SCOPE is the text object to
+operate on.  Optional DOC is the function's docstring.
+
+Transposition over an active region will swap the object at
+mark (region beginning) with the one at point (region end)"
+    `(defun ,name (arg)
+       ,doc
+       (interactive "p")
+       (let ((x (format "%s-%s" "transpose" ,scope)))
+         (if (use-region-p)
+             (funcall (intern x) 0)
+           (funcall (intern x) arg)))))
+
+  (prot/transpose
+   prot/transpose-lines
+   "lines"
+   "Transpose lines or swap over active region.")
+
+  (prot/transpose
+   prot/transpose-paragraphs
+   "paragraphs"
+   "Transpose paragraphs or swap over active region.")
+
+  (prot/transpose
+   prot/transpose-sentences
+   "sentences"
+   "Transpose sentences or swap over active region.")
+
+  (prot/transpose
+   prot/transpose-sexps
+   "sexps"
+   "Transpose balanced expressions or swap over active region.")
+
+  (defun prot/transpose-chars ()
+    "Always transposes the two characters before point.
+There is no 'dragging' the character forward.  This is the
+behaviour of `transpose-chars' when point is at end-of-line."
+    (interactive)
+    (transpose-chars -1)
+    (forward-char))
+
+  (defun prot/transpose-words (arg)
+    "Transpose words.
+
+If region is active, swap the word at mark (region beginning)
+with the one at point (region end).
+
+Otherwise, and while inside a sentence, this behaves as the
+built-in `transpose-words', dragging forward the word behind the
+point.  The difference lies in its behaviour at the end or
+beginnning of a line, where it will always transpose the word at
+point with the one behind or ahead of it (effectively the
+last/first two words)."
+    (interactive "p")
+    (cond
+     ((use-region-p)
+      (transpose-words 0))
+     ((eq (point) (point-at-eol))
+      (transpose-words -1))
+     ((eq (point) (point-at-bol))
+      (forward-word 1)
+      (transpose-words 1))
+     (t
+      (transpose-words arg))))
+
+  :bind (("C-t" . prot/transpose-chars)
+         ("C-x C-t" . prot/transpose-lines)
+         ("C-S-t" . prot/transpose-paragraphs)
+         ("C-x M-t" . prot/transpose-sentences)
+         ("C-M-t" . prot/transpose-sexps)
+         ("M-t" . prot/transpose-words)))
+
+(use-package emacs
+  :commands (prot/mark-symbol
+             prot/mark-sexp-backward)
+  :config
+  (defmacro prot/mark (name object &optional docstring)
+    "Produce function for marking small syntactic constructs.
+NAME is how the function should be called.  OBJECT is its scope.
+Optional DOCSTRING describes the resulting function.
+
+This is a slightly modified version of the built-in `mark-word'."
+    `(defun ,name (&optional arg allow-extend)
+       ,docstring
+       (interactive "P\np")
+       (let ((x (format "%s-%s" "forward" ,object)))
+         (cond ((and allow-extend
+                     (or (and (eq last-command this-command) (mark t))
+                         (region-active-p)))
+                (setq arg (if arg (prefix-numeric-value arg)
+                            (if (< (mark) (point)) -1 1)))
+                (set-mark
+                 (save-excursion
+                   (goto-char (mark))
+                   (funcall (intern x) arg)
+                   (point))))
+               (t
+                (let ((bounds (bounds-of-thing-at-point (intern ,object))))
+                  (unless (consp bounds)
+                    (user-error "No %s at point" ,object))
+                  (if (>= (prefix-numeric-value arg) 0)
+                      (goto-char (car bounds))
+                    (goto-char (cdr bounds)))
+                  (push-mark
+                   (save-excursion
+                     (funcall (intern x) (prefix-numeric-value arg))
+                     (point)))
+                  (activate-mark)))))))
+
+  (prot/mark
+   prot/mark-word
+   "word"
+   "Mark the whole word at point.
+This function is a slightly modified version of the built-in
+`mark-word', that I intend to use only in special circumstances,
+such as when recording a keyboard macro where precision is
+required.  For a general purpose utility, use `prot/mark-symbol'
+instead.")
+
+  (prot/mark
+   prot/mark-symbol
+   "symbol"
+   "Mark the whole symbol at point.
+With optional ARG, mark the current symbol and any remaining
+ARGth symbols away from point.  A negative argument moves
+backward. Repeated invocations of this command mark the next
+symbol in the direction originally specified.
+
+In the absence of a symbol and if a word is present at point,
+this command will operate on it as described above.")
+
+  (defun prot/mark-sexp-backward (&optional arg)
+    "Mark previous or ARGth balanced expression[s].
+Just a convenient backward-looking `mark-sexp'."
+    (interactive "P")
+    (if arg
+        (mark-sexp (- arg) t)
+      (mark-sexp (- 1) t)))
+
+  (defun prot/mark-construct-dwim (&optional arg)
+    "Mark symbol or balanced expression at point.
+A do-what-I-mean wrapper for `prot/mark-sexp-backward',
+`mark-sexp', and `prot/mark-symbol'.
+
+When point is over a symbol, mark the entirety of it.  Regular
+words are interpreted as symbols when an actual symbol is not
+present.
+
+For balanced expressions, a backward match will happen when point
+is to the right of the closing delimiter.  A forward match is the
+fallback condition and should work when point is before a
+balanced expression, with or without whitespace in between it an
+the opening delimiter.
+
+Optional ARG will mark a total of ARGth objects while counting
+the current one (so 3 would be 1+2 more).  A negative count moves
+the mark backward (though that would invert the backward-moving
+sexp matching of `prot/mark-sexp-backward', so be mindful of
+where the point is).  Repeated invocations of this command
+incrementally mark objects in the direction originally
+specified."
+    (interactive "P")
+    (cond
+     ((symbol-at-point)
+      (prot/mark-symbol arg t))
+     ((eq (point) (cdr (bounds-of-thing-at-point 'sexp)))
+      (prot/mark-sexp-backward arg))
+     (t
+      (mark-sexp arg t))))
+
+  :bind (("M-@" . prot/mark-word)       ; replaces `mark-word'
+         ("C-M-SPC" . prot/mark-construct-dwim)))
+
+(use-package beginend
+  :ensure
+  :demand
+  :diminish beginend-global-mode
+  :config
+  (dolist (mode beginend-modes) (diminish (cdr mode)))
+  (beginend-global-mode 1))
+
+(use-package goto-last-change
+  :ensure
+  :bind ("C-z" . goto-last-change))
+
 (use-package imenu
   :config
   (setq imenu-use-markers t)
@@ -346,19 +837,26 @@ aggressive fuzzy-style matching for this particular command."
 Add this to `imenu-after-jump-hook'."
     (let ((pulse-delay .05))
       (recenter 0)
-      (pulse-momentary-highlight-one-line (point) 'modus-theme-intense-red)))
+      (prot/pulse-line)))
+
+  (defun prot/imenu-show-entry ()
+    "Reveal index at point after successful `imenu' execution.
+To be used with `imenu-after-jump-hook'."
+    (cond
+     ((and (eq major-mode 'org-mode)
+           (org-at-heading-p))
+      (org-show-entry)
+      (org-reveal t))
+     ((when prot/outline-minor-mode
+        (outline-show-entry)))))
 
   :hook ((imenu-after-jump-hook . prot/imenu-recenter-pulse)
-         (imenu-after-jump-hook . (lambda ()
-                                    (when (and (eq major-mode 'org-mode)
-                                               (org-at-heading-p))
-                                      (org-show-entry)
-                                      (org-reveal t)))))
+         (imenu-after-jump-hook . prot/imenu-show-entry))
   :bind ("C-." . prot/imenu-vertical))
 
 (use-package imenu-list
   :ensure
-  :defer
+  :after imenu
   :config
   (defun prot/imenu-list-dwim (&optional arg)
     "Convenience wrapper for `imenu-list'.
@@ -381,16 +879,9 @@ With \\[universal-argument] toggle the display of the window."
 
 (use-package flimenu
   :ensure
+  :after imenu
   :config
   (flimenu-global-mode 1))
-
-(use-package savehist
-  :config
-  (setq savehist-file "~/.emacs.d/savehist")
-  (setq history-length 30000)
-  (setq history-delete-duplicates nil)
-  (setq savehist-save-minibuffer-history t)
-  (savehist-mode 1))
 
 (use-package icomplete
   :demand
@@ -435,63 +926,6 @@ With \\[universal-argument] toggle the display of the window."
               ("<left>" . icomplete-backward-completions)
               ("<up>" . icomplete-backward-completions)
               ("<C-backspace>" . icomplete-fido-backward-updir)))
-
-;; ............................................................. Recentf
-
-(use-package recentf
-  :config
-  (setq recentf-save-file "~/.emacs.d/recentf")
-  (setq recentf-max-saved-items 200)
-  (setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/doas:"))
-
-  (defun prot/recentf-keep-predicate (file)
-    "Additional conditions for saving in `recentf-list'.
-Add this function to `recentf-keep'.
-
-NEEDS REVIEW."
-    (cond
-     ((file-directory-p file) (file-readable-p file))))
-  (add-to-list 'recentf-keep 'prot/recentf-keep-default-predicate)
-
-  (defun prot/recentf ()
-    "Select item from `recentf-list' using completion.
-The user's $HOME directory is abbreviated as a tilde."
-    (interactive)
-    (icomplete-vertical-do ()
-      (let ((files (mapcar 'abbreviate-file-name recentf-list)))
-        (find-file
-         (completing-read "Open recentf entry: " files nil t)))))
-
-  (defun prot/recentf-dirs (&optional arg)
-    "Select directory from `recentf-list' using completion.
-With \\[universal-argument] present the list in a `dired' buffer.
-This buffer is meant to be reused by subsequent invocations of
-this command (otherwise you need to remove the `when' expression.
-
-Without \\[universal-argument], the user's $HOME directory is
-abbreviated as a tilde.  In the Dired buffer paths are absolute."
-    (interactive "P")
-    (let* ((list (mapcar 'abbreviate-file-name recentf-list))
-           (dirs (delete-dups
-                  (mapcar (lambda (file)
-                            (if (file-directory-p file)
-                                (directory-file-name file)
-                              (substring (file-name-directory file) 0 -1)))
-                          list)))
-           (buf "*Recentf Dired*")
-           (default-directory "~"))
-      (when (get-buffer buf)
-        (kill-buffer buf))
-      (if arg
-          (dired (cons (generate-new-buffer-name buf) dirs))
-        (icomplete-vertical-do ()
-          (find-file
-           (completing-read "Recent dirs: " dirs nil t))))))
-
-  
-  :hook (after-init-hook . recentf-mode)
-  :bind (("s-r" . prot/recentf)
-         ("C-x C-r" . prot/recentf-dirs)))
 
 ;; Icomplete vertical mode
 
@@ -618,10 +1052,11 @@ Use as a value for `completion-in-region-function'."
 ;; Dabbrev (dynamic word completion)
 
 (use-package dabbrev
+  :defer
   :after (minibuffer icomplete icomplete-vertical) ; read those as well
   :config
   (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
-  (setq dabbrev-abbrev-skip-leading-regexp "\\$\\|\\*\\|/\\|=")
+  (setq dabbrev-abbrev-skip-leading-regexp "\\$\\|\\*\\|/\\|=\\|'")
   (setq dabbrev-backward-only nil)
   (setq dabbrev-case-distinction nil)
   (setq dabbrev-case-fold-search t)
@@ -636,6 +1071,7 @@ Use as a value for `completion-in-region-function'."
 ;; ............................................................. Isearch
 
 (use-package isearch
+  :defer
   :diminish
   :config
   (setq search-highlight t)
@@ -703,16 +1139,19 @@ search started."
 ;; ................................................. Regular expressions
 
 (use-package re-builder
+  :defer
   :config
   (setq reb-re-syntax 'read))
 
 (use-package visual-regexp
   :ensure
+  :defer
   :config
   (setq vr/default-replace-preview nil)
   (setq vr/match-separator-use-custom-face t))
 
 (use-package replace
+  :defer
   :config
   (setq list-matching-lines-jump-to-current-line t)
   ;; See my "Modus themes" for these inherited faces
@@ -731,6 +1170,8 @@ search started."
 
 (use-package wgrep
   :ensure
+  :defer
+  :commands wgrep
   :config
   (setq wgrep-auto-save-buffer t)
   (setq wgrep-change-readonly-file t))
@@ -739,7 +1180,7 @@ search started."
 
 (use-package rg
   :ensure
-  :after wgrep
+  :defer
   :config
   (setq rg-group-result t)
   (setq rg-hide-command t)
@@ -795,6 +1236,7 @@ This function is meant to be mapped to a key in `rg-mode-map'."
   (setq uniquify-after-kill-buffer-p t))
 
 (use-package ibuffer
+  :defer
   :config
   (setq ibuffer-expert t)
   (setq ibuffer-display-summary nil)
@@ -870,6 +1312,7 @@ When no VC root is available, use standard `switch-to-buffer'."
 
 (use-package ibuffer-vc
   :ensure
+  :defer
   :after (ibuffer vc)
   :bind (:map ibuffer-mode-map
               ("/ V" . ibuffer-vc-set-filter-groups-by-vc-root)
@@ -953,9 +1396,11 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
            (window-width . 0.25)
            (side . right)
            (slot . 0)
-           (window-parameters . ((no-other-window . t)
-                                 (mode-line-format . (" "
-                                                      mode-line-buffer-identification)))))
+           (window-parameters
+            . ((no-other-window . t)
+               (mode-line-format
+                . (" "
+                   mode-line-buffer-identification)))))
           ("\\*Custom.*"
            (display-buffer-in-side-window)
            (window-width . 0.25)
@@ -978,6 +1423,7 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
          ("s-0" . delete-window)
          ("s-1" . delete-other-windows)
          ("s-5" . delete-frame)
+         ("C-x _" . balance-windows)
          ("C-x +" . balance-windows-area)
          ("s-q" . window-toggle-side-windows)))
 
@@ -989,11 +1435,9 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
              prot/display-buffer-at-bottom)
   :config
   (defun prot/window-dired-vc-root-left ()
-    "Open root directory of current version-controlled repository
-or the present working directory with `dired' and bespoke window
-parameters.  This is meant as a proof-of-concept function,
-illustrating how to leverage window rules to display a buffer,
-plus a few concomitant extras."
+    "Open project or dir `dired' in a side window.
+
+NOTE: For demo purposes."
     (interactive)
     (let ((dir (if (eq (vc-root-dir) nil)
                    (dired-noselect default-directory)
@@ -1002,16 +1446,18 @@ plus a few concomitant extras."
        dir `((side . left)
              (slot . -1)
              (window-width . 0.16)
-             (window-parameters . ((no-other-window . t)
-                                   (no-delete-other-windows . t)
-                                   (mode-line-format . (" "
-                                                        mode-line-buffer-identification))))))
+             (window-parameters
+              . ((no-other-window . t)
+                 (no-delete-other-windows . t)
+                 (mode-line-format
+                  . (" "
+                     mode-line-buffer-identification))))))
       (with-current-buffer dir
         (rename-buffer "*Dired-Side*")
-        (setq-local window-size-fixed 'width)))
-    (with-eval-after-load 'ace-window
-      (when (boundp 'aw-ignored-buffers)
-        (add-to-list 'aw-ignored-buffers "*Dired-Side*"))))
+        (setq-local window-size-fixed 'width))
+      (with-eval-after-load 'ace-window
+        (when (boundp 'aw-ignored-buffers)
+          (add-to-list 'aw-ignored-buffers "*Dired-Side*")))))
 
   (defun prot/make-frame-floating-with-current-buffer ()
     "Display the current buffer in a new floating frame.
@@ -1030,18 +1476,19 @@ window manager (BSPWM) to present the frame in a floating state."
                   (minibuffer . nil))))
 
   (defun prot/display-buffer-at-bottom ()
-    "Move the current buffer to the bottom of the frame.  This is
-useful to take a buffer out of a side window.
+    "Move the current buffer to the bottom of the frame.
+This is useful to take a buffer out of a side window."
 
-The window parameters of this function are provided mostly for
-didactic purposes."
     (interactive)
     (let ((buffer (current-buffer)))
       (with-current-buffer buffer
         (delete-window)
         (display-buffer-at-bottom
-         buffer `((window-parameters . ((mode-line-format . (" "
-                                                             mode-line-buffer-identification))))))))))
+         buffer
+         `((window-parameters
+            . ((mode-line-format
+                . (" "
+                   mode-line-buffer-identification))))))))))
 
 (use-package winner
   :hook (after-init-hook . winner-mode)
@@ -1049,6 +1496,7 @@ didactic purposes."
          ("<s-left>" . winner-undo)))
 
 (use-package windmove
+  :defer
   :config
   (setq windmove-create-window nil)
   :bind (("s-k" . windmove-up)
@@ -1056,9 +1504,22 @@ didactic purposes."
          ("s-j" . windmove-down)
          ("s-h" . windmove-left)))
 
+(use-package transpose-frame
+  :ensure
+  :defer
+  :commands (transpose-frame
+             flip-frame
+             flop-frame
+             rotate-frame
+             rotate-frame-clockwise
+             rotate-frame-anticlockwise)
+  :bind (("C-s-t" . flop-frame) ; what I consider "transpose" in this context
+         ("C-s-r" . rotate-frame-clockwise)))
+
 ;; ............................................................... Dired
 
 (use-package dired
+  :defer
   :config
   (setq dired-recursive-copies 'always)
   (setq dired-recursive-deletes 'always)
@@ -1068,6 +1529,7 @@ didactic purposes."
          (dired-mode-hook . hl-line-mode)))
 
 (use-package dired-aux
+  :defer
   :config
   (setq dired-isearch-filenames 'dwim)
   ;; The following variables were introduced in Emacs 27.1
@@ -1154,6 +1616,7 @@ This relies on the external 'fd' executable."
          ("C-c d" . contrib/cd-bookmark)))
 
 (use-package find-dired
+  :defer
   :after dired
   :config
   (setq find-ls-option '("-ls" . "-AFhl"))
@@ -1162,11 +1625,13 @@ This relies on the external 'fd' executable."
 (use-package async :ensure)
 
 (use-package dired-async
+  :defer
   :after (dired async)
   :hook (dired-mode-hook . dired-async-mode))
 
 (use-package dired-narrow
   :ensure
+  :defer
   :after dired
   :config
   (setq dired-narrow-exit-when-one-left t)
@@ -1176,6 +1641,7 @@ This relies on the external 'fd' executable."
               ("/" . dired-narrow-regexp)))
 
 (use-package wdired
+  :defer
   :after dired
   :commands wdired-change-to-wdired-mode
   :config
@@ -1184,6 +1650,7 @@ This relies on the external 'fd' executable."
 
 (use-package peep-dired
   :ensure
+  :defer
   :after dired
   :config
   (setq peep-dired-cleanup-on-disable t)
@@ -1196,6 +1663,7 @@ This relies on the external 'fd' executable."
 
 (use-package dired-subtree
   :ensure
+  :defer
   :after dired
   :config
   (setq dired-subtree-use-backgrounds nil)
@@ -1205,6 +1673,7 @@ This relies on the external 'fd' executable."
               ("<S-iso-lefttab>" . dired-subtree-remove)))
 
 (use-package dired-x
+  :defer
   :after dired
   :config
   (setq dired-clean-up-buffers-too t)
@@ -1251,6 +1720,7 @@ NEEDS REVIEW."
 ;; ........................................................ Applications
 
 (use-package calendar
+  :defer
   :config
   (setq calendar-mark-diary-entries-flag t)
   (setq calendar-time-display-form
@@ -1259,20 +1729,30 @@ NEEDS REVIEW."
                      (concat " (" time-zone ")"))))
   (setq calendar-week-start-day 1)      ; Monday
   (setq calendar-date-style 'iso)
+  (setq calendar-christian-all-holidays-flag nil)
   (setq calendar-holidays
-        (append holiday-general-holidays holiday-local-holidays
-                holiday-other-holidays holiday-christian-holidays
-                holiday-islamic-holidays holiday-oriental-holidays
+        (append holiday-local-holidays
                 holiday-solar-holidays))
 
   (use-package solar
+    :defer
     :config
     (setq calendar-latitude 48.85
           calendar-longitude 2.29))
 
+  (use-package lunar
+    :defer
+    :config
+    (setq lunar-phase-names
+          '("New Moon"
+            "First Quarter Moon"
+            "Full Moon"
+            "Last Quarter Moon")))
+
   :hook (calendar-today-visible-hook . calendar-mark-today))
 
 (use-package diary-lib
+  :defer
   :config
   (setq diary-header-line-flag nil)
   (setq diary-mail-addr "david@daporter.net")
@@ -1288,48 +1768,57 @@ NEEDS REVIEW."
           (year "[-/]" month "[-/]" day "[^0-9]")
           (dayname "\\W"))))
 
-(use-package org-plus-contrib
+(use-package org
   :ensure
-  :custom
+  :config
   ;; agenda and basic directory structure
-  (org-directory "~/org/")
-  (org-archive-location "archive/%s_archive::")
-  (org-archive-file-header-format
-   "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n")
-  (org-deadline-warning-days 3)
-  (org-refile-use-outline-path 'file)
-  (org-outline-path-complete-in-steps nil)
-  (org-refile-allow-creating-parent-nodes 'confirm)
-
-  ;; Include the todo keywords
-  (org-fast-tag-selection-include-todo t)
-  (org-use-fast-todo-selection t)
-  (org-todo-keywords
-   '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d)" "CANCELLED(c@/!)")))
-
-  (org-fontify-done-headline nil)
-  (org-fontify-quote-and-verse-blocks t)
-  (org-fontify-whole-heading-line nil)
-  (org-enforce-todo-dependencies t)
-  (org-enforce-todo-checkbox-dependencies t)
-  (org-track-ordered-property-with-tag t)
+  (setq org-directory "~/org/")
+  (setq org-default-notes-file "~/org/notes.org")
+  (setq org-agenda-files
+        '("~/gtd/inbox.org"
+          "~/gtd/projects.org"))
+  (setq org-archive-location "archive/%s_archive::")
+  (setq org-archive-file-header-format
+        "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n")
+  ;; refile, todo
+  (setq org-refile-targets
+        '(("~/gtd/projects.org" :maxlevel . 3)
+          ("~/gtd/maybe.org" :level . 1)))
+  (setq org-refile-use-outline-path t)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
+  (setq org-refile-use-cache t)
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d)" "CANCELLED(c@/!)")))
+  (setq org-fast-tag-selection-include-todo t)
+  (setq org-use-fast-todo-selection t)
+  (setq org-outline-path-complete-in-steps nil)  
+  (setq org-fontify-quote-and-verse-blocks t)
+  (setq org-fontify-whole-heading-line nil)
+  (setq org-fontify-whole-block-delimiter-line t)
+  (setq org-enforce-todo-dependencies t)
+  (setq org-enforce-todo-checkbox-dependencies t)
+  (setq org-track-ordered-property-with-tag t)
+  ;; code blocks
+  (setq org-confirm-babel-evaluate nil)
   ;; log
-  (org-log-done 'time)
-  (org-log-note-clock-out nil)
-  (org-log-redeadline nil)
-  (org-log-reschedule nil)
-  (org-read-date-prefer-future 'time)
+  (setq org-log-done 'time)
+  (setq org-log-note-clock-out nil)
+  (setq org-log-redeadline nil)
+  (setq org-log-reschedule nil)
+  (setq org-read-date-prefer-future 'time)
   ;; general
-  (org-special-ctrl-a/e t)
-  (org-hide-emphasis-markers t)
-  (org-catch-invisible-edits 'show)
-  (org-loop-over-headlines-in-active-region 'start-level)
-  (org-imenu-depth 7)
+  (setq org-adapt-indentation nil)      ; No, thanks!
+  (setq org-special-ctrl-a/e t)
+  (setq org-special-ctrl-k t)
+  (setq org-M-RET-may-split-line '((default . nil)))
+  (setq org-hide-emphasis-markers t)
+  (setq org-hide-leading-stars nil)
+  (setq org-catch-invisible-edits 'show)
+  (setq org-return-follows-link t)
+  (setq org-loop-over-headlines-in-active-region 'start-level)
+  (setq org-imenu-depth 7)
+  (setq org-modules '(ol-gnus ol-info ol-eww))
 
-  :init
-  (require 'org-checklist)
-  
-  :hook (org-mode-hook . org-indent-mode)
   :bind (:map org-mode-map
               ("<C-return>" . nil)
               ("<C-S-return>" . nil)))
@@ -1342,57 +1831,16 @@ NEEDS REVIEW."
               ("C-c S-l" . org-toggle-link-display)
               ("C-c C-S-l" . org-insert-last-stored-link)))
 
-(use-package org-agenda
-  :custom
-  ;; Show the daily agenda by default instead of the weekly one.
-  ;; Make the global TODO list into a list of tasks available for
-  ;; scheduling.
-  (org-agenda-span 'day)
-  (org-agenda-todo-ignore-scheduled t)
-  (org-agenda-todo-ignore-timestamp t)
-  
-  (org-refile-targets
-   '(("~/gtd/projects.org" :maxlevel . 3)
-     ("~/gtd/maybe.org" :level . 1)))
-  (org-agenda-files
-   '("~/gtd/inbox.org"
-     "~/gtd/projects.org"))
-  (org-agenda-custom-commands
-   '(("A" "Agenda"
-      ((agenda "")
-       (todo "TODO"
-             ((org-agenda-overriding-header "To Refile:")
-              (org-agenda-files '("~/gtd/inbox.org"))))))
-     ("n" "Next tasks"
-      ((todo "TODO"
-             ((org-agenda-overriding-header "Next tasks:")))))))
-
-  :bind (("C-c a" . org-agenda)
-         ("s-a" . org-agenda)))
-
-(use-package org-habit
-  :after org-plus-contrib
-  :config
-  (add-to-list 'org-modules 'org-habit)
-  (setq org-habit-graph-column 80)
-  (setq org-habit-show-habits-only-for-today t))
-
-(use-package org-cliplink
-  :ensure
-  :after org-plus-contrib
-  :demand
-  :bind ("C-c y l" . org-cliplink))
-
-(use-package org-protocol
-  :demand)
-
 (use-package org-capture
+  :after org
   :config
   (setq org-capture-templates
         '(("t" "Todo" entry (file "~/gtd/inbox.org")
            "* TODO %?\n%U\n%a\n")
+          ("f" "Fleeting note" entry  (file "~/gtd/inbox.org")
+           "* TODO Process fleeting note\n%?\n%U\n%a\n")
           ("r" "Reply to an email" entry (file+headline "~/gtd/inbox.org")
-           "* TODO Reply to %:from on  %:subject\n SCHEDULED: %t\n%U\n%a\n"
+           "* TODO Reply to %:from on %:subject\n SCHEDULED: %t\n%U\n%a\n"
            :immediate-finish t)
           ("l" "link" entry (file "~/gtd/inbox.org")
            "* TODO %(org-cliplink-capture)" :immediate-finish t)
@@ -1400,37 +1848,177 @@ NEEDS REVIEW."
            "* TODO [[%:link][%:description]]\n%:initial" :immediate-finish t)))
 
   (setq org-capture-templates-contexts
-        '(("r" ((in-mode . "gnus2-article-mode")
+        '(("r" ((in-mode . "gnus-article-mode")
                 (in-mode . "gnus-summary-mode")))))
 
+  (defun contrib/org-capture-no-delete-windows (oldfun args)
+    (cl-letf (((symbol-function 'delete-other-windows) 'ignore))
+      (apply oldfun args)))
+
+  (with-eval-after-load "org-capture"
+    (advice-add 'org-capture-place-template :around 'contrib/org-capture-no-delete-windows))
+  
   :bind ("C-c c" . org-capture))
+
+(use-package org-agenda
+  :after org
+  :config
+  ;; Basic setup
+  (setq org-agenda-span 'day)
+  (setq org-agenda-confirm-kill t)
+  (setq org-agenda-show-outline-path nil)
+  (setq org-agenda-window-setup 'current-window)
+  
+  ;; General view options
+  (defun prot/org-agenda-format-date-aligned (date)
+    "Format a DATE string for display in the daily/weekly agenda.
+This function makes sure that dates are aligned for easy reading.
+
+Slightly tweaked version of `org-agenda-format-date-aligned' that
+produces dates with a fixed length."
+    (require 'cal-iso)
+    (let* ((dayname (calendar-day-name date t))
+           (day (cadr date))
+           (day-of-week (calendar-day-of-week date))
+           (month (car date))
+           (monthname (calendar-month-name month t))
+           (year (nth 2 date))
+           (iso-week (org-days-to-iso-week
+                      (calendar-absolute-from-gregorian date)))
+           (weekyear (cond ((and (= month 1) (>= iso-week 52))
+                            (1- year))
+                           ((and (= month 12) (<= iso-week 1))
+                            (1+ year))
+                           (t year)))
+           (weekstring (if (= day-of-week 1)
+                           (format " (W%02d)" iso-week)
+                         "")))
+      (format "%s %2d %s %4d%s"
+              dayname day monthname year weekstring)))
+
+  (setq org-agenda-format-date #'prot/org-agenda-format-date-aligned)
+
+  ;; Items with deadline and scheduled timestamps
+  (setq org-deadline-warning-days 5)
+  (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+  (setq org-agenda-skip-timestamp-if-deadline-is-shown t)
+  (setq org-agenda-skip-deadline-prewarning-if-scheduled 1)
+  (setq org-scheduled-past-days 365)
+  (setq org-deadline-past-days 365)
+  (setq org-agenda-timerange-leaders
+        '("" "(%d/%d): "))
+  (setq org-agenda-scheduled-leaders
+        '("Scheduled: " "Sched.%2dx: "))
+  (setq org-agenda-inactive-leader "[")
+  (setq org-agenda-deadline-leaders
+        '("Deadline:  " "In %3d d.: " "%2d d. ago: "))
+  ;; Time grid
+  (setq org-agenda-time-leading-zero t)
+  (setq org-agenda-current-time-string
+        "—·—·—·—·—·—·—·—·—")
+  (setq org-agenda-time-grid
+        '((daily today require-timed)
+          (0700 0800 0900 1000 1100
+                1200 1300 1400 1500 1600
+                1700 1800 1900 2000 2100)
+          " -----" "—————————————————"))
+
+  ;; Global to-do list
+  (setq org-agenda-todo-ignore-with-date t)
+  (setq org-agenda-todo-ignore-timestamp t)
+  (setq org-agenda-todo-ignore-scheduled t)
+  (setq org-agenda-todo-ignore-deadlines t)
+  (setq org-agenda-todo-ignore-time-comparison-use-seconds t)
+
+  (setq org-agenda-custom-commands
+        '(("A" "Agenda"
+           ((agenda "")
+            (todo "TODO"
+                  ((org-agenda-overriding-header "To Refile:")
+                   (org-agenda-files '("~/gtd/inbox.org"))))))
+          ("n" "Next tasks"
+           ((todo "TODO"
+                  ((org-agenda-overriding-header "Next tasks:")))))))
+
+  :bind ("C-c a" . org-agenda))
+
+(use-package org-src
+  :after org
+  :config
+  (setq org-src-window-setup 'current-window)
+  (setq org-edit-src-persistent-message nil)
+  (setq org-src-fontify-natively t)
+  (setq org-src-preserve-indentation t)
+  (setq org-src-tab-acts-natively t)
+  (setq org-edit-src-content-indentation 0))
+
+(use-package ox
+  :after org
+  :config
+  (setq org-export-with-toc t)
+  (setq org-export-headline-levels 8)
+  (setq org-export-backends
+        '(ascii html latex md))
+  (setq org-export-dispatch-use-expert-ui nil))
+
+(use-package org-cliplink
+  :ensure
+  :after org
+  :demand
+  :bind ("C-c y l" . org-cliplink))
+
+(use-package org-protocol
+  :demand)
 
 (use-package org-list
   :config
   (setq org-list-allow-alphabetical t))
 
-(use-package org-src
-  :after org-plus-contrib
-  :config
-  (setq org-src-window-setup 'current-window)
-  (setq org-src-preserve-indentation t)
-  (setq org-src-tab-acts-natively t)
-  (setq org-edit-src-content-indentation 0))
-
 (use-package htmlize
   :ensure
   :after org-plus-contrib
+  :config
   (setq htmlize-ignore-face-size t))
+
+(use-package deft
+  :ensure
+  :config
+  (setq deft-directory "~/Sync/notes/wiki")
+  (setq deft-extensions '("org" "md" "txt"))
+  (setq deft-default-extension "org")
+
+  (defun dp/deft-dir (dir)
+    "Run deft in directory DIR"
+    (kill-buffer "*Deft*")
+    (setq deft-directory dir)
+    (deft))
+
+  (defun dp/deft-wiki ()
+    "Run deft in wiki directory"
+    (interactive)
+    (dp/deft-dir "~/Sync/notes/wiki"))
+
+  (defun dp/deft-zettelkasten ()
+    "Run deft in zettelkasten directory"
+    (interactive)
+    (dp/deft-dir org-roam-directory))
+
+  :bind
+  (("C-c n w" . dp/deft-wiki)
+   ("C-c n z" . dp/deft-zettelkasten)))
 
 (use-package org-roam
   :ensure
   :diminish
-  :custom
-  (org-roam-directory "~/Sync/notes/")
+  :config
+  (setq org-roam-directory "~/Sync/notes/zettelkasten")
+
   :hook
   (after-init-hook . org-roam-mode)
+
   :bind (:map org-roam-mode-map
-              (("C-c n l" . org-roam)
+              (("C-c n x" . org-roam-jump-to-index)
+               ("C-c n l" . org-roam)
                ("C-c n f" . org-roam-find-file)
                ("C-c n b" . org-roam-switch-to-buffer))
               :map org-mode-map
@@ -1438,33 +2026,21 @@ NEEDS REVIEW."
 
 (use-package org-journal
   :ensure
-  :after org-roam
-  :custom
-  (org-journal-date-prefix "#+TITLE: ")
-  (org-journal-file-format "%Y-%m-%d.org")
-  (org-journal-dir org-roam-directory)
-  (org-journal-date-format "%A, %d %B %Y")
+  :config
+  (setq org-journal-dir "~/Sync/notes/journal/")
+  (setq org-journal-file-format "%Y-%m-%d.org")
+  (setq org-journal-date-prefix "#+title: ")
+  (setq org-journal-date-format "%A, %d %B %Y")
   :bind
   ("C-c n j" . org-journal-new-entry))
 
 (use-package org-ref
   :ensure
   :config
-  (setq reftex-default-bibliography '("~/Sync/bibliography/references.bib"))
+  (setq reftex-default-bibliography '("~/Sync/notes/bibliography/references.bib"))
   (setq org-ref-default-bibliography reftex-default-bibliography)
-  (setq org-ref-bibliography-notes "~/Sync/bibliography/notes.org")
-  (setq org-ref-pdf-directory "~/Sync/bibliography/bibtex-pdfs/"))
-
-(use-package deft
-  :ensure
-  :after org-roam
-  :custom
-  (deft-recursive t)
-  (deft-use-filter-string-for-filename t)
-  (deft-default-extension "org")
-  (deft-directory org-roam-directory)
-  :bind
-  ("C-c n d" . deft))
+  (setq org-ref-bibliography-notes "~/Sync/notes/bibliography/notes.org")
+  (setq org-ref-pdf-directory "~/Sync/notes/bibliography/bibtex-pdfs/"))
 
 (use-package pdf-tools
   :ensure
@@ -1520,11 +2096,11 @@ NEEDS REVIEW."
 ;; ........................................................... Mode line
 
 (use-package emacs
-  :commands contrib/toggle-mode-line
+  :commands prot/hidden-mode-line-mode
   :config
   (setq mode-line-percent-position '(-3 "%p"))
-  ;;(setq mode-line-defining-kbd-macro
-  ;;      (propertize "Macro" 'face 'mode-line-emphasis))
+  (setq mode-line-defining-kbd-macro
+        (propertize " Macro" 'face 'mode-line-emphasis))
   (setq-default mode-line-format
                 '("%e"
                   mode-line-front-space
@@ -1536,18 +2112,21 @@ NEEDS REVIEW."
                   mode-line-buffer-identification
                   "  "
                   mode-line-position
+                  (vc-mode vc-mode)
                   " "
                   mode-line-modes
                   " "
                   mode-line-misc-info
                   mode-line-end-spaces))
 
-  (defun contrib/toggle-mode-line ()
+  (define-minor-mode prot/hidden-mode-line-mode
     "Toggle modeline visibility in the current buffer."
-    (interactive)
-    (if mode-line-format
+    :init-value nil
+    :global nil
+    (if prot/hidden-mode-line-mode
         (setq-local mode-line-format nil)
-      (kill-local-variable 'mode-line-format))))
+      (kill-local-variable 'mode-line-format)
+      (force-mode-line-update))))
 
 (use-package battery
   :config
@@ -1560,7 +2139,7 @@ NEEDS REVIEW."
 
 (use-package time
   :config
-  (setq display-time-format "%Y-%m-%d  %H:%M")
+  (setq display-time-format "%H:%M  %Y-%m-%d")
   ;;;; Covered by `display-time-format'
   ;; (setq display-time-24hr-format t)
   ;; (setq display-time-day-and-date t)
@@ -1594,9 +2173,37 @@ NEEDS REVIEW."
   (setq diff-hl-side 'left)
   :hook ((after-init-hook . global-diff-hl-mode)))
 
+(use-package hl-todo
+  :ensure
+  :hook (prog-mode-hook . hl-todo-mode))
+
 (use-package hl-line
   :config
   (setq hl-line-sticky-flag nil))
+
+(use-package display-line-numbers
+  :config
+  ;; Set absolute line numbers.  A value of "relative" is also useful.
+  (setq display-line-numbers-type t)
+  ;; Those two variables were introduced in Emacs 27.1
+  (setq display-line-numbers-major-tick 20)
+  (setq display-line-numbers-minor-tick 5)
+  ;; Use absolute numbers in narrowed buffers
+  (setq display-line-numbers-widen t)
+
+  (define-minor-mode prot/display-line-numbers-mode
+    "Toggle `display-line-numbers-mode' and `hl-line-mode'."
+    :init-value nil
+    :global nil
+    (if prot/display-line-numbers-mode
+        (progn
+          (display-line-numbers-mode 1)
+          (hl-line-mode 1)
+          (setq-local truncate-lines t))
+      (display-line-numbers-mode -1)
+      (hl-line-mode -1)
+      (setq-local truncate-lines nil)))
+  :bind ("<f7>" . prot/display-line-numbers-mode))
 
 (use-package whitespace
   :config
@@ -1609,49 +2216,93 @@ NEEDS REVIEW."
   :bind (("<f6>" . prot/toggle-invisibles)
          ("C-c z" . delete-trailing-whitespace)))
 
-(use-package display-line-numbers
+(use-package focus
+  :ensure
+  :commands (prot/focus-mode-to-thing
+             prot/focus-mode)
   :config
-  (defun prot/toggle-line-numbers ()
-    "Toggles the display of line numbers.  Applies to all buffers."
-    (interactive)
-    (if (bound-and-true-p display-line-numbers-mode)
-        (display-line-numbers-mode -1)
-      (display-line-numbers-mode)))
-  :bind ("<f7>" . prot/toggle-line-numbers))
+  (setq-default focus-mode-to-thing
+                '((prog-mode . defun)
+                  (text-mode . paragraph)))
+
+  ;; TODO review in accordance with `prot/focus-mode'
+  (defun prot/focus-mode-to-thing (&optional narrow)
+    "Set local values for `focus-mode-to-thing'.
+With optional NARROW limit the scope of `focus-mode' to smaller
+syntactic units."
+    (interactive "P")
+    (let* ((units (if narrow
+                      (list 'sexp 'sentence)
+                    (list 'defun 'paragraph)))
+           (prog (car units))
+           (text (cadr units)))
+      (setq-local focus-mode-to-thing
+                  `((prog-mode . ,prog)
+                    (text-mode . ,text)))))
+
+  ;; TODO use `define-minor-mode' instead of this
+  (defun prot/focus-mode (&optional arg)
+    "Toggle the use of `focus-mode'.
+With optional \\[universal-argument] prefix, also invoke
+`prot/focus-mode-to-thing' with its optional argument for a
+narrower field of view."
+    (interactive "P")
+    (if (bound-and-true-p focus-mode)
+        (focus-mode -1)
+      (if arg
+          (prot/focus-mode-to-thing t)
+        (kill-local-variable 'focus-mode-to-thing))
+      (focus-mode 1)))
+
+  ;; C-c o is used by `prot/olivetti-mode' and this is a good mnemonic
+  ;; for a concept of "Only the thing".
+  :bind (("C-c O" . prot/focus-mode)))
 
 (use-package olivetti
   :ensure
   :diminish
   :config
-  (setq olivetti-body-width 100)
+  (setq olivetti-body-width 0.7)
   (setq olivetti-minimum-body-width 80)
   (setq olivetti-recall-visual-line-mode-entry-state t)
 
-  (defun prot/olivetti-mode ()
-    "Toggle `olivetti-mode' with additional parameters.
-Fringes are disabled for the current window.  For the
-font-related changes see `prot/variable-pitch-mode'."
-    (interactive)
-    (if (bound-and-true-p olivetti-mode)
+  (define-minor-mode prot/olivetti-mode
+    "Toggle buffer-local `olivetti-mode' with additional parameters.
+
+Fringes are disabled.  The modeline is hidden, except for
+`prog-mode' buffers (see `prot/hidden-mode-line-mode').  The
+default typeface is set to a proportionately spaced family,
+except for programming modes (see `prot/variable-pitch-mode').
+The cursor becomes a blinking bar, per `prot/cursor-type-mode'."
+    :init-value nil
+    :global nil
+    (if prot/olivetti-mode
         (progn
-          (olivetti-mode -1)
-          (set-window-fringes (selected-window) nil) ; Use default width
-          (prot/variable-pitch-mode)
-          (contrib/toggle-mode-line))
-      (olivetti-mode 1)
-      (set-window-fringes (selected-window) 0 0)
-      (prot/variable-pitch-mode)
-      (contrib/toggle-mode-line)))
+          (olivetti-mode 1)
+          (set-window-fringes (selected-window) 0 0)
+          (prot/variable-pitch-mode 1)
+          (prot/cursor-type-mode 1)
+          (unless (derived-mode-p 'prog-mode)
+            (prot/hidden-mode-line-mode 1)))
+      (olivetti-mode -1)
+      (set-window-fringes (selected-window) nil) ; Use default width
+      (prot/variable-pitch-mode -1)
+      (prot/cursor-type-mode -1)
+      (unless (derived-mode-p 'prog-mode)
+        (prot/hidden-mode-line-mode -1))))
   :bind ("C-c o" . prot/olivetti-mode))
 
-(use-package rainbow-blocks
+(use-package auto-dim-other-buffers
   :ensure
-  :diminish
-  :commands rainbow-blocks-mode
+  :commands auto-dim-other-buffers-mode
   :config
-  (setq rainbow-blocks-highlight-braces-p t)
-  (setq rainbow-blocks-highlight-brackets-p t)
-  (setq rainbow-blocks-highlight-parens-p t))
+  (setq auto-dim-other-buffers-dim-on-switch-to-minibuffer nil)
+  (setq auto-dim-other-buffers-dim-on-focus-out t))
+
+(use-package paren-face
+  :ensure
+  :disabled
+  :hook (after-init-hook . global-paren-face-mode))
 
 ;; ................................................... Language settings
 
@@ -1661,19 +2312,40 @@ font-related changes see `prot/variable-pitch-mode'."
 (use-package emacs
   :config
   (setq-default fill-column 72)
-  (setq sentence-end-double-space t)
-  (setq sentence-end-without-period nil)
-  (setq colon-double-space nil)
   :hook (after-init-hook . column-number-mode))
+
+(use-package emacs
+  :config
+  (setq sentence-end-double-space t)
+  (setq colon-double-space nil)
+  (setq use-hard-newlines nil)
+  (setq sentence-end-without-period nil))
+
+(use-package emacs
+  :diminish auto-fill-function
+  :config
+  (setq adaptive-fill-mode t)
+
+  (defun prot/unfill-region-or-paragraph (&optional region)
+    "Unfill paragraph or, when active, the region.
+Join all lines in a region, if active, while respecting any empty
+lines (so multiple paragraphs are not joined, just unfilled).  If
+no region is active, operate on the paragraph.  The idea is to
+produce the opposite effect of both `fill-paragraph' and
+`fill-region'."
+    (interactive)
+    (let ((fill-column most-positive-fixnum))
+      (if (use-region-p)
+          (fill-region (region-beginning) (region-end))
+        (fill-paragraph nil region))))
+
+  :hook (text-mode-hook . (lambda ()
+                            (turn-on-auto-fill)))
+  :bind ("M-Q" . prot/unfill-region-or-paragraph))
 
 (use-package subword
   :diminish
   :hook (prog-mode-hook . subword-mode))
-
-(use-package emacs
-  :diminish auto-fill-function
-  :hook (text-mode-hook . (lambda ()
-                            (turn-on-auto-fill))))
 
 (use-package newcomment
   :config
@@ -1705,29 +2377,45 @@ Else toggle the comment status of the line at point."
 ;; ............................................. Spelling and dictionary
 
 (use-package ispell
+  :commands (ispell-change-dictionary
+             ispell-word
+             ispell-region
+             ispell-buffer)
   :config
   (setq ispell-program-name "aspell")
-  (setq ispell-dictionary "british-ise-w_accents")
+  (setq ispell-dictionary "en_GB")
 
-  (defun dp/ispell-toggle-dictionaries ()
-    "Toggle between English and French dictionaries."
+  (defvar prot/ispell-dictionaries
+    '(("English" . "en")
+      ("Français" . "fr")
+      ("Espanõl" . "es")
+      ("Nederlands" . "nl"))
+    "Alist of dictionaries I may use.
+It is used by `prot/ispell-dictionaries-complete'.")
+
+  (defun prot/ispell-dictionaries-complete ()
+    "Select an item from `prot/ispell-dictionaries'."
     (interactive)
-    (if (string= ispell-current-dictionary "british-ise-w_accents")
-        (ispell-change-dictionary "francais-lrg")
-      (ispell-change-dictionary "british-ise-w_accents")))
+    (let* ((dicts (mapcar #'car prot/ispell-dictionaries))
+           (choice (completing-read "Select dictionary: " dicts nil t))
+           (key (cdr (assoc `,choice prot/ispell-dictionaries))))
+      (ispell-change-dictionary key)
+      (message "Switched to %s" key)))
 
-  :bind ("C-M-$" . dp/ispell-toggle-dictionaries))
+  (defun dp/ispell-dwim ()
+    "Spell check region or select dictionary.
 
-(use-package flyspell
-  :commands (flyspell-buffer
-             flyspell-mode
-             flyspell-region)
-  :config
-  (setq flyspell-issue-message-flag nil)
-  (setq flyspell-issue-welcome-flag nil)
-  
-  :bind (:map flyspell-mode-map
-              ("C-;" . nil)))
+Use `ispell-region' on the active region, else invoke
+`prot/ispell-dictionaries-complete'."
+    (interactive)
+    (let ((beg (region-beginning))
+          (end (region-end)))
+      (if (use-region-p)
+          (ispell-region beg end)
+        (prot/ispell-dictionaries-complete))))
+
+  :bind (("M-$" . dp/ispell-dwim)
+         ("C-M-$" . prot/ispell-dictionaries-complete)))
 
 (use-package emacs
   :config
@@ -1746,6 +2434,7 @@ cursor."
 
 (use-package flycheck
   :ensure
+  :defer
   :config
   (setq flycheck-check-syntax-automatically '(mode-enabled save))
 
@@ -1771,6 +2460,7 @@ See URL `https://jorisroovers.com/gitlint/'."
   :hook (flycheck-mode-hook . flycheck-indicator-mode))
 
 (use-package flymake
+  :defer
   :commands flymake-mode
   :config
   (setq flymake-fringe-indicator-position 'left-fringe)
@@ -1786,6 +2476,7 @@ See URL `https://jorisroovers.com/gitlint/'."
               ("C-c p" . flymake-goto-prev-error)))
 
 (use-package eldoc
+  :defer
   :diminish
   :config
   (global-eldoc-mode 1))
@@ -1796,6 +2487,10 @@ See URL `https://jorisroovers.com/gitlint/'."
 (use-package markdown-mode
   :ensure
   :config
+  ;; Allows for fenced block focus with C-c ' (same as Org blocks).
+  (use-package edit-indirect
+    :ensure
+    :defer)
   (setq markdown-fontify-code-blocks-natively t)
   :mode ("\\.md$" . markdown-mode))
 
@@ -1812,7 +2507,7 @@ See URL `https://jorisroovers.com/gitlint/'."
 
 (use-package electric
   :config
-  (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
+  (setq electric-pair-inhibit-predicate'electric-pair-conservative-inhibit)
   (setq electric-pair-preserve-balance t)
   (setq electric-pair-pairs
         '((8216 . 8217)
@@ -1844,70 +2539,63 @@ See URL `https://jorisroovers.com/gitlint/'."
 
 ;; Tabs, indentation, and the TAB key
 
-;; I believe tabs, in the sense of inserting the tab character, are best
-;; suited for indentation. While spaces are superior at precisely
-;; aligning text. However, I understand that elisp uses its own
-;; approach, which I do not want to interfere with. Also, Emacs tends to
-;; perform alignments by mixing tabs with spaces, which can actually
-;; lead to misalignments depending on certain variables such as the size
-;; of the tab. As such, I am disabling tabs by default.
-
-;; If there ever is a need to use different settings in other modes, we
-;; can customise them via hooks. This is not an issue I have encountered
-;; yet and am therefore refraining from solving a problem that does not
-;; affect me.
-
 (use-package emacs
   :config
-  (setq-default tab-always-indent t)
+  (setq-default tab-always-indent 'complete)
   (setq-default tab-width 4)
   (setq-default indent-tabs-mode nil))
 
-;; ............................................................ Custom movements
-
-;; Mark by semantic unit
-
-(use-package expand-region
-  :ensure
-  :pin gnu                              ; Prefer ELPA version
-  :config
-  (setq expand-region-smart-cursor t)
-  :bind (("C-=" . er/expand-region)
-         ("C-M-=" . er/mark-outside-pairs)
-         ("C-+" . er/mark-symbol)))
-
-;; Go to last change
-
-(use-package goto-last-change
-  :ensure
-  :bind ("C-z" . goto-last-change))
-
-(use-package goto-last-change
-  :ensure
-  :bind ("C-z" . goto-last-change))
 
 ;; ................................................... Cursor and mouse settings
 
-(use-package emacs
+(use-package frame
+  :commands prot/cursor-type-mode
   :config
   (setq-default cursor-type 'box)
   (setq-default cursor-in-non-selected-windows '(bar . 2))
   (setq-default blink-cursor-blinks 50)
-  (setq-default blink-cursor-interval 0.75)
+  (setq-default blink-cursor-interval nil) ; 0.75 would be my choice
   (setq-default blink-cursor-delay 0.2)
-  :hook (after-init-hook . blink-cursor-mode))
+
+  (blink-cursor-mode -1)
+
+  (define-minor-mode prot/cursor-type-mode
+    "Toggle between static block and pulsing bar cursor."
+    :init-value nil
+    :global t
+    (if prot/cursor-type-mode
+        (progn
+          (setq-local blink-cursor-interval 0.75)
+          (setq-local cursor-type '(bar . 2))
+          (setq-local cursor-in-non-selected-windows 'hollow)
+          (blink-cursor-mode 1))
+      (dolist (local '(blink-cursor-interval
+                       cursor-type
+                       cursor-in-non-selected-windows))
+        (kill-local-variable `,local))
+      (blink-cursor-mode -1))))
 
 (use-package pulse
   :config
+  (defface prot/pulse-line-modus-theme
+    '((t :inherit modus-theme-subtle-green :extend t))
+    "Ad-hoc face for `prot/pulse-line'.
+This is done because it is not possible to highlight empty lines
+without the `:extend' property.")
+
   (defun prot/pulse-line (&optional face)
     "Temporarily highlight the current line."
     (interactive)
-    (let ((pulse-delay .06)
+    (let ((start (if (eobp)
+                     (line-beginning-position 0)
+                   (line-beginning-position)))
+          (end (line-beginning-position 2))
+          (pulse-delay .04)
           (face
            (if face
                face
-             'modus-theme-intense-red)))
-      (pulse-momentary-highlight-one-line (point) face)))
+             'prot/pulse-line-modus-theme)))
+      (pulse-momentary-highlight-region start end face)))
   :bind ("<s-escape>" . prot/pulse-line))
 
 (use-package mouse
@@ -1918,7 +2606,7 @@ See URL `https://jorisroovers.com/gitlint/'."
           ((shift) . 5)
           ((meta) . 0.5)
           ((control) . text-scale)))
-  (setq mouse-drag-copy-region t)
+  (setq mouse-drag-copy-region nil)
   (setq make-pointer-invisible t)
   (setq mouse-wheel-progressive-speed t)
   (setq mouse-wheel-follow-mouse t)
@@ -1926,15 +2614,43 @@ See URL `https://jorisroovers.com/gitlint/'."
 
 (use-package emacs
   :config
-  (setq scroll-preserve-screen-position t)
-  (setq scroll-conservatively 1)        ; affects `scroll-step'
-  (setq scroll-margin 0))
+  (setq-default scroll-preserve-screen-position t)
+  (setq-default scroll-conservatively 1) ; affects `scroll-step'
+  (setq-default scroll-margin 0)
+
+  (define-minor-mode prot/scroll-centre-cursor-mode
+    "Toggle centred cursor scrolling behaviour."
+    :init-value nil
+    :lighter " S="
+    :global nil
+    (if prot/scroll-centre-cursor-mode
+        (progn
+          (setq-local scroll-margin (* (frame-height) 2))
+          (setq-local scroll-conservatively 0)
+          (setq-local maximum-scroll-margin 0.5))
+      (dolist (local '(scroll-preserve-screen-position
+                       scroll-conservatively
+                       maximum-scroll-margin
+                       scroll-margin))
+        (kill-local-variable `,local))))
+
+  ;; C-c l is used for `org-store-link'.  The mnemonic for this is to
+  ;; focus the Line and also works as a variant of C-l.
+  :bind ("C-c L" . prot/scroll-centre-cursor-mode))
+
+(use-package delsel
+  :hook (after-init-hook . delete-selection-mode))
 
 (use-package tooltip
   :config
   (setq tooltip-delay 0.5)
   (setq tooltip-short-delay 0.5)
   (setq x-gtk-use-system-tooltips nil)
+  (setq tooltip-frame-parameters
+        '((name . "tooltip")
+          (internal-border-width . 6)
+          (border-width . 0)
+          (no-special-glyphs . t)))
   :hook (after-init-hook . tooltip-mode))
 
 (use-package autorevert
@@ -1963,6 +2679,12 @@ See URL `https://jorisroovers.com/gitlint/'."
 (use-package emacs
   :config
   (setq mode-require-final-newline 'visit-save))
+
+(use-package package
+  :commands (list-packages
+             package-refresh-contents
+             package-list-packages)
+  :hook (package-menu-mode-hook . hl-line-mode))
 
 ;; ............................................................. Version control
 
@@ -2015,9 +2737,11 @@ See URL `https://jorisroovers.com/gitlint/'."
          ("t" . vc-annotate-toggle-annotation-visibility)))
 
 (use-package magit
-  :ensure)
+  :ensure
+  :defer)
 
 (use-package git-commit
+  :defer
   :after magit
   :config
   (setq git-commit-summary-max-length 50)
@@ -2035,6 +2759,7 @@ See URL `https://jorisroovers.com/gitlint/'."
           overlong-summary-line)))
 
 (use-package magit-diff
+  :defer
   :after magit
   :config
   ;; In the fucused hunk, highlight changes within a line, not just the
@@ -2091,6 +2816,7 @@ With \\[universal-argument] do it for the current file instead."
          ("C-c C-n" . prot/diff-restrict-view-dwim)))
 
 (use-package ediff
+  :defer
   :config
   (setq ediff-keep-variants nil)
   (setq ediff-make-buffers-readonly-at-startup nil)
@@ -2131,7 +2857,7 @@ sure this is a good approach."
 
 (use-package auth-source
   :config
-  (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo"))
+  (setq auth-sources '("~/.authinfo.gpg"))
   (setq user-full-name "David Porter")
   (setq user-mail-address "david@daporter.net"))
 
@@ -2170,7 +2896,7 @@ Add this function to `message-header-setup-hook'."
         (progn
           (when (message-fetch-field "Gcc")
             (message-remove-header "Gcc"))
-          (message-add-header "Gcc: nnimap+migadu:Sent"))
+          (message-add-header "Gcc: nnmaildir+migadu:sent"))
       (message "Gnus is not running. No GCC field inserted.")))
 
   :hook ((message-header-setup-hook . prot/message-header-add-gcc)
@@ -2181,17 +2907,19 @@ Add this function to `message-header-setup-hook'."
 (use-package gnus
   :config
   (setq gnus-directory "~/news")
-  (setq gnus-select-method '(nnnil))
+  (setq gnus-select-method '(nnnil ""))
   (setq gnus-secondary-select-methods
         '((nntp "news.gwene.org")
           (nntp "news.gmane.io")
-          (nnimap "migadu"
-                  (nnimap-address "imap.migadu.com"
-                                  (nnimap-stream ssl)
-                                  (nnimap-authinfo-file "~/.authinfo.gpg")))))
+          (nnmaildir "migadu" (directory "~/mail/migadu"))))
 
-  (setq gnus-parameters '(("migadu" (posting-style
-                                     (gcc "nnimap+migadu:Sent")))))
+  (setq nnir-method-default-engines
+        '((nnmaildir . notmuch)))
+
+  (setq gnus-parameters
+        '(("migadu"
+           (posting-style
+            (gcc "nnmaildir+migadu:sent")))))
   (setq gnus-gcc-mark-as-read t)
   (setq gnus-agent t)
   (setq gnus-novice-user nil)
@@ -2201,9 +2929,9 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-always-read-dribble-file t)
 
   (defun dp/archive-message ()
-    "Move the current message to the mailbox `Archive'."
+    "Move the current message to the mailbox `archive'."
     (interactive)
-    (gnus-summary-move-article nil "nnimap+migadu:Archive"))
+    (gnus-summary-move-article nil "nnmaildir+migadu:archive"))
 
   :bind (("C-c g" . gnus)
          ("s-g" . gnus)
@@ -2258,10 +2986,12 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-treat-display-smileys nil)
   (setq gnus-article-mode-line-format "%G %S %m")
   (setq gnus-visible-headers
-        '("^From:" "^To:" "^Cc:" "^Newsgroups:" "^Subject:" "^Date:"
+        '("^From:" "^Subject:" "^To:" "^Cc:" "^Newsgroups:" "^Subject:" "^Date:"
           "Followup-To:" "Reply-To:" "^Organization:" "^X-Newsreader:"
           "^X-Mailer:"))
   (setq gnus-sorted-header-list gnus-visible-headers)
+  :hook (gnus-article-mode-hook . (lambda ()
+                                    (setq-local fill-column 80)))
   :bind (:map gnus-article-mode-map
               ("i" . gnus-article-show-images)
               ("s" . gnus-mime-save-part)
@@ -2277,10 +3007,6 @@ Add this function to `message-header-setup-hook'."
   :after gnus
   :demand
   :config
-  (setq gnus-level-subscribed 6)
-  (setq gnus-level-unsubscribed 7)
-  (setq gnus-level-zombie 8)
-  (setq gnus-activate-level 4)
   (setq gnus-list-groups-with-ticked-articles nil)
   (setq gnus-group-sort-function
         '((gnus-group-sort-by-unread)
@@ -2290,7 +3016,7 @@ Add this function to `message-header-setup-hook'."
   :hook
   (gnus-group-mode-hook . hl-line-mode)
   (gnus-select-group-hook . gnus-group-set-timestamp)
-  :bind (:map gnus-agent-group-mode-map
+  :bind (:map gnus-group-mode-map
               ("M-n" . gnus-topic-goto-next-topic)
               ("M-p" . gnus-topic-goto-previous-topic)))
 
@@ -2350,7 +3076,7 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-summary-mode-line-format "%p")
 
   (setq gnus-parameters
-        '(("nnimap\\+migadu:.*"
+        '(("nnmaildir\\+migadu:.*"
            (gnus-summary-dummy-line-format
             (concat "   "
                     "                      "
@@ -2377,7 +3103,7 @@ Add this function to `message-header-setup-hook'."
         " ")))
 
   :hook (gnus-summary-mode-hook . hl-line-mode)
-  :bind (:map gnus-agent-summary-mode-map
+  :bind (:map gnus-summary-mode-map
               ("<delete>" . gnus-summary-delete-article)
               ("n" . gnus-summary-next-article)
               ("p" . gnus-summary-prev-article)
@@ -2398,223 +3124,16 @@ Add this function to `message-header-setup-hook'."
   :after (gnus dired)
   :hook (dired-mode-hook . gnus-dired-mode))
 
-;; Custom movements and motions
-
-(use-package emacs
-  :config
-  (defun prot/copy-line ()
-    "Copies the entirety of the current line."
-    (interactive)
-    (copy-region-as-kill (point-at-bol) (point-at-eol))
-    (message "Current line copied"))
-
-  (defun prot/insert-double-quotes (&optional arg)
-    "Insert a pair of double quotes or wrap ARG with them."
-    (interactive "P")
-    (insert-pair arg ?\" ?\"))
-
-  (defun prot/insert-double-smart-quotes (&optional arg)
-    "Insert a pair of double smart quotes or wrap ARG with them."
-    (interactive "P")
-    (insert-pair arg ?\“ ?\”))
-
-  (defun prot/insert-single-smart-quotes (&optional arg)
-    "Insert a pair of single smart quotes or wrap ARG with them."
-    (interactive "P")
-    (insert-pair arg ?\‘ ?\’))
-
-  (defun prot/insert-elisp-quotes (&optional arg)
-    "Insert a pair of elisp symbol quotes or wrap ARG with them."
-    (interactive "P")
-    (insert-pair arg ?\` ?\'))
-
-  (defun prot/multi-line-next ()
-    "Moves point 15 lines down."
-    (interactive)
-    (forward-line 15))
-
-  (defun prot/multi-line-prev ()
-    "Moves point 15 lines up."
-    (interactive)
-    (forward-line -15))
-
-  (defun prot/kill-line-backward ()
-    "Kill from point to the beginning of the line."
-    (interactive)
-    (kill-line 0))
-
-  (defun prot/new-line-below ()
-    "Create a new line below the current one.  Move the point to
-the absolute beginning.  Also see `prot/new-line-above'."
-    (interactive)
-    (end-of-line)
-    (newline))
-
-  (defun prot/new-line-above ()
-    "Create a new line above the current one.  Move the point to
-the absolute beginning.  Also see `prot/new-line-below'."
-    (interactive)
-    (beginning-of-line)
-    (newline)
-    (forward-line -1))
-
-  (defun contrib/rename-file-and-buffer ()
-    "Rename current buffer and if the buffer is visiting a file, rename it too."
-    (interactive)
-    (let ((filename (buffer-file-name)))
-      (if (not (and filename (file-exists-p filename)))
-          (rename-buffer (read-from-minibuffer "New name: " (buffer-name)))
-        (let* ((new-name (read-from-minibuffer "New name: " filename))
-               (containing-dir (file-name-directory new-name)))
-          (make-directory containing-dir t)
-          (cond
-           ((vc-backend filename) (vc-rename-file filename new-name))
-           (t
-            (rename-file filename new-name t)
-            (set-visited-file-name new-name t t)))))))
-
-  (defun prot/transpose-chars ()
-    "Always transposes the two characters before point.  There is
-no 'dragging' the character forward.  This is the behaviour of
-`transpose-chars' when point is at end-of-line."
-    (interactive)
-    (transpose-chars -1)
-    (forward-char))
-
-  (defun prot/transpose-or-swap-lines (arg)
-    "If region is active, swap the line at mark (region
-beginning) with the one at point (region end).  This leverages a
-facet of the built-in `transpose-lines'.  Otherwise transpose the
-current line with the one before it ('drag' line downward)."
-    (interactive "p")
-    (if (use-region-p)
-        (transpose-lines 0)
-      (transpose-lines arg)))
-
-  (defun prot/transpose-or-swap-paragraphs (arg)
-    "If region is active, swap the paragraph at mark (region
-beginning) with the one at point (region end).  This leverages a
-facet of the built-in `transpose-paragraphs'.  Otherwise
-transpose the current paragraph with the one after it ('drag'
-paragraph downward)."
-    (interactive "p")
-    (if (use-region-p)
-        (transpose-paragraphs 0)
-      (transpose-paragraphs arg)))
-
-  (defun prot/transpose-or-swap-sentences (arg)
-    "If region is active, swap the sentence at mark (region
-beginning) with the one at point (region end).  This leverages a
-facet of the built-in `transpose-sentences'.  Otherwise transpose
-the sentence before point with the one after it ('drag' sentence
-forward/downward).  Also `fill-paragraph' afterwards.
-
-Note that, by default, sentences are demarcated by two spaces."
-    (interactive "p")
-    (if (use-region-p)
-        (transpose-sentences 0)
-      (transpose-sentences arg))
-    (fill-paragraph))
-
-  (defun prot/transpose-or-swap-words (arg)
-    "If region is active, swap the word at mark (region
-beginning) with the one at point (region end).
-
-Otherwise, and while inside a sentence, this behaves as the
-built-in `transpose-words', dragging forward the word behind the
-point.  The difference lies in its behaviour at the end of a
-line, where it will always transpose the word at point with the
-one behind it (effectively the last two words).
-
-This addresses two patterns of behaviour I dislike in the
-original command:
-
-1. When a line follows, `M-t' will transpose the last word of the
-line at point with the first word of the line below.
-
-2. While at the end of the line, `M-t' will not transpose the
-last two words, but will instead move point one word backward.
-To actually transpose the last two words, you need to invoke the
-command twice."
-    (interactive "p")
-    (if (use-region-p)
-        (transpose-words 0)
-      (if (eq (point) (point-at-eol))
-          (progn
-            (backward-word 1)
-            (transpose-words 1)
-            (forward-char 1))
-        (transpose-words arg))))
-
-  (defun prot/unfill-region-or-paragraph (&optional region)
-    "Join all lines in a region, if active, while respecting any
-empty lines (so multiple paragraphs are not joined, just
-unfilled).  If no region is active, operate on the paragraph.
-The idea is to produce the opposite effect of both
-`fill-paragraph' and `fill-region'."
-    (interactive)
-    (let ((fill-column most-positive-fixnum))
-      (if (use-region-p)
-          (fill-region (region-beginning) (region-end))
-        (fill-paragraph nil region))))
-
-  (defun prot/yank-replace-line-or-region ()
-    "Replace the line at point with the contents of the last
-stretch of killed text.  If the region is active, operate over it
-instead.  This command can then be followed by the standard
-`yank-pop' (default is bound to M-y)."
-    (interactive)
-    (if (use-region-p)
-        (progn
-          (delete-region (region-beginning) (region-end))
-          (yank))
-      (delete-region (point-at-bol) (point-at-eol))
-      (yank)))
-
-  :bind (("<C-M-backspace>" . backward-kill-sexp)
-         ("M-c" . capitalize-dwim)
-         ("M-l" . downcase-dwim)        ; "lower" case
-         ("M-u" . upcase-dwim)
-         ("<C-f2>" . contrib/rename-file-and-buffer)
-         ("C-S-w" . prot/copy-line)
-         ("M-=" . count-words)
-         ("M-\"" . prot/insert-double-quotes)
-         ("C-M-\"" . prot/insert-double-smart-quotes)
-         ("C-M-'" . prot/insert-single-smart-quotes)
-         ("M-`" . prot/insert-elisp-quotes)
-         ("C-s-k" . kill-this-buffer)
-         ("M-k" . prot/kill-line-backward)
-         ("C-S-n" . prot/multi-line-next)
-         ("C-S-p" . prot/multi-line-prev)
-         ("<C-return>" . prot/new-line-below)
-         ("<C-S-return>" . prot/new-line-above)
-         ("M-SPC" . cycle-spacing)
-         ("M-o" . delete-blank-lines)
-         ("C-t" . prot/transpose-chars)
-         ("C-x C-t" . prot/transpose-or-swap-lines)
-         ("C-S-t" . prot/transpose-or-swap-paragraphs)
-         ("C-x M-t" . prot/transpose-or-swap-sentences)
-         ("M-t" . prot/transpose-or-swap-words)
-         ("M-Q" . prot/unfill-region-or-paragraph)
-         ("C-S-y" . prot/yank-replace-line-or-region)))
-
-(use-package beginend
-  :ensure
-  :demand
-  :diminish beginend-global-mode
-  :config
-  (dolist (mode beginend-modes) (diminish (cdr mode)))
-  (beginend-global-mode 1))
-
 (use-package elfeed
   :ensure
+  :defer
   :config
   (setq elfeed-use-curl t)
   (setq elfeed-curl-max-connections 10)
   (setq elfeed-db-directory "~/.emacs.d/elfeed/")
   (setq elfeed-enclosure-default-dir "~/Downloads/")
   (setq elfeed-search-filter "@4-months-ago +unread")
-  (setq elfeed-sort-order 'descending)
+  (setq elfeed-sort-order 'ascending)
   (setq elfeed-search-clipboard-type 'CLIPBOARD)
   (setq elfeed-search-title-max-width 100)
   (setq elfeed-search-title-min-width 30)
@@ -2655,7 +3174,7 @@ With \\[universal-argument] browse the entry in `eww' using the
       (with-current-buffer (get-buffer "*elfeed-search*")
         (unless (one-window-p)              ; experimental
           (delete-other-windows win))
-        (split-window win (/ (frame-height) 3) 'below)
+        (split-window win (/ (frame-height) 5) 'below)
         (other-window 1)
         (if arg
             (progn
@@ -2711,8 +3230,8 @@ current monitor's width."
            (enclosure (elt (car (elfeed-entry-enclosures entry)) 0)) ; fragile?
            (audio "--no-video")
            ;; Here the display width checks if I am on the laptop
-           (height (if (<= (display-pixel-width ) 1366) 720 1080))
-           (video (format "--ytdl-format=[height<=?%s]" height))
+           (height (if (<= (display-pixel-width ) 1600) 720 1080))
+           (video (format "--ytdl-format=bestvideo[height<=?%s]+bestaudio/best" height))
            (buf (pop-to-buffer "*elfeed-mpv-output*")))
       (run-hooks 'prot/elfeed-mpv-hook)
       (if enclosure              ; make this its own parametrised function
@@ -2855,7 +3374,114 @@ The idea is to bind this to a prefix key, so that its defined
 keys follow the pattern of <PREFIX> <KEY>.")
   :bind-keymap ("C-c w" . prot/eww-global-map))
 
-;; ............................................ Emacs server and desktop
+;; ........................................................... History and state
 
 (use-package server
   :hook (after-init-hook . server-start))
+
+(use-package desktop
+  :config
+  (setq desktop-auto-save-timeout 300)
+  (setq desktop-dirname "~/.emacs.d/")
+  (setq desktop-base-file-name "desktop")
+  (setq desktop-files-not-to-save nil)
+  (setq desktop-globals-to-clear nil)
+  (setq desktop-load-locked-desktop t)
+  (setq desktop-missing-file-warning t)
+  (setq desktop-restore-eager 0)
+  (setq desktop-restore-frames nil)
+  (setq desktop-save 'ask-if-new)
+  (desktop-save-mode 1))
+
+(use-package emacs
+  :init
+  (setq initial-buffer-choice t)
+  (setq inhibit-startup-echo-area-message "david") ; read the docstring
+  (setq inhibit-startup-screen t)
+  (setq inhibit-startup-buffer-menu t))
+
+;; ............................................................. Recentf
+
+(use-package recentf
+  :config
+  (setq recentf-save-file "~/.emacs.d/recentf")
+  (setq recentf-max-saved-items 200)
+  (setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/doas:" "/sudo:"))
+
+  (defun prot/recentf-keep-predicate (file)
+    "Additional conditions for saving in `recentf-list'.
+Add this function to `recentf-keep'.
+
+NEEDS REVIEW."
+    (cond
+     ((file-directory-p file) (file-readable-p file))))
+  (add-to-list 'recentf-keep 'prot/recentf-keep-default-predicate)
+
+  (defun prot/recentf (&optional input)
+    "Select item from `recentf-list' using completion.
+Use INPUT as an initial, yet editable, filter.
+
+The user's $HOME directory is abbreviated as a tilde."
+    (interactive)
+    (let* ((files (mapcar 'abbreviate-file-name recentf-list))
+           (f (icomplete-vertical-do ()
+                (completing-read "Open recentf entry: " files nil t
+                                 (when input input)))))
+      (find-file f)))
+
+  (defun prot/recentf-dirs (&optional arg)
+    "Select directory from `recentf-list' using completion.
+With \\[universal-argument] present the list in a `dired' buffer.
+This buffer is meant to be reused by subsequent invocations of
+this command (otherwise you need to remove the `when' expression.
+
+Without \\[universal-argument], the user's $HOME directory is
+abbreviated as a tilde.  In the Dired buffer paths are absolute."
+    (interactive "P")
+    (let* ((list (mapcar 'abbreviate-file-name recentf-list))
+           (dirs (delete-dups
+                  (mapcar (lambda (file)
+                            (if (file-directory-p file)
+                                (directory-file-name file)
+                              (substring (file-name-directory file) 0 -1)))
+                          list)))
+           (buf "*Recentf Dired*")
+           (default-directory "~"))
+      (when (get-buffer buf)
+        (kill-buffer buf))
+      (if arg
+          (dired (cons (generate-new-buffer-name buf) dirs))
+        (icomplete-vertical-do ()
+          (find-file
+           (completing-read "Recent dirs: " dirs nil t))))))
+  
+  :hook (after-init-hook . recentf-mode)
+  :bind (("s-r" . prot/recentf)
+         ("C-x C-r" . prot/recentf-dirs)))
+
+(use-package savehist
+  :config
+  (setq savehist-file "~/.emacs.d/savehist")
+  (setq history-length 1000)
+  (setq history-delete-duplicates t)
+  (setq savehist-save-minibuffer-history t)
+  :hook (after-init-hook . savehist-mode))
+
+(use-package saveplace
+  :config
+  (setq save-place-file "~/.emacs.d/saveplace")
+  (setq save-place-forget-unreadable-files t)
+  (save-place-mode 1))
+
+;; Backups
+
+(use-package emacs
+  :config
+  (setq backup-directory-alist
+        '(("." . "~/.emacs.d/backup/")))
+  (setq backup-by-copying t)
+  (setq version-control t)
+  (setq delete-old-versions t)
+  (setq kept-new-versions 6)
+  (setq kept-old-versions 2)
+  (setq create-lockfiles nil))
