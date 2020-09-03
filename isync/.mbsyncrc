@@ -22,42 +22,42 @@ Channel migadu-inbox
 Master :migadu-remote:INBOX
 Slave :migadu-local:inbox
 
-Channel migadu-drafts
-Master :migadu-remote:Drafts
-Slave :migadu-local:drafts
-
 Channel migadu-sent
 Master :migadu-remote:Sent
 Slave :migadu-local:sent
 
-Channel migadu-archive
-Master :migadu-remote:Archive
-Slave :migadu-local:archive
+Channel migadu-drafts
+Master :migadu-remote:Drafts
+Slave :migadu-local:drafts
+
+Channel migadu-spam
+Master :migadu-remote:Junk
+Slave :migadu-local:spam
 
 Channel migadu-trash
 Master :migadu-remote:Trash
 Slave :migadu-local:trash
 
-Channel migadu-spam
-Master :migadu-remote:Junk
-Slave :migadu-local:spam
+Channel migadu-archive
+Master :migadu-remote:Archive
+Slave :migadu-local:archive
 
 Channel migadu-catchall
 Master :migadu-remote:
 Slave  :migadu-local:
 Pattern *
 Patterns !INBOX   !inbox
-Patterns !Archive !archive
-Patterns !Drafts  !drafts
-Patterns !Spam    !spam
 Patterns !Sent    !sent
+Patterns !Drafts  !drafts
+Patterns !Junk    !spam
 Patterns !Trash   !trash
+Patterns !Archive !archive
 
 Group migadu
 Channel migadu-inbox
-Channel migadu-drafts
 Channel migadu-sent
-Channel migadu-archive
-Channel migadu-trash
+Channel migadu-drafts
 Channel migadu-spam
+Channel migadu-trash
+Channel migadu-archive
 Channel migadu-catchall
