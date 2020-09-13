@@ -60,8 +60,8 @@ xterm*highlightTextColor: XtDefaultBackground
 xterm*faceName: Hack
 xterm*renderFont: true
 xterm*boldColors: false
-xterm*faceSize:  8.5
-xterm*faceSize1: 8
+xterm*faceSize:  9
+xterm*faceSize1: 11
 xterm*faceSize2: 12
 xterm*faceSize3: 15
 xterm*faceSize4: 18.25
