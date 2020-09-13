@@ -3,9 +3,11 @@
 /bin/bin/shfmt
 /bspwm/.config/bspwm/bspwm_colours
 /colours/.wallpaper.jpg
+/emacs/.emacs.d/.emacs.desktop.lock
 /emacs/.emacs.d/.org-id-locations
 /emacs/.emacs.d/auto-save-list
 /emacs/.emacs.d/bookmarks
+/emacs/.emacs.d/desktop
 /emacs/.emacs.d/diary
 /emacs/.emacs.d/elfeed
 /emacs/.emacs.d/elpa

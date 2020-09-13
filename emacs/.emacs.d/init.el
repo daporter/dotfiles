@@ -1,14 +1,19 @@
 ;; Emacs Configuration
 ;; =============================================================================
 
-;; ................................................................. use-package
+;;; Base settings
+
+;;;; Always  refresh package cache
 
 (require 'package)
-(setq package-enable-at-startup nil)
+
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 
-(unless package--initialized (package-initialize))
+;; Initialise the packages, avoiding a re-initialisation.
+(unless (bound-and-true-p package--initialized)
+  (setq package-enable-at-startup nil)
+  (package-initialize))
 
 ;; Make sure `use-package' is available.
 (unless (package-installed-p 'use-package)
@@ -22,6 +27,7 @@
   (setq use-package-always-demand nil)
   (setq use-package-expand-minimally nil)
   (setq use-package-enable-imenu-support t)
+  (setq use-package-compute-statistics t)
   ;; The following is VERY IMPORTANT.  Write hooks using their real name
   ;; instead of a shorter version: after-init ==> `after-init-hook'.
   ;;
@@ -32,33 +38,82 @@
 (eval-when-compile
   (require 'use-package))
 
-;; ............................................................... Base settings
+;;;; Disable GUI components
+
+(use-package emacs
+  :init
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  :config
+  (setq use-file-dialog nil)
+  (setq use-dialog-box t)       ; only for mouse events
+  (setq inhibit-splash-screen t)
+  :bind (("C-z" . nil)
+         ("C-x C-z" . nil)
+         ("C-h h" . nil)))
+
+;;;; Set selection timeout
 
 ;; On OpenBSD, Emacs sometimes freezes when interacting with the
-;; secondary selection.  This happens often when invoking
-;; 'org-capture'.  The workaround is to set a short timeout for
-;; accessing the secondary selection.  More info here:
+;; secondary selection.  This happens often when invoking 'org-capture'.
+;; The workaround is to set a short timeout for accessing the secondary
+;; selection.  More info here:
 ;; https://omecha.info/blog/org-capture-freezes-emacs.html
 (use-package emacs
   :config
   (setq x-selection-timeout 10))
 
-;; Modeline "lighters"
+;;;; Remove modeline "lighters"
+
 (use-package diminish
   :ensure
   :after use-package)
 
-;; Store customisation settings in a separate file
+;;;; Put customisation settings in a "custom.el"
+
 (use-package cus-edit
   :config
-  (setq custom-file "~/.emacs.d/custom.el")
+  (defvar prot/custom-file "~/.emacs.d/custom.el")
 
-  (unless (file-exists-p custom-file)
-    (write-region "" nil custom-file))
+  (setq custom-file prot/custom-file)
 
-  (load custom-file))
+  (defun prot/cus-edit ()
+    (let ((file prot/custom-file))
+      (unless (file-exists-p file)
+        (make-empty-file file))
+      (load-file file)))
+  :hook (after-init-hook . prot/cus-edit))
 
-;; Base typeface configurations
+;;;; Modus themes
+
+(use-package modus-operandi-theme
+  :ensure
+  :init
+  (setq modus-operandi-theme-slanted-constructs t
+        modus-operandi-theme-bold-constructs t
+        modus-operandi-theme-visible-fringes t
+        modus-operandi-theme-variable-pitch-headings t
+        modus-operandi-theme-distinct-org-blocks t
+        modus-operandi-theme-rainbow-headings t
+        modus-operandi-theme-scale-headings t)
+  :config
+  (load-theme 'modus-operandi t))
+
+(use-package modus-vivendi-theme
+  :ensure
+  :init
+  (setq modus-vivendi-theme-slanted-constructs t
+        modus-vivendi-theme-bold-constructs t
+        modus-vivendi-theme-visible-fringes t
+        modus-vivendi-theme-variable-pitch-headings t
+        modus-vivendi-theme-distinct-org-blocks t
+        modus-vivendi-theme-rainbow-headings t
+        modus-vivendi-theme-scale-headings t))
+
+;;;; Base typeface configurations
+
+;;;;; Primary and complementary font settings
 
 (use-package emacs
   :defines (prot/font-set-fonts-hook
@@ -77,39 +132,24 @@
   (setq x-underline-at-descent-line t)
   (setq underline-minimum-offset 1)
 
-  (defconst prot/font-fontconfig-params
-    "embeddedbitmap=false:autohint=false:hintstyle=hintslight"
-    "Additional parameters for the given font family.
- These are specific to the fontconfig backend for GNU/Linux systems.")
-  
   (defvar prot/font-switch-fonts-hook nil
     "Hook that is called after setting fonts.
 See, for example, `prot/font-set-fonts'.")
 
   (defconst prot/font-sizes-families-alist
-    ;; '(("laptop" . (8.5 "Hack" "Noto Serif" 1))
-    ;;   ("desktop" . (10 "Hack" "Noto Serif" 1)))
-    '(("laptop" . (8.5 "Hack" "FiraGO" 1.5))
-      ("desktop" . (10 "Hack" "FiraGO" 1.5)))
+    '(("laptop" . (100 "Hack" "FiraGO"))
+      ("desktop" . (100 "Hack" "FiraGO")))
     "Alist of desired typefaces and their point sizes.
 
 Each association consists of a display type mapped to a point
 size, followed by monospaced and proportionately spaced font
-names, and a possible increase in desired size between the latter
-two to account for their innate differences in proportions.
+names.  The monospaced typeface is meant to be applied to the
+`default' and `fixed-pitch' faces.  The proportionately spaced
+font is intended for the `variable-pitch' face.")
 
-The monospaced typeface is meant to be applied to the `default'
-and `fixed-pitch' faces.  The proportionately space font is
-intended for the `variable-pitch' face.")
-
-  (defun prot/font-set-face-attribute (face family size &optional params)
-    "Set FACE font to FAMILY at SIZE with optional PARAMS."
-    (let ((params (if params
-                      params
-                    prot/font-fontconfig-params)))
-      (set-face-attribute
-       `,face nil :font
-       (format "%s-%s:%s" family (number-to-string size) params))))
+  (defun prot/font-set-face-attribute (face family)
+    "Set FACE font to FAMILY."
+    (set-face-attribute `,face nil :family (format "%s" family)))
 
   (defun prot/font-set-fonts (&optional points font-mono font-var)
     "Set default font size using presets.
@@ -122,30 +162,27 @@ since the `variable-pitch' it applies to is not supposed to be
 spacing-sensitive.  Both families must be represented as a string
 holding the family's name."
     (interactive)
-    (let* ((data prot/font-sizes-families-alist)
-           (displays (mapcar #'car data))
-           (choice (if points
-                       points
-                     (completing-read "Pick display size: " displays nil t)))
-           (size (if points
-                     points
-                   (nth 1 (assoc `,choice data))))
-           (mono (if font-mono
-                     font-mono
-                   (if (member choice displays)
-                       (nth 2 (assoc `,choice data))
-                     nil)))
-           (var (if font-var
-                    font-var
-                  (if (member choice displays)
-                      (nth 3 (assoc `,choice data))
-                    nil)))
-           (adjust (nth 4 (assoc `,choice data))))
-      (when window-system
-        (dolist (face '(default fixed-pitch))
-          (prot/font-set-face-attribute `,face mono size))
-        (prot/font-set-face-attribute 'variable-pitch var (+ size adjust))))
-    (run-hooks 'prot/font-set-fonts-hook))
+    (if window-system
+        (let* ((data prot/font-sizes-families-alist)
+               (displays (mapcar #'car data))
+               (choice (or points
+                           (completing-read "Pick display size: " displays nil t)))
+               (size (or points
+                         (nth 1 (assoc `,choice data))))
+               (mono (or font-mono
+                         (if (member choice displays)
+                             (nth 2 (assoc `,choice data))
+                           nil)))
+               (var (or font-var
+                        (if (member choice displays)
+                            (nth 3 (assoc `,choice data))
+                          nil)))
+               (adjust (nth 4 (assoc `,choice data))))
+          (set-face-attribute 'default nil :family mono :height size)
+          (prot/font-set-face-attribute 'fixed-pitch mono)
+          (prot/font-set-face-attribute 'variable-pitch var)
+          (run-hooks 'prot/font-set-fonts-hook))
+      (user-error "Not running a graphical Emacs.  Cannot set fonts.")))
 
   (defvar prot/font-monospaced-fonts-list
     '("Hack" "Iosevka Slab" "Source Code Pro"
@@ -156,23 +193,24 @@ See `prot/font-set-font-size-family' for how this is used
 code-wise.")
 
   (defun prot/font-set-font-size-family ()
-    "set point size and main typeface.
-this command is intended for testing various font families at
+    "Set point size and main typeface.
+This command is intended for testing various font families at
 some common point sizes.
 
-see `prot/font-set-fonts' for the function i would normally use
+See `prot/font-set-fonts' for the function I would normally use
 or `prot/font-fonts-dwim' which just wraps this one with that."
     (interactive)
-    (let* ((fonts prot/font-monospaced-fonts-list)
-           (font (completing-read "select main font: " fonts nil t))
-           (nums (list 10 11 12 13))
-           (sizes (mapcar 'number-to-string nums))
-           (size (completing-read "select or insert number: " sizes nil))
-           (var (face-attribute 'variable-pitch :family)))
-      (dolist (face '(default fixed-pitch))
-        (prot/font-set-face-attribute face font (string-to-number size)))
-      (prot/font-set-face-attribute 'variable-pitch var (string-to-number size))
-      (run-hooks 'prot/font-set-fonts-hook)))
+    (if window-system
+        (let* ((fonts prot/font-monospaced-fonts-list)
+               (font (completing-read "Select main font: " fonts nil t))
+               (nums (list 100 110 120 130))
+               (sizes (mapcar 'number-to-string nums))
+               (size (completing-read "Select or insert number: " sizes nil))
+               (var (face-attribute 'variable-pitch :family)))
+          (set-face-attribute 'default nil :family font :height (string-to-number size))
+          (prot/font-set-face-attribute 'variable-pitch var)
+          (run-hooks 'prot/font-set-fonts-hook))
+      (user-error "Not running a graphical Emacs.  Cannot set fonts.")))
 
   (defun prot/font-fonts-dwim (&optional arg)
     "Set fonts interactively.
@@ -208,9 +246,6 @@ respectively."
        ,doc
        (let* ((data ,alist)
               (fonts (mapcar #'car data))
-              ;; REVIEW This should be adjusted to account for the
-              ;; possibility of a distinct font family for the `bold'
-              ;; face.
               (font (face-attribute 'default :family))
               (x (cdr (assoc font data))))
          (if (member font fonts)
@@ -240,25 +275,29 @@ respectively."
     "Use font settings based on screen size.
 Meant to be used at some early initialisation stage, such as with
 `after-init-hook'."
-    (let* ((display (if (<= (display-pixel-width) 1600)
-                        "laptop"
-                      "desktop"))
-           (data prot/font-sizes-families-alist)
-           (size (cadr (assoc `,display data)))
-           (mono (nth 2 (assoc `,display data)))
-           (var (nth 3 (assoc `,display data)))
-           (adjust (nth 4 (assoc `,display data))))
-      (dolist (face '(default fixed-pitch))
-        (prot/font-set-face-attribute face mono size))
-      (prot/font-set-face-attribute 'variable-pitch var (+ size adjust))
+    (when window-system
+      (let* ((display (if (<= (display-pixel-width) 1600)
+                          "laptop"
+                        "desktop"))
+             (data prot/font-sizes-families-alist)
+             (size (cadr (assoc `,display data)))
+             (mono (nth 2 (assoc `,display data)))
+             (var (nth 3 (assoc `,display data))))
+        (set-face-attribute 'default nil :family mono :height size)
+        (prot/font-set-face-attribute 'fixed-pitch mono)
+        (prot/font-set-face-attribute 'variable-pitch var))
       (run-hooks 'prot/font-switch-fonts-hook)))
 
   :hook ((after-init-hook . prot/font-fonts-per-monitor)
          (prot/font-set-fonts-hook . prot/font-line-spacing)
-         (prot/font-set-fonts-hook . prot/font-bold-face))
+         (prot/font-set-fonts-hook . prot/font-bold-face)
+         ;; See theme section for this hook
+         (prot/modus-theme-after-load-hook . prot/font-bold-face))
   ;; Awkward key because I do not need it very often.  Maybe once a day.
   ;; The "C-c f" is used elsewhere.
   :bind ("C-c F" . prot/font-fonts-dwim))
+
+;;;;; Mode for proportional fonts
 
 (use-package face-remap
   :diminish buffer-face-mode            ; the actual mode
@@ -273,13 +312,17 @@ Meant to be used at some early initialisation stage, such as with
           (variable-pitch-mode 1))
       (variable-pitch-mode -1))))
 
-;; ................................................ Completion framework
+;;; Selection candidates and search methods
 
-;; Minibuffer essentials and Icomplete
+;;;; Completion framework and extras
+
+;;;;; Tools for completion candidate listing
+
+;;;;;; Minibuffer configurations and extras
 
 (use-package minibuffer
   :config
-
+  ;;; General minibuffer configurations
   ;; Super-powerful completion style for out-of-order groups of matches
   ;; using a comprehensive set of matching styles.
   (use-package orderless
@@ -305,8 +348,8 @@ Meant to be used at some early initialisation stage, such as with
           '(prot/orderless-literal-dispatcher
             prot/orderless-initialism-dispatcher))
     :bind (:map minibuffer-local-completion-map
-                ("SPC" . nil)         ; space should never complete
-                ("?" . nil)))         ; valid regexp character
+                ("SPC" . nil)))       ; Space should never complete: use
+                                        ; it for `orderless' groups.
 
   (setq completion-styles
         '(orderless partial-completion))
@@ -328,6 +371,7 @@ Meant to be used at some early initialisation stage, such as with
   (minibuffer-depth-indicate-mode 1)
   (minibuffer-electric-default-mode 1)
 
+  ;;; General minibuffer functions
   (defun prot/focus-minibuffer ()
     "Focus the active minibuffer.
 
@@ -361,6 +405,56 @@ succession."
                            completions)))
              (select-window completions nil)))))
 
+  ;;; Completions' buffer actions
+  ;; NOTE In practice I only use those while inspecting a long list
+  ;; produced by C-h {f,o,v}.  To pop the Completions buffer, use
+  ;; `minibuffer-completion-help', by default bound to ? from inside the
+  ;; minibuffer.
+
+  (defun prot/completions-kill-save-symbol ()
+    "Add symbol-at-point to the kill ring.
+
+Intended for use in the \\*Completions\\* buffer.  Bind this to a
+key in `completion-list-mode-map'."
+    (interactive)
+    (kill-new (thing-at-point 'symbol)))
+
+  (defmacro prot/completions-buffer-act (name doc &rest body)
+    `(defun ,name ()
+       ,doc
+       (interactive)
+       (let ((completions-window (get-buffer-window "*Completions*"))
+             (completions-buffer (get-buffer "*Completions*"))
+             (symbol (thing-at-point 'symbol)))
+         (if (window-live-p completions-window)
+             (with-current-buffer completions-buffer
+               ,@body)
+           (user-error "No live window with Completions")))))
+
+  (prot/completions-buffer-act
+   prot/completions-kill-symbol-at-point
+   "Add \"Completions\" buffer symbol-at-point to the kill ring."
+   (kill-new `,symbol)
+   (message "Copied %s to kill-ring"
+            (propertize `,symbol 'face 'success)))
+
+  (prot/completions-buffer-act
+   prot/completions-insert-symbol-at-point
+   "Add \"Completions\" buffer symbol-at-point to active window."
+   (let ((window (window-buffer (get-mru-window))))
+     (with-current-buffer window
+       (insert `,symbol)
+       (message "Inserted %s"
+                (propertize `,symbol 'face 'success)))))
+
+  (prot/completions-buffer-act
+   prot/completions-insert-symbol-at-point-exit
+   "Like `prot/completions-insert-symbol-at-point' plus exit."
+   (prot/completions-insert-symbol-at-point)
+   (top-level))
+
+  ;;; Miscellaneous functions and key bindings
+
   ;; Technically, this is not specific to the minibuffer, but I define
   ;; it here so that you can see how it is also used from inside the
   ;; "Completions" buffer
@@ -381,41 +475,570 @@ instead."
               (select-window help)
             (select-window (get-mru-window)))))))
 
-  (defun prot/completions-kill-save-symbol ()
-    "Add symbol-at-point to the kill ring.
-
-Intended for use in the \\*Completions\\* buffer.  Bind this to a
-key in `completion-list-mode-map'."
-    (interactive)
-    (kill-new (thing-at-point 'symbol)))
-
-  ;; Defines, among others, aliases for common actions to Super-KEY.
-  ;; Normally these should go in individual package declarations, but
-  ;; their grouping here makes things easier to understand.
+  ;; Defines, among others, aliases for common minibuffer commands to
+  ;; Super-KEY.  Normally these should go in individual package
+  ;; declarations, but their grouping here makes things easier to
+  ;; understand.  Besides, they are related to the minibuffer.
   :bind (("s-f" . find-file)
          ("s-F" . find-file-other-window)
          ("s-d" . dired)
          ("s-D" . dired-other-window)
          ("s-b" . switch-to-buffer)
          ("s-B" . switch-to-buffer-other-window)
-         ("C-s-h" . prot/describe-symbol-at-point)
-         ("C-s-H" . (lambda ()
-                      (interactive)
-                      (prot/describe-symbol-at-point '(4))))
          ("s-v" . prot/focus-minibuffer-or-completions)
+         ("s-h" . prot/describe-symbol-at-point)
+         ("s-H" . (lambda ()
+                    (interactive)
+                    (prot/describe-symbol-at-point '(4))))
          :map minibuffer-local-completion-map
-         ("<return>" . minibuffer-force-complete-and-exit)
-         ("C-j" . exit-minibuffer)
+         ("<return>" . minibuffer-force-complete-and-exit) ; exit with completion
+         ("C-j" . exit-minibuffer)      ; force input unconditionally
          :map completion-list-mode-map
          ("h" . prot/describe-symbol-at-point)
-         ("w" . prot/completions-kill-save-symbol)
+         ("w" . prot/completions-kill-symbol-at-point)
+         ("i" . prot/completions-insert-symbol-at-point)
+         ("j" . prot/completions-insert-symbol-at-point-exit)
          ("n" . next-line)
          ("p" . previous-line)
          ("f" . next-completion)
          ("b" . previous-completion)
          ("M-v" . prot/focus-minibuffer)))
 
-;; Custom movements and motions
+;;;;;; Icomplete configurations and extras
+
+(use-package icomplete
+  :demand
+  :after minibuffer                     ; Read that section as well
+  :config
+  (setq icomplete-delay-completions-threshold 100)
+  (setq icomplete-max-delay-chars 2)
+  (setq icomplete-compute-delay 0.2)
+  (setq icomplete-show-matches-on-no-input t)
+  (setq icomplete-hide-common-prefix nil)
+  (setq icomplete-prospects-height 1)
+  (setq icomplete-separator (propertize " · " 'face 'shadow))
+  ;; (setq icomplete-separator " │ ")
+  ;; (setq icomplete-separator " ┆ ")
+  ;; (setq icomplete-separator " ¦ ")
+  ;; (setq icomplete-separator " ┆ ")
+  (setq icomplete-with-completion-tables t)
+  (setq icomplete-tidy-shadowed-file-names t)
+
+  (when (boundp 'fido-mode)
+    (fido-mode -1))                        ; Emacs 27.1
+  (icomplete-mode 1)
+
+  (defun prot/icomplete-minibuffer-truncate ()
+    "Truncate minibuffer lines in `icomplete-mode'.
+This should only affect the horizontal layout and is meant to
+enforce `icomplete-prospects-height' being set to 1, which is
+what I always want.
+
+Hook it to `icomplete-minibuffer-setup-hook'."
+    (when (and (minibufferp)
+               (bound-and-true-p icomplete-mode))
+      (setq truncate-lines t)))
+
+  ;;; Minibuffer actions
+  ;; For a fully fledged package that covers this niche and offers lots
+  ;; of added functionality, check Omar Antolín Camarena's "embark"
+  ;; library: https://github.com/oantolin/embark
+  ;;
+  ;; My idea here is to implement the three actions I had always relied
+  ;; on, because they are the only ones I ever use.
+  (defmacro prot/minibuffer-completion-act (name doc &rest body)
+    `(defun ,name ()
+       (interactive)
+       (let ((candidate (car completion-all-sorted-completions)))
+         (when (and (minibufferp)
+                    (bound-and-true-p icomplete-mode))
+           ,@body))))
+
+  (prot/minibuffer-completion-act
+   prot/minibuffer-kill-completion
+   "Place minibuffer candidate to the top of the `kill-ring'."
+   (kill-new `,candidate)
+   (message "Copied %s to kill-ring" (propertize `,candidate 'face 'success)))
+
+  (prot/minibuffer-completion-act
+   prot/minibuffer-insert-completion
+   "Insert minibuffer candidate in last active window."
+   (with-minibuffer-selected-window (insert `,candidate)))
+
+  (prot/minibuffer-completion-act
+   prot/minibuffer-insert-completion-exit
+   "Like `prot/minibuffer-insert-completion' but exit minibuffer."
+   (prot/minibuffer-insert-completion)
+   (top-level))
+
+  (define-prefix-command 'prot/minibuffer-completion-map)
+
+  (define-key prot/minibuffer-completion-map
+    (kbd "w") 'prot/minibuffer-kill-completion)
+  (define-key prot/minibuffer-completion-map
+    (kbd "i") 'prot/minibuffer-insert-completion)
+  (define-key prot/minibuffer-completion-map
+    (kbd "j") 'prot/minibuffer-insert-completion-exit)
+
+  (define-key minibuffer-local-completion-map
+    (kbd "M-o") prot/minibuffer-completion-map)
+
+  ;; Note that the the syntax for `use-package' hooks is controlled by
+  ;; the `use-package-hook-name-suffix' variable.  The "-hook" suffix is
+  ;; not an error of mine.
+  :hook (icomplete-minibuffer-setup-hook . prot/icomplete-minibuffer-truncate)
+  :bind (:map icomplete-minibuffer-map
+              ("<tab>" . icomplete-force-complete)
+              ("<return>" . icomplete-force-complete-and-exit) ; exit with completion
+              ("C-j" . exit-minibuffer) ; force input unconditionally
+              ("C-n" . icomplete-forward-completions)
+              ("<right>" . icomplete-forward-completions)
+              ("<down>" . icomplete-forward-completions)
+              ("C-p" . icomplete-backward-completions)
+              ("<left>" . icomplete-backward-completions)
+              ("<up>" . icomplete-backward-completions)
+              ;; The following command is from Emacs 27.1
+              ("<C-backspace>" . icomplete-fido-backward-updir)))
+
+;;;;;;; Icomplete vertical mode
+
+(use-package icomplete-vertical
+  :ensure
+  :demand
+  :after (minibuffer icomplete)
+  :config
+  (setq icomplete-vertical-prospects-height (/ (frame-height) 6))
+  (icomplete-vertical-mode -1)
+
+  (defun prot/kill-ring-yank-complete ()
+    "Insert the selected `kill-ring' item directly at point.
+When region is active, `delete-region'.
+
+Sorting of the `kill-ring' is disabled.  Items appear as they
+normally would when calling `yank' followed by `yank-pop'."
+    (interactive)
+    (let ((kills                    ; do not sort items
+           (lambda (string pred action)
+             (if (eq action 'metadata)
+                 '(metadata (display-sort-function . identity)
+                            (cycle-sort-function . identity))
+               (complete-with-action
+                action kill-ring string pred)))))
+      (icomplete-vertical-do
+          (:separator 'dotted-line :height (/ (frame-height) 4))
+        (when (use-region-p)
+          (delete-region (region-beginning) (region-end)))
+        (insert
+         (completing-read "Yank from kill ring: " kills nil t)))))
+
+  :bind (("s-y" . prot/kill-ring-yank-complete)
+         :map icomplete-minibuffer-map
+         ("C-v" . icomplete-vertical-toggle)))
+
+;;;;; Imenu (dynamic completion-based buffer navigation)
+
+(use-package imenu
+  :config
+  (setq imenu-use-markers t)
+  (setq imenu-auto-rescan t)
+  (setq imenu-auto-rescan-maxout 600000)
+  (setq imenu-max-item-length 100)
+  (setq imenu-use-popup-menu nil)
+  (setq imenu-eager-completion-buffer t)
+  (setq imenu-space-replacement " ")
+  (setq imenu-level-separator "/")
+
+  (defun prot/imenu-vertical ()
+    "Use a vertical Icomplete layout for `imenu'.
+Also configure the value of `orderless-matching-styles' to avoid
+aggressive fuzzy-style matching for this particular command."
+    (interactive)
+    (let ((orderless-matching-styles    ; make sure to check `orderless'
+           '(orderless-literal
+             orderless-regexp
+             orderless-prefixes)))
+      (icomplete-vertical-do (:height (/ (frame-height) 4))
+        (call-interactively 'imenu))))
+
+  (defun prot/imenu-recenter-pulse ()
+    "Recent `imenu' position at the top with subtle feedback.
+Add this to `imenu-after-jump-hook'."
+    (let ((pulse-delay .05))
+      (recenter 0)
+      (prot/pulse-line)))
+
+  (defun prot/imenu-show-entry ()
+    "Reveal index at point after successful `imenu' execution.
+To be used with `imenu-after-jump-hook'."
+    (cond
+     ((and (eq major-mode 'org-mode)
+           (org-at-heading-p))
+      (org-show-entry)
+      (org-reveal t))
+     ((when prot/outline-minor-mode
+        (outline-show-entry)))))
+
+  :hook ((imenu-after-jump-hook . prot/imenu-recenter-pulse)
+         (imenu-after-jump-hook . prot/imenu-show-entry))
+  :bind ("C-." . prot/imenu-vertical))
+
+
+;;;;;; Imenu-list (dedicated sidebar)
+
+(use-package imenu-list
+  :ensure
+  :after imenu
+  :config
+  (defun prot/imenu-list-dwim (&optional arg)
+    "Convenience wrapper for `imenu-list'.
+Move between the current buffer and a dedicated window with the
+contents of `imenu'.
+
+The dedicated window is created if it does not exist, while it is
+updated once it is focused again through this command.
+
+With \\[universal-argument] toggle the display of the window."
+    (interactive "P")
+    (if arg
+        (imenu-list-smart-toggle)
+      (with-current-buffer
+          (if (eq major-mode 'imenu-list-major-mode)
+              (pop-to-buffer (other-buffer (current-buffer) t))
+            (imenu-list)))))
+
+  :bind ("C-," . prot/imenu-list-dwim))
+
+;;;;;; Flimenu (flat imenu index)
+
+(use-package flimenu
+  :ensure
+  :after imenu
+  :config
+  (flimenu-global-mode 1))
+
+;;;;; Generic completion for projects and directory trees
+
+(use-package project
+  :config
+  (defun prot/find-file-vc-or-dir (&optional arg)
+    "Find file by name that belongs to the current project or dir.
+With \\[universal-argument] match files by contents.  This
+requires the command-line executable called 'rg' or 'ripgrep'."
+    (interactive "P")
+    (let* ((default-directory (file-name-directory
+                               (or (locate-dominating-file "." ".git" )
+                                   default-directory))))
+      (if arg
+          (let* ((regexp (read-regexp
+                          (concat "File contents matching REGEXP in "
+                                  (propertize default-directory 'face 'bold)
+                                  ": ")))
+                 (results (process-lines "rg" "-l" "--hidden" "-m" "1" "-M" "120" regexp)))
+            (find-file
+             (icomplete-vertical-do ()
+               (completing-read (concat
+                                 "Files with contents matching "
+                                 (propertize regexp 'face 'success)
+                                 (format " (%s)" (length results))
+                                 ": ")
+                                results nil t))))
+        (let* ((filenames-all (directory-files-recursively default-directory ".*" nil t))
+               (filenames (cl-remove-if (lambda (x)
+                                          (string-match-p "\\.git" x))
+                                        filenames-all)))
+          (icomplete-vertical-do ()
+            (find-file
+             (completing-read "Find file recursively: " filenames nil t)))))))
+
+  (defun prot/find-project (&optional arg)
+    "Switch to sub-directory at the specified locations.
+With \\[universal-argument] produce a `dired' buffer instead with
+all the possible candidates."
+    (interactive "P")
+    (let* ((dirs (list "~/Git/Projects/" "~/.emacs.d/prot-dev/"))
+           (dotless directory-files-no-dot-files-regexp)
+           (cands (mapcan (lambda (d)
+                            (directory-files d t dotless))
+                          dirs))
+           (projects (mapcar 'abbreviate-file-name cands))
+           (buf "*Projects Dired*"))
+      (if arg
+          (dired (cons (generate-new-buffer-name buf) projects))
+        (icomplete-vertical-do ()
+          (dired
+           (completing-read "Find project: " projects nil t))))))
+
+  :bind (("M-s p" . prot/find-project)
+         ("M-s f" . prot/find-file-vc-or-dir)
+         ("M-s l" . find-library)))
+
+;;;;; In-buffer completions
+
+(use-package emacs
+  :config
+  (defun contrib/completing-read-in-region (start end collection &optional predicate)
+    "Prompt for completion of region in the minibuffer if non-unique.
+Use as a value for `completion-in-region-function'."
+    (if (and (minibufferp) (not (string= (minibuffer-prompt) "Eval: ")))
+        (completion--in-region start end collection predicate)
+      (let* ((initial (buffer-substring-no-properties start end))
+             (limit (car (completion-boundaries initial collection predicate "")))
+             (all (completion-all-completions initial collection predicate
+                                              (length initial)))
+             (completion (cond
+                          ((atom all) nil)
+                          ((and (consp all) (atom (cdr all)))
+                           (concat (substring initial 0 limit) (car all)))
+                          (t (completing-read
+                              "Completion: " collection predicate t initial)))))
+        (if (null completion)
+            (progn (message "No completion") nil)
+          (delete-region start end)
+          (insert completion)
+          t))))
+
+  (setq completion-in-region-function #'contrib/completing-read-in-region)
+  :bind (:map minibuffer-local-completion-map
+              ("<tab>" . minibuffer-force-complete)))
+
+;;;;;; Dabbrev (dynamic word completion)
+
+(use-package dabbrev
+  :after (minibuffer icomplete icomplete-vertical) ; read those as well
+  :config
+  (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
+  (setq dabbrev-abbrev-skip-leading-regexp "[$*/=']")
+  (setq dabbrev-backward-only nil)
+  (setq dabbrev-case-distinction 'case-replace)
+  (setq dabbrev-case-fold-search t)
+  (setq dabbrev-case-replace 'case-replace)
+  (setq dabbrev-check-other-buffers t)
+  (setq dabbrev-eliminate-newlines nil)
+  (setq dabbrev-upcase-means-case-search t)
+  :bind (("M-/" . dabbrev-expand)
+         ("C-M-/" . dabbrev-completion)
+         ("s-/" . dabbrev-completion)))
+
+;;;; Configurations for—or extensions to—built-in search commands
+
+;;;;; Isearch configurations and enhancements
+
+(use-package isearch
+  :diminish
+  :config
+  (setq search-highlight t)
+  (setq search-whitespace-regexp ".*?")
+  (setq isearch-lax-whitespace t)
+  (setq isearch-regexp-lax-whitespace nil)
+  (setq isearch-lazy-highlight t)
+  ;; All of the following variables were introduced in Emacs 27.1.
+  (setq isearch-lazy-count t)
+  (setq lazy-count-prefix-format nil)
+  (setq lazy-count-suffix-format " (%s/%s)")
+  (setq isearch-yank-on-move 'shift)
+  (setq isearch-allow-scroll 'unlimited)
+
+  (defun prot/isearch-mark-and-exit ()
+    "Mark the current search string and exit the search."
+    (interactive)
+    (push-mark isearch-other-end t 'activate)
+    (setq deactivate-mark nil)
+    (isearch-done))
+
+  (defun prot/isearch-other-end ()
+    "End current search in the opposite side of the match.
+Particularly useful when the match does not fall within the
+confines of word boundaries (e.g. multiple words)."
+    (interactive)
+    (isearch-done)
+    (when isearch-other-end
+      (goto-char isearch-other-end)))
+
+  (defun prot/isearch-abort-dwim ()
+    "Delete failed `isearch' input, single char, or cancel search.
+
+This is a modified variant of `isearch-abort' that allows us to
+perform the following, based on the specifics of the case: (i)
+delete the entirety of a non-matching part, when present; (ii)
+delete a single character, when possible; (iii) exit current
+search if no character is present and go back to point where the
+search started."
+    (interactive)
+    (if (eq (length isearch-string) 0)
+        (isearch-cancel)
+      (isearch-del-char)
+      (while (or (not isearch-success) isearch-error)
+        (isearch-pop-state)))
+    (isearch-update))
+
+  (defun prot/isearch-query-replace-symbol-at-point ()
+    "Run `query-replace-regexp' for the symbol at point."
+    (interactive)
+    (isearch-forward-symbol-at-point)
+    (isearch-query-replace-regexp))
+
+  (defmacro prot/isearch-occurrence (name edge &optional doc)
+    "Construct function for moving to `isearch' occurrence.
+NAME is the name of the function.  EDGE is either the beginning
+or the end of the buffer.  Optional DOC is the resulting
+function's docstring."
+    `(defun ,name (&optional arg)
+       ,doc
+       (interactive "p")
+       (let ((x (if arg arg 1))
+             (command (intern (format "isearch-%s-of-buffer" ,edge))))
+         (isearch-forward-symbol-at-point)
+         (funcall command x))))
+
+  (prot/isearch-occurrence
+   prot/isearch-beginning-of-buffer
+   "beginning"
+   "Run `isearch-beginning-of-buffer' for the symbol at point.
+With numeric ARG, move to ARGth occurrence counting from the
+beginning of the buffer.")
+
+  (prot/isearch-occurrence
+   prot/isearch-end-of-buffer
+   "end"
+   "Run `isearch-end-of-buffer' for the symbol at point.
+With numeric ARG, move to ARGth occurrence counting from the
+end of the buffer.")
+
+  :bind (("M-s %" . prot/isearch-query-replace-symbol-at-point)
+         ("M-s M-<" . prot/isearch-beginning-of-buffer)
+         ("M-s M->" . prot/isearch-end-of-buffer)
+         :map minibuffer-local-isearch-map
+         ("M-/" . isearch-complete-edit)
+         :map isearch-mode-map
+         ("C-g" . isearch-cancel)       ; instead of `isearch-abort'
+         ("M-/" . isearch-complete)
+         ("C-SPC" . prot/isearch-mark-and-exit)
+         ("<backspace>" . prot/isearch-abort-dwim)
+         ("<C-return>" . prot/isearch-other-end)))
+
+;;;;; Occur (replace.el)
+
+(use-package replace
+  :config
+  (setq list-matching-lines-jump-to-current-line t)
+  ;; See my "Modus themes" for these inherited faces
+  (setq list-matching-lines-buffer-name-face
+        '(:inherit modus-theme-intense-neutral :weight bold))
+  (setq list-matching-lines-current-line-face
+        '(:inherit modus-theme-special-mild))
+
+  (defun prot/occur-url ()
+    "Produce list with all URLs in the current buffer."
+    (interactive)
+    (let ((urls browse-url-button-regexp))
+      (occur urls "\\&")))
+
+  (defun prot/occur-browse-url-in-buffer ()
+    "Run `eww' on a URL from the buffer using completion.
+Also see `prot/occur-url'."
+    (interactive)
+    (let ((matches nil))
+      (save-excursion
+        (goto-char (point-min))
+        (while (search-forward-regexp browse-url-button-regexp nil t)
+          (push (match-string-no-properties 0) matches)))
+      (icomplete-vertical-do
+          (:height (/ (frame-height) 4) :separator 'dotted-line)
+        (eww
+         (completing-read "Browse URL: " matches nil t)))))
+
+  (defun prot/occur-visit-or-list-urls (&optional arg)
+    "Wrap `prot/occur-visit-or-list-urls' and `prot/occur-url'.
+Meant to economise on key bindings."
+    (interactive "P")
+    (if arg
+        (prot/occur-url)
+      (prot/occur-browse-url-in-buffer)))
+
+  :hook ((occur-mode-hook . hl-line-mode)
+         (occur-mode-hook . (lambda ()
+                              (toggle-truncate-lines t))))
+  :bind (("M-s u" . prot/occur-visit-or-list-urls)
+         ("M-s M-o" . multi-occur)
+         :map occur-mode-map
+         ("t" . toggle-truncate-lines)))
+
+;;;;; Regular expressions: re-builder and visual-regexp
+
+(use-package re-builder
+  :config
+  (setq reb-re-syntax 'read))
+
+(use-package visual-regexp
+  :ensure
+  :config
+  (setq vr/default-replace-preview nil)
+  (setq vr/match-separator-use-custom-face t))
+
+;;;;; wgrep (writable grep)
+
+(use-package wgrep
+  :ensure
+  :commands wgrep
+  :config
+  (setq wgrep-auto-save-buffer t)
+  (setq wgrep-change-readonly-file t))
+
+;;;;; ripgrep (rg.el)
+
+(use-package rg
+  :ensure
+  :config
+  (setq rg-group-result t)
+  (setq rg-hide-command t)
+  (setq rg-show-columns nil)
+  (setq rg-show-header t)
+  (setq rg-custom-type-aliases nil)
+  (setq rg-default-alias-fallback "all")
+
+  (rg-define-search prot/rg-vc-or-dir
+    "RipGrep in project root or present directory."
+    :query ask
+    :format regexp
+    :files "everything"
+    :dir (let ((vc (vc-root-dir)))
+           (if vc
+               vc                         ; search root project dir
+             default-directory))          ; or from the current dir
+    :confirm prefix
+    :flags ("--hidden -g !.git"))
+
+  (rg-define-search prot/rg-ref-in-dir
+    "RipGrep for thing at point in present directory."
+    :query point
+    :format regexp
+    :files "everything"
+    :dir default-directory
+    :confirm prefix
+    :flags ("--hidden -g !.git"))
+
+  (defun prot/rg-save-search-as-name ()
+    "Save `rg' buffer, naming it after the current search query.
+
+This function is meant to be mapped to a key in `rg-mode-map'."
+    (interactive)
+    (let ((pattern (car rg-pattern-history)))
+      (rg-save-search-as-name (concat "«" pattern "»"))))
+
+  :bind (("M-s g" . prot/rg-vc-or-dir)
+         ("M-s r" . prot/rg-ref-in-dir)
+         :map rg-mode-map
+         ("s" . prot/rg-save-search-as-name)
+         ("C-n" . next-line)
+         ("C-p" . previous-line)
+         ("M-n" . rg-next-file)
+         ("M-p" . rg-prev-file)))
+
+;;; General movements and motions
+
+;;;; Custom commands in line with simple.el and lisp.el
+
+;;;;; Custom commands for lines
 
 (use-package emacs
   :config
@@ -435,7 +1058,8 @@ Move the point to the absolute beginning.  Adapt indentation by
 passing \\[universal-argument]."
     (interactive "P")
     (let ((indent (if arg arg nil)))
-      (if (bobp)
+      (if (or (bobp)
+              (line-number-at-pos 1))
           (progn
             (beginning-of-line)
             (newline)
@@ -533,6 +1157,8 @@ This command can then be followed by the standard
          ("<C-return>" . prot/new-line-below)
          ("<C-S-return>" . prot/new-line-above)))
 
+;;;;; Custom commands for text insertion or manipulation
+
 (use-package emacs
   :config
   ;; Got those numbers from `string-to-char'
@@ -613,6 +1239,8 @@ derivatives, such as `markdown-mode', though not in `org-mode'."
          ("M-u" . upcase-dwim)
          :map text-mode-map
          ("<M-return>" . prot/text-mode-heading)))
+
+;;;;; Custom commands for object transposition
 
 (use-package emacs
   :commands (prot/transpose-chars
@@ -695,6 +1323,8 @@ last/first two words)."
          ("C-x M-t" . prot/transpose-sentences)
          ("C-M-t" . prot/transpose-sexps)
          ("M-t" . prot/transpose-words)))
+
+;;;;; Custom commands for marking syntactic constructs
 
 (use-package emacs
   :commands (prot/mark-symbol
@@ -797,6 +1427,8 @@ specified."
   :bind (("M-@" . prot/mark-word)       ; replaces `mark-word'
          ("C-M-SPC" . prot/mark-construct-dwim)))
 
+;;;; Go to actionable beginning or end of buffer (beginend.el)
+
 (use-package beginend
   :ensure
   :demand
@@ -805,429 +1437,261 @@ specified."
   (dolist (mode beginend-modes) (diminish (cdr mode)))
   (beginend-global-mode 1))
 
+;;;; Go to last change
+
 (use-package goto-last-change
   :ensure
   :bind ("C-z" . goto-last-change))
 
-(use-package imenu
+;;; Directory, buffer, window management
+
+;;;; Dired (directory editor, file manager)
+
+;;;;; Base settings for Dired
+
+(use-package dired
   :config
-  (setq imenu-use-markers t)
-  (setq imenu-auto-rescan t)
-  (setq imenu-auto-rescan-maxout 600000)
-  (setq imenu-max-item-length 100)
-  (setq imenu-use-popup-menu nil)
-  (setq imenu-eager-completion-buffer t)
-  (setq imenu-space-replacement " ")
-  (setq imenu-level-separator "/")
+  (setq dired-recursive-copies 'always)
+  (setq dired-recursive-deletes 'always)
+  (setq delete-by-moving-to-trash t)
+  (setq dired-listing-switches
+        "-AGFhlv --group-directories-first --time-style=long-iso")
+  (setq dired-dwim-target t)
+  ;; Note that the the syntax for `use-package' hooks is controlled by
+  ;; the `use-package-hook-name-suffix' variable.  The "-hook" suffix is
+  ;; not an error of mine.
+  :hook ((dired-mode-hook . dired-hide-details-mode)
+         (dired-mode-hook . hl-line-mode)))
 
-  (defun prot/imenu-vertical ()
-    "Use a vertical Icomplete layout for `imenu'.
-Also configure the value of `orderless-matching-styles' to avoid
-aggressive fuzzy-style matching for this particular command."
-    (interactive)
-    (let ((orderless-matching-styles    ; make sure to check `orderless'
-           '(orderless-literal
-             orderless-regexp
-             orderless-prefixes)))
-      (icomplete-vertical-do (:height (/ (frame-height) 4))
-        (call-interactively 'imenu))))
+(use-package dired-aux
+  :config
+  (setq dired-isearch-filenames 'dwim)
+  ;; The following variables were introduced in Emacs 27.1
+  (setq dired-create-destination-dirs 'ask)
+  (setq dired-vc-rename-file t)
 
-  (defun prot/imenu-recenter-pulse ()
-    "Recent `imenu' position at the top with subtle feedback.
-Add this to `imenu-after-jump-hook'."
-    (let ((pulse-delay .05))
-      (recenter 0)
-      (prot/pulse-line)))
+  (defmacro prot/dired-fd (name doc prompt &rest flags)
+    "Make commands for selecting 'fd' results with completion.
+NAME is how the function should be named.  DOC is the function's
+documentation string.  PROMPT describes the scope of the query.
+FLAGS are the command-line arguments passed to the 'fd'
+executable, each of which is a string."
+    `(defun ,name (&optional arg)
+       ,doc
+       (interactive "P")
+       (let* ((vc (vc-root-dir))
+              (dir (expand-file-name (if vc vc default-directory)))
+              (regexp (read-regexp
+                       (format "%s matching REGEXP in %s: " ,prompt
+                               (propertize dir 'face 'bold))))
+              (names (process-lines "fd" ,@flags regexp dir))
+              (buf "*FD Dired*"))
+         (if names
+             (if arg
+                 (dired (cons (generate-new-buffer-name buf) names))
+               (icomplete-vertical-do ()
+                 (find-file
+                  (completing-read (format "Items matching %s (%s): "
+                                           (propertize regexp 'face 'success)
+                                           (length names))
+                                   names nil t)))))
+         (user-error (format "No matches for « %s » in %s" regexp dir)))))
 
-  (defun prot/imenu-show-entry ()
-    "Reveal index at point after successful `imenu' execution.
-To be used with `imenu-after-jump-hook'."
-    (cond
-     ((and (eq major-mode 'org-mode)
-           (org-at-heading-p))
-      (org-show-entry)
-      (org-reveal t))
-     ((when prot/outline-minor-mode
-        (outline-show-entry)))))
+  (prot/dired-fd
+   prot/dired-fd-dirs
+   "Search for directories in VC root or PWD.
+With \\[universal-argument] put the results in a `dired' buffer.
+This relies on the external 'fd' executable."
+   "Subdirectories"
+   "-i" "-H" "-a" "-t" "d" "-c" "never")
 
-  :hook ((imenu-after-jump-hook . prot/imenu-recenter-pulse)
-         (imenu-after-jump-hook . prot/imenu-show-entry))
-  :bind ("C-." . prot/imenu-vertical))
+  (prot/dired-fd
+   prot/dired-fd-files-and-dirs
+   "Search for files and directories in VC root or PWD.
+With \\[universal-argument] put the results in a `dired' buffer.
+This relies on the external 'fd' executable."
+   "Files and dirs"
+   "-i" "-H" "-a" "-t" "d" "-t" "f" "-c" "never")
 
-(use-package imenu-list
+  (defun contrib/cdb--bookmarked-directories ()
+    (bookmark-maybe-load-default-file)
+    (cl-loop for (name . props) in bookmark-alist
+             for fn = (cdr (assq 'filename props))
+             when (and fn (string-suffix-p "/" fn))
+             collect (cons name fn)))
+
+  (defun contrib/cd-bookmark (bm)
+    "Insert the path of a bookmarked directory."
+    (interactive
+     (list (let ((enable-recursive-minibuffers t))
+             (completing-read
+              "Directory: " (contrib/cdb--bookmarked-directories) nil t))))
+    (when (minibufferp)
+      (delete-region (minibuffer-prompt-end) (point-max)))
+    (insert (cdr (assoc bm (contrib/cdb--bookmarked-directories)))))
+
+  :bind (("M-s d" .  prot/dired-fd-dirs)
+         ("M-s z" . prot/dired-fd-files-and-dirs)
+         :map dired-mode-map
+         ("C-+" . dired-create-empty-file)
+         ("M-s f" . nil)
+         :map minibuffer-local-filename-completion-map
+         ("C-c d" . contrib/cd-bookmark)))
+
+(use-package async :ensure)
+
+(use-package dired-async
+  :after (dired async)
+  :hook (dired-mode-hook . dired-async-mode))
+
+;;;;; Narrowed dired
+
+(use-package dired-narrow
   :ensure
-  :after imenu
+  :after dired
   :config
-  (defun prot/imenu-list-dwim (&optional arg)
-    "Convenience wrapper for `imenu-list'.
-Move between the current buffer and a dedicated window with the
-contents of `imenu'.
+  (setq dired-narrow-exit-when-one-left t)
+  (setq dired-narrow-enable-blinking t)
+  (setq dired-narrow-blink-time 0.3)
+  :bind (:map dired-mode-map
+              ("/" . dired-narrow-regexp)))
 
-The dedicated window is created if it does not exist, while it is
-updated once it is focused again through this command.
+;;;;; wdired (writable dired)
 
-With \\[universal-argument] toggle the display of the window."
-    (interactive "P")
-    (if arg
-        (imenu-list-smart-toggle)
-      (with-current-buffer
-          (if (eq major-mode 'imenu-list-major-mode)
-              (pop-to-buffer (other-buffer (current-buffer) t))
-            (imenu-list)))))
+(use-package wdired
+  :after dired
+  :commands wdired-change-to-wdired-mode
+  :config
+  (setq wdired-allow-to-change-permissions t)
+  (setq wdired-create-parent-directories t))
 
-  :bind ("C-," . prot/imenu-list-dwim))
+;;;;; peep-dired (file previews including images)
 
-(use-package flimenu
+(use-package peep-dired
   :ensure
-  :after imenu
+  :after dired
   :config
-  (flimenu-global-mode 1))
+  (setq peep-dired-cleanup-on-disable t)
+  (setq peep-dired-cleanup-eagerly t)
+  (setq peep-dired-enable-on-directories nil)
+  (setq peep-dired-ignored-extensions
+        '("mkv" "webm" "mp4" "mp3" "ogg" "iso"))
+  :bind (:map dired-mode-map
+              ("P" . peep-dired)))
 
-(use-package icomplete
-  :demand
-  :after minibuffer                     ; Read that section as well
+;;;;; image-dired (image thumbnails and previews)
+
+(use-package image-dired
   :config
-  (setq icomplete-delay-completions-threshold 100)
-  (setq icomplete-max-delay-chars 2)
-  (setq icomplete-compute-delay 0.2)
-  (setq icomplete-show-matches-on-no-input t)
-  (setq icomplete-hide-common-prefix nil)
-  (setq icomplete-prospects-height 1)
-  ;; (setq icomplete-separator " · ")
-  ;; (setq icomplete-separator " │ ")
-  ;; (setq icomplete-separator " ┊ ")
-  (setq icomplete-separator (propertize " ┆ " 'face 'shadow))
-  (setq icomplete-with-completion-tables t)
-  (setq icomplete-in-buffer t)
-  (setq icomplete-tidy-shadowed-file-names nil)
+  (setq image-dired-external-viewer "xdg-open")
+  (setq image-dired-thumb-size 80)
+  (setq image-dired-thumb-margin 2)
+  (setq image-dired-thumb-relief 0)
+  (setq image-dired-thumbs-per-row 4)
+  :bind (:map image-dired-thumbnail-mode-map
+              ("<return>" . image-dired-thumbnail-display-external)))
 
-  ;;(fido-mode -1)                        ; Emacs 27.1
-  (icomplete-mode 1)
+;;;;; dired-subtree (tree-style view/navigation)
 
-  (defun prot/icomplete-minibuffer-truncate ()
-    "Truncate minibuffer lines in `icomplete-mode'.
-  This should only affect the horizontal layout and is meant to
-  enforce `icomplete-prospects-height' being set to 1.
-
-  Hook it to `icomplete-minibuffer-setup-hook'."
-    (when (and (minibufferp)
-               (bound-and-true-p icomplete-mode))
-      (setq truncate-lines t)))
-
-  :hook (icomplete-minibuffer-setup-hook . prot/icomplete-minibuffer-truncate)
-  :bind (:map icomplete-minibuffer-map
-              ("<tab>" . icomplete-force-complete)
-              ("<return>" . icomplete-force-complete-and-exit) ; exit with completion
-              ("C-j" . exit-minibuffer) ; force current input unconditionally
-              ("C-n" . icomplete-forward-completions)
-              ("<right>" . icomplete-forward-completions)
-              ("<down>" . icomplete-forward-completions)
-              ("C-p" . icomplete-backward-completions)
-              ("<left>" . icomplete-backward-completions)
-              ("<up>" . icomplete-backward-completions)
-              ("<C-backspace>" . icomplete-fido-backward-updir)))
-
-;; Icomplete vertical mode
-
-(use-package icomplete-vertical
+(use-package dired-subtree
   :ensure
-  :demand
-  :after (minibuffer icomplete)
+  :after dired
   :config
-  (setq icomplete-vertical-prospects-height (/ (frame-height) 6))
-  (icomplete-vertical-mode -1)
+  (setq dired-subtree-use-backgrounds nil)
+  :bind (:map dired-mode-map
+              ("<tab>" . dired-subtree-toggle)
+              ("<C-tab>" . dired-subtree-cycle)
+              ("<S-iso-lefttab>" . dired-subtree-remove)))
 
-  (defun prot/kill-ring-yank-complete ()
-    "Insert the selected `kill-ring' item directly at point.
-When region is active, `delete-region'.
+;;;;; dired-x (extra Dired functions)
 
-Sorting of the `kill-ring' is disabled.  Items appear as they
-normally would when calling `yank' followed by `yank-pop'."
-    (interactive)
-    (let ((kills                    ; do not sort items
-           (lambda (string pred action)
-             (if (eq action 'metadata)
-                 '(metadata (display-sort-function . identity)
-                            (cycle-sort-function . identity))
-               (complete-with-action
-                action kill-ring string pred)))))
-      (icomplete-vertical-do
-          (:separator 'dotted-line :height (/ (frame-height) 4))
-        (when (use-region-p)
-          (delete-region (region-beginning) (region-end)))
-        (insert
-         (completing-read "Yank from kill ring: " kills nil t)))))
-
-  :bind (("s-y" . prot/kill-ring-yank-complete)
-         :map icomplete-minibuffer-map
-         ("C-v" . icomplete-vertical-toggle)))
-
-;; Completion for projects and directory trees
-
-(use-package project
-  :after (minibuffer icomplete icomplete-vertical) ; read those
+(use-package dired-x
+  :after dired
   :config
-  (defun prot/find-file-vc-or-dir (&optional arg)
-    "Find file by name that belongs to the current project or dir.
-With \\[universal-argument] match files by contents.  This
-requires the command-line executable called 'rg' or 'ripgrep'."
+  (setq dired-clean-up-buffers-too t)
+  (setq dired-clean-confirm-killing-deleted-buffers t)
+  (setq dired-x-hands-off-my-keys t)
+  (setq dired-bind-man nil)
+  (setq dired-bind-info nil)
+
+  (defun prot/dired-jump-extra (&optional arg)
+    "Switch directories comprising context and bookmarks.
+NEEDS REVIEW."
     (interactive "P")
-    (let* ((default-directory (file-name-directory
-                               (or (locate-dominating-file "." ".git" )
-                                   default-directory))))
-      (if arg
-          (let* ((regexp (read-regexp
-                          (concat "File contents matching REGEXP in "
-                                  (propertize default-directory 'face 'bold)
-                                  ": ")))
-                 (results (process-lines "rg" "-l" "--hidden" "-m" "1" "-M" "120" regexp)))
-            (find-file
-             (icomplete-vertical-do ()
-               (completing-read (concat
-                                 "Files with contents matching "
-                                 (propertize regexp 'face 'success)
-                                 (format " (%s)" (length results))
-                                 ": ")
-                                results nil t))))
-        (let* ((filenames-all (directory-files-recursively default-directory ".*" t))
-               (filenames (cl-remove-if (lambda (x)
-                                          (string-match-p "\\.git" x))
-                                        filenames-all)))
-          (icomplete-vertical-do ()
-            (find-file
-             (completing-read "Find file recursively: " filenames nil t)))))))
+    (let* ((vc (vc-root-dir))
+           (buf-name (buffer-file-name))
+           (path (if buf-name
+                     buf-name
+                   default-directory))
+           (file (abbreviate-file-name path))
+           (bookmarks (mapcar (lambda (b)
+                                (cdr b))
+                              (contrib/cdb--bookmarked-directories)))
+           (collection (append bookmarks
+                               (list (file-name-directory file)
+                                     (when vc vc))))
+           (files (cl-remove-if (lambda (f)
+                                  (eq f nil))
+                                collection)))
+      (icomplete-vertical-do ()
+        (dired
+         (completing-read "Jump to context or bookmark: " files nil t)))))
 
-  (defun prot/find-project (&optional arg)
-    "Switch to sub-directory at the specified locations.
-With \\[universal-argument] produce a `dired' buffer instead with
-all the possible candidates."
-    (interactive "P")
-    (let* ((dirs (list "~/projects/"))
-           (dotless directory-files-no-dot-files-regexp)
-           (cands (mapcan (lambda (d)
-                            (directory-files d t dotless))
-                          dirs))
-           (projects (mapcar 'abbreviate-file-name cands))
-           (buf "*Projects Dired*"))
-      (if arg
-          (dired (cons (generate-new-buffer-name buf) projects))
-        (icomplete-vertical-do ()
-          (dired
-           (completing-read "Find project: " projects nil t))))))
+  :bind (("C-c j" . prot/dired-jump-extra)
+         ("C-x C-j" . dired-jump)
+         ("s-j" . dired-jump)
+         ("C-x 4 C-j" . dired-jump-other-window)
+         ("s-J" . dired-jump-other-window)))
 
-  :bind (("M-s p" . prot/find-project)
-         ("M-s f" . prot/find-file-vc-or-dir)
-         ("M-s l" . find-library)))
+;;;;; diredfl (more dired colours)
 
-;; ............................................... In-buffer completions
+(use-package diredfl
+  :ensure
+  :config
+  (setq diredfl-ignore-compressed-flag nil)
+  :hook (dired-mode-hook . diredfl-mode))
+
+;;;;; Dired disk usage (du)
+
+(use-package dired-du
+  :ensure
+  :commands dired-du-mode)
+
+;;;; Working with buffers
+
+;;;;; General buffer commands
 
 (use-package emacs
-  :after (minibuffer icomplete icomplete-vertical) ; review those first
   :config
-  (defun contrib/completing-read-in-region (start end collection &optional predicate)
-    "Prompt for completion of region in the minibuffer if non-unique.
-Use as a value for `completion-in-region-function'."
-    (if (and (minibufferp) (not (string= (minibuffer-prompt) "Eval: ")))
-        (completion--in-region start end collection predicate)
-      (let* ((initial (buffer-substring-no-properties start end))
-             (limit (car (completion-boundaries initial collection predicate "")))
-             (all (completion-all-completions initial collection predicate
-                                              (length initial)))
-             (completion (cond
-                          ((atom all) nil)
-                          ((and (consp all) (atom (cdr all)))
-                           (concat (substring initial 0 limit) (car all)))
-                          (t (completing-read
-                              "Completion: " collection predicate t initial)))))
-        (if (null completion)
-            (progn (message "No completion") nil)
-          (delete-region start end)
-          (insert completion)
-          t))))
+  (defun prot/kill-buffer-current (&optional arg)
+    "Kill current buffer or abort recursion when in minibuffer."
+    (interactive "P")
+    (if (minibufferp)
+        (abort-recursive-edit)
+      (kill-buffer (current-buffer)))
+    (when (and arg
+               (not (one-window-p)))
+      (delete-window)))
 
-  (setq completion-in-region-function #'contrib/completing-read-in-region)
-  :bind (:map minibuffer-local-completion-map
-              ("<tab>" . minibuffer-force-complete)))
-
-;; Dabbrev (dynamic word completion)
-
-(use-package dabbrev
-  :defer
-  :after (minibuffer icomplete icomplete-vertical) ; read those as well
-  :config
-  (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
-  (setq dabbrev-abbrev-skip-leading-regexp "\\$\\|\\*\\|/\\|=\\|'")
-  (setq dabbrev-backward-only nil)
-  (setq dabbrev-case-distinction nil)
-  (setq dabbrev-case-fold-search t)
-  (setq dabbrev-case-replace nil)
-  (setq dabbrev-check-other-buffers t)
-  (setq dabbrev-eliminate-newlines nil)
-  (setq dabbrev-upcase-means-case-search t)
-  :bind (("M-/" . dabbrev-expand)
-         ("C-M-/" . dabbrev-completion)
-         ("s-/" . dabbrev-completion)))
-
-;; ............................................................. Isearch
-
-(use-package isearch
-  :defer
-  :diminish
-  :config
-  (setq search-highlight t)
-  (setq search-whitespace-regexp ".*?")
-  (setq isearch-lax-whitespace t)
-  (setq isearch-regexp-lax-whitespace nil)
-  (setq isearch-lazy-highlight t)
-  ;; All of the following variables were introduced in Emacs 27.1.
-  (setq isearch-lazy-count t)
-  (setq lazy-count-prefix-format nil)
-  (setq lazy-count-suffix-format " (%s/%s)")
-  (setq isearch-yank-on-move 'shift)
-  (setq isearch-allow-scroll 'unlimited)
-
-  (defun prot/isearch-mark-and-exit ()
-    "Mark the current search string and exit the search."
+  (defun contrib/rename-file-and-buffer ()
+    "Rename current buffer and, if available, its file."
     (interactive)
-    (push-mark isearch-other-end t 'activate)
-    (setq deactivate-mark nil)
-    (isearch-done))
+    (let ((filename (buffer-file-name)))
+      (if (not (and filename (file-exists-p filename)))
+          (rename-buffer (read-from-minibuffer "New name: " (buffer-name)))
+        (let* ((new-name (read-from-minibuffer "New name: " filename))
+               (containing-dir (file-name-directory new-name)))
+          (make-directory containing-dir t)
+          (cond
+           ((vc-backend filename) (vc-rename-file filename new-name))
+           (t
+            (rename-file filename new-name t)
+            (set-visited-file-name new-name t t)))))))
+  :bind (("M-=" . count-words)
+         ("<C-f2>" . contrib/rename-file-and-buffer)
+         ("s-k" . prot/kill-buffer-current)))
 
-  (defun prot/isearch-other-end ()
-    "End current search in the opposite side of the match.
-Particularly useful when the match does not fall within the
-confines of word boundaries (e.g. multiple words)."
-    (interactive)
-    (isearch-done)
-    (when isearch-other-end
-      (goto-char isearch-other-end)))
-
-  (defun prot/isearch-abort-dwim ()
-    "Delete failed `isearch' input, single char, or cancel search.
-
-This is a modified variant of `isearch-abort' that allows us to
-perform the following, based on the specifics of the case: (i)
-delete the entirety of a non-matching part, when present; (ii)
-delete a single character, when possible; (iii) exit current
-search if no character is present and go back to point where the
-search started."
-    (interactive)
-    (if (eq (length isearch-string) 0)
-        (isearch-cancel)
-      (isearch-del-char)
-      (while (or (not isearch-success) isearch-error)
-        (isearch-pop-state)))
-    (isearch-update))
-
-  (defun prot/isearch-query-replace-symbol-at-point ()
-    "Run `query-replace-regexp' for the symbol at point."
-    (interactive)
-    (isearch-forward-symbol-at-point)
-    (isearch-query-replace-regexp))
-
-  :bind (("M-s %" . prot/isearch-query-replace-symbol-at-point)
-         ("s-s" . prot/isearch-for-region)
-         :map minibuffer-local-isearch-map
-         ("M-/" . isearch-complete-edit)
-         :map isearch-mode-map
-         ("C-g" . isearch-cancel)       ; instead of `isearch-abort'
-         ("M-/" . isearch-complete)
-         ("C-SPC" . prot/isearch-mark-and-exit)
-         ("<backspace>" . prot/isearch-abort-dwim)
-         ("<C-return>" . prot/isearch-other-end)))
-
-;; ................................................. Regular expressions
-
-(use-package re-builder
-  :defer
-  :config
-  (setq reb-re-syntax 'read))
-
-(use-package visual-regexp
-  :ensure
-  :defer
-  :config
-  (setq vr/default-replace-preview nil)
-  (setq vr/match-separator-use-custom-face t))
-
-(use-package replace
-  :defer
-  :config
-  (setq list-matching-lines-jump-to-current-line t)
-  ;; See my "Modus themes" for these inherited faces
-  (setq list-matching-lines-buffer-name-face
-        '(:inherit modus-theme-intense-neutral :weight bold))
-  (setq list-matching-lines-current-line-face
-        '(:inherit modus-theme-special-mild))
-  :hook ((occur-mode-hook . hl-line-mode)
-         (occur-mode-hook . (lambda ()
-                              (toggle-truncate-lines t))))
-  :bind (("M-s M-o" . multi-occur)
-         :map occur-mode-map
-         ("t" . toggle-truncate-lines)))
-
-;; wgrep
-
-(use-package wgrep
-  :ensure
-  :defer
-  :commands wgrep
-  :config
-  (setq wgrep-auto-save-buffer t)
-  (setq wgrep-change-readonly-file t))
-
-;; ripgrep
-
-(use-package rg
-  :ensure
-  :defer
-  :config
-  (setq rg-group-result t)
-  (setq rg-hide-command t)
-  (setq rg-show-columns nil)
-  (setq rg-show-header t)
-  (setq rg-custom-type-aliases nil)
-  (setq rg-default-alias-fallback "all")
-
-  (rg-define-search prot/rg-vc-or-dir
-    "RipGrep in project root or present directory."
-    :query ask
-    :format regexp
-    :files "everything"
-    :dir (let ((vc (vc-root-dir)))
-           (if vc
-               vc                         ; search root project dir
-             default-directory))          ; or from the current dir
-    :confirm prefix
-    :flags ("--hidden -g !.git"))
-
-  (rg-define-search prot/rg-ref-in-dir
-    "RipGrep for thing at point in present directory."
-    :query point
-    :format regexp
-    :files "everything"
-    :dir default-directory
-    :confirm prefix
-    :flags ("--hidden -g !.git"))
-
-  (defun prot/rg-save-search-as-name ()
-    "Save `rg' buffer, naming it after the current search query.
-
-This function is meant to be mapped to a key in `rg-mode-map'."
-    (interactive)
-    (let ((pattern (car rg-pattern-history)))
-      (rg-save-search-as-name (concat "«" pattern "»"))))
-
-  :bind (("M-s g" . prot/rg-vc-or-dir)
-         ("M-s r" . prot/rg-ref-in-dir)
-         :map rg-mode-map
-         ("s" . prot/rg-save-search-as-name)
-         ("C-n" . next-line)
-         ("C-p" . previous-line)
-         ("M-n" . rg-next-file)
-         ("M-p" . rg-prev-file)))
-
-;; ............................................................. Buffers
+;;;;; Unique names for buffers
 
 (use-package uniquify
   :config
@@ -1235,8 +1699,9 @@ This function is meant to be mapped to a key in `rg-mode-map'."
   (setq uniquify-strip-common-suffix t)
   (setq uniquify-after-kill-buffer-p t))
 
+;;;;; Ibuffer and extras (dired-like buffer list manager)
+
 (use-package ibuffer
-  :defer
   :config
   (setq ibuffer-expert t)
   (setq ibuffer-display-summary nil)
@@ -1258,6 +1723,7 @@ This function is meant to be mapped to a key in `rg-mode-map'."
                 (name 16 -1)
                 " " filename)))
   (setq ibuffer-saved-filter-groups nil)
+  (setq ibuffer-old-time 48)
 
   (defun prot/buffers-major-mode (&optional arg)
     "Select buffers that match the current buffer's major mode.
@@ -1298,7 +1764,7 @@ When no VC root is available, use standard `switch-to-buffer'."
               (lambda (pair) ; pair is (name-string . buffer-object)
                 (with-current-buffer (cdr pair) (string= (vc-root-dir) root))))))
         (call-interactively 'switch-to-buffer))))
-  
+
   :hook (ibuffer-mode-hook . hl-line-mode)
   :bind (("M-s b" . prot/buffers-major-mode)
          ("M-s v" . prot/buffers-vc-root)
@@ -1310,15 +1776,16 @@ When no VC root is available, use standard `switch-to-buffer'."
          ("s n" . ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
          ("/ g" . ibuffer-filter-by-content)))
 
+;;;;;; Ibuffer integration with VC (version control framework)
+
 (use-package ibuffer-vc
   :ensure
-  :defer
   :after (ibuffer vc)
   :bind (:map ibuffer-mode-map
               ("/ V" . ibuffer-vc-set-filter-groups-by-vc-root)
               ("/ <deletechar>" . ibuffer-clear-filter-groups)))
 
-;; ............................................................. Windows
+;;;; Window configuration
 
 (use-package emacs
   :config
@@ -1326,11 +1793,12 @@ When no VC root is available, use standard `switch-to-buffer'."
     "Current window configuration.
 Intended for use by `prot/window-monocle'.")
 
-  (defun prot/window-single-toggle ()
+  (define-minor-mode prot/window-single-toggle
     "Toggle between multiple windows and single window.
 This is the equivalent of maximising a window.  Tiling window
 managers such as DWM, BSPWM refer to this state as 'monocle'."
-    (interactive)
+    :lighter " [M]"
+    :global nil
     (if (one-window-p)
         (when prot/window-configuration
           (set-window-configuration prot/window-configuration))
@@ -1338,11 +1806,18 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
       (delete-other-windows)))
   :bind ("s-m" . prot/window-single-toggle))
 
+;;;;; Window rules and basic tweaks
+
 (use-package window
   :init
   (setq display-buffer-alist
         '(;; top side window
-          ("\\*elfeed-mpv-output.*"
+          ("\\*Bongo-Elfeed Queue.*"
+           (display-buffer-reuse-window display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . top)
+           (slot . -2))
+          ("\\*\\(elfeed-mpv-output\\|world-clock\\).*"
            (display-buffer-in-side-window)
            (window-height . 0.16)
            (side . top)
@@ -1413,6 +1888,9 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
   (setq even-window-sizes 'height-only)
   (setq window-sides-vertical nil)
   (setq switch-to-buffer-in-dedicated-window 'pop)
+  ;; Note that the the syntax for `use-package' hooks is controlled by
+  ;; the `use-package-hook-name-suffix' variable.  The "-hook" suffix is
+  ;; not an error of mine.
   :hook ((help-mode-hook . visual-line-mode)
          (custom-mode-hook . visual-line-mode))
   :bind (("s-n" . next-buffer)
@@ -1427,86 +1905,32 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
          ("C-x +" . balance-windows-area)
          ("s-q" . window-toggle-side-windows)))
 
-;; These are all experimental.  Just showcasing the power of passing
-;; parameters to windows or frames.
-(use-package emacs
-  :commands (prot/window-dired-vc-root-left
-             prot/make-frame-floating-with-current-buffer
-             prot/display-buffer-at-bottom)
-  :config
-  (defun prot/window-dired-vc-root-left ()
-    "Open project or dir `dired' in a side window.
-
-NOTE: For demo purposes."
-    (interactive)
-    (let ((dir (if (eq (vc-root-dir) nil)
-                   (dired-noselect default-directory)
-                 (dired-noselect (vc-root-dir)))))
-      (display-buffer-in-side-window
-       dir `((side . left)
-             (slot . -1)
-             (window-width . 0.16)
-             (window-parameters
-              . ((no-other-window . t)
-                 (no-delete-other-windows . t)
-                 (mode-line-format
-                  . (" "
-                     mode-line-buffer-identification))))))
-      (with-current-buffer dir
-        (rename-buffer "*Dired-Side*")
-        (setq-local window-size-fixed 'width))
-      (with-eval-after-load 'ace-window
-        (when (boundp 'aw-ignored-buffers)
-          (add-to-list 'aw-ignored-buffers "*Dired-Side*")))))
-
-  (defun prot/make-frame-floating-with-current-buffer ()
-    "Display the current buffer in a new floating frame.
-
-This passes certain parameters to the newly created frame:
-
-- use a different name than the default;
-- use a graphical frame;
-- do not display the minibuffer.
-
-The name is meant to be used by the external rules of my tiling
-window manager (BSPWM) to present the frame in a floating state."
-    (interactive)
-    (make-frame '((name . "my_float_window")
-                  (window-system . x)
-                  (minibuffer . nil))))
-
-  (defun prot/display-buffer-at-bottom ()
-    "Move the current buffer to the bottom of the frame.
-This is useful to take a buffer out of a side window."
-
-    (interactive)
-    (let ((buffer (current-buffer)))
-      (with-current-buffer buffer
-        (delete-window)
-        (display-buffer-at-bottom
-         buffer
-         `((window-parameters
-            . ((mode-line-format
-                . (" "
-                   mode-line-buffer-identification))))))))))
+;;;;; Window history (winner-mode)
 
 (use-package winner
   :hook (after-init-hook . winner-mode)
-  :bind (("<s-right>" . winner-redo)
-         ("<s-left>" . winner-undo)))
+  :bind ("<s-right>" . winner-redo)
+  ("<s-left>" . winner-undo))
+
+;;;;; Directional window motions (windmove)
 
 (use-package windmove
-  :defer
   :config
-  (setq windmove-create-window nil)
-  :bind (("s-k" . windmove-up)
-         ("s-l" . windmove-right)
-         ("s-j" . windmove-down)
-         ("s-h" . windmove-left)))
+  (setq windmove-create-window nil)     ; Emacs 27.1
+  :bind (("C-s-k" . windmove-up)
+         ("C-s-l" . windmove-right)
+         ("C-s-j" . windmove-down)
+         ("C-s-h" . windmove-left)
+         ;; numpad keys clockwise: 8 6 2 4
+         ("<kp-up>" . windmove-up)
+         ("<kp-right>" . windmove-right)
+         ("<kp-down>" . windmove-down)
+         ("<kp-left>" . windmove-left)))
+
+;;;;; Transposition and rotation of windows
 
 (use-package transpose-frame
   :ensure
-  :defer
   :commands (transpose-frame
              flip-frame
              flop-frame
@@ -1516,211 +1940,11 @@ This is useful to take a buffer out of a side window."
   :bind (("C-s-t" . flop-frame) ; what I consider "transpose" in this context
          ("C-s-r" . rotate-frame-clockwise)))
 
-;; ............................................................... Dired
+;;; Applications and utilities
 
-(use-package dired
-  :defer
-  :config
-  (setq dired-recursive-copies 'always)
-  (setq dired-recursive-deletes 'always)
-  (setq dired-listing-switches "-AFlh")
-  (setq dired-dwim-target t)
-  :hook ((dired-mode-hook . dired-hide-details-mode)
-         (dired-mode-hook . hl-line-mode)))
-
-(use-package dired-aux
-  :defer
-  :config
-  (setq dired-isearch-filenames 'dwim)
-  ;; The following variables were introduced in Emacs 27.1
-  (setq dired-create-destination-dirs 'ask)
-  (setq dired-vc-rename-file t)
-
-  ;; TODO defmacro to avoid duplication of code in `fd' functions
-  ;; TODO how can a defmacro produce named functions that are then
-  ;; mapped to keys?
-  (defun prot/dired-fd-dirs (&optional arg)
-    "Search for directories in VC root or PWD.
-With \\[universal-argument] put the results in a `dired' buffer.
-This relies on the external 'fd' executable."
-    (interactive "P")
-    (let* ((vc (vc-root-dir))
-           (dir (expand-file-name (if vc vc default-directory)))
-           (regexp (read-regexp
-                    (concat "Subdirectories matching REGEXP in "
-                            (propertize dir 'face 'bold)
-                            ": ")))
-           (names (process-lines "fd" "-i" "-H" "-a" "-t" "d" "-c" "never" regexp dir))
-           (buf "*FD Dired*"))
-      (if names
-          (if arg
-              (dired (cons (generate-new-buffer-name buf) names))
-            (icomplete-vertical-do ()
-              (find-file
-               (completing-read (concat
-                                 "Files or directories matching "
-                                 (propertize regexp 'face 'success)
-                                 (format " (%s)" (length names))
-                                 ": ")
-                                names nil t)))))
-      (user-error (concat "No matches for " "«" regexp "»" " in " dir))))
-
-  (defun prot/dired-fd-files-and-dirs (&optional arg)
-    "Search for files and directories in VC root or PWD.
-With \\[universal-argument] put the results in a `dired' buffer.
-This relies on the external 'fd' executable."
-    (interactive "P")
-    (let* ((vc (vc-root-dir))
-           (dir (expand-file-name (if vc vc default-directory)))
-           (regexp (read-regexp
-                    (concat "Files and dirs matching REGEXP in "
-                            (propertize dir 'face 'bold)
-                            ": ")))
-           (names (process-lines "fd" "-i" "-H" "-a" "-t" "d" "-t" "f" "-c" "never" regexp dir))
-           (buf "*FD Dired*"))
-      (if names
-          (if arg
-              (dired (cons (generate-new-buffer-name buf) names))
-            (icomplete-vertical-do ()
-              (find-file
-               (completing-read (concat
-                                 "Files and directories matching "
-                                 (propertize regexp 'face 'success)
-                                 (format " (%s)" (length names))
-                                 ": ")
-                                names nil t)))))
-      (user-error (concat "No matches for " "«" regexp "»" " in " dir))))
-
-  (defun contrib/cdb--bookmarked-directories ()
-    (bookmark-maybe-load-default-file)
-    (cl-loop for (name . props) in bookmark-alist
-             for fn = (cdr (assq 'filename props))
-             when (and fn (string-suffix-p "/" fn))
-             collect (cons name fn)))
-
-  (defun contrib/cd-bookmark (bm)
-    "Insert the path of a bookmarked directory."
-    (interactive
-     (list (let ((enable-recursive-minibuffers t))
-             (completing-read
-              "Directory: " (contrib/cdb--bookmarked-directories) nil t))))
-    (when (minibufferp)
-      (delete-region (minibuffer-prompt-end) (point-max)))
-    (insert (cdr (assoc bm (contrib/cdb--bookmarked-directories)))))
-  :bind (("M-s d" .  prot/dired-fd-dirs)
-         ("M-s z" . prot/dired-fd-files-and-dirs)
-         :map dired-mode-map
-         ("C-+" . dired-create-empty-file)
-         ("M-s f" . nil)
-         :map minibuffer-local-filename-completion-map
-         ("C-c d" . contrib/cd-bookmark)))
-
-(use-package find-dired
-  :defer
-  :after dired
-  :config
-  (setq find-ls-option '("-ls" . "-AFhl"))
-  (setq find-name-arg "-iname"))
-
-(use-package async :ensure)
-
-(use-package dired-async
-  :defer
-  :after (dired async)
-  :hook (dired-mode-hook . dired-async-mode))
-
-(use-package dired-narrow
-  :ensure
-  :defer
-  :after dired
-  :config
-  (setq dired-narrow-exit-when-one-left t)
-  (setq dired-narrow-enable-blinking t)
-  (setq dired-narrow-blink-time 0.3)
-  :bind (:map dired-mode-map
-              ("/" . dired-narrow-regexp)))
-
-(use-package wdired
-  :defer
-  :after dired
-  :commands wdired-change-to-wdired-mode
-  :config
-  (setq wdired-allow-to-change-permissions t)
-  (setq wdired-create-parent-directories t))
-
-(use-package peep-dired
-  :ensure
-  :defer
-  :after dired
-  :config
-  (setq peep-dired-cleanup-on-disable t)
-  (setq peep-dired-cleanup-eagerly t)
-  (setq peep-dired-enable-on-directories nil)
-  (setq peep-dired-ignored-extensions
-        '("mkv" "webm" "mp4" "mp3" "ogg" "iso"))
-  :bind (:map dired-mode-map
-              ("P" . peep-dired)))
-
-(use-package dired-subtree
-  :ensure
-  :defer
-  :after dired
-  :config
-  (setq dired-subtree-use-backgrounds nil)
-  :bind (:map dired-mode-map
-              ("<tab>" . dired-subtree-toggle)
-              ("<C-tab>" . dired-subtree-cycle)
-              ("<S-iso-lefttab>" . dired-subtree-remove)))
-
-(use-package dired-x
-  :defer
-  :after dired
-  :config
-  (setq dired-clean-up-buffers-too t)
-  (setq dired-clean-confirm-killing-deleted-buffers t)
-  (setq dired-x-hands-off-my-keys t)
-  (setq dired-bind-man nil)
-  (setq dired-bind-info nil)
-
-  (defun prot/dired-jump-extra (&optional arg)
-    "Switch directories comprising context and bookmarks.
-NEEDS REVIEW."
-    (interactive "P")
-    (let* ((vc (vc-root-dir))
-           (buf-name (buffer-file-name))
-           (path (if buf-name
-                     buf-name
-                   default-directory))
-           (file (abbreviate-file-name path))
-           (bookmarks (mapcar (lambda (b)
-                                (cdr b))
-                              (contrib/cdb--bookmarked-directories)))
-           (collection (append bookmarks
-                               (list (file-name-directory file)
-                                     (when vc vc))))
-           (files (cl-remove-if (lambda (f)
-                                  (eq f nil))
-                                collection)))
-      (icomplete-vertical-do ()
-        (dired
-         (completing-read "Jump to context or bookmark: " files nil t)))))
-  
-  :bind (("C-c j" . prot/dired-jump-extra)
-         ("C-x C-j" . dired-jump)
-         ("s-j" . dired-jump)
-         ("C-x 4 C-j" . dired-jump-other-window)
-         ("s-J" . dired-jump-other-window)))
-
-(use-package diredfl
-  :ensure
-  :config
-  (setq diredfl-ignore-compressed-flag nil)
-  :hook (dired-mode-hook . diredfl-mode))
-
-;; ........................................................ Applications
+;;;; Calendar
 
 (use-package calendar
-  :defer
   :config
   (setq calendar-mark-diary-entries-flag t)
   (setq calendar-time-display-form
@@ -1731,17 +1955,15 @@ NEEDS REVIEW."
   (setq calendar-date-style 'iso)
   (setq calendar-christian-all-holidays-flag nil)
   (setq calendar-holidays
-        (append holiday-local-holidays
+        (append holiday-local-holidays  ; TODO set local holidays
                 holiday-solar-holidays))
 
   (use-package solar
-    :defer
     :config
-    (setq calendar-latitude 48.85
-          calendar-longitude 2.29))
+    (setq calendar-latitude 35.17
+          calendar-longitude 33.36))
 
   (use-package lunar
-    :defer
     :config
     (setq lunar-phase-names
           '("New Moon"
@@ -1751,14 +1973,19 @@ NEEDS REVIEW."
 
   :hook (calendar-today-visible-hook . calendar-mark-today))
 
+;;;; Diary
+
 (use-package diary-lib
-  :defer
   :config
+  (setq diary-file "~/.emacs.d/diary")
+  (setq diary-entry-marker "diary")
+  (setq diary-show-holidays-flag t)
   (setq diary-header-line-flag nil)
   (setq diary-mail-addr "david@daporter.net")
   (setq diary-mail-days 3)
   (setq diary-number-of-entries 3)
   (setq diary-comment-start ";")
+  (setq diary-comment-end "")
   (setq diary-date-forms
         '((day "/" month "[^/0-9]")
           (day "/" month "/" year "[^0-9]")
@@ -1767,6 +1994,11 @@ NEEDS REVIEW."
           (monthname " *" day ", *" year "[^0-9]")
           (year "[-/]" month "[-/]" day "[^0-9]")
           (dayname "\\W"))))
+
+
+;;;; Org-mode (personal information manager)
+
+;;;;; Org basic configurations
 
 (use-package org
   :ensure
@@ -1817,19 +2049,27 @@ NEEDS REVIEW."
   (setq org-return-follows-link t)
   (setq org-loop-over-headlines-in-active-region 'start-level)
   (setq org-imenu-depth 7)
-  (setq org-modules '(ol-gnus ol-info ol-eww))
+  (setq org-modules '(habit ol-gnus ol-info ol-eww))
 
   :bind (:map org-mode-map
               ("<C-return>" . nil)
               ("<C-S-return>" . nil)))
 
+(use-package org-list
+  :config
+  (setq org-list-allow-alphabetical t))
+
+;;;;; Org links
+
 (use-package ol
   :config
   (setq org-link-keep-stored-after-insertion t)
-  :bind (:map org-mode-map
-              ("C-c l" . org-store-link)
-              ("C-c S-l" . org-toggle-link-display)
-              ("C-c C-S-l" . org-insert-last-stored-link)))
+  :bind (("C-c l" . org-store-link)
+         :map org-mode-map
+         ("C-c S-l" . org-toggle-link-display)
+         ("C-c C-S-l" . org-insert-last-stored-link)))
+
+;;;;; Org-capture templates
 
 (use-package org-capture
   :after org
@@ -1850,15 +2090,10 @@ NEEDS REVIEW."
   (setq org-capture-templates-contexts
         '(("r" ((in-mode . "gnus-article-mode")
                 (in-mode . "gnus-summary-mode")))))
-
-  (defun contrib/org-capture-no-delete-windows (oldfun args)
-    (cl-letf (((symbol-function 'delete-other-windows) 'ignore))
-      (apply oldfun args)))
-
-  (with-eval-after-load "org-capture"
-    (advice-add 'org-capture-place-template :around 'contrib/org-capture-no-delete-windows))
   
   :bind ("C-c c" . org-capture))
+
+;;;;; Org agenda
 
 (use-package org-agenda
   :after org
@@ -1897,6 +2132,7 @@ produces dates with a fixed length."
               dayname day monthname year weekstring)))
 
   (setq org-agenda-format-date #'prot/org-agenda-format-date-aligned)
+  (setq org-habit-graph-column 45)
 
   ;; Items with deadline and scheduled timestamps
   (setq org-deadline-warning-days 5)
@@ -1940,7 +2176,12 @@ produces dates with a fixed length."
            ((todo "TODO"
                   ((org-agenda-overriding-header "Next tasks:")))))))
 
-  :bind ("C-c a" . org-agenda))
+  :bind (("C-c a" . org-agenda)
+         :map org-mode-map
+         ("C-'" . nil)
+         ("C-," . nil)))
+
+;;;;; Org source code blocks
 
 (use-package org-src
   :after org
@@ -1952,33 +2193,7 @@ produces dates with a fixed length."
   (setq org-src-tab-acts-natively t)
   (setq org-edit-src-content-indentation 0))
 
-(use-package ox
-  :after org
-  :config
-  (setq org-export-with-toc t)
-  (setq org-export-headline-levels 8)
-  (setq org-export-backends
-        '(ascii html latex md))
-  (setq org-export-dispatch-use-expert-ui nil))
-
-(use-package org-cliplink
-  :ensure
-  :after org
-  :demand
-  :bind ("C-c y l" . org-cliplink))
-
-(use-package org-protocol
-  :demand)
-
-(use-package org-list
-  :config
-  (setq org-list-allow-alphabetical t))
-
-(use-package htmlize
-  :ensure
-  :after org-plus-contrib
-  :config
-  (setq htmlize-ignore-face-size t))
+;;;;; Deft
 
 (use-package deft
   :ensure
@@ -1989,7 +2204,8 @@ produces dates with a fixed length."
 
   (defun dp/deft-dir (dir)
     "Run deft in directory DIR"
-    (kill-buffer "*Deft*")
+    (when (get-buffer "*Deft*")
+      (kill-buffer "*Deft*"))
     (setq deft-directory dir)
     (deft))
 
@@ -2007,8 +2223,11 @@ produces dates with a fixed length."
   (("C-c n w" . dp/deft-wiki)
    ("C-c n z" . dp/deft-zettelkasten)))
 
+;;;;; Org-roam
+
 (use-package org-roam
   :ensure
+  :after org-capture
   :diminish
   :config
   (setq org-roam-directory "~/Sync/notes/zettelkasten")
@@ -2024,6 +2243,8 @@ produces dates with a fixed length."
               :map org-mode-map
               (("C-c n i" . org-roam-insert))))
 
+;;;;; Org-journal
+
 (use-package org-journal
   :ensure
   :config
@@ -2034,6 +2255,8 @@ produces dates with a fixed length."
   :bind
   ("C-c n j" . org-journal-new-entry))
 
+;;;;; Org-ref
+
 (use-package org-ref
   :ensure
   :config
@@ -2042,824 +2265,51 @@ produces dates with a fixed length."
   (setq org-ref-bibliography-notes "~/Sync/notes/bibliography/notes.org")
   (setq org-ref-pdf-directory "~/Sync/notes/bibliography/bibtex-pdfs/"))
 
-(use-package pdf-tools
-  :ensure
+;;;;; Org export
+
+(use-package ox
+  :after org
+  :commands (prot/ox-html prot/ox-texinfo)
   :config
-  (pdf-tools-install))
+  (setq org-export-with-toc t)
+  (setq org-export-headline-levels 8)
+  (setq org-export-dispatch-use-expert-ui nil)
+  (setq org-html-htmlize-output-type nil)
+  (setq org-html-head-include-default-style nil)
+  (setq org-html-head-include-scripts nil)
+  (use-package ox-texinfo)
+  ;; FIXME: how to remove everything else?
+  (setq org-export-backends '(html texinfo))
 
-(use-package nov
-  :ensure
-  :mode ("\\.epub\\'" . nov-mode))
-
-;; ............................................................... Theme
-
-;; Disable GUI components
-(use-package emacs
-  :init
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  :config
-  (setq use-file-dialog nil)
-  (setq use-dialog-box t)       ; only for mouse events
-  (setq inhibit-splash-screen t)
-  (global-unset-key (kbd "C-z"))
-  (global-unset-key (kbd "C-x C-z"))
-  (global-unset-key (kbd "C-h h")))
-
-;; Themes
-
-(use-package modus-vivendi-theme
-  :ensure
-  :init
-  (setq modus-vivendi-theme-slanted-constructs t
-        modus-vivendi-theme-bold-constructs t
-        modus-vivendi-theme-visible-fringes t
-        modus-vivendi-theme-proportional-fonts t
-        modus-vivendi-theme-distinct-org-blocks t
-        modus-vivendi-theme-rainbow-headings t
-        modus-vivendi-theme-scale-headings t))
-
-(use-package modus-operandi-theme
-  :ensure
-  :init
-  (setq modus-operandi-theme-slanted-constructs t
-        modus-operandi-theme-bold-constructs t
-        modus-operandi-theme-visible-fringes t
-        modus-operandi-theme-proportional-fonts t
-        modus-operandi-theme-distinct-org-blocks t
-        modus-operandi-theme-rainbow-headings t
-        modus-operandi-theme-scale-headings t)
-  :config
-  (load-theme 'modus-operandi t))
-
-;; ........................................................... Mode line
-
-(use-package emacs
-  :commands prot/hidden-mode-line-mode
-  :config
-  (setq mode-line-percent-position '(-3 "%p"))
-  (setq mode-line-defining-kbd-macro
-        (propertize " Macro" 'face 'mode-line-emphasis))
-  (setq-default mode-line-format
-                '("%e"
-                  mode-line-front-space
-                  mode-line-mule-info
-                  mode-line-client
-                  mode-line-modified
-                  mode-line-remote
-                  mode-line-frame-identification
-                  mode-line-buffer-identification
-                  "  "
-                  mode-line-position
-                  (vc-mode vc-mode)
-                  " "
-                  mode-line-modes
-                  " "
-                  mode-line-misc-info
-                  mode-line-end-spaces))
-
-  (define-minor-mode prot/hidden-mode-line-mode
-    "Toggle modeline visibility in the current buffer."
-    :init-value nil
-    :global nil
-    (if prot/hidden-mode-line-mode
-        (setq-local mode-line-format nil)
-      (kill-local-variable 'mode-line-format)
-      (force-mode-line-update))))
-
-(use-package battery
-  :config
-  (setq battery-mode-line-format " [%b%p%%]")
-  (setq battery-mode-line-limit 97)
-  (setq battery-update-interval 180)
-  (setq battery-load-low 20)
-  (setq battery-load-critical 10)
-  :hook (after-init-hook . display-battery-mode))
-
-(use-package time
-  :config
-  (setq display-time-format "%H:%M  %Y-%m-%d")
-  ;;;; Covered by `display-time-format'
-  ;; (setq display-time-24hr-format t)
-  ;; (setq display-time-day-and-date t)
-  (setq display-time-interval 60)
-  (setq display-time-mail-directory nil)
-  (setq display-time-default-load-average nil)
-  :hook (after-init-hook . display-time-mode))
-
-;; ...................................... Window elements and indicators
-
-(use-package emacs
-  :config
-  (setq window-divider-default-right-width 1)
-  (setq window-divider-default-bottom-width 1)
-  (setq window-divider-default-places 'right-only)
-  :hook (after-init-hook . window-divider-mode))
-
-(use-package fringe
-  :config
-  (fringe-mode nil)
-  (setq-default fringes-outside-margins nil)
-  (setq-default indicate-buffer-boundaries nil)
-  (setq-default indicate-empty-lines nil)
-  (setq-default overflow-newline-into-fringe t))
-
-(use-package diff-hl
-  :ensure
-  :after vc
-  :config
-  (setq diff-hl-draw-borders nil)
-  (setq diff-hl-side 'left)
-  :hook ((after-init-hook . global-diff-hl-mode)))
-
-(use-package hl-todo
-  :ensure
-  :hook (prog-mode-hook . hl-todo-mode))
-
-(use-package hl-line
-  :config
-  (setq hl-line-sticky-flag nil))
-
-(use-package display-line-numbers
-  :config
-  ;; Set absolute line numbers.  A value of "relative" is also useful.
-  (setq display-line-numbers-type t)
-  ;; Those two variables were introduced in Emacs 27.1
-  (setq display-line-numbers-major-tick 20)
-  (setq display-line-numbers-minor-tick 5)
-  ;; Use absolute numbers in narrowed buffers
-  (setq display-line-numbers-widen t)
-
-  (define-minor-mode prot/display-line-numbers-mode
-    "Toggle `display-line-numbers-mode' and `hl-line-mode'."
-    :init-value nil
-    :global nil
-    (if prot/display-line-numbers-mode
-        (progn
-          (display-line-numbers-mode 1)
-          (hl-line-mode 1)
-          (setq-local truncate-lines t))
-      (display-line-numbers-mode -1)
-      (hl-line-mode -1)
-      (setq-local truncate-lines nil)))
-  :bind ("<f7>" . prot/display-line-numbers-mode))
-
-(use-package whitespace
-  :config
-  (defun prot/toggle-invisibles ()
-    "Toggles the display of indentation and space characters."
+  (defun prot/ox-html ()
     (interactive)
-    (if (bound-and-true-p whitespace-mode)
-        (whitespace-mode -1)
-      (whitespace-mode)))
-  :bind (("<f6>" . prot/toggle-invisibles)
-         ("C-c z" . delete-trailing-whitespace)))
+    (org-html-export-as-html nil nil nil t nil))
 
-(use-package focus
-  :ensure
-  :commands (prot/focus-mode-to-thing
-             prot/focus-mode)
-  :config
-  (setq-default focus-mode-to-thing
-                '((prog-mode . defun)
-                  (text-mode . paragraph)))
-
-  ;; TODO review in accordance with `prot/focus-mode'
-  (defun prot/focus-mode-to-thing (&optional narrow)
-    "Set local values for `focus-mode-to-thing'.
-With optional NARROW limit the scope of `focus-mode' to smaller
-syntactic units."
-    (interactive "P")
-    (let* ((units (if narrow
-                      (list 'sexp 'sentence)
-                    (list 'defun 'paragraph)))
-           (prog (car units))
-           (text (cadr units)))
-      (setq-local focus-mode-to-thing
-                  `((prog-mode . ,prog)
-                    (text-mode . ,text)))))
-
-  ;; TODO use `define-minor-mode' instead of this
-  (defun prot/focus-mode (&optional arg)
-    "Toggle the use of `focus-mode'.
-With optional \\[universal-argument] prefix, also invoke
-`prot/focus-mode-to-thing' with its optional argument for a
-narrower field of view."
-    (interactive "P")
-    (if (bound-and-true-p focus-mode)
-        (focus-mode -1)
-      (if arg
-          (prot/focus-mode-to-thing t)
-        (kill-local-variable 'focus-mode-to-thing))
-      (focus-mode 1)))
-
-  ;; C-c o is used by `prot/olivetti-mode' and this is a good mnemonic
-  ;; for a concept of "Only the thing".
-  :bind (("C-c O" . prot/focus-mode)))
-
-(use-package olivetti
-  :ensure
-  :diminish
-  :config
-  (setq olivetti-body-width 0.7)
-  (setq olivetti-minimum-body-width 80)
-  (setq olivetti-recall-visual-line-mode-entry-state t)
-
-  (define-minor-mode prot/olivetti-mode
-    "Toggle buffer-local `olivetti-mode' with additional parameters.
-
-Fringes are disabled.  The modeline is hidden, except for
-`prog-mode' buffers (see `prot/hidden-mode-line-mode').  The
-default typeface is set to a proportionately spaced family,
-except for programming modes (see `prot/variable-pitch-mode').
-The cursor becomes a blinking bar, per `prot/cursor-type-mode'."
-    :init-value nil
-    :global nil
-    (if prot/olivetti-mode
-        (progn
-          (olivetti-mode 1)
-          (set-window-fringes (selected-window) 0 0)
-          (prot/variable-pitch-mode 1)
-          (prot/cursor-type-mode 1)
-          (unless (derived-mode-p 'prog-mode)
-            (prot/hidden-mode-line-mode 1)))
-      (olivetti-mode -1)
-      (set-window-fringes (selected-window) nil) ; Use default width
-      (prot/variable-pitch-mode -1)
-      (prot/cursor-type-mode -1)
-      (unless (derived-mode-p 'prog-mode)
-        (prot/hidden-mode-line-mode -1))))
-  :bind ("C-c o" . prot/olivetti-mode))
-
-(use-package auto-dim-other-buffers
-  :ensure
-  :commands auto-dim-other-buffers-mode
-  :config
-  (setq auto-dim-other-buffers-dim-on-switch-to-minibuffer nil)
-  (setq auto-dim-other-buffers-dim-on-focus-out t))
-
-(use-package paren-face
-  :ensure
-  :disabled
-  :hook (after-init-hook . global-paren-face-mode))
-
-;; ................................................... Language settings
-
-(use-package smartparens
-  :ensure)
-
-(use-package emacs
-  :config
-  (setq-default fill-column 72)
-  :hook (after-init-hook . column-number-mode))
-
-(use-package emacs
-  :config
-  (setq sentence-end-double-space t)
-  (setq colon-double-space nil)
-  (setq use-hard-newlines nil)
-  (setq sentence-end-without-period nil))
-
-(use-package emacs
-  :diminish auto-fill-function
-  :config
-  (setq adaptive-fill-mode t)
-
-  (defun prot/unfill-region-or-paragraph (&optional region)
-    "Unfill paragraph or, when active, the region.
-Join all lines in a region, if active, while respecting any empty
-lines (so multiple paragraphs are not joined, just unfilled).  If
-no region is active, operate on the paragraph.  The idea is to
-produce the opposite effect of both `fill-paragraph' and
-`fill-region'."
+  (defun prot/ox-texinfo ()
     (interactive)
-    (let ((fill-column most-positive-fixnum))
-      (if (use-region-p)
-          (fill-region (region-beginning) (region-end))
-        (fill-paragraph nil region))))
+    (org-texinfo-export-to-info)))
 
-  :hook (text-mode-hook . (lambda ()
-                            (turn-on-auto-fill)))
-  :bind ("M-Q" . prot/unfill-region-or-paragraph))
+;;;; Email settings
 
-(use-package subword
-  :diminish
-  :hook (prog-mode-hook . subword-mode))
-
-(use-package newcomment
-  :config
-  (setq comment-empty-lines t)
-  (setq comment-fill-column nil)
-  (setq comment-multi-line t)
-  (setq comment-style 'multi-line)
-
-  (defun prot/comment-dwim (&optional arg)
-    "Alternative to `comment-dwim': offers a simple wrapper
-around `comment-line' and `comment-dwim'.
-
-If the region is active, then toggle the comment status of the
-region or, if the major mode defines as much, of all the lines
-implied by the region boundaries.
-
-Else toggle the comment status of the line at point."
-    (interactive "*P")
-    (if (use-region-p)
-        (comment-dwim arg)
-      (save-excursion
-        (comment-line arg))))
-
-  :bind (("C-;" . prot/comment-dwim)
-         ("C-:" . comment-kill)
-         ("M-;" . comment-indent)
-         ("C-x C-;" . comment-box)))
-
-;; ............................................. Spelling and dictionary
-
-(use-package ispell
-  :commands (ispell-change-dictionary
-             ispell-word
-             ispell-region
-             ispell-buffer)
-  :config
-  (setq ispell-program-name "aspell")
-  (setq ispell-dictionary "en_GB")
-
-  (defvar prot/ispell-dictionaries
-    '(("English" . "en")
-      ("Français" . "fr")
-      ("Espanõl" . "es")
-      ("Nederlands" . "nl"))
-    "Alist of dictionaries I may use.
-It is used by `prot/ispell-dictionaries-complete'.")
-
-  (defun prot/ispell-dictionaries-complete ()
-    "Select an item from `prot/ispell-dictionaries'."
-    (interactive)
-    (let* ((dicts (mapcar #'car prot/ispell-dictionaries))
-           (choice (completing-read "Select dictionary: " dicts nil t))
-           (key (cdr (assoc `,choice prot/ispell-dictionaries))))
-      (ispell-change-dictionary key)
-      (message "Switched to %s" key)))
-
-  (defun dp/ispell-dwim ()
-    "Spell check region or select dictionary.
-
-Use `ispell-region' on the active region, else invoke
-`prot/ispell-dictionaries-complete'."
-    (interactive)
-    (let ((beg (region-beginning))
-          (end (region-end)))
-      (if (use-region-p)
-          (ispell-region beg end)
-        (prot/ispell-dictionaries-complete))))
-
-  :bind (("M-$" . dp/ispell-dwim)
-         ("C-M-$" . prot/ispell-dictionaries-complete)))
-
-(use-package emacs
-  :config
-  (defun dp/dict-lookup-en-fr ()
-    "Look up a definition in the WordRerefence.com en-fr dictionary.
-
-Uses the region if it is active, otherwise the word under the
-cursor."
-    (interactive)
-    (let ((word (if (use-region-p)
-                    (buffer-substring-no-properties
-                     (region-beginning) (region-end))
-                  (current-word))))
-      (browse-url (concat "https://www.wordreference.com/enfr/" word)))))
-
-
-(use-package flycheck
-  :ensure
-  :defer
-  :config
-  (setq flycheck-check-syntax-automatically '(mode-enabled save))
-
-  (flycheck-define-checker dp/git-commit-message
-    "A git commit message checker using `gitlint'.
-
-See URL `https://jorisroovers.com/gitlint/'."
-    :command ("gitlint" "--msg-filename" source)
-    :error-patterns
-    ((error line-start
-            line ": " (id (one-or-more (in alnum)))
-            blank
-            (message (one-or-more (not (any ":"))))
-            (minimal-match (zero-or-more anything))
-            line-end))
-    :modes vc-git-log-edit-mode)
-
-  (add-to-list 'flycheck-checkers 'dp/git-commit-message t))
-
-(use-package flycheck-indicator
-  :ensure
-  :after flycheck
-  :hook (flycheck-mode-hook . flycheck-indicator-mode))
-
-(use-package flymake
-  :defer
-  :commands flymake-mode
-  :config
-  (setq flymake-fringe-indicator-position 'left-fringe)
-  (setq flymake-suppress-zero-counters t)
-  (setq flymake-start-on-flymake-mode t)
-  (setq flymake-no-changes-timeout nil)
-  (setq flymake-start-on-save-buffer t)
-  (setq flymake-proc-compilation-prevents-syntax-check t)
-  (setq flymake-wrap-around nil)
-  :bind (:map flymake-mode-map
-              ("C-c d" . flymake-show-diagnostics-buffer)
-              ("C-c n" . flymake-goto-next-error)
-              ("C-c p" . flymake-goto-prev-error)))
-
-(use-package eldoc
-  :defer
-  :diminish
-  :config
-  (global-eldoc-mode 1))
-
-(use-package haskell-mode
-  :ensure)
-
-(use-package markdown-mode
-  :ensure
-  :config
-  ;; Allows for fenced block focus with C-c ' (same as Org blocks).
-  (use-package edit-indirect
-    :ensure
-    :defer)
-  (setq markdown-fontify-code-blocks-natively t)
-  :mode ("\\.md$" . markdown-mode))
-
-(use-package yaml-mode
-  :ensure
-  :mode (("\\.yml\\'" . yaml-mode)
-         ("\\.yaml\\'" . yaml-mode)))
-
-(use-package emacs
-  :mode (("sxhkdrc" . conf-mode)
-         ("Xmodmap" . conf-xdefaults-mode)))
-
-;; Configure 'electric' behaviour
-
-(use-package electric
-  :config
-  (setq electric-pair-inhibit-predicate'electric-pair-conservative-inhibit)
-  (setq electric-pair-preserve-balance t)
-  (setq electric-pair-pairs
-        '((8216 . 8217)
-          (8220 . 8221)
-          (171 . 187)))
-  (setq electric-pair-skip-self 'electric-pair-default-skip-self)
-  (setq electric-pair-skip-whitespace nil)
-  (setq electric-pair-skip-whitespace-chars
-        '(9
-          10
-          32))
-  (setq electric-quote-context-sensitive t)
-  (setq electric-quote-paragraph t)
-  (setq electric-quote-string nil)
-  (setq electric-quote-replace-double t)
-  :hook (after-init-hook . (lambda ()
-                             (electric-indent-mode 1)
-                             (electric-pair-mode -1)
-                             (electric-quote-mode -1))))
-
-;; Parentheses
-
-(use-package paren
-  :config
-  (setq show-paren-style 'parenthesis)
-  (setq show-paren-when-point-in-periphery t)
-  (setq show-paren-when-point-inside-paren nil)
-  :hook (after-init-hook . show-paren-mode))
-
-;; Tabs, indentation, and the TAB key
-
-(use-package emacs
-  :config
-  (setq-default tab-always-indent 'complete)
-  (setq-default tab-width 4)
-  (setq-default indent-tabs-mode nil))
-
-
-;; ................................................... Cursor and mouse settings
-
-(use-package frame
-  :commands prot/cursor-type-mode
-  :config
-  (setq-default cursor-type 'box)
-  (setq-default cursor-in-non-selected-windows '(bar . 2))
-  (setq-default blink-cursor-blinks 50)
-  (setq-default blink-cursor-interval nil) ; 0.75 would be my choice
-  (setq-default blink-cursor-delay 0.2)
-
-  (blink-cursor-mode -1)
-
-  (define-minor-mode prot/cursor-type-mode
-    "Toggle between static block and pulsing bar cursor."
-    :init-value nil
-    :global t
-    (if prot/cursor-type-mode
-        (progn
-          (setq-local blink-cursor-interval 0.75)
-          (setq-local cursor-type '(bar . 2))
-          (setq-local cursor-in-non-selected-windows 'hollow)
-          (blink-cursor-mode 1))
-      (dolist (local '(blink-cursor-interval
-                       cursor-type
-                       cursor-in-non-selected-windows))
-        (kill-local-variable `,local))
-      (blink-cursor-mode -1))))
-
-(use-package pulse
-  :config
-  (defface prot/pulse-line-modus-theme
-    '((t :inherit modus-theme-subtle-green :extend t))
-    "Ad-hoc face for `prot/pulse-line'.
-This is done because it is not possible to highlight empty lines
-without the `:extend' property.")
-
-  (defun prot/pulse-line (&optional face)
-    "Temporarily highlight the current line."
-    (interactive)
-    (let ((start (if (eobp)
-                     (line-beginning-position 0)
-                   (line-beginning-position)))
-          (end (line-beginning-position 2))
-          (pulse-delay .04)
-          (face
-           (if face
-               face
-             'prot/pulse-line-modus-theme)))
-      (pulse-momentary-highlight-region start end face)))
-  :bind ("<s-escape>" . prot/pulse-line))
-
-(use-package mouse
-  :config
-  ;; In Emacs 27, use Control + mouse wheel to scale text.
-  (setq mouse-wheel-scroll-amount
-        '(1
-          ((shift) . 5)
-          ((meta) . 0.5)
-          ((control) . text-scale)))
-  (setq mouse-drag-copy-region nil)
-  (setq make-pointer-invisible t)
-  (setq mouse-wheel-progressive-speed t)
-  (setq mouse-wheel-follow-mouse t)
-  :hook (after-init-hook . mouse-wheel-mode))
-
-(use-package emacs
-  :config
-  (setq-default scroll-preserve-screen-position t)
-  (setq-default scroll-conservatively 1) ; affects `scroll-step'
-  (setq-default scroll-margin 0)
-
-  (define-minor-mode prot/scroll-centre-cursor-mode
-    "Toggle centred cursor scrolling behaviour."
-    :init-value nil
-    :lighter " S="
-    :global nil
-    (if prot/scroll-centre-cursor-mode
-        (progn
-          (setq-local scroll-margin (* (frame-height) 2))
-          (setq-local scroll-conservatively 0)
-          (setq-local maximum-scroll-margin 0.5))
-      (dolist (local '(scroll-preserve-screen-position
-                       scroll-conservatively
-                       maximum-scroll-margin
-                       scroll-margin))
-        (kill-local-variable `,local))))
-
-  ;; C-c l is used for `org-store-link'.  The mnemonic for this is to
-  ;; focus the Line and also works as a variant of C-l.
-  :bind ("C-c L" . prot/scroll-centre-cursor-mode))
-
-(use-package delsel
-  :hook (after-init-hook . delete-selection-mode))
-
-(use-package tooltip
-  :config
-  (setq tooltip-delay 0.5)
-  (setq tooltip-short-delay 0.5)
-  (setq x-gtk-use-system-tooltips nil)
-  (setq tooltip-frame-parameters
-        '((name . "tooltip")
-          (internal-border-width . 6)
-          (border-width . 0)
-          (no-special-glyphs . t)))
-  :hook (after-init-hook . tooltip-mode))
-
-(use-package autorevert
-  :diminish
-  :config
-  (setq auto-revert-verbose t)
-  :hook (after-init-hook . global-auto-revert-mode))
-
-(use-package emacs
-  :config
-  (setq save-interprogram-paste-before-kill t))
-
-(use-package emacs
-  :config
-  (setq frame-title-format '("%b"))
-  (setq echo-keystrokes 0.25)
-  (setq ring-bell-function 'ignore)
-
-  (defalias 'yes-or-no-p 'y-or-n-p)
-  (put 'narrow-to-region 'disabled nil)
-  (put 'upcase-region 'disabled nil)
-  (put 'downcase-region 'disabled nil)
-  (put 'dired-find-alternate-file 'disabled nil)
-  (put 'overwrite-mode 'disabled t))
-
-(use-package emacs
-  :config
-  (setq mode-require-final-newline 'visit-save))
-
-(use-package package
-  :commands (list-packages
-             package-refresh-contents
-             package-list-packages)
-  :hook (package-menu-mode-hook . hl-line-mode))
-
-;; ............................................................. Version control
-
-;; VC
-
-(use-package vc
-  :config
-  (setq vc-find-revision-no-save t)
-  (require 'log-view)                   ; needed for the key bindings
-  :bind (("C-x v b" . vc-retrieve-tag)  ; "branch" switch
-         ("C-x v t" . vc-create-tag)
-         ("C-x v f" . vc-log-incoming)  ; the actual git fetch
-         ("C-x v F" . vc-update)        ; "F" because "P" is push
-         ("C-x v d" . vc-diff)
-         (:map log-view-mode-map
-               ("<tab>" . log-view-toggle-entry-display)
-               ("<return>" . log-view-find-revision)
-               ("s" . vc-log-search)
-               ("o" . vc-log-outgoing)
-               ("f" . vc-log-incoming)
-               ("F" . vc-update)
-               ("P" . vc-push))))
-
-(use-package vc-dir
-  :config
-  (defun prot/vc-dir-project ()
-    "Unconditionally display `vc-diff' for the current project."
-    (interactive)
-    (vc-dir (vc-root-dir)))
-  :bind (("C-x v p" . prot/vc-dir-project)
-         :map vc-dir-mode-map
-         ("b" . vc-retrieve-tag)
-         ("t" . vc-create-tag)
-         ("o" . vc-log-outgoing)
-         ("f" . vc-log-incoming) ; replaces `vc-dir-find-file' (use RET)
-         ("F" . vc-update)       ; symmetric with P: `vc-push'
-         ("d" . vc-diff)         ; align with D: `vc-root-diff'
-         ("k" . vc-dir-clean-files)))
-
-(use-package vc-git
-  :config
-  (setq vc-git-diff-switches "--patch-with-stat")
-  (setq vc-git-print-log-follow t))
-
-(use-package vc-annotate
-  :config
-  (setq vc-annotate-display-mode 'scale) ; scale to oldest
-  :bind (("C-x v a" . vc-annotate)       ; `vc-update-change-log' is not in git
-         :map vc-annotate-mode-map
-         ("t" . vc-annotate-toggle-annotation-visibility)))
-
-(use-package magit
-  :ensure
-  :defer)
-
-(use-package git-commit
-  :defer
-  :after magit
-  :config
-  (setq git-commit-summary-max-length 50)
-  (setq git-commit-known-pseudo-headers
-        '("Signed-off-by"
-          "Acked-by"
-          "Modified-by"
-          "Cc"
-          "Suggested-by"
-          "Reported-by"
-          "Tested-by"
-          "Reviewed-by"))
-  (setq git-commit-style-convention-checks
-        '(non-empty-second-line
-          overlong-summary-line)))
-
-(use-package magit-diff
-  :defer
-  :after magit
-  :config
-  ;; In the fucused hunk, highlight changes within a line, not just the
-  ;; line itself.
-  (setq magit-diff-refine-hunk t))
-
-(use-package diff
-  :config
-  (setq diff-default-read-only t)
-  (setq diff-advance-after-apply-hunk t)
-  (setq diff-update-on-the-fly t)
-  ;; The following are from Emacs 27.1
-  (setq diff-refine nil)
-  (setq diff-font-lock-prettify nil)
-  (setq diff-font-lock-syntax nil)
-
-  (defun prot/diff-buffer-with-file (&optional arg)
-    "Compare buffer to its file, else run `vc-diff'.
-With \\[universal-argument] also enable highlighting of word-wise
-changes, local to the current buffer."
-    (interactive "P")
-    (let ((buf nil))     ; this method will "fail" if multi diff buffers
-      (if (buffer-modified-p)
-          (progn
-            (diff-buffer-with-file (current-buffer))
-            (setq buf "*Diff*"))
-        (vc-diff)
-        (setq buf "*vc-diff*"))
-      (when arg
-        (with-current-buffer (get-buffer buf)
-          (setq-local diff-refine 'font-lock)))))
-
-  (defun prot/diff-restrict-view-dwim (&optional arg)
-    "Use `diff-restrict-view', or widen when already narrowed.
-By default the narrowing effect applies to the focused diff hunk.
-With \\[universal-argument] do it for the current file instead."
-    (interactive "P")
-    (when (derived-mode-p 'diff-mode)
-      (if (buffer-narrowed-p)
-          (progn
-            (widen)
-            (message "Widened the view"))
-        (if arg
-            (progn
-              (diff-restrict-view arg)
-              (message "Narrowed to file"))
-          (diff-restrict-view)
-          (message "Narrowed to diff hunk")))))
-
-  ;; `prot/diff-buffer-with-file' replaces the default for `vc-diff'
-  ;; (which I bind to another key---see previous section).
-  :bind (("C-x v =" . prot/diff-buffer-with-file)
-         :map diff-mode-map
-         ("C-c C-n" . prot/diff-restrict-view-dwim)))
-
-(use-package ediff
-  :defer
-  :config
-  (setq ediff-keep-variants nil)
-  (setq ediff-make-buffers-readonly-at-startup nil)
-  (setq ediff-merge-revisions-with-ancestor t)
-  (setq ediff-show-clashes-only t)
-  (setq ediff-split-window-function 'split-window-horizontally)
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-
-  ;; Tweak those for safer identification and removal
-  (setq ediff-combination-pattern
-        '("<<<<<<< prot-ediff-combine Variant A" A
-          ">>>>>>> prot-ediff-combine Variant B" B
-          "####### prot-ediff-combine Ancestor" Ancestor
-          "======= prot-ediff-combine End"))
-
-  ;; TODO automate process in a robust way, or at least offer a good key
-  ;; binding.
-  (defun prot/ediff-flush-combination-pattern ()
-    "Remove my custom `ediff-combination-pattern' markers.
-
-This is a quick-and-dirty way to get rid of the markers that are
-left behind by `smerge-ediff' when combining the output of two
-diffs.  While this could be automated via a hook, I am not yet
-sure this is a good approach."
-    (interactive)
-    (flush-lines ".*prot-ediff.*" (point-min) (point-max) nil)))
-
-(use-package log-edit
-  :config
-  (setq log-edit-confirm 'changed)
-  (setq log-edit-keep-buffer nil)
-  (setq log-edit-require-final-newline t)
-  (setq log-edit-setup-add-author nil))
-
-;; ....................................................................... Email
-
-;; Base email settings
+;;;;; Client-agnostic email settings (credentials, message composition, encryption)
 
 (use-package auth-source
   :config
   (setq auth-sources '("~/.authinfo.gpg"))
   (setq user-full-name "David Porter")
   (setq user-mail-address "david@daporter.net"))
+
+(use-package mm-encode
+  :config
+  (setq mm-encrypt-option 'guided)
+  (setq mm-sign-option 'guided))
+
+(use-package mml-sec
+  :config
+  (setq mml-secure-openpgp-encrypt-to-self t)
+  (setq mml-secure-openpgp-sign-with-sender t)
+  (setq mml-secure-smime-encrypt-to-self t)
+  (setq mml-secure-smime-sign-with-sender t))
 
 (use-package epa-file
   :config
@@ -2879,39 +2329,41 @@ sure this is a good approach."
   (setq message-confirm-send nil)
   (setq message-kill-buffer-on-exit t)
   (setq message-wide-reply-confirm-recipients t)
+  (setq message-default-charset 'utf-8)
   (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
 
   (defun prot/message-header-add-gcc ()
     "While `gnus' is running, add pre-populated Gcc header.
 
 The Gcc header places a copy of the outgoing message to the
-appropriate maildir directory.
+appropriate directory of the IMAP server, as per the contents of
+~/.authinfo.gpg.
 
 In the absence of a Gcc header, the outgoing message will not
-appear in the appropriate directory, though it will still be
-sent.
+appear in the appropriate maildir directory, though it will still
+be sent.
 
 Add this function to `message-header-setup-hook'."
     (if (gnus-alive-p)
         (progn
           (when (message-fetch-field "Gcc")
             (message-remove-header "Gcc"))
-          (message-add-header "Gcc: nnmaildir+migadu:sent"))
+          (message-add-header "Gcc: nnmaildir+pub:Sent"))
       (message "Gnus is not running. No GCC field inserted.")))
-
+  
   :hook ((message-header-setup-hook . prot/message-header-add-gcc)
          (message-setup-hook . message-sort-headers)))
 
-;; Gnus
+;;;;; Gnus for reading email, mailing lists, and more
+
+;;;;;; Gnus account settings and essential configurations
 
 (use-package gnus
   :config
   (setq gnus-directory "~/news")
   (setq gnus-select-method '(nnnil ""))
   (setq gnus-secondary-select-methods
-        '((nntp "news.gwene.org")
-          (nntp "news.gmane.io")
-          (nnmaildir "migadu" (directory "~/mail/migadu"))))
+        '((nnmaildir "migadu" (directory "~/mail/migadu"))))
 
   (setq nnir-method-default-engines
         '((nnmaildir . notmuch)))
@@ -2933,25 +2385,13 @@ Add this function to `message-header-setup-hook'."
     (interactive)
     (gnus-summary-move-article nil "nnmaildir+migadu:archive"))
 
-  :bind (("C-c g" . gnus)
-         ("s-g" . gnus)
-         :map gnus-summary-mode-map
-         ("C-c A" . dp/archive-message)))
+  :bind ("C-c m" . gnus))
 
 (use-package nnmail
   :config
   (setq nnmail-expiry-wait 30))
 
-(use-package mm-encode
-  :config
-  (setq mm-encrypt-option 'guided))
-
-(use-package mml-sec
-  :config
-  (setq mml-secure-openpgp-encrypt-to-self t)
-  (setq mml-secure-openpgp-sign-with-sender t)
-  (setq mml-secure-smime-encrypt-to-self t)
-  (setq mml-secure-smime-sign-with-sender t))
+;;;;;; Gnus agent
 
 (use-package gnus-agent
   :after gnus
@@ -2967,6 +2407,8 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-agent-mark-unread-after-downloaded t)
   (setq gnus-agent-queue-mail t)        ; queue if unplugged
   (setq gnus-agent-synchronize-flags nil))
+
+;;;;;; Gnus article (message view)
 
 (use-package gnus-art
   :after gnus
@@ -2986,7 +2428,7 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-treat-display-smileys nil)
   (setq gnus-article-mode-line-format "%G %S %m")
   (setq gnus-visible-headers
-        '("^From:" "^Subject:" "^To:" "^Cc:" "^Newsgroups:" "^Subject:" "^Date:"
+        '("^From:" "^Subject:" "^To:" "^Cc:" "^Newsgroups:" "^Date:"
           "Followup-To:" "Reply-To:" "^Organization:" "^X-Newsreader:"
           "^X-Mailer:"))
   (setq gnus-sorted-header-list gnus-visible-headers)
@@ -2997,11 +2439,15 @@ Add this function to `message-header-setup-hook'."
               ("s" . gnus-mime-save-part)
               ("o" . gnus-mime-copy-part)))
 
+;;;;;; Gnus asynchronous operations
+
 (use-package gnus-async
   :after gnus
   :config
   (setq gnus-asynchronous t)
   (setq gnus-use-article-prefetch 15))
+
+;;;;;; Gnus group (main interface)
 
 (use-package gnus-group
   :after gnus
@@ -3012,10 +2458,10 @@ Add this function to `message-header-setup-hook'."
         '((gnus-group-sort-by-unread)
           (gnus-group-sort-by-alphabet)
           (gnus-group-sort-by-rank)))
+  (setq gnus-group-line-format "%M%p%P%5y:%B%(%g%)\n")
   (setq gnus-group-mode-line-format "%%b")
-  :hook
-  (gnus-group-mode-hook . hl-line-mode)
-  (gnus-select-group-hook . gnus-group-set-timestamp)
+  :hook ((gnus-group-mode-hook . hl-line-mode)
+         (gnus-select-group-hook . gnus-group-set-timestamp))
   :bind (:map gnus-group-mode-map
               ("M-n" . gnus-topic-goto-next-topic)
               ("M-p" . gnus-topic-goto-previous-topic)))
@@ -3024,8 +2470,9 @@ Add this function to `message-header-setup-hook'."
   :after (gnus gnus-group)
   :config
   (setq gnus-topic-display-empty-topics nil)
-  :hook
-  (gnus-group-mode-hook . gnus-topic-mode))
+  :hook (gnus-group-mode-hook . gnus-topic-mode))
+
+;;;;;; Gnus summary
 
 (use-package gnus-sum
   :after (gnus gnus-group)
@@ -3034,6 +2481,7 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-auto-select-first nil)
   (setq gnus-summary-ignore-duplicates t)
   (setq gnus-suppress-duplicates t)
+  (setq gnus-save-duplicate-list t)
   (setq gnus-summary-goto-unread nil)
   (setq gnus-thread-sort-functions
         '(gnus-thread-sort-by-number
@@ -3115,18 +2563,644 @@ Add this function to `message-header-setup-hook'."
               ("C-M-p" . gnus-summary-prev-group)
               ("C-M-^" . gnus-summary-refer-thread)))
 
+;;;;;; Gnus server
+
 (use-package gnus-srvr
   :after gnus
   :hook
   ((gnus-browse-mode-hook gnus-server-mode-hook) . hl-line-mode))
 
+;;;;;; Gnus intersection with Dired
+
 (use-package gnus-dired
   :after (gnus dired)
   :hook (dired-mode-hook . gnus-dired-mode))
 
+;;;; Version control tools
+
+;;;;; Diff-mode
+
+(use-package diff
+  :commands prot/diff-refine-buffer
+  :config
+  (setq diff-default-read-only t)
+  (setq diff-advance-after-apply-hunk t)
+  (setq diff-update-on-the-fly t)
+  ;; The following are from Emacs 27.1
+  (setq diff-refine nil)                ; I do it on demand
+  (setq diff-font-lock-prettify nil)    ; better for patches
+  (setq diff-font-lock-syntax nil)      ; good for accessibility
+
+  (defun prot/diff-buffer-with-file (&optional arg)
+    "Compare buffer to its file, else run `vc-diff'.
+With \\[universal-argument] also enable highlighting of word-wise
+changes, local to the current buffer."
+    (interactive "P")
+    (let ((buf nil))     ; this method will "fail" if multi diff buffers
+      (if (buffer-modified-p)
+          (progn
+            (diff-buffer-with-file (current-buffer))
+            (setq buf "*Diff*"))
+        (vc-diff)
+        (setq buf "*vc-diff*"))
+      (when arg
+        (with-current-buffer (get-buffer buf)
+          (setq-local diff-refine 'font-lock)))))
+
+  (defun prot/diff-refine-buffer ()
+    "Produce word-wise, 'refined' diffs in `diff-mode' buffer.
+Also see `prot/diff-refine-hunk-or-buf' that is a wrapper for the
+current command."
+    (interactive)
+    (let ((position (point)))
+      (when (derived-mode-p 'diff-mode)
+        (setq-local diff-refine 'font-lock)
+        (font-lock-flush (point-min) (point-max))
+        (goto-char position))))
+
+  (defun prot/diff-refine-hunk-or-buf (&optional arg)
+    "Apply word-wise, 'refined' diffs to hunk or buffer.
+With prefix ARG (\\[universal-argument]), refine the entire
+buffer, else the diff hunk at point.
+
+This is a wrapper around `prot/diff-refine-buffer' and
+`diff-refine-hunk', meant to economise on key bindings."
+    (interactive "P")
+    (if arg
+        (prot/diff-refine-buffer)
+      (diff-refine-hunk)))
+
+  (defun prot/diff-restrict-view-dwim (&optional arg)
+    "Use `diff-restrict-view', or widen when already narrowed.
+By default the narrowing effect applies to the focused diff hunk.
+With \\[universal-argument] do it for the current file instead."
+    (interactive "P")
+    (when (derived-mode-p 'diff-mode)
+      (if (buffer-narrowed-p)
+          (progn
+            (widen)
+            (message "Widened the view"))
+        (if arg
+            (progn
+              (diff-restrict-view arg)
+              (message "Narrowed to file"))
+          (diff-restrict-view)
+          (message "Narrowed to diff hunk")))))
+
+  ;; `prot/diff-buffer-with-file' replaces the default for `vc-diff'
+  ;; (which I bind to another key---see VC section).
+  :bind (("C-x v =" . prot/diff-buffer-with-file)
+         :map diff-mode-map
+         ("C-c C-b" . prot/diff-refine-hunk-or-buf) ; replace `diff-refine-hunk'
+         ("C-c C-n" . prot/diff-restrict-view-dwim)))
+
+;;;;; Generic version control (VC) framework
+
+(use-package vc
+  :config
+  (setq vc-find-revision-no-save t)
+
+  (use-package add-log
+    :config
+    ;; I use a different account for git commits
+    (setq add-log-mailing-address "info@protesilaos.com")
+    (setq add-log-keep-changes-together t))
+
+  (use-package log-view
+    :config
+    (defun prot/vc-print-log (&optional arg)
+      "Like `vc-print-log' but for a custom fileset.
+
+With optional prefix ARG (\\[universal-argument]), query for a
+number to limit the log to.  Then prompt the user for matching
+files in the `default-directory'.  A literal space delimits
+multiple files (inserting a space will renew the prompt, asking
+for another file match).
+
+In a `dired-mode' buffer, print log for the file at point, or any
+marked files, except for when a double prefix argument is passed.
+A single prefix arg still provides for a limit to the log.
+
+If a double prefix ARG is passed, prompt for a limit and produce
+a log that covers all files in the present directory."
+      (interactive "P")
+      (let* ((lim (if arg
+                      (read-number "Limit log to N entries: " 5)
+                    20))
+             (dir default-directory)
+             (dotless directory-files-no-dot-files-regexp)
+             (files (directory-files dir nil dotless t))
+             (crm-separator " ")
+             (set (cond
+                   ((equal arg '(16))
+                    files)
+                   ((eq major-mode 'dired-mode)
+                    (dired-get-marked-files t nil))
+                   (t
+                    (icomplete-vertical-do ()
+                      (completing-read-multiple
+                       "Select files in current dir: " files nil t)))))
+             (backend (vc-backend set)))
+        (vc-print-log-internal backend set nil nil lim 'with-diff)))
+
+    (defun prot/log-view-extract-commit ()
+      "Kill commit from around point in `vc-print-log'."
+      (interactive)
+      (let ((commit (cadr (log-view-current-entry (point) t))))
+        (kill-new (format "%s" commit))
+        (message "Copied: %s" commit)))
+
+    :bind (("C-x v SPC" . prot/vc-print-log)
+           :map log-view-mode-map
+           ("<tab>" . log-view-toggle-entry-display)
+           ("<return>" . log-view-find-revision)
+           ("w" . prot/log-view-extract-commit)
+           ("s" . vc-log-search)
+           ("o" . vc-log-outgoing)
+           ("f" . vc-log-incoming)
+           ("F" . vc-update)
+           ("P" . vc-push)))
+
+  :bind (("C-x v b" . vc-retrieve-tag)  ; "branch" switch
+         ("C-x v t" . vc-create-tag)
+         ("C-x v f" . vc-log-incoming)  ; the actual git fetch
+         ("C-x v F" . vc-update)        ; "F" because "P" is push
+         ("C-x v d" . vc-diff)))
+
+(use-package vc-dir
+  :config
+  (defun prot/vc-dir (&optional arg)
+    "Run `vc-dir' for the current project or directory.
+With optional ARG (\\[universal-argument]), use the present
+working directory, else default to the root of the current
+project, as defined by `vc-root-dir'."
+    (interactive "P")
+    (let ((dir (if arg default-directory (vc-root-dir))))
+      (vc-dir dir)))
+  :bind (("C-x v p" . prot/vc-dir)
+         :map vc-dir-mode-map
+         ("b" . vc-retrieve-tag)
+         ("t" . vc-create-tag)
+         ("o" . vc-log-outgoing)
+         ("f" . vc-log-incoming) ; replaces `vc-dir-find-file' (use RET)
+         ("F" . vc-update)       ; symmetric with P: `vc-push'
+         ("d" . vc-diff)         ; align with D: `vc-root-diff'
+         ("k" . vc-dir-clean-files)))
+
+(use-package vc-git
+  :config
+  (setq vc-git-diff-switches '("--patch-with-stat" "--histogram"))
+  (setq vc-git-print-log-follow t)
+  (setq vc-git-revision-complete-only-branches t) ; Emacs 28
+  (setq vc-git-root-log-format
+        '("%d%h  %ad  %an: %s"
+          "^\\(?:[*/\\| ]+ \\)?\
+\\(?2: ([^)]+)\\)?\
+\\(?1:[0-9a-z]+ \\) \
+\\(?3:[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}\\)\
+\\(?4:.*?:\\)"
+          ((1 'log-view-message)
+           (2 'change-log-list nil lax)
+           (3 'change-log-date)
+           (4 'change-log-name)))))
+
+(use-package vc-annotate
+  :config
+  (setq vc-annotate-display-mode 'scale) ; scale to oldest
+  :bind (("C-x v a" . vc-annotate)       ; `vc-update-change-log' is not in git
+         :map vc-annotate-mode-map
+         ("<tab>" . vc-annotate-toggle-annotation-visibility)))
+
+;;;;;; Commit log editing
+
+(use-package log-edit
+  :config
+  (setq log-edit-confirm 'changed)
+  (setq log-edit-keep-buffer nil)
+  (setq log-edit-require-final-newline t)
+  (setq log-edit-setup-add-author nil))
+
+;;;;; Interactive git front-end (Magit)
+
+;;;;;; Base Magit settings
+
+(use-package magit
+  :ensure
+  :bind ("C-c g" . magit-status))
+
+;;;;;; Magit commits
+
+(use-package git-commit
+  :after magit
+  :config
+  (setq git-commit-summary-max-length 50)
+  (setq git-commit-known-pseudo-headers
+        '("Signed-off-by"
+          "Acked-by"
+          "Modified-by"
+          "Cc"
+          "Suggested-by"
+          "Reported-by"
+          "Tested-by"
+          "Reviewed-by"))
+  (setq git-commit-style-convention-checks
+        '(non-empty-second-line
+          overlong-summary-line)))
+
+;;;;;; Magit diffs
+
+(use-package magit-diff
+  :after magit
+  :config
+  (setq magit-diff-refine-hunk t))
+
+;;;;;; Magit repo list
+
+(use-package magit-repos
+  :after magit
+  :commands magit-list-repositories
+  :config
+  (setq magit-repository-directories
+        '(("~/projects" . 1))))
+
+;;;;; Smerge and Ediff
+
+(use-package smerge-mode
+  :config
+  (defhydra prot/hydra-smerge-mode
+    (:color pink :hint nil :post (smerge-auto-leave))
+    "
+   ^Motions^      ^Actions^
+---^^-------------^^-------
+_n_: Next      _b_: Base
+_p_: Prev      _u_: Upper
+^^             _l_: Lower
+^^             _a_: All
+"
+    ("n" smerge-next)
+    ("p" smerge-prev)
+    ("b" smerge-keep-base)
+    ("u" smerge-keep-upper)
+    ("l" smerge-keep-lower)
+    ("a" smerge-keep-all)
+    ("q" nil "cancel" :color blue))
+
+  (defun prot/smerge-mode-hydra ()
+    "Load `prot/hydra-smerge-mode' in `smerge-mode'."
+    (when smerge-mode
+      (prot/hydra-smerge-mode/body)))
+  :hook ((vc-find-file-hook . prot/smerge-mode-hydra)
+         (magit-diff-visit-file-hook . prot/smerge-mode-hydra)))
+
+(use-package ediff
+  :config
+  (setq ediff-keep-variants nil)
+  (setq ediff-make-buffers-readonly-at-startup nil)
+  (setq ediff-merge-revisions-with-ancestor t)
+  (setq ediff-show-clashes-only t)
+  (setq ediff-split-window-function 'split-window-horizontally)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+  ;; Tweak those for safer identification and removal
+  (setq ediff-combination-pattern
+        '("<<<<<<< prot-ediff-combine Variant A" A
+          ">>>>>>> prot-ediff-combine Variant B" B
+          "####### prot-ediff-combine Ancestor" Ancestor
+          "======= prot-ediff-combine End"))
+
+  ;; TODO automate process in a robust way, or at least offer a good key
+  ;; binding.
+  (defun prot/ediff-flush-combination-pattern ()
+    "Remove my custom `ediff-combination-pattern' markers.
+
+This is a quick-and-dirty way to get rid of the markers that are
+left behind by `smerge-ediff' when combining the output of two
+diffs.  While this could be automated via a hook, I am not yet
+sure this is a good approach."
+    (interactive)
+    (flush-lines ".*prot-ediff.*" (point-min) (point-max) nil)))
+
+;;;; Shells and terminal emulators
+
+;;;;; Command-line shells
+
+;;;;;; Shell (M-x shell)
+
+(use-package shell
+  :commands shell-command
+  :config
+  (setq ansi-color-for-comint-mode t)
+  (setq shell-command-prompt-show-cwd t) ; Emacs 27.1
+  :bind (("<s-S-return>" . shell)))
+
+;;;;;; Eshell (like M-x shell but in elisp)
+
+(use-package eshell
+  :bind ("<s-return>" . eshell))
+
+(use-package esh-mode
+  :commands prot/eshell-minor-mode
+  :config
+  ;; used by other functions below
+  (declare-function ffap-file-at-point "ffap.el")
+
+  (defmacro prot/eshell-ffap (name doc &rest body)
+    "Make commands for `eshell' find-file-at-point.
+NAME is how the function is called.  DOC is the function's
+documentation string.  BODY is the set of arguments passed to the
+`if' statement to be evaluated when a file at point is present."
+    `(defun ,name ()
+       ,doc
+       (interactive)
+       (let ((file (ffap-file-at-point)))
+         (if file
+             ,@body
+           (user-error "No file at point")))))
+
+  (prot/eshell-ffap
+   prot/eshell-insert-file-at-point
+   "Insert (cat) contents of file at point."
+   (progn
+     (goto-char (point-max))
+     (insert (concat "cat " file))
+     (eshell-send-input)))
+
+  (prot/eshell-ffap
+   prot/eshell-kill-save-file-at-point
+   "Add to kill-ring the absolute path of file at point."
+   (progn
+     (kill-new (concat (eshell/pwd) "/" file))
+     (message "Copied full path of %s" file)))
+
+  (prot/eshell-ffap
+   prot/eshell-find-file-at-point
+   "Run `find-file' for file at point (ordinary file or dir).
+Recall that this will produce a `dired' buffer if the file is a
+directory."
+   (find-file file))
+
+  (prot/eshell-ffap
+   prot/eshell-file-parent-dir
+   "Open `dired' with the parent directory of file at point."
+   (dired (file-name-directory file)))
+
+  (defun prot/eshell-put-last-output-to-buffer ()
+    "Produce a buffer with output of last `eshell' command."
+    (interactive)
+    (let ((eshell-output (buffer-substring-no-properties
+                          (eshell-beginning-of-output)
+                          (eshell-end-of-output))))
+      (with-current-buffer (get-buffer-create "*last-eshell-output*")
+        (erase-buffer)
+        (insert eshell-output)
+        (switch-to-buffer-other-window (current-buffer)))))
+
+  (defun prot/eshell-complete-redirect-to-buffer ()
+    "Complete the syntax for appending to a buffer via `eshell'."
+    (interactive)
+    (insert
+     (format " >>> #<%s>"
+             (read-buffer-to-switch "Switch to buffer: "))))
+
+  (defun prot/eshell-narrow-output-highlight-regexp ()
+    (interactive)
+    (let ((regexp (read-regexp "Regexp to highlight")))
+      (narrow-to-region (eshell-beginning-of-output)
+                        (eshell-end-of-output))
+      (goto-char (point-min))
+      (highlight-regexp regexp 'hi-yellow)))
+
+  ;;;; NOTE by Prot 2020-06-16: the following two advice-add snippets
+  ;;;; will need to be reviewed to make sure they do not produce
+  ;;;; undesirable side effects.
+
+  ;; syntax highlighting implementation modified from
+  ;; https://emacs.stackexchange.com/questions/50385/use-emacs-syntax-coloring-when-not-in-emacs
+  ;;
+  ;; This command also makes it possible to, e.g., cat an encrypted and/or
+  ;; compressed file.
+  (defun contrib/eshell-cat-with-syntax-highlight (&rest args)
+    "Like `eshell/cat' but with syntax highlighting.
+To be used as `:override' advice to `eshell/cat'."
+    (setq args (eshell-stringify-list (flatten-tree args)))
+    (dolist (filename args)
+      (let ((existing-buffer (get-file-buffer filename))
+            (buffer (find-file-noselect filename)))
+        (eshell-print
+         (with-current-buffer buffer
+           (if (fboundp 'font-lock-ensure)
+               (font-lock-ensure)
+             (with-no-warnings
+               (font-lock-fontify-buffer)))
+           (let ((contents (buffer-string)))
+             (remove-text-properties 0 (length contents) '(read-only nil) contents)
+             contents)))
+        (unless existing-buffer
+          (kill-buffer buffer)))))
+
+  (advice-add 'eshell/cat :override #'contrib/eshell-cat-with-syntax-highlight)
+
+  ;; Turn ls results into clickable links.  Especially useful when
+  ;; combined with link-hint.  Modified from
+  ;; https://www.emacswiki.org/emacs/EshellEnhancedLS
+  (define-button-type 'eshell-ls
+    'supertype 'button
+    'help-echo "RET, mouse-2: visit this file"
+    'follow-link t)
+
+  (defun contrib/electrify-ls (name)
+    "Buttonise `eshell' ls file names.
+Visit them with RET or mouse click.  This function is meant to be
+used as `:filter-return' advice to `eshell-ls-decorated-name'."
+    (add-text-properties 0 (length name)
+                         (list 'button t
+                               'keymap button-map
+                               'mouse-face 'highlight
+                               'evaporate t
+                               'action #'find-file
+                               'button-data (expand-file-name name)
+                               'category 'eshell-ls)
+                         name)
+    name)
+
+  (advice-add 'eshell-ls-decorated-name :filter-return #'contrib/electrify-ls)
+
+  ;; XXX HACK: This and the following minor mode are only introduced to
+  ;; circumvent an issue I have encountered with `eshell-mode-map' being
+  ;; set to nil and breaking my key bindings by forcing them into the
+  ;; global map.
+  ;;
+  ;; What I do is to define a minor mode that runs from
+  ;; `eshell-mode-hook' and pass all my custom key bindings there.
+  (defvar prot/eshell-minor-mode-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "M-n") 'outline-next-visible-heading)
+      (define-key map (kbd "M-k") 'eshell-kill-input)
+      (define-key map (kbd "C-c w") 'prot/eshell-kill-save-file-at-point)
+      (define-key map (kbd "C-c i") 'prot/eshell-insert-file-at-point)
+      (define-key map (kbd "C-c f") 'prot/eshell-find-file-at-point)
+      (define-key map (kbd "C-c C-f") 'prot/eshell-find-file-at-point)
+      (define-key map (kbd "C-c o") 'prot/eshell-put-last-output-to-buffer)
+      (define-key map (kbd "C-c >") 'prot/eshell-complete-redirect-to-buffer)
+      (define-key map (kbd "C-c C-j") 'prot/eshell-file-parent-dir)
+      (define-key map (kbd "C-c h") 'prot/eshell-narrow-output-highlight-regexp)
+      map)
+    "Key map with custom commands for `eshell'.")
+
+  ;; HACK: See comment above.
+  (define-minor-mode prot/eshell-minor-mode
+    "Special minor mode to enable custom keys in `eshell'.
+
+\\{prot/eshell-minor-mode-map}"
+    :init-value nil
+    :keymap prot/eshell-minor-mode-map)
+
+  :hook (eshell-mode-hook . prot/eshell-minor-mode))
+
+(use-package esh-module
+  :config
+  (setq eshell-modules-list             ; Needs review
+        '(eshell-alias
+          eshell-basic
+          eshell-cmpl
+          eshell-dirs
+          eshell-glob
+          eshell-hist
+          eshell-ls
+          eshell-pred
+          eshell-prompt
+          eshell-script
+          eshell-term
+          eshell-tramp
+          eshell-unix)))
+
+(use-package em-dirs
+  :after esh-mode
+  :config
+  (setq eshell-cd-on-directory t))
+
+(use-package em-tramp
+  :after esh-mode
+  :config
+  (setq password-cache t)
+  (setq password-cache-expiry 600))
+
+(use-package em-hist
+  :after esh-mode
+  :config
+  (setq eshell-hist-ignoredups t)
+  (setq eshell-save-history-on-exit t)
+
+  (defun prot/eshell-complete-history ()
+    "Insert element from `eshell' history using completion."
+    (interactive)
+    (let ((hist (ring-elements eshell-history-ring)))
+      (insert
+       (completing-read "Input history: " hist nil t))))
+
+  (defun prot/eshell-complete-recent-dir (&optional arg)
+    "Switch to a recent `eshell' directory using completion.
+With \\[universal-argument] also open the directory in a `dired'
+buffer."
+    (interactive "P")
+    (let* ((dirs (ring-elements eshell-last-dir-ring))
+           (dir (icomplete-vertical-do ()
+                  (completing-read "Switch to recent dir: " dirs nil t))))
+      (insert dir)                      ; Not good enough
+      (eshell-send-input)               ; Should cd directly…
+      (when arg
+        (dired dir))))
+
+  ;; `cl-remove-if' is used right below
+  (declare-function cl-remove-if "cl-seq")
+
+  (defun prot/eshell-find-subdirectory-recursive ()
+    "Recursive `eshell/cd' to subdirectory.
+This command has the potential for infinite recursion: use it
+wisely or prepare to use `eshell-interrupt-process'."
+    (interactive)
+    (let* ((dir (abbreviate-file-name (eshell/pwd)))
+           (contents (directory-files-recursively dir ".*" t nil nil))
+           (dirs (cl-remove-if (lambda (x)
+                                 (or (not (file-directory-p x))
+                                     (string-match-p "\\.git" x)))
+                               contents))
+           (selection (icomplete-vertical-do ()
+                        (completing-read
+                         (format "Find sub-dir from %s (%s): "
+                                 (propertize dir 'face 'success)
+                                 (length dirs))
+                         dirs nil t))))
+      (insert selection)
+      (eshell-send-input)))
+
+  :bind (:map prot/eshell-minor-mode-map
+              ("M-s" . nil) ; I use this for lots of more useful commands
+              ("M-r" . prot/eshell-complete-history) ; use this to find input history
+              ("C-c d" . prot/eshell-find-subdirectory-recursive)
+              ("C-c =" . prot/eshell-complete-recent-dir)))
+
+;;;;; Terminals inside of Emacs
+
+;;;;;; Vterm terminal emulator
+
+(use-package vterm
+  :ensure
+  :commands vterm
+  :config
+  (setq vterm-disable-bold-font nil)
+  (setq vterm-disable-inverse-video nil)
+  (setq vterm-disable-underline nil)
+  (setq vterm-kill-buffer-on-exit nil)
+  (setq vterm-max-scrollback 9999)
+  (setq vterm-shell "/bin/bash")
+  (setq vterm-term-environment-variable "xterm-256color"))
+
+;;;;;; Built-in terminals (fallback option)
+
+(use-package term
+  :commands (term ansi-term)
+  :config
+  (setq term-buffer-maximum-size 9999)
+  (setq term-completion-autolist t)
+  (setq term-completion-recexact t)
+  (setq term-scroll-to-bottom-on-output nil))
+
+;;;; Tools for manual pages (manpages)
+
+(use-package man
+  :bind (:map Man-mode-map
+              ("i" . Man-goto-section)
+              ("g" . Man-update-manpage)))
+
+;;;; PDF Tools
+
+(use-package pdf-tools
+  :ensure
+  :config
+  (pdf-tools-install))
+
+;;;; Proced (process monitor, similar to `top')
+
+(use-package proced
+  :commands proced
+  :config
+  (setq proced-auto-update-flag t)
+  (setq proced-auto-update-interval 1)
+  (setq proced-descend t)
+  (setq proced-filter 'user))
+
+(use-package proced-narrow
+  :ensure
+  :after proced
+  :diminish
+  :bind (:map proced-mode-map
+              ("/" . proced-narrow)))
+
+;;;; Elfeed (RSS/Atom feed reader)
+
 (use-package elfeed
   :ensure
-  :defer
   :config
   (setq elfeed-use-curl t)
   (setq elfeed-curl-max-connections 10)
@@ -3206,8 +3280,6 @@ the buffer."
   (defvar prot/elfeed-mpv-hook nil
     "Hook called before `prot/elfeed-mpv-dwim'.")
 
-  ;; TODO make this buffer more useful, such as running it in a
-  ;; shell-aware mode.
   (defun prot/elfeed-mpv-buffer ()
     "Prepare \"*elfeed-mpv-output*\" buffer.
 For use by `prot/elfeed-mpv-dwim'.  To be called from
@@ -3230,16 +3302,74 @@ current monitor's width."
            (enclosure (elt (car (elfeed-entry-enclosures entry)) 0)) ; fragile?
            (audio "--no-video")
            ;; Here the display width checks if I am on the laptop
-           (height (if (<= (display-pixel-width ) 1600) 720 1080))
-           (video (format "--ytdl-format=bestvideo[height<=?%s]+bestaudio/best" height))
+           (height (if (<= (display-pixel-width ) 1366) 720 1080))
+           (video                       ; this assumes mpv+youtube-dl
+            (format "%s --ytdl-format=bestvideo[height\\<=?%s]+bestaudio/best"
+                    "--hwdec=auto-safe" height))
            (buf (pop-to-buffer "*elfeed-mpv-output*")))
       (run-hooks 'prot/elfeed-mpv-hook)
-      (if enclosure              ; make this its own parametrised function
+      (if enclosure
           (progn
-            (start-process "audio-mpv" buf "mpv" audio enclosure)
-            (message (concat "Launching MPV for " (propertize enclosure 'face 'success))))
-        (start-process "video-mpv" buf "mpv" video link)
-        (message (concat "Launching MPV for " (propertize link 'face 'success))))))
+            (async-shell-command (format "mpv %s %s" audio enclosure) buf)
+            (message
+             (concat "Launching MPV for "
+                     (propertize enclosure 'face 'success))))
+        (async-shell-command (format "mpv %s %s" video link) buf)
+        (message
+         (concat "Launching MPV for "
+                 (propertize link 'face 'success))))))
+
+  (defvar prot/elfeed-bongo-playlist "*Bongo-Elfeed Queue*"
+    "Name of the Elfeed+Bongo multimedia playlist.")
+
+  (defun prot/elfeed-bongo-insert-item ()
+    "Insert `elfeed' multimedia links in `bongo' playlist buffer.
+
+The playlist buffer has a unique name so that it will never
+interfere with the default `bongo-playlist-buffer'."
+    (interactive)
+    (with-eval-after-load 'bongo
+      (let* ((entry (if (eq major-mode 'elfeed-show-mode)
+                        elfeed-show-entry
+                      (elfeed-search-selected :ignore-region)))
+             (link (elfeed-entry-link entry))
+             (enclosure (elt (car (elfeed-entry-enclosures entry)) 0))
+             (url (or enclosure link))
+             (title (elfeed-entry-title entry))
+             (height (if (<= (display-pixel-width) 1366) 720 1080))
+             (bongo-pl prot/elfeed-bongo-playlist)
+             (buffer (get-buffer-create bongo-pl)))
+        (unless (bongo-playlist-buffer)
+          (bongo-playlist-buffer))
+        (display-buffer buffer)
+        (with-current-buffer buffer
+ 	      (when (not (bongo-playlist-buffer-p))
+ 	        (bongo-playlist-mode)
+            (setq-local bongo-library-buffer (get-buffer "*elfeed-search*"))
+            (setq-local bongo-enabled-backends '(mpv))
+            (setq-local bongo-mpv-extra-arguments
+                        (format           ; this assumes mpv+youtube-dl
+                         "%s --ytdl-format=bestvideo[height\\<=?%s]+bestaudio/best"
+                         "--hwdec=auto-safe" height))
+            (bongo-progressive-playback-mode))
+ 	      (goto-char (point-max))
+          (bongo-insert-uri url title)
+          (bongo-insert-comment-text (format "     ==> %s\n" url))
+          (let ((inhibit-read-only t))
+            (delete-duplicate-lines (point-min) (point-max)))
+          (bongo-recenter))
+        (message "Enqueued %s “%s” in %s"
+                 (if enclosure "podcast" "video")
+                 (propertize title 'face 'italic)
+                 (propertize bongo-pl 'face 'bold)))))
+
+  (defun prot/elfeed-bongo-switch-to-playlist ()
+    (interactive)
+    (let* ((bongo-pl prot/elfeed-bongo-playlist)
+           (buffer (get-buffer bongo-pl)))
+      (if buffer
+          (switch-to-buffer buffer)
+        (message "No `bongo' playlist is associated with `elfeed'."))))
 
   (defun prot/elfeed-show-search-update (direction)
     "Update `elfeed-search-buffer' to match entry in DIRECTION.
@@ -3266,8 +3396,8 @@ EXPERIMENTAL."
           (search-forward (format "%s" title))
           (funcall (intern (concat `,direction "-line")))
           (set-window-point win (point-at-bol))
-          (prot/pulse-line 'modus-theme-subtle-cyan)))))
-
+          (prot/pulse-line)))))
+  
   (defun prot/elfeed-search-tag-filter ()
     "Filter `elfeed' by tags using completion.
 
@@ -3299,6 +3429,37 @@ minibuffer with `exit-minibuffer' (I bind it to C-j in
         (setq elfeed-search-filter input))
       (elfeed-search-update :force)))
 
+  (defun prot/elfeed-show-archive ()
+    "Create an archive copy of the current `elfeed' entry."
+    (interactive)
+    (let* ((entry (if (eq major-mode 'elfeed-show-mode)
+                      elfeed-show-entry
+                    (elfeed-search-selected :ignore-region)))
+           ;; TODO how to cleanly add hyphens instead of spaces?
+           (title (elfeed-entry-title entry))
+           (elfeed-show-truncate-long-urls nil)
+           (archives "~/Documents/feeds/")
+           (file (format "%s%s.txt" archives title)))
+      (unless (file-exists-p archives)
+        (make-directory archives t))
+      (when (derived-mode-p 'elfeed-show-mode)
+        ;; Refresh to expand truncated URLs
+        (elfeed-show-refresh)
+        (write-file file t)
+        (message "Saved buffer at %s" file))))
+
+  (defun prot/elfeed-toggle-tag (tag)
+    "Toggle TAG on current item."
+    (interactive)
+    (elfeed-search-toggle-all tag))
+
+  (defface prot/important-elfeed-entry
+    '((t :inherit error))
+    "Marks an important Elfeed entry.")
+
+  (push '(important prot/important-elfeed-entry)
+        elfeed-search-face-alist)
+  
   :hook ((elfeed-search-mode-hook . prot/elfeed-feeds)
          (prot/elfeed-mpv-hook . prot/elfeed-mpv-buffer))
   :bind (("C-c f" . elfeed)
@@ -3310,8 +3471,14 @@ minibuffer with `exit-minibuffer' (I bind it to C-j in
          ("o" . prot/elfeed-search-other-window)
          ("v" . prot/elfeed-mpv-dwim)
          ("q" . prot/elfeed-kill-buffer-close-window-dwim)
+         ("!" . (lambda ()
+                  (interactive)
+                  (prot/elfeed-toggle-tag 'important)))
+         ("b" . prot/elfeed-bongo-insert-item)
+         ("h" . prot/elfeed-bongo-switch-to-playlist) ; "hop" mnemonic
          :map elfeed-show-mode-map
-         ;; TODO any way to do this without lambda?
+         ("a" . prot/elfeed-show-archive)
+         ("b" . prot/elfeed-bongo-insert-item)
          ("n" . (lambda ()
                   (interactive)
                   (prot/elfeed-show-search-update "next")))
@@ -3323,6 +3490,8 @@ minibuffer with `exit-minibuffer' (I bind it to C-j in
          ("v" . prot/elfeed-mpv-dwim)
          ("w" . elfeed-show-yank)))
 
+;;;; Emacs Simple HTML Renderer (shr)
+
 (use-package shr
   :config
   (setq shr-use-fonts nil)
@@ -3331,38 +3500,47 @@ minibuffer with `exit-minibuffer' (I bind it to C-j in
   (setq shr-image-animate nil)
   (setq shr-width (current-fill-column)))
 
-;; Support the HTML pre tag with proper syntax highlighting.
 (use-package shr-tag-pre-highlight
   :ensure
   :after shr
   :config
   (add-to-list 'shr-external-rendering-functions
-               '(pre . shr-tag-pre-highlight))
-  (when (version< emacs-version "26")
-    (with-eval-after-load 'eww
-      (advice-add 'eww-display-html :around
-                  'eww-display-html--override-shr-external-rendering-functions))))
+               '(pre . shr-tag-pre-highlight)))
+
+;;;; Emacs Web Wowser (EWW)
 
 (use-package eww
-  :commands (eww
-             eww-browse-url
-             eww-search-words
-             eww-open-in-new-buffer
-             eww-open-file
-             prot/eww-visit-history)
   :config
-  (setq eww-restore-desktop t)
+  (setq eww-restore-desktop nil)
+  (setq eww-desktop-remove-duplicates t)
   (setq eww-header-line-format "%u")
+  (setq eww-search-prefix "https://duckduckgo.com/html/?q=")
+  (setq eww-download-directory "~/Downloads/")
+  (setq eww-suggest-uris
+        '(eww-links-at-point
+          thing-at-point-url-at-point))
+  (setq eww-bookmarks-directory "~/.emacs.d/eww-bookmarks/")
+  (setq eww-history-limit 150)
+  (setq eww-use-external-browser-for-content-type
+        "\\`\\(video/\\|audio/\\|application/pdf\\)")
+  (setq eww-browse-url-new-window-is-tab nil)
+  (setq eww-form-checkbox-selected-symbol "[X]")
+  (setq eww-form-checkbox-symbol "[ ]")
 
-  (defun prot/eww-visit-history ()
-    "Revisit `eww' history using completion."
-    (interactive)
-    (let ((history eww-prompt-history))
+  (defun prot/eww-visit-history (&optional arg)
+    "Revisit a URL from `eww-prompt-history' using completion.
+With \\[universal-argument] produce a new buffer."
+    (interactive "P")
+    (let ((history eww-prompt-history)  ; eww-bookmarks
+          (new (if arg t nil)))
       (icomplete-vertical-do ()
         (eww
-         (completing-read "Visit website from history: " history nil t)))))
+         (completing-read "Visit website from history: " history nil t)
+         new))))
 
-  (defvar prot/eww-global-map
+  ;; eww-view-source
+
+  (defvar prot/eww-mode-global-map
     (let ((map (make-sparse-keymap)))
       (define-key map "s" 'eww-search-words)
       (define-key map "o" 'eww-open-in-new-buffer)
@@ -3370,11 +3548,1116 @@ minibuffer with `exit-minibuffer' (I bind it to C-j in
       (define-key map "w" 'prot/eww-visit-history)
       map)
     "Key map to scope `eww' bindings for global usage.
-The idea is to bind this to a prefix key, so that its defined
-keys follow the pattern of <PREFIX> <KEY>.")
-  :bind-keymap ("C-c w" . prot/eww-global-map))
+The idea is to bind this to a prefix sequence, so that its
+defined keys follow the pattern of <PREFIX> <KEY>.")
+  :bind-keymap ("C-c w" . prot/eww-mode-global-map)
+  :bind (:map eww-mode-map
+              ("n" . next-line)
+              ("p" . previous-line)
+              ("f" . forward-char)
+              ("b" . backward-char)
+              ("a" . prot/eww-org-archive-current-url)
+              ("B" . eww-back-url)
+              ("N" . eww-next-url)
+              ("P" . eww-previous-url)))
 
-;; ........................................................... History and state
+(use-package browse-url
+  :after eww
+  :config
+  (setq browse-url-browser-function 'eww-browse-url))
+
+;;; General interface and interactions
+
+;;;; Mode line
+
+(use-package emacs
+  :commands prot/mode-line-hidden-mode
+  :config
+  (setq mode-line-percent-position '(-3 "%p"))
+  (setq mode-line-defining-kbd-macro
+        (propertize " Macro" 'face 'mode-line-emphasis))
+  (setq-default mode-line-format
+                '("%e"
+                  mode-line-front-space
+                  mode-line-mule-info
+                  mode-line-client
+                  mode-line-modified
+                  mode-line-remote
+                  mode-line-frame-identification
+                  mode-line-buffer-identification
+                  "  "
+                  mode-line-position
+                  (vc-mode vc-mode)
+                  " "
+                  mode-line-modes
+                  " "
+                  mode-line-misc-info
+                  mode-line-end-spaces))
+
+  (define-minor-mode prot/mode-line-hidden-mode
+    "Toggle modeline visibility in the current buffer."
+    :init-value nil
+    :global nil
+    (if prot/mode-line-hidden-mode
+        (setq-local mode-line-format nil)
+      (kill-local-variable 'mode-line-format)
+      (force-mode-line-update))))
+
+;;;;; Battery status
+
+(use-package battery
+  :config
+  (setq battery-mode-line-format " [%b%p%%]")
+  (setq battery-mode-line-limit 97)
+  (setq battery-update-interval 180)
+  (setq battery-load-low 20)
+  (setq battery-load-critical 10)
+  :hook (after-init-hook . display-battery-mode))
+
+;;;;; Display current time
+
+(use-package time
+  :commands world-clock
+  :config
+  (setq display-time-format "%H:%M  %Y-%m-%d")
+  ;;;; Covered by `display-time-format'
+  ;; (setq display-time-24hr-format t)
+  ;; (setq display-time-day-and-date t)
+  (setq display-time-interval 60)
+  (setq display-time-mail-directory nil)
+  (setq display-time-default-load-average nil)
+
+  ;; World clock
+  (setq zoneinfo-style-world-list
+        '(("America/Los_Angeles" "Los Angeles")
+          ("America/New_York" "New York")
+          ("Europe/Amsterdam" "Amsterdam")
+          ("Oceania/Sydney" "Sydney")))
+
+  ;; All of the following variables are for Emacs 28
+  (setq world-clock-list t)
+  (setq world-clock-time-format "%R %z  %A %d %B")
+  (setq world-clock-buffer-name "*world-clock*") ; Placement handled by
+                                        ; `display-buffer-alist'
+  (setq world-clock-timer-enable t)
+  (setq world-clock-timer-second 60)
+
+  :hook (after-init-hook . display-time-mode))
+
+;;;; Window divider mode
+
+(use-package emacs
+  :config
+  (setq window-divider-default-right-width 1)
+  (setq window-divider-default-bottom-width 1)
+  (setq window-divider-default-places 'right-only)
+  :hook (after-init-hook . window-divider-mode))
+
+;;;; Fringe mode
+
+(use-package fringe
+  :config
+  (fringe-mode nil)
+  (setq-default fringes-outside-margins nil)
+  (setq-default indicate-buffer-boundaries nil)
+  (setq-default indicate-empty-lines nil)
+  (setq-default overflow-newline-into-fringe t))
+
+;;;;; Diff highlights in the fringe (diff-hl)
+
+(use-package diff-hl
+  :ensure
+  :after vc
+  :config
+  (setq diff-hl-draw-borders nil)
+  (setq diff-hl-side 'left)
+  :hook ((after-init-hook . global-diff-hl-mode)))
+
+;;;; Highlight comment keywords (hl-todo)
+
+(use-package hl-todo
+  :ensure
+  :hook (prog-mode-hook . hl-todo-mode))
+
+;;;; Tone down parentheses and autoload cookies in Elisp
+
+(use-package paren-face
+  :ensure
+  :disabled
+  :hook (after-init-hook . global-paren-face-mode))
+
+(use-package dim-autoload
+  :ensure
+  :hook (emacs-lisp-mode-hook . dim-autoload-cookies-mode))
+
+;;;; Optional visual indicators or layout elements
+
+;;;;; Current line highlight (hl-line-mode)
+
+(use-package hl-line
+  :config
+  (setq hl-line-sticky-flag nil))
+
+;;;;; Toggles for line numbers and whitespace indicators
+
+(use-package display-line-numbers
+  :config
+  ;; Set absolute line numbers.  A value of "relative" is also useful.
+  (setq display-line-numbers-type t)
+  ;; Those two variables were introduced in Emacs 27.1
+  (setq display-line-numbers-major-tick 20)
+  (setq display-line-numbers-minor-tick 5)
+  ;; Use absolute numbers in narrowed buffers
+  (setq display-line-numbers-widen t)
+
+  (define-minor-mode prot/display-line-numbers-mode
+    "Toggle `display-line-numbers-mode' and `hl-line-mode'."
+    :init-value nil
+    :global nil
+    (if prot/display-line-numbers-mode
+        (progn
+          (display-line-numbers-mode 1)
+          (hl-line-mode 1)
+          (setq-local truncate-lines t))
+      (display-line-numbers-mode -1)
+      (hl-line-mode -1)
+      (setq-local truncate-lines nil)))
+  :bind ("<f7>" . prot/display-line-numbers-mode))
+
+(use-package whitespace
+  :config
+  (defun prot/toggle-invisibles ()
+    "Toggles the display of indentation and space characters."
+    (interactive)
+    (if (bound-and-true-p whitespace-mode)
+        (whitespace-mode -1)
+      (whitespace-mode)))
+  :bind (("<f6>" . prot/toggle-invisibles)
+         ("C-c z" . delete-trailing-whitespace)))
+
+;;;;; Dim context and focus-to-thing (focus-mode)
+
+(use-package focus
+  :ensure
+  :commands (prot/focus-mode-to-thing
+             prot/focus-mode)
+  :config
+  (setq-default focus-mode-to-thing
+                '((prog-mode . defun)
+                  (text-mode . paragraph)))
+
+  ;; TODO review in accordance with `prot/focus-mode'
+  (defun prot/focus-mode-to-thing (&optional narrow)
+    "Set local values for `focus-mode-to-thing'.
+With optional NARROW limit the scope of `focus-mode' to smaller
+syntactic units."
+    (interactive "P")
+    (let* ((units (if narrow
+                      (list 'sexp 'sentence)
+                    (list 'defun 'paragraph)))
+           (prog (car units))
+           (text (cadr units)))
+      (setq-local focus-mode-to-thing
+                  `((prog-mode . ,prog)
+                    (text-mode . ,text)))))
+
+  ;; TODO use `define-minor-mode' instead of this
+  (defun prot/focus-mode (&optional arg)
+    "Toggle the use of `focus-mode'.
+With optional \\[universal-argument] prefix, also invoke
+`prot/focus-mode-to-thing' with its optional argument for a
+narrower field of view."
+    (interactive "P")
+    (if (bound-and-true-p focus-mode)
+        (focus-mode -1)
+      (if arg
+          (prot/focus-mode-to-thing t)
+        (kill-local-variable 'focus-mode-to-thing))
+      (focus-mode 1)))
+
+  ;; C-c o is used by `prot/olivetti-mode' and this is a good mnemonic
+  ;; for a concept of "Only the thing".
+  :bind (("C-c O" . prot/focus-mode)))
+
+;;;;; Centred, focused text mode (olivetti-mode)
+
+(use-package olivetti
+  :ensure
+  :diminish
+  :config
+  (setq olivetti-body-width 0.7)
+  (setq olivetti-minimum-body-width 80)
+  (setq olivetti-recall-visual-line-mode-entry-state t)
+
+  (define-minor-mode prot/olivetti-mode
+    "Toggle buffer-local `olivetti-mode' with additional parameters.
+
+Fringes are disabled.  The modeline is hidden, except for
+`prog-mode' buffers (see `prot/hidden-mode-line-mode').  The
+default typeface is set to a proportionately spaced family,
+except for programming modes (see `prot/variable-pitch-mode').
+The cursor becomes a blinking bar, per `prot/cursor-type-mode'."
+    :init-value nil
+    :global nil
+    (if prot/olivetti-mode
+        (progn
+          (olivetti-mode 1)
+          (set-window-fringes (selected-window) 0 0)
+          (prot/variable-pitch-mode 1)
+          (prot/cursor-type-mode 1)
+          (unless (derived-mode-p 'prog-mode)
+            (prot/hidden-mode-line-mode 1)))
+      (olivetti-mode -1)
+      (set-window-fringes (selected-window) nil) ; Use default width
+      (prot/variable-pitch-mode -1)
+      (prot/cursor-type-mode -1)
+      (unless (derived-mode-p 'prog-mode)
+        (prot/hidden-mode-line-mode -1))))
+  :bind ("C-c o" . prot/olivetti-mode))
+
+;;;;; Auto-dim unfocused buffers
+
+(use-package auto-dim-other-buffers
+  :ensure
+  :commands auto-dim-other-buffers-mode
+  :config
+  (setq auto-dim-other-buffers-dim-on-switch-to-minibuffer nil)
+  (setq auto-dim-other-buffers-dim-on-focus-out t))
+
+;;;;; Outline mode, outline minor mode, and extras
+
+(use-package outline
+  :diminish outline-minor-mode
+  :config
+  ;;; NOTE change this to provide support for your major mode, in case
+  ;;; it is missing.
+  ;; (setq outline-regexp "[*\^L]+")
+
+  (use-package outline-minor-faces
+    :ensure
+    :hook
+    (outline-minor-mode-hook . outline-minor-faces-add-font-lock-keywords))
+
+  (use-package foldout)
+  (use-package bicycle :ensure)
+
+  ;;; NOTE this could also be used to auto-reveal a fold, though I find
+  ;;; it a bit annoying when things like that happen automatically.
+  ;; (use-package reveal :diminish)
+
+  ;;; NOTE DEPRECATED I am keeping this older piece for reference, but I
+  ;;; am discontinuing it: I prefer the approach further below.
+  ;;   (defhydra prot/hydra-outline (:idle nil :color pink
+  ;;                                       :hint nil :post (deactivate-mark))
+  ;;     "
+  ;;    ^Motions^                            ^Show^
+  ;; ---^------------------------------------^----------------
+  ;; _n_: Next heading                    _a_: All
+  ;; _p_: Prev heading                    _e_: Entry
+  ;; _f_: Fore same level               _TAB_: Cycle
+  ;; _b_: Back same level   _<S-iso-lefttab>_: Cycle global
+  ;; "
+  ;;     ("n" outline-next-visible-heading)
+  ;;     ("p" outline-previous-visible-heading)
+  ;;     ("f" outline-forward-same-level)
+  ;;     ("b" outline-backward-same-level)
+  ;;     ("a" outline-show-all)
+  ;;     ("e" outline-show-entry)
+  ;;     ("TAB" bicycle-cycle)
+  ;;     ("<S-iso-lefttab>" bicycle-cycle-global)
+  ;;     ("q" nil "cancel" :color blue))
+
+  (defun prot/outline-hide-all ()
+    "Hide all `outline-mode' subtrees."
+    (interactive)
+    (outline-map-region 'outline-hide-subtree (point-min) (point-max)))
+
+  (defun prot/outline-down-heading ()
+    "Move to the next `outline-mode' subtree."
+    (interactive)
+    ;; Hacky, but it kinda works.
+    (outline-up-heading 1 t)
+    (outline-forward-same-level 1))
+
+  (defun prot/bicycle-cycle-tab-dwim ()
+    "Convenience wrapper for TAB key in `outline-mode'."
+    (interactive)
+    (if (outline-on-heading-p)
+        (bicycle-cycle)
+      (indent-for-tab-command)))
+
+  (defvar prot/outline-minor-mode-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "M-n") 'outline-next-visible-heading)
+      (define-key map (kbd "M-p") 'outline-previous-visible-heading)
+      (define-key map (kbd "C-c C-n") 'outline-next-visible-heading)
+      (define-key map (kbd "C-c C-p") 'outline-previous-visible-heading)
+      (define-key map (kbd "C-c C-f") 'outline-forward-same-level)
+      (define-key map (kbd "C-c C-b") 'outline-backward-same-level)
+      (define-key map (kbd "C-c C-a") 'outline-show-all)
+      (define-key map (kbd "C-c C-q") 'prot/outline-hide-all)
+      (define-key map (kbd "C-c C-u") 'outline-up-heading)
+      (define-key map (kbd "C-c C-d") 'prot/outline-down-heading)
+      (define-key map (kbd "C-c C-z") 'foldout-zoom-subtree)
+      (define-key map (kbd "C-c C-x") 'foldout-exit-fold)
+      (define-key map (kbd "<tab>") 'prot/bicycle-cycle-tab-dwim)
+      (define-key map (kbd "<C-tab>") 'bicycle-cycle)
+      (define-key map (kbd "<S-iso-lefttab>") 'bicycle-cycle-global)
+      map)
+    "Key map for `prot/outline-minor-mode'.
+The idea is to make `outline-minor-mode' keys a bit easier to
+work with.")
+
+  (defvar prot/outline-minor-mode-enter-hook nil
+    "Hook that runs when `prot/outline-minor-mode' is enabled.")
+
+  (defvar prot/outline-minor-mode-exit-hook nil
+    "Hook that runs when `prot/outline-minor-mode' is disabled.")
+
+  ;; `imenu' integration with `outline-minor-mode'
+  (defun prot/outline-imenu-heading ()
+    "Move to the previous `outline-mode' heading.
+This is because `imenu' produces its index by moving backward
+from the bottom."
+    (outline-previous-heading))
+
+  (defun prot/outline-imenu-title ()
+    "Return the text of the `outline-mode' heading."
+    (interactive)
+    ;; NOTE This may be too simplistic and error-prone, though I have
+    ;; not ran into any problems.
+    (buffer-substring (point-at-bol)
+                      (point-at-eol)))
+
+  (defun prot/outline-imenu-setup ()
+    "`imenu' bindings for the local `outline-mode' buffer.
+To be used in tandem with `prot/outline-minor-mode-enter-hook'."
+    (setq-local imenu-prev-index-position-function
+                'prot/outline-imenu-heading)
+    (setq-local imenu-extract-index-name-function
+                'prot/outline-imenu-title))
+
+  (defun prot/outline-imenu-restore ()
+    "Restore `imenu' list when `prot/outline-minor-mode' is off.
+The new index should be the same as the one you would get in a
+standard invocation of `imenu'.
+
+To be used in `prot/outline-minor-mode-exit-hook'."
+    (dolist (var '(imenu-prev-index-position-function
+                   imenu-extract-index-name-function))
+      (kill-local-variable var))
+    (save-excursion
+      (imenu-default-create-index-function)
+      (message "Refreshed `imenu' index")))
+
+  ;; XXX This could prove problematic when more than one major modes are
+  ;; active, such as when you use C-c ' in an Org block.
+  (defun prot/outline-minor-refontify ()
+    "Re-enable the current buffer's major mode.
+Add this to `prot/outline-minor-mode-exit-hook'."
+    (let ((mode major-mode))
+      (when (or (derived-mode-p 'text-mode)
+                (derived-mode-p 'prog-mode))
+        (funcall mode)
+        (message "Re-enabled %s" mode))))
+
+  (define-minor-mode prot/outline-minor-mode
+    "Toggles `outline-minor-mode' and extras.
+
+\\{prot/outline-minor-mode-map}"
+    :init-value nil
+    :lighter " =┆"
+    :global nil
+    :keymap prot/outline-minor-mode-map
+    (if prot/outline-minor-mode
+        (progn
+          (when (eq major-mode 'org-mode)
+            (user-error "Don't use `outline-minor-mode' with Org"))
+          (outline-minor-mode 1)
+          (run-hooks 'prot/outline-minor-mode-enter-hook))
+      (outline-minor-mode -1)
+      (run-hooks 'prot/outline-minor-mode-exit-hook)))
+
+  :hook ((prot/outline-minor-mode-enter-hook . prot/outline-imenu-setup)
+         (prot/outline-minor-mode-exit-hook . prot/outline-imenu-restore)
+         (prot/outline-minor-mode-exit-hook . prot/outline-minor-refontify))
+  ;; key replaces `menu-bar-open', which I never use
+  :bind ("<f10>" . prot/outline-minor-mode))
+
+;;;; Registers
+
+(use-package register
+  :commands (prot/clear-registers
+             prot/append-register-line-separator
+             prot/append-register-space-separator
+             prot/prepend-register-line-separator
+             prot/prepend-register-space-separator)
+  :config
+  ;;;;;; Use this if you need it
+  ;;;; Define f5 as an alias for C-x r
+  ;; (global-set-key (kbd "<f5>") (lookup-key global-map (kbd "C-x r")))
+
+  (defun prot/clear-registers ()
+    "Remove all saved registers."
+    (interactive)
+    (setq register-alist nil))
+
+  (defun prot/append-register-space-separator (start end)
+    "Append region to register with space in between entries.
+
+A prompt will ask for the register to operate on."
+    (interactive "r")
+    (let* ((prompt (register-read-with-preview
+                    "Append to register with space separator: ")))
+      (setq register-separator ?+)
+      (set-register register-separator " ")
+      (append-to-register prompt start end nil)))
+
+  (defun prot/append-register-line-separator (start end)
+    "Append region to register with an empty line in between entries.
+
+A prompt will ask for the register to operate on."
+    (interactive "r")
+    (let* ((prompt (register-read-with-preview
+                    "Append to register with line separator: ")))
+      (setq register-separator ?+)
+      (set-register register-separator "\n\n")
+      (append-to-register prompt start end nil)))
+
+  (defun prot/prepend-register-space-separator (start end)
+    "Prepend region to register with space in between entries.
+
+A prompt will ask for the register to operate on."
+    (interactive "r")
+    (let* ((prompt (register-read-with-preview
+                    "Prepend to register with space separator: ")))
+      (setq register-separator ?+)
+      (set-register register-separator " ")
+      (prepend-to-register prompt start end nil)))
+
+  (defun prot/prepend-register-line-separator (start end)
+    "Prepend region to register with an empty line in between entries.
+
+A prompt will ask for the register to operate on."
+    (interactive "r")
+    (let* ((prompt (register-read-with-preview
+                    "Prepend to register with line separator: ")))
+      (setq register-separator ?+)
+      (set-register register-separator "\n\n")
+      (prepend-to-register prompt start end nil))))
+
+;;;; Visual bookmarks (bm.el)
+
+(use-package bm
+  :ensure
+  :init
+  (setq bm-restore-repository-on-load t)
+  :config
+  (setq bm-annotate-on-create nil)
+  (setq bm-buffer-persistence t)
+  (setq bm-cycle-all-buffers t)
+  (setq bm-goto-position nil)
+  (setq bm-highlight-style 'bm-highlight-line-and-fringe)
+  (setq bm-marker 'bm-marker-right)
+  (setq bm-in-lifo-order nil)
+  (setq bm-recenter t)
+  (setq bm-repository-file "~/.emacs.d/bm-bookmarks")
+  (setq bm-repository-size 100)
+  (setq bm-show-annotations t)
+  (setq bm-wrap-immediately t)
+  (setq bm-wrap-search t)
+  :bind (("<C-f8>" . bm-next)
+         ("<C-S-f8>" . bm-previous)
+         ("<s-f8>" . bm-toggle-buffer-persistence)
+         ("<f8>" . bm-toggle)))
+
+;;;; Annotations (annotate.el)
+
+(use-package annotate
+  :ensure
+  :diminish
+  :commands (annotate-annotate
+             prot/annotate-annotate
+             annotate-goto-next-annotation
+             annotate-goto-previous-annotation
+             annotate-export-annotations
+             annotate-integrate-annotations
+             annotate-show-annotation-summary)
+  :config
+  (setq annotate-file "~/.emacs.d/annotations")
+  (setq annotate-annotation-column 73)
+  (setq annotate-diff-export-context 5)
+  (setq annotate-use-messages nil)
+  (setq annotate-integrate-marker "")
+  (setq annotate-integrate-higlight ?^)
+  (setq annotate-fallback-comment "#")
+  (setq annotate-blacklist-major-mode '())
+  (setq annotate-annotation-max-size-not-place-new-line 50)
+  (setq annotate-search-region-lines-delta 4)
+  (setq annotate-annotation-position-policy :by-length)
+  (setq annotate-summary-ask-query nil)
+
+  (defun prot/annotate-mode ()
+    "Toggles `annotate-mode' for the current buffer."
+    (if (bound-and-true-p annotate-mode)
+        (annotate-mode -1)
+      (annotate-mode 1)))
+
+  (defun prot/annotate-annotate ()
+    "Ensure `annotate-mode' is enabled for `annotate-annotate'."
+    (unless (bound-and-true-p annotate-mode)
+      (annotate-mode 1))
+    (annotate-annotate))
+
+  (defun prot/annotate-annotate-dwim (&optional arg)
+    "Common points of entry for annotations.
+Write an annotation or toggle `annotate-mode' by prefixing this
+function with the \\[universal-argument]."
+    (interactive "P")
+    (if arg
+        (prot/annotate-mode)
+      (prot/annotate-annotate)))
+
+  (defhydra prot/hydra-annotate (:idle nil :color pink :hint nil
+                                       :post (deactivate-mark))
+    "
+   ^Motions^                ^Actions^
+---^------------------------^----------------
+_n_: Next annotation     _a_: Annotate
+_p_: Prev annotation     _i_: Integrate
+^^                       _s_: Show summary
+"
+    ("n" annotate-goto-next-annotation)
+    ("p" annotate-goto-previous-annotation)
+    ("a" prot/annotate-annotate)
+    ("i" annotate-integrate-annotations)
+    ("s" annotate-show-annotation-summary)
+    ("q" nil "cancel" :color blue))
+
+  :bind (("<f9>" . prot/annotate-annotate-dwim)
+         ("<C-f9>" . annotate-goto-next-annotation)
+         ("<C-S-f9>" . annotate-goto-previous-annotation)
+         :map annotate-mode-map
+         ("C-c h a" . prot/hydra-annotate/body)))
+
+;;;; Cursor and mouse settings
+
+;;;;; Cursor appearance and tweaks
+
+(use-package frame
+  :commands prot/cursor-type-mode
+  :config
+  (setq-default cursor-type 'box)
+  (setq-default cursor-in-non-selected-windows '(bar . 2))
+  (setq-default blink-cursor-blinks 50)
+  (setq-default blink-cursor-interval nil) ; 0.75 would be my choice
+  (setq-default blink-cursor-delay 0.2)
+
+  (blink-cursor-mode -1)
+
+  (define-minor-mode prot/cursor-type-mode
+    "Toggle between static block and pulsing bar cursor."
+    :init-value nil
+    :global t
+    (if prot/cursor-type-mode
+        (progn
+          (setq-local blink-cursor-interval 0.75)
+          (setq-local cursor-type '(bar . 2))
+          (setq-local cursor-in-non-selected-windows 'hollow)
+          (blink-cursor-mode 1))
+      (dolist (local '(blink-cursor-interval
+                       cursor-type
+                       cursor-in-non-selected-windows))
+        (kill-local-variable `,local))
+      (blink-cursor-mode -1))))
+
+;;;;; pulse.el (highlight cursor position)
+
+(use-package pulse
+  :config
+  (defface prot/pulse-line-modus-theme
+    '((t :inherit modus-theme-subtle-green :extend t))
+    "Ad-hoc face for `prot/pulse-line'.
+This is done because it is not possible to highlight empty lines
+without the `:extend' property.")
+
+  (defun prot/pulse-line (&optional face)
+    "Temporarily highlight the current line."
+    (interactive)
+    (let ((start (if (eobp)
+                     (line-beginning-position 0)
+                   (line-beginning-position)))
+          (end (line-beginning-position 2))
+          (pulse-delay .04)
+          (face
+           (if face
+               face
+             'prot/pulse-line-modus-theme)))
+      (pulse-momentary-highlight-region start end face)))
+  :bind ("<s-escape>" . prot/pulse-line))
+
+
+;;;;; Mouse wheel behaviour
+
+(use-package mouse
+  :config
+  ;; In Emacs 27, use Control + mouse wheel to scale text.
+  (setq mouse-wheel-scroll-amount
+        '(1
+          ((shift) . 5)
+          ((meta) . 0.5)
+          ((control) . text-scale)))
+  (setq mouse-drag-copy-region nil)
+  (setq make-pointer-invisible t)
+  (setq mouse-wheel-progressive-speed t)
+  (setq mouse-wheel-follow-mouse t)
+  :hook (after-init-hook . mouse-wheel-mode))
+
+;;;;; Scrolling behaviour
+
+(use-package emacs
+  :config
+  (setq-default scroll-preserve-screen-position t)
+  (setq-default scroll-conservatively 1) ; affects `scroll-step'
+  (setq-default scroll-margin 0)
+
+  (define-minor-mode prot/scroll-centre-cursor-mode
+    "Toggle centred cursor scrolling behaviour."
+    :init-value nil
+    :lighter " S="
+    :global nil
+    (if prot/scroll-centre-cursor-mode
+        (setq-local scroll-margin (* (frame-height) 2)
+                    scroll-conservatively 0
+                    maximum-scroll-margin 0.5)
+      (dolist (local '(scroll-preserve-screen-position
+                       scroll-conservatively
+                       maximum-scroll-margin
+                       scroll-margin))
+        (kill-local-variable `,local))))
+
+  ;; C-c l is used for `org-store-link'.  The mnemonic for this is to
+  ;; focus the Line and also works as a variant of C-l.
+  :bind ("C-c L" . prot/scroll-centre-cursor-mode))
+
+;;;;; Delete selection
+
+(use-package delsel
+  :hook (after-init-hook . delete-selection-mode))
+
+;;;;; Tooltips (tooltip-mode)
+
+(use-package tooltip
+  :config
+  (setq tooltip-delay 0.5)
+  (setq tooltip-short-delay 0.5)
+  (setq x-gtk-use-system-tooltips nil)
+  (setq tooltip-frame-parameters
+        '((name . "tooltip")
+          (internal-border-width . 6)
+          (border-width . 0)
+          (no-special-glyphs . t)))
+  :hook (after-init-hook . tooltip-mode))
+
+;;;; Conveniences and minor extras
+
+;;;;; Auto revert mode
+
+(use-package autorevert
+  :diminish
+  :config
+  (setq auto-revert-verbose t)
+  :hook (after-init-hook . global-auto-revert-mode))
+
+;;;;; Preserve contents of system clipboard
+
+(use-package emacs
+  :config
+  (setq save-interprogram-paste-before-kill t))
+
+;;;;; Generic feedback
+
+(use-package emacs
+  :config
+  (setq frame-title-format '("%b"))
+  (setq echo-keystrokes 0.25)
+  (setq default-input-method "greek")
+  (setq ring-bell-function 'ignore)
+
+  (defalias 'yes-or-no-p 'y-or-n-p)
+  (put 'narrow-to-region 'disabled nil)
+  (put 'upcase-region 'disabled nil)
+  (put 'downcase-region 'disabled nil)
+  (put 'dired-find-alternate-file 'disabled nil)
+  (put 'overwrite-mode 'disabled t))
+
+;;;;; Newline characters for file ending
+
+(use-package emacs
+  :config
+  (setq mode-require-final-newline 'visit-save))
+
+;;;;; Altered zap and easier repeats
+
+(use-package emacs
+  :config
+  (setq repeat-on-final-keystroke t)
+  (setq set-mark-command-repeat-pop t)
+  :bind ("M-z" . zap-up-to-char))
+
+;;;;; Package lists
+
+(use-package package
+  :commands (list-packages
+             package-refresh-contents
+             package-list-packages)
+  :hook (package-menu-mode-hook . hl-line-mode))
+
+;;; Language settings for prose and code
+
+;;;; Line length (column count)
+
+(use-package emacs
+  :config
+  (setq-default fill-column 72)
+  :hook (after-init-hook . column-number-mode))
+
+;;;; Paragraphs and fill-mode
+
+(use-package emacs
+  :config
+  (setq sentence-end-double-space t)
+  (setq colon-double-space nil)
+  (setq use-hard-newlines nil)
+  (setq sentence-end-without-period nil))
+
+(use-package emacs
+  :diminish auto-fill-function
+  :config
+  (setq adaptive-fill-mode t)
+
+  (defun prot/unfill-region-or-paragraph (&optional region)
+    "Unfill paragraph or, when active, the region.
+Join all lines in a region, if active, while respecting any empty
+lines (so multiple paragraphs are not joined, just unfilled).  If
+no region is active, operate on the paragraph.  The idea is to
+produce the opposite effect of both `fill-paragraph' and
+`fill-region'."
+    (interactive)
+    (let ((fill-column most-positive-fixnum))
+      (if (use-region-p)
+          (fill-region (region-beginning) (region-end))
+        (fill-paragraph nil region))))
+
+  :hook (text-mode-hook . (lambda ()
+                            (turn-on-auto-fill)))
+  :bind ("M-Q" . prot/unfill-region-or-paragraph))
+
+;;;; Recognise subwords
+
+(use-package subword
+  :diminish
+  :hook (prog-mode-hook . subword-mode))
+
+;;;; Comment lines, regions, boxes, etc.
+
+(use-package newcomment
+  :config
+  (setq comment-empty-lines t)
+  (setq comment-fill-column nil)
+  (setq comment-multi-line t)
+  (setq comment-style 'multi-line)
+
+  (defun prot/comment-dwim (&optional arg)
+    "Alternative to `comment-dwim': offers a simple wrapper
+around `comment-line' and `comment-dwim'.
+
+If the region is active, then toggle the comment status of the
+region or, if the major mode defines as much, of all the lines
+implied by the region boundaries.
+
+Else toggle the comment status of the line at point."
+    (interactive "*P")
+    (if (use-region-p)
+        (comment-dwim arg)
+      (save-excursion
+        (comment-line arg))))
+
+  :bind (("C-;" . prot/comment-dwim)
+         ("C-:" . comment-kill)
+         ("M-;" . comment-indent)
+         ("C-x C-;" . comment-box)))
+
+;;;; Configure 'electric' behaviour
+
+(use-package electric
+  :config
+  (setq electric-pair-inhibit-predicate'electric-pair-conservative-inhibit)
+  (setq electric-pair-preserve-balance t)
+  (setq electric-pair-pairs
+        '((8216 . 8217)
+          (8220 . 8221)
+          (171 . 187)))
+  (setq electric-pair-skip-self 'electric-pair-default-skip-self)
+  (setq electric-pair-skip-whitespace nil)
+  (setq electric-pair-skip-whitespace-chars
+        '(9
+          10
+          32))
+  (setq electric-quote-context-sensitive t)
+  (setq electric-quote-paragraph t)
+  (setq electric-quote-string nil)
+  (setq electric-quote-replace-double t)
+  :hook (after-init-hook . (lambda ()
+                             (electric-indent-mode 1)
+                             (electric-pair-mode -1)
+                             (electric-quote-mode -1))))
+
+;;;; Parentheses (show-paren-mode)
+
+(use-package paren
+  :config
+  (setq show-paren-style 'parenthesis)
+  (setq show-paren-when-point-in-periphery nil)
+  (setq show-paren-when-point-inside-paren nil)
+  :hook (after-init-hook . show-paren-mode))
+
+;;;; Tabs, indentation, and the TAB key
+
+(use-package emacs
+  :config
+  (setq-default tab-always-indent 'complete)
+  (setq-default tab-width 4)
+  (setq-default indent-tabs-mode nil))
+
+;;;; Dictionary (and local sdcv variant)
+
+(use-package sdcv
+  :ensure
+  :hook (sdcv-mode-hook . (lambda ()
+                            (font-lock-mode -1))))
+
+(use-package dictionary
+  :ensure)
+
+;;;; Flyspell (spell check)
+
+(use-package flyspell
+  :commands (ispell-change-dictionary
+             ispell-word
+             flyspell-buffer
+             flyspell-mode
+             flyspell-region)
+  :config
+  (setq flyspell-issue-message-flag nil)
+  (setq flyspell-issue-welcome-flag nil)
+  (setq ispell-program-name "aspell")
+  (setq ispell-dictionary "en_GB")
+
+  (defvar prot/ispell-dictionaries
+    '(("English" . "en")
+      ("Français" . "fr")
+      ("Nederlands" . "nl")
+      ("Espanõl" . "es"))
+    "Alist of dictionaries I may use.
+It is used by `prot/ispell-dictionaries-complete'.")
+
+  (defun prot/ispell-dictionaries-complete ()
+    "Select an item from `prot/ispell-dictionaries'."
+    (interactive)
+    (let* ((dicts (mapcar #'car prot/ispell-dictionaries))
+           (choice (completing-read "Select dictionary: " dicts nil t))
+           (key (cdr (assoc `,choice prot/ispell-dictionaries))))
+      (ispell-change-dictionary key)
+      (message "Switched to %s" key)))
+
+  (defun prot/flyspell-dwim ()
+    "Spell check region or select dictionary.
+
+Use `flyspell-region' on the active region, else invoke
+`prot/ispell-dictionaries-complete'."
+    (interactive)
+    (let ((beg (region-beginning))
+          (end (region-end)))
+      (if (use-region-p)
+          (flyspell-region beg end)
+        (prot/ispell-dictionaries-complete))))
+
+  :bind (("M-$" . prot/flyspell-dwim)
+         ("C-M-$" . prot/ispell-dictionaries-complete)
+         :map flyspell-mode-map
+         ("C-;" . nil)))
+
+;;;;; WordReference.com lookup
+
+(use-package emacs
+  :config
+  (defun dp/wordreference-lookup (dict)
+    "Look up a definition in the WordRerefence.com dictionary DICT.
+
+Uses the region if it is active, otherwise the word under the
+cursor."
+    (let ((word (if (use-region-p)
+                    (buffer-substring-no-properties
+                     (region-beginning) (region-end))
+                  (current-word))))
+      (browse-url (concat "https://www.wordreference.com/" dict "/" word))))
+  
+  (defun dp/wordreference-lookup-en-fr ()
+    "Look up a definition in the WordRerefence.com en-fr dictionary."
+    (interactive)
+    (dp/wordreference-lookup "enfr"))
+
+  (defun dp/wordreference-lookup-fr-en ()
+    "Look up a definition in the WordRerefence.com fr-en dictionary."
+    (interactive)
+    (dp/wordreference-lookup "fren")))
+
+;;;; Code and text linters
+
+;;;;; Flymake
+
+(use-package flymake
+  :commands flymake-mode
+  :config
+  (setq flymake-fringe-indicator-position 'left-fringe)
+  (setq flymake-suppress-zero-counters t)
+  (setq flymake-start-on-flymake-mode t)
+  (setq flymake-no-changes-timeout nil)
+  (setq flymake-start-on-save-buffer t)
+  (setq flymake-proc-compilation-prevents-syntax-check t)
+  (setq flymake-wrap-around nil)
+
+  (defhydra prot/hydra-flymake (:color pink :hint nil)
+    "
+Actions
+-------
+_n_: Next error
+_p_: Previous error
+_d_: Diagnostics' buffer
+"
+    ("d" flymake-show-diagnostics-buffer)
+    ("n" flymake-goto-next-error)
+    ("p" flymake-goto-prev-error)
+    ("q" nil "cancel" :color blue))
+  :bind (:map flymake-mode-map
+              ("C-c h l" . prot/hydra-flymake/body)))
+
+;;;;; Flycheck
+
+(use-package flycheck
+  :ensure
+  :commands flycheck-mode
+  :config
+  (setq flycheck-check-syntax-automatically
+        '(save mode-enabled))
+
+  (defun prot/flycheck-list-errors-toggle ()
+    "Toggle the display of `flycheck-mode' diagnostics' buffer."
+    (interactive)
+    (let ((diagnostics (get-buffer-window flycheck-error-list-buffer)))
+      (unless flycheck-mode
+        (user-error "Flycheck mode not enabled"))
+      (if diagnostics
+          (delete-window diagnostics)
+        (flycheck-list-errors))))
+
+  (defhydra prot/hydra-flycheck (:color pink :hint nil)
+    "
+   ^Actions^             ^Helpers^
+---^^--------------------^^-----------------
+_n_: Next error       _c_: Check buffer
+_p_: Previous error   _l_: List diagnostics
+_e_: Explain error    _x_: Disable checker
+_d_: Display error
+"
+    ("l" prot/flycheck-list-errors-toggle)
+    ("c" flycheck-buffer)
+    ("n" flycheck-next-error)
+    ("p" flycheck-previous-error)
+    ("e" flycheck-explain-error-at-point)
+    ("d" flycheck-display-error-at-point)
+    ("x" flycheck-disable-checker :color blue)
+    ("q" nil "cancel" :color blue))
+
+  :hook (flycheck-error-list-mode-hook . visual-line-mode)
+  :bind (:map flycheck-mode-map
+              ("C-c h l" . prot/hydra-flycheck/body)))
+
+
+;;;;;; Flycheck mode line indicator
+
+(use-package flycheck-indicator
+  :ensure
+  :after flycheck
+  :config
+  (setq flycheck-indicator-icon-error (string-to-char "!"))
+  (setq flycheck-indicator-icon-info (string-to-char "·"))
+  (setq flycheck-indicator-icon-warning (string-to-char "*"))
+  (setq flycheck-indicator-status-icons
+        '((not-checked "%")
+          (no-checker "-")
+          (running "&")
+          (errored "!")
+          (finished "=")
+          (interrupted "#")
+          (suspicious "?")))
+
+  (flycheck-define-checker dp/git-commit-message
+    "A git commit message checker using `gitlint'.
+
+See URL `https://jorisroovers.com/gitlint/'."
+    :command ("gitlint" "--msg-filename" source)
+    :error-patterns
+    ((error line-start
+            line ": " (id (one-or-more (in alnum)))
+            blank
+            (message (one-or-more (not (any ":"))))
+            (minimal-match (zero-or-more anything))
+            line-end))
+    :modes vc-git-log-edit-mode)
+
+  (add-to-list 'flycheck-checkers 'dp/git-commit-message t)
+
+  :hook (flycheck-mode-hook . flycheck-indicator-mode))
+
+;;;; Eldoc (elisp live documentation feedback)
+
+(use-package eldoc
+  :diminish
+  :config
+  (global-eldoc-mode 1))
+
+;;;; Support for various major modes
+
+;;;;; Markdown
+
+(use-package markdown-mode
+  :ensure
+  :config
+  ;; Allows for fenced block focus with C-c ' (same as Org blocks).
+  (use-package edit-indirect :ensure)
+  (setq markdown-fontify-code-blocks-natively t)
+  :mode ("\\.md$" . markdown-mode))
+
+;;;;; YAML
+
+(use-package yaml-mode
+  :ensure
+  :mode (("\\.yml\\'" . yaml-mode)
+         ("\\.yaml\\'" . yaml-mode)))
+
+;;;;; CSS
+
+(use-package css-mode
+  :mode (("\\.css$" . css-mode)
+         ("\\.scss$" . scss-mode))
+  :config
+  (setq css-fontify-colors nil))
+
+;;; History and state
+
+;;;; Emacs server and desktop
 
 (use-package server
   :hook (after-init-hook . server-start))
@@ -3400,13 +4683,15 @@ keys follow the pattern of <PREFIX> <KEY>.")
   (setq inhibit-startup-screen t)
   (setq inhibit-startup-buffer-menu t))
 
-;; ............................................................. Recentf
+;;;; Record various types of history
+
+;;;;; Recentf (recent files and directories)
 
 (use-package recentf
   :config
   (setq recentf-save-file "~/.emacs.d/recentf")
   (setq recentf-max-saved-items 200)
-  (setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/doas:" "/sudo:"))
+  (setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/sudo:"))
 
   (defun prot/recentf-keep-predicate (file)
     "Additional conditions for saving in `recentf-list'.
@@ -3454,10 +4739,12 @@ abbreviated as a tilde.  In the Dired buffer paths are absolute."
         (icomplete-vertical-do ()
           (find-file
            (completing-read "Recent dirs: " dirs nil t))))))
-  
+
   :hook (after-init-hook . recentf-mode)
   :bind (("s-r" . prot/recentf)
          ("C-x C-r" . prot/recentf-dirs)))
+
+;;;;; Minibuffer history (savehist-mode)
 
 (use-package savehist
   :config
@@ -3467,13 +4754,15 @@ abbreviated as a tilde.  In the Dired buffer paths are absolute."
   (setq savehist-save-minibuffer-history t)
   :hook (after-init-hook . savehist-mode))
 
+;;;;; Record cursor position
+
 (use-package saveplace
   :config
   (setq save-place-file "~/.emacs.d/saveplace")
   (setq save-place-forget-unreadable-files t)
   (save-place-mode 1))
 
-;; Backups
+;;;;; Backups
 
 (use-package emacs
   :config
@@ -3485,3 +4774,4 @@ abbreviated as a tilde.  In the Dired buffer paths are absolute."
   (setq kept-new-versions 6)
   (setq kept-old-versions 2)
   (setq create-lockfiles nil))
+
