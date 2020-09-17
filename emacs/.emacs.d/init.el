@@ -137,8 +137,8 @@
 See, for example, `prot/font-set-fonts'.")
 
   (defconst prot/font-sizes-families-alist
-    '(("laptop" . (100 "Hack" "FiraGO"))
-      ("desktop" . (100 "Hack" "FiraGO")))
+    '(("laptop" . (105 "Hack" "Noto Sans"))
+      ("desktop" . (105 "Hack" "Noto Sans")))
     "Alist of desired typefaces and their point sizes.
 
 Each association consists of a display type mapped to a point
