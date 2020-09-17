@@ -2198,9 +2198,9 @@ produces dates with a fixed length."
 (use-package deft
   :ensure
   :config
-  (setq deft-directory "~/Sync/notes/wiki")
-  (setq deft-extensions '("org" "md" "txt"))
-  (setq deft-default-extension "org")
+  (setq deft-directory "~/Dropbox/wiki")
+  (setq deft-extensions '("md" "org" "txt"))
+  (setq deft-default-extension "md")
 
   (defun dp/deft-dir (dir)
     "Run deft in directory DIR"
@@ -2212,43 +2212,36 @@ produces dates with a fixed length."
   (defun dp/deft-wiki ()
     "Run deft in wiki directory"
     (interactive)
-    (dp/deft-dir "~/Sync/notes/wiki"))
+    (dp/deft-dir "~/Dropbox/wiki"))
 
   (defun dp/deft-zettelkasten ()
     "Run deft in zettelkasten directory"
     (interactive)
-    (dp/deft-dir org-roam-directory))
+    (let ((deft-extensions '("md"))
+          (deft-use-filename-as-title t))
+      (dp/deft-dir "~/Dropbox/zettelkasten")))
 
   :bind
   (("C-c n w" . dp/deft-wiki)
    ("C-c n z" . dp/deft-zettelkasten)))
 
-;;;;; Org-roam
-
-(use-package org-roam
-  :ensure
-  :after org-capture
-  :diminish
+(use-package zetteldeft
+  :ensure t
+  :after deft
   :config
-  (setq org-roam-directory "~/Sync/notes/zettelkasten")
-
-  :hook
-  (after-init-hook . org-roam-mode)
-
-  :bind (:map org-roam-mode-map
-              (("C-c n x" . org-roam-jump-to-index)
-               ("C-c n l" . org-roam)
-               ("C-c n f" . org-roam-find-file)
-               ("C-c n b" . org-roam-switch-to-buffer))
-              :map org-mode-map
-              (("C-c n i" . org-roam-insert))))
+  (setq zetteldeft-title-prefix "# ")
+  (setq zetteldeft-link-indicator "[[")
+  (setq zetteldeft-link-suffix "]]")
+  (zetteldeft-set-classic-keybindings)
+  (font-lock-add-keywords
+   'markdown-mode `((,zetteldeft-id-regex . font-lock-warning-face))))
 
 ;;;;; Org-journal
 
 (use-package org-journal
   :ensure
   :config
-  (setq org-journal-dir "~/Sync/notes/journal/")
+  (setq org-journal-dir "~/Dropbox/journal/")
   (setq org-journal-file-format "%Y-%m-%d.org")
   (setq org-journal-date-prefix "#+title: ")
   (setq org-journal-date-format "%A, %d %B %Y")
@@ -2260,10 +2253,10 @@ produces dates with a fixed length."
 (use-package org-ref
   :ensure
   :config
-  (setq reftex-default-bibliography '("~/Sync/notes/bibliography/references.bib"))
+  (setq reftex-default-bibliography '("~/Dropbox/bibliography/references.bib"))
   (setq org-ref-default-bibliography reftex-default-bibliography)
-  (setq org-ref-bibliography-notes "~/Sync/notes/bibliography/notes.org")
-  (setq org-ref-pdf-directory "~/Sync/notes/bibliography/bibtex-pdfs/"))
+  (setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org")
+  (setq org-ref-pdf-directory "~/Dropbox/bibliography/bibtex-pdfs/"))
 
 ;;;;; Org export
 
@@ -3196,6 +3189,15 @@ wisely or prepare to use `eshell-interrupt-process'."
   :diminish
   :bind (:map proced-mode-map
               ("/" . proced-narrow)))
+
+;;;; BibTex reference manager
+
+(use-package ebib
+  :ensure
+  :commands ebib
+  :config
+  (setq ebib-preload-bib-files
+        '("~/Dropbox/bibliography/references.bib")))
 
 ;;;; Elfeed (RSS/Atom feed reader)
 
@@ -4634,11 +4636,23 @@ See URL `https://jorisroovers.com/gitlint/'."
 
 (use-package markdown-mode
   :ensure
+  :mode ("\\.md$" . markdown-mode)
   :config
   ;; Allows for fenced block focus with C-c ' (same as Org blocks).
   (use-package edit-indirect :ensure)
+  (setq markdown-command "multimarkdown")
   (setq markdown-fontify-code-blocks-natively t)
-  :mode ("\\.md$" . markdown-mode))
+  (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S")
+  
+  (defun dp/reftex-citation ()
+    (interactive)
+    (let ((reftex-cite-format
+           ;; MLA citation style
+           '((?\C-m . "[#%l]: %a. *%t*. %d, %u, %y, %p %<."))))
+      (reftex-citation)))
+  
+  :hook (write-file-hooks . time-stamp)
+  :bind ("C-c [" . dp/reftex-citation))
 
 ;;;;; YAML
 
