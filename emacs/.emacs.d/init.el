@@ -479,17 +479,17 @@ instead."
   ;; Super-KEY.  Normally these should go in individual package
   ;; declarations, but their grouping here makes things easier to
   ;; understand.  Besides, they are related to the minibuffer.
-  :bind (("s-f" . find-file)
-         ("s-F" . find-file-other-window)
-         ("s-d" . dired)
-         ("s-D" . dired-other-window)
-         ("s-b" . switch-to-buffer)
-         ("s-B" . switch-to-buffer-other-window)
-         ("s-v" . prot/focus-minibuffer-or-completions)
-         ("s-h" . prot/describe-symbol-at-point)
-         ("s-H" . (lambda ()
-                    (interactive)
-                    (prot/describe-symbol-at-point '(4))))
+  :bind (("C-s-f" . find-file)
+         ("C-s-F" . find-file-other-window)
+         ("C-s-d" . dired)
+         ("C-s-D" . dired-other-window)
+         ("C-s-b" . switch-to-buffer)
+         ("C-s-B" . switch-to-buffer-other-window)
+         ("C-s-v" . prot/focus-minibuffer-or-completions)
+         ("C-s-h" . prot/describe-symbol-at-point)
+         ("C-s-H" . (lambda ()
+                      (interactive)
+                      (prot/describe-symbol-at-point '(4))))
          :map minibuffer-local-completion-map
          ("<return>" . minibuffer-force-complete-and-exit) ; exit with completion
          ("C-j" . exit-minibuffer)      ; force input unconditionally
@@ -631,7 +631,7 @@ normally would when calling `yank' followed by `yank-pop'."
         (insert
          (completing-read "Yank from kill ring: " kills nil t)))))
 
-  :bind (("s-y" . prot/kill-ring-yank-complete)
+  :bind (("C-s-y" . prot/kill-ring-yank-complete)
          :map icomplete-minibuffer-map
          ("C-v" . icomplete-vertical-toggle)))
 
@@ -755,7 +755,7 @@ requires the command-line executable called 'rg' or 'ripgrep'."
 With \\[universal-argument] produce a `dired' buffer instead with
 all the possible candidates."
     (interactive "P")
-    (let* ((dirs (list "~/Git/Projects/" "~/.emacs.d/prot-dev/"))
+    (let* ((dirs (list "~/Dropbox/projects/"))
            (dotless directory-files-no-dot-files-regexp)
            (cands (mapcan (lambda (d)
                             (directory-files d t dotless))
@@ -816,8 +816,7 @@ Use as a value for `completion-in-region-function'."
   (setq dabbrev-eliminate-newlines nil)
   (setq dabbrev-upcase-means-case-search t)
   :bind (("M-/" . dabbrev-expand)
-         ("C-M-/" . dabbrev-completion)
-         ("s-/" . dabbrev-completion)))
+         ("C-M-/" . dabbrev-completion)))
 
 ;;;; Configurations for—or extensions to—built-in search commands
 
@@ -1639,9 +1638,9 @@ NEEDS REVIEW."
 
   :bind (("C-c j" . prot/dired-jump-extra)
          ("C-x C-j" . dired-jump)
-         ("s-j" . dired-jump)
+         ("C-s-j" . dired-jump)
          ("C-x 4 C-j" . dired-jump-other-window)
-         ("s-J" . dired-jump-other-window)))
+         ("C-s-J" . dired-jump-other-window)))
 
 ;;;;; diredfl (more dired colours)
 
@@ -1689,7 +1688,7 @@ NEEDS REVIEW."
             (set-visited-file-name new-name t t)))))))
   :bind (("M-=" . count-words)
          ("<C-f2>" . contrib/rename-file-and-buffer)
-         ("s-k" . prot/kill-buffer-current)))
+         ("C-s-k" . prot/kill-buffer-current)))
 
 ;;;;; Unique names for buffers
 
@@ -1804,7 +1803,7 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
           (set-window-configuration prot/window-configuration))
       (setq prot/window-configuration (current-window-configuration))
       (delete-other-windows)))
-  :bind ("s-m" . prot/window-single-toggle))
+  :bind ("C-s-m" . prot/window-single-toggle))
 
 ;;;;; Window rules and basic tweaks
 
@@ -1893,34 +1892,34 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
   ;; not an error of mine.
   :hook ((help-mode-hook . visual-line-mode)
          (custom-mode-hook . visual-line-mode))
-  :bind (("s-n" . next-buffer)
-         ("s-p" . previous-buffer)
-         ("s-o" . other-window)
-         ("s-2" . split-window-below)
-         ("s-3" . split-window-right)
-         ("s-0" . delete-window)
-         ("s-1" . delete-other-windows)
-         ("s-5" . delete-frame)
+  :bind (("C-s-n" . next-buffer)
+         ("C-s-p" . previous-buffer)
+         ("C-s-o" . other-window)
+         ("C-s-2" . split-window-below)
+         ("C-s-3" . split-window-right)
+         ("C-s-0" . delete-window)
+         ("C-s-1" . delete-other-windows)
+         ("C-s-5" . delete-frame)
          ("C-x _" . balance-windows)
          ("C-x +" . balance-windows-area)
-         ("s-q" . window-toggle-side-windows)))
+         ("C-s-q" . window-toggle-side-windows)))
 
 ;;;;; Window history (winner-mode)
 
 (use-package winner
   :hook (after-init-hook . winner-mode)
-  :bind ("<s-right>" . winner-redo)
-  ("<s-left>" . winner-undo))
+  :bind (("<C-s-right>" . winner-redo)
+         ("<C-s-left>" . winner-undo)))
 
 ;;;;; Directional window motions (windmove)
 
 (use-package windmove
   :config
   (setq windmove-create-window nil)     ; Emacs 27.1
-  :bind (("C-s-k" . windmove-up)
-         ("C-s-l" . windmove-right)
-         ("C-s-j" . windmove-down)
-         ("C-s-h" . windmove-left)
+  :bind (("M-s-k" . windmove-up)
+         ("M-s-l" . windmove-right)
+         ("M-s-j" . windmove-down)
+         ("M-s-h" . windmove-left)
          ;; numpad keys clockwise: 8 6 2 4
          ("<kp-up>" . windmove-up)
          ("<kp-right>" . windmove-right)
@@ -2004,18 +2003,18 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
   :ensure
   :config
   ;; agenda and basic directory structure
-  (setq org-directory "~/org/")
-  (setq org-default-notes-file "~/org/notes.org")
+  (setq org-directory "~/Dropbox/notes/")
+  (setq org-default-notes-file "~/Dropbox/notes/notes.org")
   (setq org-agenda-files
-        '("~/gtd/inbox.org"
-          "~/gtd/projects.org"))
+        '("~/Dropbox/gtd/inbox.org"
+          "~/Dropbox/gtd/projects.org"))
   (setq org-archive-location "archive/%s_archive::")
   (setq org-archive-file-header-format
         "#+FILETAGS: ARCHIVE\nArchived entries from file %s\n")
   ;; refile, todo
   (setq org-refile-targets
-        '(("~/gtd/projects.org" :maxlevel . 3)
-          ("~/gtd/maybe.org" :level . 1)))
+        '(("~/Dropbox/gtd/projects.org" :maxlevel . 3)
+          ("~/Dropbox/gtd/maybe.org" :level . 1)))
   (setq org-refile-use-outline-path t)
   (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-refile-use-cache t)
@@ -2075,16 +2074,16 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
   :after org
   :config
   (setq org-capture-templates
-        '(("t" "Todo" entry (file "~/gtd/inbox.org")
+        '(("t" "Todo" entry (file "~/Dropbox/gtd/inbox.org")
            "* TODO %?\n%U\n%a\n")
-          ("f" "Fleeting note" entry  (file "~/gtd/inbox.org")
+          ("f" "Fleeting note" entry  (file "~/Dropbox/gtd/inbox.org")
            "* TODO Process fleeting note\n%?\n%U\n%a\n")
-          ("r" "Reply to an email" entry (file+headline "~/gtd/inbox.org")
+          ("r" "Reply to an email" entry (file+headline "~/Dropbox/gtd/inbox.org")
            "* TODO Reply to %:from on %:subject\n SCHEDULED: %t\n%U\n%a\n"
            :immediate-finish t)
-          ("l" "link" entry (file "~/gtd/inbox.org")
+          ("l" "link" entry (file "~/Dropbox/gtd/inbox.org")
            "* TODO %(org-cliplink-capture)" :immediate-finish t)
-          ("c" "org-protocol-capture" entry (file "~/gtd/inbox.org")
+          ("c" "org-protocol-capture" entry (file "~/Dropbox/gtd/inbox.org")
            "* TODO [[%:link][%:description]]\n%:initial" :immediate-finish t)))
 
   (setq org-capture-templates-contexts
@@ -2171,7 +2170,7 @@ produces dates with a fixed length."
            ((agenda "")
             (todo "TODO"
                   ((org-agenda-overriding-header "To Refile:")
-                   (org-agenda-files '("~/gtd/inbox.org"))))))
+                   (org-agenda-files '("~/Dropbox/gtd/inbox.org"))))))
           ("n" "Next tasks"
            ((todo "TODO"
                   ((org-agenda-overriding-header "Next tasks:")))))))
@@ -2311,7 +2310,7 @@ produces dates with a fixed length."
 
 (use-package message
   :config
-  (setq message-directory "~/mail/")
+  (setq message-directory "~/Mail/")
   (setq mail-user-agent 'message-user-agent)
   (setq compose-mail-user-agent-warnings nil)
   (setq message-mail-user-agent nil)    ; default is `gnus'
@@ -2353,10 +2352,10 @@ Add this function to `message-header-setup-hook'."
 
 (use-package gnus
   :config
-  (setq gnus-directory "~/news")
+  (setq gnus-directory "~/News")
   (setq gnus-select-method '(nnnil ""))
   (setq gnus-secondary-select-methods
-        '((nnmaildir "migadu" (directory "~/mail/migadu"))))
+        '((nnmaildir "migadu" (directory "~/Mail/migadu"))))
 
   (setq nnir-method-default-engines
         '((nnmaildir . notmuch)))
@@ -2393,7 +2392,7 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-agent-cache t)
   (setq gnus-agent-confirmation-function 'y-or-n-p)
   (setq gnus-agent-consider-all-articles nil)
-  (setq gnus-agent-directory "~/news/agent/")
+  (setq gnus-agent-directory "~/News/agent/")
   (setq gnus-agent-enable-expiration 'ENABLE)
   (setq gnus-agent-expire-all nil)
   (setq gnus-agent-expire-days 30)
@@ -2814,7 +2813,7 @@ project, as defined by `vc-root-dir'."
   :commands magit-list-repositories
   :config
   (setq magit-repository-directories
-        '(("~/projects" . 1))))
+        '(("~/Dropbox/projects" . 1))))
 
 ;;;;; Smerge and Ediff
 
@@ -3440,7 +3439,7 @@ minibuffer with `exit-minibuffer' (I bind it to C-j in
            ;; TODO how to cleanly add hyphens instead of spaces?
            (title (elfeed-entry-title entry))
            (elfeed-show-truncate-long-urls nil)
-           (archives "~/Documents/feeds/")
+           (archives "~/Dropbox/feeds/")
            (file (format "%s%s.txt" archives title)))
       (unless (file-exists-p archives)
         (make-directory archives t))
@@ -4196,8 +4195,7 @@ without the `:extend' property.")
                face
              'prot/pulse-line-modus-theme)))
       (pulse-momentary-highlight-region start end face)))
-  :bind ("<s-escape>" . prot/pulse-line))
-
+  :bind ("<C-s-escape>" . prot/pulse-line))
 
 ;;;;; Mouse wheel behaviour
 
