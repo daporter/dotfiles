@@ -2233,7 +2233,28 @@ produces dates with a fixed length."
   (setq zetteldeft-link-suffix "]]")
   (zetteldeft-set-classic-keybindings)
   (font-lock-add-keywords
-   'markdown-mode `((,zetteldeft-id-regex . font-lock-warning-face))))
+   'markdown-mode `((,zetteldeft-id-regex . font-lock-warning-face)))
+
+  (define-skeleton zettel-skeleton
+    "A Zettel skeleton.."
+    nil
+    "\n"
+    "    ID: "
+    (let ((b (buffer-name)))
+      (string-match zetteldeft-id-regex b)
+      (match-string 0 b))
+    "\n"
+    "    Time-stamp: <>\n"
+    "    Tags: \n"
+    "\n"
+    _
+    "\n"
+    "\n"
+    "## See Also\n"
+    "\n"
+    "- \n"
+    "\n"
+    "<!-- References -->\n"))
 
 ;;;;; Org-journal
 
