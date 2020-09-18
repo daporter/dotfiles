@@ -2217,12 +2217,20 @@ produces dates with a fixed length."
     "Run deft in zettelkasten directory"
     (interactive)
     (let ((deft-extensions '("md"))
-          (deft-use-filename-as-title t))
+          (deft-use-filename-as-title t)
+          (deft-strip-summary-regexp
+            ;; Show beginning of the body text in the summary line.
+            (concat "\\("
+                    "[\n\t]"
+                    "\\|^---$"
+                    "\\|^\\(ID\\|Time-stamp\\|Tags\\):.*$"
+                    "\\|^# .*$"
+                    "\\)")))
       (dp/deft-dir "~/Dropbox/zettelkasten")))
 
   :bind
-  (("C-c n w" . dp/deft-wiki)
-   ("C-c n z" . dp/deft-zettelkasten)))
+  (("C-c d w" . dp/deft-wiki)
+   ("C-c d z" . dp/deft-zettelkasten)))
 
 (use-package zetteldeft
   :ensure t
@@ -2234,27 +2242,40 @@ produces dates with a fixed length."
   (zetteldeft-set-classic-keybindings)
   (font-lock-add-keywords
    'markdown-mode `((,zetteldeft-id-regex . font-lock-warning-face)))
-
-  (define-skeleton zettel-skeleton
-    "A Zettel skeleton.."
-    nil
-    "\n"
-    "    ID: "
-    (let ((b (buffer-name)))
-      (string-match zetteldeft-id-regex b)
-      (match-string 0 b))
-    "\n"
-    "    Time-stamp: <>\n"
-    "    Tags: \n"
-    "\n"
-    _
-    "\n"
-    "\n"
-    "## See Also\n"
-    "\n"
-    "- \n"
-    "\n"
-    "<!-- References -->\n"))
+  
+  (defun dp/insert-zettel-metadata ()
+    "Insert metadata at the beginning of a Zettel file."
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (insert
+       "---\n"
+       "ID: "
+       (let ((b (buffer-name)))
+         (string-match zetteldeft-id-regex b)
+         (match-string 0 b))
+       "\n"
+       "Time-stamp: <>\n"
+       "Tags:\n"
+       "---\n")))
+  
+  (defun dp/insert-zettel-body-skeleton ()
+    "Insert a body skeleton in a Zettel file."
+    (interactive)
+    (progn
+      (goto-char (point-min))
+      (re-search-forward "^# ")
+      (forward-line)
+      (insert
+       "\n"
+       "\n"
+       "\n"
+       "## See Also\n"
+       "\n"
+       "-\n"
+       "\n"
+       "<!-- References -->\n")
+      (forward-line -7))))
 
 ;;;;; Org-journal
 
