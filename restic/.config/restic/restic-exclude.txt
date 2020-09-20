@@ -1,10 +1,13 @@
-*.core
 $HOME/.cabal
 $HOME/.cache
+$HOME/.dropbox
+$HOME/.dropbox-dist
+$HOME/.local/share/Trash
 $HOME/.mozilla
 $HOME/.surf
-$HOME/Sync/media
-$HOME/dl
+$HOME/Downloads
 $HOME/dotfiles/emacs/.emacs.d/elpa
+$HOME/snap
 $HOME/src
 $HOME/tmp
+*.core
