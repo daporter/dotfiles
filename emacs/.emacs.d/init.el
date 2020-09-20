@@ -2294,7 +2294,6 @@ produces dates with a fixed length."
 (use-package org-ref
   :ensure
   :config
-  (setq reftex-default-bibliography '("~/Dropbox/bibliography/references.bib"))
   (setq org-ref-default-bibliography reftex-default-bibliography)
   (setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org")
   (setq org-ref-pdf-directory "~/Dropbox/bibliography/bibtex-pdfs/"))
@@ -3230,6 +3229,31 @@ wisely or prepare to use `eshell-interrupt-process'."
   :diminish
   :bind (:map proced-mode-map
               ("/" . proced-narrow)))
+
+;;;;; BibTeX
+
+(use-package reftex
+  :config
+  (setq reftex-default-bibliography
+        '("~/Dropbox/bibliography/references.bib"))
+
+  (defun dp/reftex-citation ()
+    (interactive)
+    (let ((reftex-cite-format
+           '((?\C-m . "%l")
+             ;; MLA citation style
+             (?f . "[#%l]: %a. *%t*. %d, %u, %y, %p %<."))))
+      (reftex-citation))))
+
+(use-package bibtex
+  :config
+  (setq bibtex-align-at-equal-sign t)
+  (setq bibtex-autokey-name-year-separator "")
+  (setq bibtex-autokey-year-title-separator "")
+  (setq bibtex-autokey-titleword-first-ignore '("the" "a" "if" "and" "an"))
+  (setq bibtex-autokey-titleword-length 30)
+  (setq bibtex-autokey-titlewords 1)
+  (setq bibtex-autokey-titlewords-stretch 0))
 
 ;;;; BibTex reference manager
 
@@ -4683,13 +4707,6 @@ See URL `https://jorisroovers.com/gitlint/'."
   (setq markdown-command "multimarkdown")
   (setq markdown-fontify-code-blocks-natively t)
   (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S")
-  
-  (defun dp/reftex-citation ()
-    (interactive)
-    (let ((reftex-cite-format
-           ;; MLA citation style
-           '((?\C-m . "[#%l]: %a. *%t*. %d, %u, %y, %p %<."))))
-      (reftex-citation)))
   
   :hook (write-file-hooks . time-stamp)
   :bind ("C-c [" . dp/reftex-citation))
