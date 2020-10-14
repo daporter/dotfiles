@@ -2022,7 +2022,7 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
         '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d)" "CANCELLED(c@/!)")))
   (setq org-fast-tag-selection-include-todo t)
   (setq org-use-fast-todo-selection t)
-  (setq org-outline-path-complete-in-steps nil)  
+  (setq org-outline-path-complete-in-steps nil)
   (setq org-fontify-quote-and-verse-blocks t)
   (setq org-fontify-whole-heading-line nil)
   (setq org-fontify-whole-block-delimiter-line t)
@@ -2089,7 +2089,6 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
   (setq org-capture-templates-contexts
         '(("r" ((in-mode . "gnus-article-mode")
                 (in-mode . "gnus-summary-mode")))))
-  
   :bind ("C-c c" . org-capture))
 
 ;;;;; Org agenda
@@ -2102,7 +2101,7 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
   (setq org-agenda-confirm-kill t)
   (setq org-agenda-show-outline-path nil)
   (setq org-agenda-window-setup 'current-window)
-  
+
   ;; General view options
   (defun prot/org-agenda-format-date-aligned (date)
     "Format a DATE string for display in the daily/weekly agenda.
@@ -2383,7 +2382,7 @@ Add this function to `message-header-setup-hook'."
             (message-remove-header "Gcc"))
           (message-add-header "Gcc: nnmaildir+pub:Sent"))
       (message "Gnus is not running. No GCC field inserted.")))
-  
+
   :hook ((message-header-setup-hook . prot/message-header-add-gcc)
          (message-setup-hook . message-sort-headers)))
 
@@ -2572,7 +2571,7 @@ Add this function to `message-header-setup-hook'."
 
   (defun dp/get-address-from-header (field header)
     (cdr (assq field (elt header (1- (length header))))))
-  
+
   (defun gnus-user-format-function-g (header)
     "Indicate whether HEADER contains my Gmail address."
     (let ((gmail-address "david\\.a\\.porter@gmail\\.com")
@@ -3247,6 +3246,7 @@ wisely or prepare to use `eshell-interrupt-process'."
 
 (use-package bibtex
   :config
+  (setq bibtex-dialect 'biblatex)
   (setq bibtex-align-at-equal-sign t)
   (setq bibtex-autokey-name-year-separator "")
   (setq bibtex-autokey-year-title-separator "")
@@ -3259,8 +3259,10 @@ wisely or prepare to use `eshell-interrupt-process'."
 
 (use-package ebib
   :ensure
+  :after bibtex
   :commands ebib
   :config
+  (setq ebib-bibtex-dialect bibtex-dialect)
   (setq ebib-preload-bib-files
         '("~/Dropbox/bibliography/references.bib")))
 
@@ -3464,7 +3466,7 @@ EXPERIMENTAL."
           (funcall (intern (concat `,direction "-line")))
           (set-window-point win (point-at-bol))
           (prot/pulse-line)))))
-  
+
   (defun prot/elfeed-search-tag-filter ()
     "Filter `elfeed' by tags using completion.
 
@@ -3526,7 +3528,7 @@ minibuffer with `exit-minibuffer' (I bind it to C-j in
 
   (push '(important prot/important-elfeed-entry)
         elfeed-search-face-alist)
-  
+
   :hook ((elfeed-search-mode-hook . prot/elfeed-feeds)
          (prot/elfeed-mpv-hook . prot/elfeed-mpv-buffer))
   :bind (("C-c f" . elfeed)
@@ -4568,7 +4570,7 @@ cursor."
                      (region-beginning) (region-end))
                   (current-word))))
       (browse-url (concat "https://www.wordreference.com/" dict "/" word))))
-  
+
   (defun dp/wordreference-lookup-en-fr ()
     "Look up a definition in the WordRerefence.com en-fr dictionary."
     (interactive)
@@ -4707,7 +4709,7 @@ See URL `https://jorisroovers.com/gitlint/'."
   (setq markdown-command "multimarkdown")
   (setq markdown-fontify-code-blocks-natively t)
   (setq time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S")
-  
+
   :hook (write-file-hooks . time-stamp)
   :bind ("C-c [" . dp/reftex-citation))
 
@@ -4845,4 +4847,3 @@ abbreviated as a tilde.  In the Dired buffer paths are absolute."
   (setq kept-new-versions 6)
   (setq kept-old-versions 2)
   (setq create-lockfiles nil))
-
