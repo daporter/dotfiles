@@ -1062,13 +1062,19 @@ If region is active, add its contents to the new buffer."
   (setq prot-vc-patch-output-dirs (list "~/" "~/Desktop/"))
 
   (prot-vc-git-setup-mode 1)
+
+  ;; NOTE: I override lots of the defaults
   (let ((map global-map))
+    (define-key map (kbd "C-x v i") #'prot-vc-log-insert-commits)
     (define-key map (kbd "C-x v p") #'prot-vc-project-or-dir)
     (define-key map (kbd "C-x v SPC") #'prot-vc-custom-log)
     (define-key map (kbd "C-x v c") #'prot-vc-git-patch-dwim)
     (define-key map (kbd "C-x v s") #'prot-vc-git-show)
     (define-key map (kbd "C-x v r") #'prot-vc-find-revision)
     (define-key map (kbd "C-x v B") #'prot-vc-git-blame-region-or-file))
+  (let ((map vc-git-log-edit-mode-map))
+    (define-key map (kbd "C-C C-n") #'prot-vc-log-extract-file-name)
+    (define-key map (kbd "C-C C-i") #'prot-vc-log-insert-commits))
   (let ((map log-view-mode-map))
     (define-key map (kbd "<C-tab>") #'prot-vc-log-view-toggle-entry-all)
     (define-key map (kbd "c") #'prot-vc-git-patch-dwim)
