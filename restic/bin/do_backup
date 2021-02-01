@@ -4,4 +4,7 @@
 
 . "$HOME/.profile.d/restic.sh"
 
-restic --exclude-file="$HOME/.config/restic/restic-exclude.txt" --verbose backup "$HOME"
+restic --password-command="pass restic" \
+       --exclude-file="$HOME/.config/restic/restic-exclude.txt" \
+       --verbose \
+       backup "$HOME"
