@@ -1381,7 +1381,7 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-summary-make-false-root 'dummy)
   (setq gnus-summary-dummy-line-format
         (concat "   "
-                "                   "
+                "                      "
                 "                               "
                 "• %S\n"))
   (setq gnus-summary-line-format
@@ -1398,8 +1398,6 @@ Add this function to `message-header-setup-hook'."
   (setq gnus-sum-thread-tree-vertical        "│ ")
   (setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
   (setq gnus-sum-thread-tree-single-leaf     "└─➤ ")
-  ;;(setq gnus-sum-thread-tree-leaf-with-other "├─> ")
-  ;;(setq gnus-sum-thread-tree-single-leaf     "└─> ")
   (setq gnus-sum-thread-tree-indent          "  ")
 
   (add-hook 'dired-mode-hook #'gnus-dired-mode) ; dired integration
@@ -1536,6 +1534,27 @@ Add this function to `message-header-setup-hook'."
   (setq ebib-preload-bib-files reftex-default-bibliography)
   (add-to-list 'ebib-reference-templates
                '("Book" . "{Author|Editor} ({Date|Year}). {\"Title\".} {Publisher.} {Doi|Url.}")))
+
+(defun dp-insert-zotero-bibliography ()
+  "Invoke the Zotero reference chooser and insert the bibliography chosen.
+Note: Zotero must be running and the `Better BibTeX' extension
+must be installed."
+  (interactive)
+  (shell-command
+   "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-bibliography"
+   t))
+
+(defun dp-insert-zotero-citation ()
+  "Invoke the Zotero reference chooser and insert the bibliography chosen.
+Note: Zotero must be running and the `Better BibTeX' extension
+must be installed."
+  (interactive)
+  (shell-command
+   "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-citation"
+   t))
+
+(define-key global-map (kbd "C-c C-z b") #'dp-insert-zotero-bibliography)
+(define-key global-map (kbd "C-c C-z c") #'dp-insert-zotero-citation)
 
 (require 'proced)
 (with-eval-after-load 'proced
