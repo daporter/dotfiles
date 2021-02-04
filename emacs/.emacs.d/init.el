@@ -329,6 +329,13 @@
   (setq consult-async-input-debounce 0.5)
   (setq consult-async-input-throttle 0.8)
   (setq consult-narrow-key ">")
+  (setq consult-imenu-config
+        '((emacs-lisp-mode :toplevel "Functions"
+                           :types ((?f "Functions" font-lock-function-name-face)
+                                   (?m "Macros"    font-lock-keyword-face)
+                                   (?p "Packages"  font-lock-constant-face)
+                                   (?t "Types"     font-lock-type-face)
+                                   (?v "Variables" font-lock-variable-name-face)))))
 
   ;; Registers' setup -- From Consult's README
   ;;
@@ -1003,6 +1010,14 @@ If region is active, add its contents to the new buffer."
     (setq log-edit-require-final-newline t)
     (setq log-edit-setup-add-author nil))
 
+  ;; Note that `prot-vc-git-setup-mode' will run the following when
+  ;; activated:
+  ;;
+  ;;   (remove-hook 'log-edit-hook #'log-edit-show-files)
+  ;;
+  ;; If you need the window to pop back up, do it manually with C-c C-f
+  ;; which calls `log-edit-show-files'.
+
   (setq vc-find-revision-no-save t)
   (setq vc-annotate-display-mode 'scale) ; scale to oldest
   ;; I use a different account for git commits
@@ -1062,20 +1077,24 @@ If region is active, add its contents to the new buffer."
   (setq prot-vc-shell-output "*prot-vc-output*")
   (setq prot-vc-patch-output-dirs (list "~/" "~/Desktop/"))
 
+  ;; This refashions log view and log edit buffers
   (prot-vc-git-setup-mode 1)
 
   ;; NOTE: I override lots of the defaults
   (let ((map global-map))
-    (define-key map (kbd "C-x v i") #'prot-vc-log-insert-commits)
+    (define-key map (kbd "C-x v i") #'prot-vc-git-log-insert-commits)
     (define-key map (kbd "C-x v p") #'prot-vc-project-or-dir)
     (define-key map (kbd "C-x v SPC") #'prot-vc-custom-log)
     (define-key map (kbd "C-x v c") #'prot-vc-git-patch-dwim)
     (define-key map (kbd "C-x v s") #'prot-vc-git-show)
-    (define-key map (kbd "C-x v r") #'prot-vc-find-revision)
+    (define-key map (kbd "C-x v r") #'prot-vc-git-find-revision)
     (define-key map (kbd "C-x v B") #'prot-vc-git-blame-region-or-file))
   (let ((map vc-git-log-edit-mode-map))
-    (define-key map (kbd "C-C C-n") #'prot-vc-log-extract-file-name)
-    (define-key map (kbd "C-C C-i") #'prot-vc-log-insert-commits))
+    (define-key map (kbd "C-C C-n") #'prot-vc-git-log-extract-file-name)
+    (define-key map (kbd "C-C C-i") #'prot-vc-git-log-insert-commits)
+    ;; Also done by `prot-vc-git-setup-mode', but I am putting it here
+    ;; as well for visibility.
+    (define-key map (kbd "C-c C-c") #'prot-vc-git-log-edit-done))
   (let ((map log-view-mode-map))
     (define-key map (kbd "<C-tab>") #'prot-vc-log-view-toggle-entry-all)
     (define-key map (kbd "c") #'prot-vc-git-patch-dwim)
