@@ -2059,9 +2059,9 @@ must be installed."
 (require 'flymake-proselint)
 (with-eval-after-load 'flymake-proselint
   (add-to-list 'prot-emacs-ensure-install 'flymake-proselint)
-  (add-hook 'markdown-mode #'flymake-proselint-setup)
-  (add-hook 'org-mode #'flymake-proselint-setup)
-  (add-hook 'text-mode #'flymake-proselint-setup))
+  (add-hook 'markdown-mode-hook #'flymake-proselint-setup)
+  (add-hook 'org-mode-hook #'flymake-proselint-setup)
+  (add-hook 'text-mode-hook #'flymake-proselint-setup))
 
 (require 'eldoc)
 (with-eval-after-load 'eldoc
