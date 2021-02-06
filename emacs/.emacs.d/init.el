@@ -1231,6 +1231,12 @@ sure this is a good approach."
 
   (add-hook 'calendar-today-visible-hook #'calendar-mark-today))
 
+(require 'org-journal)
+(with-eval-after-load 'org-journal
+  (setq org-journal-dir "~/Documents/journal")
+  (setq org-journal-file-format "%Y-%m-%d")
+  (setq org-journal-date-format "%A, %d %B %Y"))
+
 (require 'auth-source)
 (with-eval-after-load 'auth-source
   (setq auth-sources '("~/.authinfo.gpg"))
