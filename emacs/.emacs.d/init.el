@@ -1602,8 +1602,8 @@ must be installed."
    "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-citation"
    t))
 
-(define-key global-map (kbd "C-c C-z b") #'dp-insert-zotero-bibliography)
-(define-key global-map (kbd "C-c C-z c") #'dp-insert-zotero-citation)
+(define-key global-map (kbd "C-c b b") #'dp-insert-zotero-bibliography)
+(define-key global-map (kbd "C-c b c") #'dp-insert-zotero-citation)
 
 (require 'proced)
 (with-eval-after-load 'proced
