@@ -162,9 +162,9 @@
   ;; 400.  Source: <https://gitlab.com/protesilaos/iosevka-comfy>.
   (setq prot-fonts-typeface-sets-alist
         '((laptop 90 "Hack" normal "DejaVu Sans Condensed" normal)
-          (desktop 130 "Iosevka Comfy" light "Roboto Condensed" normal)
-          (reader 150 "Iosevka Comfy" light "FiraGO" normal)
-          (presentation 180 "Iosevka Comfy" light "Source Sans Pro" normal)))
+          (desktop 100 "Hack" normal "FiraGO" normal)
+          (reader 135 "Iosevka Comfy" light "FiraGO" normal)
+          (presentation 135 "Hack" normal "DejaVu Sans Condensed" normal)))
   (setq prot-fonts-monospaced-list
         '("Hack" "DejaVu Sans Mono" "Iosevka Comfy" "Source Code Pro"
           "Ubuntu Mono" "Fantasque Sans Mono" "Fira Code" "Monoid"))
@@ -471,9 +471,7 @@
     (define-key map (kbd "C-n") #'prot-embark-next-line-or-mini)
     (define-key map (kbd "<down>") #'prot-embark-next-line-or-mini)
     (define-key map (kbd "C-p") #'prot-embark-previous-line-or-mini)
-    (define-key map (kbd "<up>") #'prot-embark-previous-line-or-mini)
-    (define-key map (kbd "M-F") #'prot-embark-collection-flush-lines) ; M-S-f like M-S-5 (M-%)
-    (define-key map (kbd "M-K") #'prot-embark-collection-keep-lines)) ; same principle
+    (define-key map (kbd "<up>") #'prot-embark-previous-line-or-mini))
   (let ((map minibuffer-local-completion-map))
     (define-key map (kbd "C-n") #'prot-embark-switch-to-completions-top)
     (define-key map (kbd "<down>") #'prot-embark-switch-to-completions-top)
@@ -1030,16 +1028,16 @@ If region is active, add its contents to the new buffer."
   (setq vc-git-print-log-follow t)
   (setq vc-git-revision-complete-only-branches nil) ; Emacs 28
   (setq vc-git-root-log-format
-        '("%d%h %ad %an: %s"
+        '("%d %h %ad %an: %s"
           ;; The first shy group matches the characters drawn by --graph.
           ;; We use numbered groups because `log-view-message-re' wants the
           ;; revision number to be group 1.
-          "^\\(?:[*/\\| ]+ \\)?\
-\\(?2: ([^)]+)\\)?\\(?1:[0-9a-z]+\\) \
+          "^\\(?:[*/\\|]+\\)\\(?:[*/\\| ]+\\)?\
+\\(?2: ([^)]+) \\)?\\(?1:[0-9a-z]+\\) \
 \\(?4:[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}\\) \
 \\(?3:.*?\\):"
           ((1 'log-view-message)
-           (2 'change-log-list nil lax)
+           (2 'success nil lax)
            (3 'change-log-name)
            (4 'change-log-date))))
 
@@ -1056,11 +1054,23 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "a") #'vc-annotate)
     (define-key map (kbd "b") #'vc-retrieve-tag)
     (define-key map (kbd "t") #'vc-create-tag)
-    (define-key map (kbd "o") #'vc-log-outgoing)
+    (define-key map (kbd "O") #'vc-log-outgoing)
+    (define-key map (kbd "o") #'vc-dir-find-file-other-window)
     (define-key map (kbd "f") #'vc-log-incoming) ; replaces `vc-dir-find-file' (use RET)
     (define-key map (kbd "F") #'vc-update)       ; symmetric with P: `vc-push'
     (define-key map (kbd "d") #'vc-diff)         ; parallel to D: `vc-root-diff'
-    (define-key map (kbd "k") #'vc-dir-clean-files))
+    (define-key map (kbd "k") #'vc-dir-clean-files)
+    (define-key map (kbd "G") #'vc-revert)
+    (let ((prot-vc-git-stash-map (make-sparse-keymap)))
+      (define-key map "S" prot-vc-git-stash-map)
+      (define-key prot-vc-git-stash-map "c" 'vc-git-stash) ; "create" named stash
+      (define-key prot-vc-git-stash-map "s" 'vc-git-stash-snapshot)))
+  (let ((map vc-git-stash-shared-map))
+      (define-key map "a" 'vc-git-stash-apply-at-point)
+      (define-key map "c" 'vc-git-stash) ; "create" named stash
+      (define-key map "D" 'vc-git-stash-delete-at-point)
+      (define-key map "p" 'vc-git-stash-pop-at-point)
+      (define-key map "s" 'vc-git-ostash-snapshot))
   (let ((map vc-annotate-mode-map))
     (define-key map (kbd "M-q") #'vc-annotate-toggle-annotation-visibility)
     (define-key map (kbd "C-c C-c") #'vc-annotate-goto-line)
@@ -1076,7 +1086,10 @@ If region is active, add its contents to the new buffer."
 
 (require 'prot-vc)
 (with-eval-after-load 'prot-vc
-  (setq prot-vc-log-limit 20)
+  (setq prot-vc-log-limit 100)
+  (setq prot-vc-log-bulk-action-limit 50)
+  (setq prot-vc-git-log-edit-show-commits t)
+  (setq prot-vc-git-log-edit-show-commit-count 10)
   (setq prot-vc-shell-output "*prot-vc-output*")
   (setq prot-vc-patch-output-dirs (list "~/" "~/Desktop/"))
 
@@ -1091,21 +1104,29 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "C-x v c") #'prot-vc-git-patch-dwim)
     (define-key map (kbd "C-x v s") #'prot-vc-git-show)
     (define-key map (kbd "C-x v r") #'prot-vc-git-find-revision)
-    (define-key map (kbd "C-x v B") #'prot-vc-git-blame-region-or-file))
+    (define-key map (kbd "C-x v B") #'prot-vc-git-blame-region-or-file)
+    (define-key map (kbd "C-x v R") #'prot-vc-git-reset))
   (let ((map vc-git-log-edit-mode-map))
-    (define-key map (kbd "C-C C-n") #'prot-vc-git-log-extract-file-name)
+    (define-key map (kbd "C-C C-n") #'prot-vc-git-log-edit-extract-file-name)
     (define-key map (kbd "C-C C-i") #'prot-vc-git-log-insert-commits)
     ;; Also done by `prot-vc-git-setup-mode', but I am putting it here
     ;; as well for visibility.
-    (define-key map (kbd "C-c C-c") #'prot-vc-git-log-edit-done))
+    (define-key map (kbd "C-c C-c") #'prot-vc-git-log-edit-done)
+    (define-key map (kbd "C-c C-a") #'prot-vc-git-log-edit-toggle-amend)
+    (define-key map (kbd "M-p") #'prot-vc-git-log-edit-previous-comment)
+    (define-key map (kbd "M-n") #'prot-vc-git-log-edit-next-comment)
+    (define-key map (kbd "M-s") #'prot-vc-git-log-edit-complete-comment)
+    (define-key map (kbd "M-r") #'prot-vc-git-log-edit-complete-comment))
   (let ((map log-view-mode-map))
     (define-key map (kbd "<C-tab>") #'prot-vc-log-view-toggle-entry-all)
     (define-key map (kbd "c") #'prot-vc-git-patch-dwim)
+    (define-key map (kbd "R") #'prot-vc-git-log-reset)
     (define-key map (kbd "w") #'prot-vc-log-kill-hash)))
 
 (require 'magit)
 (with-eval-after-load 'magit
   (add-to-list 'prot-emacs-ensure-install 'magit)
+  (setq magit-define-global-key-bindings nil)
   (define-key global-map (kbd "C-c g") #'magit-status)
 
   (require 'git-commit)
@@ -1695,7 +1716,7 @@ must be installed."
 				       "^\\(%\\[\\|%\\]\\)$" s))))
                           mode-line-modes))
 
-(setq mode-line-compact t)            ; Emacs 28
+(setq mode-line-compact nil)            ; Emacs 28
 (setq-default mode-line-format
 	      '("%e"
                 mode-line-front-space
@@ -1787,56 +1808,33 @@ must be installed."
   (setq-default indicate-empty-lines nil)
   (setq-default overflow-newline-into-fringe t))
 
-(require 'diff-hl)
-(with-eval-after-load 'diff-hl
-  (add-to-list 'prot-emacs-ensure-install 'diff-hl)
-  (setq diff-hl-draw-borders nil)
-  (setq diff-hl-side 'left)
-  ;; TODO 2021-01-19: write toggle for diff-hl-mode
-  (add-hook 'after-init-hook #'global-diff-hl-mode))
+(require 'prot-sideline)
+(with-eval-after-load 'prot-sideline
+  (require 'display-line-numbers)
+  (with-eval-after-load 'display-line-numbers
+    ;; Set absolute line numbers.  A value of "relative" is also useful.
+    (setq display-line-numbers-type t)
+    ;; Those two variables were introduced in Emacs 27.1
+    (setq display-line-numbers-major-tick 0)
+    (setq display-line-numbers-minor-tick 0)
+    ;; Use absolute numbers in narrowed buffers
+    (setq-default display-line-numbers-widen t))
 
-(require 'hl-line)
-(with-eval-after-load 'hl-line
-  (setq hl-line-sticky-flag nil))
+  (require 'diff-hl)
+  (with-eval-after-load 'diff-hl
+    (add-to-list 'prot-emacs-ensure-install 'diff-hl)
+    (setq diff-hl-draw-borders nil)
+    (setq diff-hl-side 'left))
 
-(require 'display-line-numbers)
-(with-eval-after-load 'display-line-numbers
-  ;; Set absolute line numbers.  A value of "relative" is also useful.
-  (setq display-line-numbers-type t)
-  ;; Those two variables were introduced in Emacs 27.1
-  (setq display-line-numbers-major-tick 0)
-  (setq display-line-numbers-minor-tick 0)
-  ;; Use absolute numbers in narrowed buffers
-  (setq-default display-line-numbers-widen t)
+  (require 'hl-line)
+  (with-eval-after-load 'hl-line
+    (setq hl-line-sticky-flag nil))
 
-  ;; TODO 2021-01-19: this is subject to review, as it is fragile in its
-  ;; current state.
-  (define-minor-mode prot/display-line-numbers-mode
-    "Toggle `display-line-numbers-mode' and `hl-line-mode'."
-    :init-value nil
-    :global nil
-    (if prot/display-line-numbers-mode
-        (progn
-          (display-line-numbers-mode 1)
-          (hl-line-mode 1)
-          (setq-local truncate-lines t))
-      (display-line-numbers-mode -1)
-      (hl-line-mode -1)
-      (setq-local truncate-lines nil)))
-
-  (define-key global-map (kbd "<f7>") #'prot/display-line-numbers-mode))
-
-(require 'whitespace)
-(with-eval-after-load 'whitespace
-  (defun prot/toggle-invisibles ()
-    "Toggles the display of indentation and space characters."
-    (interactive)
-    (if (bound-and-true-p whitespace-mode)
-        (whitespace-mode -1)
-      (whitespace-mode)))
+  (require 'whitespace)
 
   (let ((map global-map))
-    (define-key map (kbd "<f6>") #'prot/toggle-invisibles)
+    (define-key map (kbd "<f6>") #'prot-sideline-negative-space-toggle)
+    (define-key map (kbd "<f7>") #'prot-sideline-mode)
     (define-key map (kbd "C-c z") #'delete-trailing-whitespace)))
 
 (require 'prot-outline)
