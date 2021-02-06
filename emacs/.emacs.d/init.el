@@ -22,6 +22,9 @@
 (setq vc-follow-symlinks t) ; Because my dotfiles are managed that way
 
 ;; For my custom libraries
+(add-to-list 'load-path (concat user-emacs-directory "lisp/"))
+
+;; For Prot's custom libraries
 (add-to-list 'load-path (concat user-emacs-directory "prot-lisp/"))
 
 ;; For other libraries
@@ -2068,6 +2071,10 @@ must be installed."
   (add-hook 'markdown-mode-hook #'flymake-proselint-setup)
   (add-hook 'org-mode-hook #'flymake-proselint-setup)
   (add-hook 'text-mode-hook #'flymake-proselint-setup))
+
+(require 'flymake-markdownlint)
+(with-eval-after-load 'flymake-markdownlint
+  (add-hook 'markdown-mode-hook #'flymake-markdownlint-setup))
 
 (require 'eldoc)
 (with-eval-after-load 'eldoc
