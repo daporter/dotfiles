@@ -1261,11 +1261,11 @@ sure this is a good approach."
   (setq org-journal-file-format "%Y-%m-%d")
   (setq org-journal-date-format "%A, %d %B %Y"))
 
-(require 'auth-source)
-(with-eval-after-load 'auth-source
-  (setq auth-sources '("~/.authinfo.gpg"))
-  (setq user-full-name "David Porter")
-  (setq user-mail-address "david@daporter.net"))
+(require 'auth-source-pass)
+(with-eval-after-load 'auth-source-pass
+  (auth-source-pass-enable))
+(setq user-full-name "David Porter")
+(setq user-mail-address "david@daporter.net")
 
 (require 'mm-encode)
 (with-eval-after-load 'mm-encode
