@@ -1322,6 +1322,8 @@ Add this function to `message-header-setup-hook'."
   (require 'gnus-dired)
   (require 'gnus-topic)
   (require 'prot-gnus)
+
+  (setq gnus-startup-file (concat user-emacs-directory ".newsrc"))
 ;;; accounts
   (setq gnus-select-method '(nnnil ""))
   (setq gnus-secondary-select-methods
