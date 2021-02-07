@@ -1684,10 +1684,6 @@ must be installed."
     (define-key map (kbd "N") #'eww-next-url)
     (define-key map (kbd "P") #'eww-previous-url)))
 
-(require 'browse-url)
-(with-eval-after-load 'browse-url
-  (setq browse-url-browser-function 'eww-browse-url))
-
 (require 'debian-el)
 (with-eval-after-load 'debian-el
   (add-to-list 'prot-emacs-ensure-install 'debian-el))
