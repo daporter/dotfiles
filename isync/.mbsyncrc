@@ -6,7 +6,7 @@ SyncState *
 IMAPAccount migadu
 Host imap.migadu.com
 User david@daporter.net
-PassCmd "gpg -q --for-your-eyes-only -d ~/.authinfo.gpg | awk -F ' ' '/imap.migadu.com/ { print $NF; exit; }'"
+PassCmd "pass imap.migadu.com/david@daporter.net"
 SSLType IMAPS
 AuthMechs LOGIN
 
