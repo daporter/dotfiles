@@ -1263,6 +1263,7 @@ sure this is a good approach."
 
 (require 'auth-source-pass)
 (with-eval-after-load 'auth-source-pass
+  (add-to-list 'prot-emacs-ensure-install 'auth-source-pass)
   (auth-source-pass-enable))
 (setq user-full-name "David Porter")
 (setq user-mail-address "david@daporter.net")
@@ -1489,17 +1490,12 @@ Add this function to `message-header-setup-hook'."
 
 (require 'smtpmail)
 (with-eval-after-load 'smtpmail
-  (setq smtpmail-default-smtp-server "smtp.migadu.com")
+  (setq send-mail-function 'smtpmail-send-it)
+  (setq smtpmail-smtp-user "david@daporter.net")
   (setq smtpmail-smtp-server "smtp.migadu.com")
-  (setq smtpmail-stream-type 'starttls)
-  (setq smtpmail-smtp-service 587)
+  (setq smtpmail-smtp-service 465)
+  (setq smtpmail-stream-type 'ssl)
   (setq smtpmail-queue-mail nil))
-
-;; part of `async' package
-(require 'smtpmail-async)
-(with-eval-after-load 'smtpmail-async
-  (setq send-mail-function 'async-smtpmail-send-it)
-  (setq message-send-mail-function 'async-smtpmail-send-it))
 
 (require 'mbsync)
 (with-eval-after-load 'mbsync
