@@ -256,6 +256,8 @@
 
 (require 'prot-minibuffer)
 (with-eval-after-load 'prot-minibuffer
+  (setq-default prot-minibuffer-mini-cursors t) ; also check `prot-cursor.el'
+
   (define-key global-map (kbd "s-v") #'prot-minibuffer-focus-mini-or-completions)
   (let ((map completion-list-mode-map))
     (define-key map (kbd "M-v") #'prot-minibuffer-focus-mini)
@@ -430,7 +432,6 @@
   ;;       embark-become-indicator embark-action-indicator)
   (add-hook 'minibuffer-setup-hook #'embark-collect-completions-after-input)
   (add-hook 'embark-post-action-hook #'embark-collect--update-linked)
-  (add-hook 'embark-collect-mode-hook #'prot-embark-completions-cursor)
   (define-key global-map (kbd "C-,") #'embark-act)
   (let ((map minibuffer-local-completion-map))
     (define-key map (kbd "C-,") #'embark-act)
@@ -454,6 +455,7 @@
 (require 'prot-embark)
 (with-eval-after-load 'prot-embark
   (add-hook 'minibuffer-exit-hook #'prot-embark-clear-live-buffers)
+  (add-hook 'embark-collect-mode-hook #'prot-embark-completions-cursor)
   (add-hook 'embark-collect-post-revert-hook #'prot-embark-collect-fit-window)
   (add-hook 'embark-collect-mode-hook #'prot-embark-hl-line)
   (add-hook 'embark-collect-mode-hook #'prot-embark-display-line-numbers)
@@ -1092,6 +1094,7 @@ If region is active, add its contents to the new buffer."
   (setq prot-vc-git-log-edit-show-commit-count 10)
   (setq prot-vc-shell-output "*prot-vc-output*")
   (setq prot-vc-patch-output-dirs (list "~/" "~/Desktop/"))
+  (add-to-list' log-edit-headers-alist '("Amend"))
 
   ;; This refashions log view and log edit buffers
   (prot-vc-git-setup-mode 1)
@@ -1101,6 +1104,7 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "C-x v i") #'prot-vc-git-log-insert-commits)
     (define-key map (kbd "C-x v p") #'prot-vc-project-or-dir)
     (define-key map (kbd "C-x v SPC") #'prot-vc-custom-log)
+    (define-key map (kbd "C-x v g") #'prot-vc-git-log-grep)
     (define-key map (kbd "C-x v c") #'prot-vc-git-patch-dwim)
     (define-key map (kbd "C-x v s") #'prot-vc-git-show)
     (define-key map (kbd "C-x v r") #'prot-vc-git-find-revision)
@@ -1841,12 +1845,9 @@ must be installed."
   (add-hook 'prot-outline-minor-mode-enter-hook
 	    #'outline-minor-faces-add-font-lock-keywords))
 
-(setq-default cursor-type '(hbar . 3))
-(setq-default cursor-in-non-selected-windows 'hollow)
-(setq-default blink-cursor-blinks 50)
-(setq-default blink-cursor-interval 0.2)
-(setq-default blink-cursor-delay 0.2)
-(blink-cursor-mode 1)
+(require 'prot-cursor)
+(with-eval-after-load 'prot-cursor
+  (prot-cursor-presentation-mode -1))
 
 (require 'mouse)
 (with-eval-after-load 'mouse
