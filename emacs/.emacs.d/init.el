@@ -2046,6 +2046,9 @@ must be installed."
   (setq flymake-start-on-save-buffer t)
   (setq flymake-proc-compilation-prevents-syntax-check t)
   (setq flymake-wrap-around nil)
+
+  (add-hook 'markdown-mode-hook #'flymake-mode)
+  
   (let ((map flymake-mode-map))
     (define-key map (kbd "C-c ! s") #'flymake-start)
     (define-key map (kbd "C-c ! d") #'flymake-show-diagnostics-buffer)
