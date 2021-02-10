@@ -85,6 +85,7 @@
     (define-key map (kbd "<C-S-return>") #'prot-simple-new-line-above)
     ;; Commands for text insertion or manipulation
     (define-key map (kbd "C-=") #'prot-simple-inset-date)
+    (define-key map (kbd "C-<") #'prot-simple-escape-url) 
     (define-key map (kbd "C-'") #'prot-simple-insert-pair-completion)
     (define-key map (kbd "M-'") #'prot-simple-insert-pair-completion)
     (define-key map (kbd "<C-M-backspace>") #'backward-kill-sexp)
@@ -1912,9 +1913,12 @@ must be installed."
   (setq package-archive-column-width 8)
   (add-hook 'package-menu-mode-hook #'hl-line-mode))
 
+(require 'text-mode)
+
 (require 'prot-text)
 (with-eval-after-load 'prot-text
   (add-to-list 'auto-mode-alist '("\\(README\\|CHANGELOG\\|COPYING\\|LICENSE\\)$" . text-mode))
+  (add-hook 'text-mode-hook #'goto-address-mode)
   (let ((map text-mode-map))
     (define-key map (kbd "<M-return>") #'prot-text-insert-heading)
     (define-key map (kbd "M-;") #'prot-text-cite-region))
