@@ -482,6 +482,12 @@
     (define-key map (kbd "<up>") #'prot-embark-switch-to-completions-bottom)
     (define-key map (kbd "C-l") #'prot-embark-completions-toggle)))
 
+(require 'keyfreq)
+(with-eval-after-load 'keyfreq
+ (add-to-list 'prot-emacs-ensure-install 'keyfreq)
+ (keyfreq-mode 1)
+ (keyfreq-autosave-mode 1))
+
 (require 'project)
 (with-eval-after-load 'project
   ;; ;; Use this for Emacs 27 (I am on 28)
