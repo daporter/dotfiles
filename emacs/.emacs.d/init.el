@@ -961,7 +961,18 @@ If region is active, add its contents to the new buffer."
   (setq zetteldeft-id-regex "[0-9]\\{12\\}")
   (font-lock-add-keywords 'markdown-mode
                           `((,zetteldeft-id-regex
-                             . font-lock-constant-face))))
+                             . font-lock-constant-face)))
+
+  ;; Zetteldeft doesn't include the ID in the titles it generates. The
+  ;; following function inserts a title that does include the ID.
+  (defun dp-zetteldeft-insert-title ()
+    "Insert a title based on the file name."
+    (interactive)
+    (let ((title (file-name-base (buffer-file-name))))
+      (save-excursion
+        (goto-char (point-min))
+        (zetteldeft--insert-title title)
+        (newline)))))
 
 (require 'tmr)
 (with-eval-after-load 'tmr
