@@ -884,14 +884,13 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "<s-right>") #'winner-redo)
     (define-key map (kbd "<s-left>") #'winner-undo)))
 
-(require 'windmove)
-(with-eval-after-load 'windmove
-  (setq windmove-create-window nil)     ; Emacs 27.1
+(require 'ace-window)
+(with-eval-after-load 'ace-window
+  (add-to-list 'prot-emacs-ensure-install 'ace-window)
+  (setq aw-keys '(?a ?e ?t ?s ?i ?h))
+  (setq aw-dispatch-always t)
   (let ((map global-map))
-    (define-key map (kbd "<C-M-up>") #'windmove-up)
-    (define-key map (kbd "<C-M-right>") #'windmove-right)
-    (define-key map (kbd "<C-M-down>") #'windmove-down)
-    (define-key map (kbd "<C-M-left>") #'windmove-left)))
+    (define-key map (kbd "s-w") #'ace-window)))
 
 (require 'tab-bar)
 (with-eval-after-load 'tab-bar
