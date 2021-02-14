@@ -1551,8 +1551,7 @@ Add this function to `message-header-setup-hook'."
     (define-key map (kbd "b") #'prot-elfeed-bongo-insert-item)
     (define-key map (kbd "h") #'prot-elfeed-bongo-switch-to-playlist)) ; "hop" mnemonic
   (let ((map elfeed-show-mode-map))
-    (define-key map (kbd "w") #'elfeed-show-yank)
-    (define-key map (kbd "b") #'prot-elfeed-bongo-insert-item)))
+    (define-key map (kbd "w") #'elfeed-show-yank)))
 
 (require 'prot-elfeed)
 (with-eval-after-load 'prot-elfeed
@@ -1570,7 +1569,8 @@ Add this function to `message-header-setup-hook'."
     (define-key map (kbd "e") #'prot-elfeed-show-eww)
     (define-key map (kbd "q") #'prot-elfeed-kill-buffer-close-window-dwim)
     (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
-    (define-key map (kbd "+") #'prot-elfeed-toggle-tag)))
+    (define-key map (kbd "+") #'prot-elfeed-toggle-tag)
+    (define-key map (kbd "b") #'elfeed-show-visit)))
 
 (require 'reftex)
 (with-eval-after-load 'reftex
