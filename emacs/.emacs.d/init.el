@@ -45,6 +45,33 @@
 
 (require 'prot-common)
 
+;; Define <home> key as a leader key.
+(progn
+  (define-prefix-command 'dp-prefix-map)
+  (global-set-key (kbd "<home>") dp-prefix-map)
+  (let ((map dp-prefix-map))
+    (define-key map (kbd "/") #'dabbrev-completion)
+    (define-key map (kbd "5") #'delete-frame)
+    (define-key map (kbd "1") #'delete-other-windows)
+    (define-key map (kbd "!") #'delete-other-windows-vertically)
+    (define-key map (kbd "0") #'delete-window)
+    (define-key map (kbd "d") #'dired)
+    (define-key map (kbd "j") #'dired-jump)
+    (define-key map (kbd "J") #'dired-jump-other-window)
+    (define-key map (kbd "D") #'dired-other-window)
+    (define-key map (kbd "<return>") #'eshell)
+    (define-key map (kbd "f") #'find-file)
+    (define-key map (kbd "F") #'find-file-other-window)
+    (define-key map (kbd "n") #'next-buffer)
+    (define-key map (kbd "o") #'other-window)
+    (define-key map (kbd "p") #'previous-buffer)
+    (define-key map (kbd "s") #'save-buffer)
+    (define-key map (kbd "2") #'split-window-below)
+    (define-key map (kbd "3") #'split-window-right)
+    (define-key map (kbd "b") #'switch-to-buffer)
+    (define-key map (kbd "B") #'switch-to-buffer-other-window)
+    (define-key map (kbd "q") #'window-toggle-side-windows)))
+
 (require 'prot-simple)
 (with-eval-after-load 'prot-simple
   (setq prot-simple-insert-pair-alist
@@ -110,7 +137,8 @@
     ;; Commands for buffers
     (define-key map (kbd "M-=") #'count-words)
     (define-key map (kbd "<C-f2>") #'prot-simple-rename-file-and-buffer)
-    (define-key map (kbd "s-k") #'prot-simple-kill-buffer-current)))
+    (define-key map (kbd "s-k") #'prot-simple-kill-buffer-current)
+    (define-key dp-prefix-map (kbd "k") #'prot-simple-kill-buffer-current)))
 
 (require 'prot-pulse)
 (with-eval-after-load 'prot-pulse
@@ -530,6 +558,7 @@
   (add-to-list 'recentf-keep 'prot-recentf-keep-predicate)
   (let ((map global-map))
     (define-key map (kbd "s-r") #'prot-recentf-recent-files)
+    (define-key dp-prefix-map (kbd "r") #'prot-recentf-recent-files)
     (define-key map (kbd "C-x C-r") #'prot-recentf-recent-dirs)))
 
 (require 'prot-embark-extras)
@@ -888,15 +917,10 @@ If region is active, add its contents to the new buffer."
   (add-hook 'after-init-hook #'winner-mode)
   (let ((map global-map))
     (define-key map (kbd "<s-right>") #'winner-redo)
-    (define-key map (kbd "<s-left>") #'winner-undo)))
-
-(require 'ace-window)
-(with-eval-after-load 'ace-window
-  (add-to-list 'prot-emacs-ensure-install 'ace-window)
-  (setq aw-keys '(?a ?e ?t ?s ?i ?h))
-  (setq aw-dispatch-always t)
-  (let ((map global-map))
-    (define-key map (kbd "s-w") #'ace-window)))
+    (define-key map (kbd "<s-left>") #'winner-undo))
+  (let ((map dp-prefix-map))
+    (define-key map (kbd "<left>") #'winner-undo)
+    (define-key map (kbd "<right>") #'winner-redo)))
 
 (require 'tab-bar)
 (with-eval-after-load 'tab-bar
@@ -913,21 +937,28 @@ If region is active, add its contents to the new buffer."
   (tab-bar-history-mode -1)
   (let ((map global-map))
     (define-key map (kbd "<s-tab>") #'tab-next)
-    (define-key map (kbd "<S-s-iso-lefttab>") #'tab-previous)))
+    (define-key map (kbd "<S-s-iso-lefttab>") #'tab-previous))
+  (let ((map dp-prefix-map))
+    (define-key map (kbd "<tab>") #'tab-next)
+    (define-key map (kbd "<S-iso-lefttab>") #'tab-previous)))
 
 (require 'prot-tab)
 (with-eval-after-load 'prot-tab
   (let ((map global-map))
     (define-key map (kbd "<f8>") #'prot-tab-tab-bar-toggle)
     (define-key map (kbd "C-x t t") #'prot-tab-select-tab-dwim)
-    (define-key map (kbd "s-t") #'prot-tab-select-tab-dwim)))
+    (define-key map (kbd "s-t") #'prot-tab-select-tab-dwim))
+  (define-key dp-prefix-map (kbd "t") #'prot-tab-select-tab-dwim))
 
 (require 'transpose-frame)
 (with-eval-after-load 'transpose-frame
   (add-to-list 'prot-emacs-ensure-install 'transpose-frame)
   (let ((map global-map))
     (define-key map (kbd "C-s-t") #'flop-frame) ; what I consider "transpose" in this context
-    (define-key map (kbd "C-s-r") #'rotate-frame-clockwise)))
+    (define-key map (kbd "C-s-r") #'rotate-frame-clockwise))
+  (let ((map dp-prefix-map))
+    (define-key map (kbd "w t") #'flop-frame) ; what I consider "transpose" in this context
+    (define-key map (kbd "w r") #'rotate-frame-clockwise)))
 
 (require 'face-remap)
 
