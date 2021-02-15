@@ -1,0 +1,94 @@
+#| ----------------------------------------------------------------------------
+
+(deflayer name
+       _    _    _                        _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _         _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _ 
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _  
+  _    _    _    _         _                   _    _    _    _    _    _
+                                                              _    _    _
+)
+
+------------------------------------------------------------------------------- |#
+
+(defcfg
+  input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
+  output (uinput-sink "KMonad: T420s"
+                       "sleep 0.2s; xset r rate 230 70; sleep 0.2s; setxkbmap us -option compose:menu")
+  cmp-seq cmps
+)
+
+(defsrc
+       mute vold volu                          prnt slck pause ins  del  home pgup
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11   f12       end  pgdn
+  grv  1    2    3    4    5    6    7    8    9    0    -     =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [     ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '     ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  wkup lctl lmet lalt           spc            ralt cmps rctl  back up   fwd
+                                                               left down right
+)
+
+(deflayer dvorak
+       mute vold volu                          prnt @qwe pause ins  del  home pgup
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11   f12       end  pgdn
+  grv  1    2    3    4    5    6    7    8    9    0    [     ]    bspc
+  tab  '    ,    .    p    y    f    g    c    r    l    /     =    \
+  bspc @ame @oal @esf @uct i    d    @hct @tsf @nal @sme -     ret
+  home ;    q    j    k    x    b    m    w    v    z    rsft
+  wkup lctl lmet @nav           spc            @sym cmps rctl  back up   fwd
+                                                               left down right
+)
+
+(deflayer symbols
+       _    _    _                        _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _         _    _
+  _    ¡    _    _    €    £    _    _    _    «    »    ©    ×    _ 
+  _    â    ë    ê    û    î    _    ÿ    _    _    _    ¿    …    _ 
+  _    à    ô    é    ù    ï    _    _    _    ñ    _    _    _
+  _    æ    œ    è    ü    ç    _    _    _    _    _    _
+  _    _    _    _         _                   XX   _    _    _    _    _
+                                                              _    _    _
+)
+
+(deflayer navigation
+       _    _    _                        _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _         _    _    
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _ 
+  _    _    _    _    _    _    _    pgup up   pgdn _    volu mute _ 
+  _    _    _    _    _    _    home left down rght end  vold _
+  _    _    _    _    _    _    _    bspc del  _    _    _
+  _    _    _    XX             _              _    _    _    _    _    _
+                                                              _    _    _
+)
+
+(deflayer qwerty
+       mute vold volu                          prnt @dvo pause ins  del  home pgup
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11   f12       end  pgdn
+  grv  1    2    3    4    5    6    7    8    9    0    -     =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [     ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '     ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  wkup lctl lmet lalt           spc            @sym cmps rctl  back up   fwd
+                                                               left down right
+)
+
+(defalias
+  qwe (layer-switch qwerty)
+  dvo (layer-switch dvorak)
+
+  sym (layer-toggle symbols)
+  nav (layer-toggle navigation)
+
+  ame (tap-hold-next-release 200 a lmet)
+  oal (tap-hold-next-release 200 o lalt)
+  esf (tap-hold-next-release 200 e lsft)
+  uct (tap-hold-next-release 200 u lctl)
+
+  hct (tap-hold-next-release 200 h rctl)
+  tsf (tap-hold-next-release 200 t rsft)
+  nal (tap-hold-next-release 200 n lalt) ;; ralt is level3_switch
+  sme (tap-hold-next-release 200 s rmet)
+)
