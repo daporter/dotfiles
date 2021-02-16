@@ -45,10 +45,15 @@
 
 (require 'prot-common)
 
-;; Define <home> key as a leader key.
+;; Some global keybindings
+(define-key global-map (kbd "<M-right>") #'forward-sentence)
+(define-key global-map (kbd "<M-left>") #'backward-sentence)
+
+;; Define the <pause> key as a leader key.  I've mapped <pause> to the
+;; left Shift key.
 (progn
   (define-prefix-command 'dp-prefix-map)
-  (global-set-key (kbd "<home>") dp-prefix-map)
+  (global-set-key (kbd "<pause>") dp-prefix-map)
   (let ((map dp-prefix-map))
     (define-key map (kbd "/") #'dabbrev-completion)
     (define-key map (kbd "5") #'delete-frame)
@@ -66,8 +71,8 @@
     (define-key map (kbd "o") #'other-window)
     (define-key map (kbd "p") #'previous-buffer)
     (define-key map (kbd "s") #'save-buffer)
-    (define-key map (kbd "2") #'split-window-below)
-    (define-key map (kbd "3") #'split-window-right)
+    (define-key map (kbd "-") #'split-window-below)
+    (define-key map (kbd "\\") #'split-window-right)
     (define-key map (kbd "b") #'switch-to-buffer)
     (define-key map (kbd "B") #'switch-to-buffer-other-window)
     (define-key map (kbd "q") #'window-toggle-side-windows)))
