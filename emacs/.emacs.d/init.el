@@ -238,16 +238,17 @@
   ;; of producing more user-friendly video demonstrations.
   (setq which-key-dont-use-unicode t)
   (setq which-key-add-column-padding 2)
-  (setq which-key-show-early-on-C-h nil)
-  (setq which-key-idle-delay most-positive-fixnum) ; set this to something like 0.8
+  (setq which-key-show-early-on-C-h t)
+  (setq which-key-idle-delay 0.8) ; set this to something like 0.8
   (setq which-key-idle-secondary-delay 0.05)
   (setq which-key-popup-type 'side-window)
   (setq which-key-show-prefix 'echo)
-  (setq which-key-max-display-columns 3)
+  (setq which-key-max-display-columns nil) ; was 3
   (setq which-key-separator "  ")
   (setq which-key-special-keys nil)
   (setq which-key-paging-key "<next>")
-  (which-key-mode -1))	   ; and turn this on, if you want to use this
+  (which-key-mode 1))	   ; and turn this on, if you want to use this
+
 
 (require 'async)
 (with-eval-after-load 'async
