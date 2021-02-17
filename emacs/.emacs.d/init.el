@@ -1316,7 +1316,8 @@ sure this is a good approach."
 (with-eval-after-load 'org-journal
   (setq org-journal-dir "~/Documents/journal")
   (setq org-journal-file-format "%Y-%m-%d")
-  (setq org-journal-date-format "%A, %d %B %Y"))
+  (setq org-journal-date-format "%A, %d %B %Y")
+  (define-key dp-prefix-map (kbd "j") #'org-journal-new-entry))
 
 (require 'auth-source-pass)
 (with-eval-after-load 'auth-source-pass
