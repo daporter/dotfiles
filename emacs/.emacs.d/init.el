@@ -6,29 +6,130 @@
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 
+(defvar prot-emacs-autoinstall-elpa nil
+  "Whether `prot-emacs-elpa-package' should install packages.
+The default nil value means never to automatically install
+packages.  A non-nil value is always interpreted as consent for
+auto-installing everything---this process does not cover manually
+maintained git repos, controlled by `prot-emacs-manual-package'.")
+
+(defvar prot-emacs-basic-init "basic-init.el"
+  "Name of 'basic init' file.
+
+This file is meant to store user configurations that are evaluated
+before loading `prot-emacs-configuration-main-file' and, when
+available, `prot-emacs-configuration-user-file'.  Those values
+control the behaviour of the Emacs setup.
+
+The only variable that is currently expected to be in the 'basic
+init' file is `prot-emacs-autoinstall-elpa'.
+
+See `prot-emacs-basic-init-setup' for the actual initialisation
+process.")
+
+(defun prot-emacs-basic-init-setup ()
+  "Load 'basic-init.el' if it exists.
+This is meant to evaluate forms that control the rest of my Emacs
+setup."
+  (let* ((init prot-emacs-basic-init)
+         (file (thread-last user-emacs-directory (expand-file-name init))))
+    (when (file-exists-p file)
+      (load-file file))))
+
+;; This variable is incremented in prot-emacs.org.  The idea is to
+;; produce a list of packages that we want to install on demand from an
+;; ELPA, when `prot-emacs-autoinstall-elpa' is set to nil (the default).
+;;
+;; So someone who tries to reproduce my Emacs setup will first get a
+;; bunch of warnings about unavailable packages, though not
+;; show-stopping errors, and will then have to use the command
+;; `prot-emacs-install-ensured'.  After that command does its job, a
+;; re-run of my Emacs configurations will yield the expected results.
+;;
+;; The assumption is that such a user will want to inspect the elements
+;; of `prot-emacs-ensure-install', remove from the setup whatever code
+;; block they do not want, and then call the aforementioned command.
+;;
+;; I do not want to maintain a setup that auto-installs everything on
+;; first boot without requiring explicit consent.  I think that is a bad
+;; practice because it teaches the user to simply put their faith in the
+;; provider.
 (defvar prot-emacs-ensure-install nil
-  "List of package names to install, if missing.")
+  "List of package names used by `prot-emacs-install-ensured'.")
 
 (defun prot-emacs-install-ensured ()
-  "Install all `prot-emacs-ensure-install' packages, if needed."
+  "Install all `prot-emacs-ensure-install' packages, if needed.
+If a package is already installed, no further action is performed
+on it."
   (interactive)
-  (package-refresh-contents)
-  (mapcar (lambda (package)
+  (when (yes-or-no-p (format "Try to install %d packages?"
+                             (length prot-emacs-ensure-install)))
+    (package-refresh-contents)
+    (mapc (lambda (package)
             (unless (package-installed-p package)
               (package-install package)))
-          prot-emacs-ensure-install))
+          prot-emacs-ensure-install)))
+
+(defmacro prot-emacs-builtin-package (package &rest body)
+  "Set up builtin PACKAGE with rest BODY.
+PACKAGE is a quoted symbol, while BODY consists of balanced
+expressions."
+  (declare (indent 1))
+  `(progn
+     (unless (require ,package nil 'noerror)
+       (display-warning 'prot-emacs (format "Loading `%s' failed" ,package) :warning))
+     ,@body))
+
+(defmacro prot-emacs-elpa-package (package &rest body)
+  "Set up PACKAGE from an Elisp archive with rest BODY.
+PACKAGE is a quoted symbol, while BODY consists of balanced
+expressions.
+
+When `prot-emacs-autoinstall-elpa' is non-nil try to install the
+package if it is missing."
+  (declare (indent 1))
+  `(progn
+     (when (and prot-emacs-autoinstall-elpa
+                (not (package-installed-p ,package)))
+       (package-install ,package))
+     (if (require ,package nil 'noerror)
+         (progn ,@body)
+       (display-warning 'prot-emacs (format "Loading `%s' failed" ,package) :warning)
+       (add-to-list 'prot-emacs-ensure-install ,package)
+       (display-warning
+        'prot-emacs
+        (format "Run `prot-emacs-install-ensured' to install all packages in `prot-emacs-ensure-install'")
+        :warning))))
+
+(defmacro prot-emacs-manual-package (package &rest body)
+  "Set up manually installed PACKAGE with rest BODY.
+PACKAGE is a quoted symbol, while BODY consists of balanced
+expressions."
+  (declare (indent 1))
+  (let ((path (thread-last user-emacs-directory
+                (expand-file-name "contrib-lisp")
+                (expand-file-name (symbol-name (eval package))))))
+    `(progn
+       (eval-and-compile
+         (add-to-list 'load-path ,path))
+       (if (require ,package nil 'noerror)
+	       (with-eval-after-load ,package
+             ,@body)
+         (display-warning 'prot-emacs (format "Loading `%s' failed" ,package) :warning)
+         (display-warning 'prot-emacs (format "This must be available at %s" ,path) :warning)))))
 
 (require 'vc)
 (setq vc-follow-symlinks t) ; Because my dotfiles are managed that way
 
 ;; For my custom libraries
-(add-to-list 'load-path (concat user-emacs-directory "lisp/"))
+(add-to-list 'load-path (locate-user-emacs-file "lisp/"))
 
-;; For Prot's custom libraries
-(add-to-list 'load-path (concat user-emacs-directory "prot-lisp/"))
-
-;; For other libraries
-(add-to-list 'load-path (concat user-emacs-directory "contrib-lisp/"))
+;; "prot-lisp" is for all my custom libraries; "contrib-lisp" is for
+;; third-party code that I handle manually; while "modus-themes"
+;; contains my themes which I use directly from source for development
+;; purposes.
+(dolist (path '("prot-lisp" "contrib-lisp" "modus-themes"))
+  (add-to-list 'load-path (thread-last user-emacs-directory (expand-file-name path))))
 
 ;; Some basic settings
 (setq frame-title-format '("%b"))
@@ -45,40 +146,14 @@
 
 (require 'prot-common)
 
-;; Some global keybindings
-(define-key global-map (kbd "<M-right>") #'forward-sentence)
-(define-key global-map (kbd "<M-left>") #'backward-sentence)
+(defun prot-emacs--expand-file-name (file extension)
+  "Return canonical path to FILE with EXTENSION."
+  (expand-file-name
+   (concat user-emacs-directory file extension)))
 
-;; Define the <pause> key as a leader key.  I've mapped <pause> to the
-;; left Shift key.
-(progn
-  (define-prefix-command 'dp-prefix-map)
-  (global-set-key (kbd "<pause>") dp-prefix-map)
-  (let ((map dp-prefix-map))
-    (define-key map (kbd "/") #'dabbrev-completion)
-    (define-key map (kbd "5") #'delete-frame)
-    (define-key map (kbd "1") #'delete-other-windows)
-    (define-key map (kbd "!") #'delete-other-windows-vertically)
-    (define-key map (kbd "0") #'delete-window)
-    (define-key map (kbd "d d") #'dired)
-    (define-key map (kbd "d D") #'dired-other-window)
-    (define-key map (kbd "d j") #'dired-jump)
-    (define-key map (kbd "d J") #'dired-jump-other-window)
-    (define-key map (kbd "<return>") #'eshell)
-    (define-key map (kbd "f") #'find-file)
-    (define-key map (kbd "F") #'find-file-other-window)
-    (define-key map (kbd "n") #'next-buffer)
-    (define-key map (kbd "o") #'other-window)
-    (define-key map (kbd "p") #'previous-buffer)
-    (define-key map (kbd "s") #'save-buffer)
-    (define-key map (kbd "-") #'split-window-below)
-    (define-key map (kbd "\\") #'split-window-right)
-    (define-key map (kbd "b") #'switch-to-buffer)
-    (define-key map (kbd "B") #'switch-to-buffer-other-window)
-    (define-key map (kbd "q") #'window-toggle-side-windows)))
+(prot-emacs-builtin-package 'prot-common)
 
-(require 'prot-simple)
-(with-eval-after-load 'prot-simple
+(prot-emacs-builtin-package 'prot-simple
   (setq prot-simple-insert-pair-alist
 	    '(("' Single quote" . (39 39))           ; ' '
 	      ("\" Double quotes" . (34 34))         ; " "
@@ -116,8 +191,8 @@
     (define-key map (kbd "<C-return>") #'prot-simple-new-line-below)
     (define-key map (kbd "<C-S-return>") #'prot-simple-new-line-above)
     ;; Commands for text insertion or manipulation
-    (define-key map (kbd "C-=") #'prot-simple-inset-date)
-    (define-key map (kbd "C-<") #'prot-simple-escape-url) 
+    (define-key map (kbd "C-=") #'prot-simple-insert-date)
+    (define-key map (kbd "C-<") #'prot-simple-escape-url)
     (define-key map (kbd "C-'") #'prot-simple-insert-pair-completion)
     (define-key map (kbd "M-'") #'prot-simple-insert-pair-completion)
     (define-key map (kbd "<C-M-backspace>") #'backward-kill-sexp)
@@ -142,29 +217,20 @@
     ;; Commands for buffers
     (define-key map (kbd "M-=") #'count-words)
     (define-key map (kbd "<C-f2>") #'prot-simple-rename-file-and-buffer)
-    (define-key map (kbd "s-k") #'prot-simple-kill-buffer-current)
-    (define-key dp-prefix-map (kbd "k") #'prot-simple-kill-buffer-current)))
+    (define-key map (kbd "s-k") #'prot-simple-kill-buffer-current)))
 
-(require 'prot-pulse)
-(with-eval-after-load 'prot-pulse
+(prot-emacs-builtin-package 'prot-pulse
   (setq prot-pulse-pulse-command-list
         '(recenter-top-bottom
           reposition-window))
   (prot-pulse-advice-commands-mode 1)
   (define-key global-map (kbd "<s-escape>") #'prot-pulse-pulse-line))
 
-(require 'cus-edit)
-(with-eval-after-load 'cus-edit
+(prot-emacs-builtin-package 'cus-edit
   ;; Disable the damn thing
   (setq custom-file (make-temp-file "emacs-custom-")))
 
-(require 'modus-themes)
-(with-eval-after-load 'modus-themes
-  (add-to-list 'prot-emacs-ensure-install 'modus-themes)
-  ;; Add all your customizations prior to loading the themes
-  ;;
-  ;; NOTE: these are not my preferences!  I am always testing various
-  ;; configurations.  Though I still like what I have here.
+(prot-emacs-elpa-package 'modus-themes
   (setq modus-themes-bold-constructs t
         modus-themes-slanted-constructs t
         modus-themes-completions 'opinionated
@@ -188,8 +254,7 @@
   (modus-themes-load-operandi)
   (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
 
-(require 'prot-fonts)
-(with-eval-after-load 'prot-fonts
+(prot-emacs-builtin-package 'prot-fonts
   ;; Note that the light weight I pass to Iosevka Comfy is thicker than
   ;; the equivalent for standard Iosevka.  In my build instructions, I
   ;; set that to 350, while normal light is at 300 and regular is at
@@ -227,13 +292,10 @@
 (setq-default bidi-paragraph-direction 'left-to-right)
 (setq bidi-inhibit-bpa t)
 
-(require 'so-long)
-(with-eval-after-load 'so-long
+(prot-emacs-builtin-package 'so-long
   (global-so-long-mode 1))
 
-(require 'which-key)
-(with-eval-after-load 'which-key
-  (add-to-list 'prot-emacs-ensure-install 'which-key)
+(prot-emacs-builtin-package 'which-key
   ;; NOTE: I only use this for `embark' and `consult' and for the sake
   ;; of producing more user-friendly video demonstrations.
   (setq which-key-dont-use-unicode t)
@@ -250,12 +312,10 @@
   (which-key-mode 1))	   ; and turn this on, if you want to use this
 
 
-(require 'async)
-(with-eval-after-load 'async
+(prot-emacs-elpa-package 'async
   (add-to-list 'prot-emacs-ensure-install 'async))
 
-(require 'prot-orderless)
-(with-eval-after-load 'prot-orderless
+(prot-emacs-builtin-package 'prot-orderless
   (setq prot-orderless-default-styles
         '(orderless-prefixes
           orderless-literal
@@ -268,8 +328,7 @@
           orderless-strict-leading-initialism
           orderless-regexp)))
 
-(require 'orderless)
-(with-eval-after-load 'orderless
+(prot-emacs-elpa-package 'orderless
   (add-to-list 'prot-emacs-ensure-install 'orderless)
   (setq orderless-component-separator " +")
   (setq orderless-matching-styles prot-orderless-default-styles)
@@ -281,19 +340,18 @@
     (define-key map (kbd "SPC") nil)
     (define-key map (kbd "?") nil)))
 
-(require 'marginalia)
-(with-eval-after-load 'marginalia
+(prot-emacs-elpa-package 'marginalia
   (add-to-list 'prot-emacs-ensure-install 'marginalia)
   (setq marginalia-annotators
         '(marginalia-annotators-heavy
           marginalia-annotators-light))
   (marginalia-mode 1))
 
-(require 'prot-minibuffer)
-(with-eval-after-load 'prot-minibuffer
+(prot-emacs-builtin-package 'prot-minibuffer
   (setq-default prot-minibuffer-mini-cursors t) ; also check `prot-cursor.el'
 
   (define-key global-map (kbd "s-v") #'prot-minibuffer-focus-mini-or-completions)
+
   (let ((map completion-list-mode-map))
     (define-key map (kbd "M-v") #'prot-minibuffer-focus-mini)
     (define-key map (kbd "h") #'prot-simple-describe-symbol) ; from `prot-simple.el'
@@ -305,8 +363,7 @@
     (define-key map (kbd "j") #'prot-minibuffer-completions-insert-symbol-at-point-exit))
   (add-hook 'minibuffer-setup-hook #'prot-minibuffer-mini-cursor))
 
-(require 'minibuffer)
-(with-eval-after-load 'minibuffer
+(prot-emacs-builtin-package 'minibuffer
   (setq completion-styles '(partial-completion substring flex orderless))
   (setq completion-category-defaults nil)
   (setq completion-cycle-threshold 3)
@@ -360,9 +417,7 @@
     (define-key map (kbd "f") #'next-completion)
     (define-key map (kbd "b") #'previous-completion)))
 
-(require 'consult)
-(with-eval-after-load 'consult
-  (add-to-list 'prot-emacs-ensure-install 'consult)
+(prot-emacs-elpa-package 'consult
   (setq consult-line-numbers-widen t)
   (setq completion-in-region-function #'consult-completion-in-region)
   (setq consult-async-min-input 3)
@@ -376,7 +431,6 @@
                                    (?p "Packages"  font-lock-constant-face)
                                    (?t "Types"     font-lock-type-face)
                                    (?v "Variables" font-lock-variable-name-face)))))
-
   ;; Registers' setup -- From Consult's README
   ;;
   ;; This gives a consistent display for `consult-register',
@@ -402,42 +456,38 @@
     (define-key map (kbd "C-x M-:") #'consult-complex-command)
     (define-key map (kbd "C-x M-m") #'consult-minor-mode-menu)
     (define-key map (kbd "C-x M-k") #'consult-kmacro)
-    (define-key map (kbd "M-g g") #'consult-goto-line)
     (define-key map (kbd "M-g M-g") #'consult-goto-line)
     (define-key map (kbd "M-X") #'consult-mode-command)
     (define-key map (kbd "M-K") #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
     (define-key map (kbd "M-F") #'consult-focus-lines) ; same principle
-    (define-key map (kbd "M-s g") #'consult-grep)
-    (define-key map (kbd "M-s m") #'consult-mark)
+    (define-key map (kbd "M-s M-g") #'consult-grep)
+    (define-key map (kbd "M-s M-m") #'consult-mark)
     (define-key map (kbd "C-x r r") #'consult-register) ; Use the register's prefix
     (define-key map (kbd "C-x r S") #'consult-register-store)
     (define-key map (kbd "C-x r L") #'consult-register-load)
     (define-key consult-narrow-map (kbd "?") #'consult-narrow-help)))
 
-(require 'prot-consult)
-(with-eval-after-load 'prot-consult
-  (setq consult-project-root-function #'prot-consult-project-root)
-  (setq prot-consult-command-centre-list
-        '(consult-line
-          prot-consult-line
-          consult-mark))
-  (setq prot-consult-command-top-list
-        '(consult-outline
-          consult-imenu
-          prot-consult-outline
-          prot-consult-imenu))
-  (prot-consult-set-up-hooks-mode 1)
-  (let ((map global-map))
-    (define-key map (kbd "M-s i") #'prot-consult-imenu)
-    (define-key map (kbd "M-s f") #'prot-consult-fd)
-    (define-key map (kbd "M-s s") #'prot-consult-outline)    ; M-s o is `occur'
-    (define-key map (kbd "M-s y") #'prot-consult-yank)
-    (define-key map (kbd "M-s l") #'prot-consult-line)))
+(with-eval-after-load 'consult
+  (prot-emacs-builtin-package 'prot-consult
+    (setq consult-project-root-function #'prot-consult-project-root)
+    (setq prot-consult-command-centre-list
+          '(consult-line
+            prot-consult-line
+            consult-mark))
+    (setq prot-consult-command-top-list
+          '(consult-outline
+            consult-imenu
+            prot-consult-outline
+            prot-consult-imenu))
+    (prot-consult-set-up-hooks-mode 1)
+    (let ((map global-map))
+      (define-key map (kbd "M-s i") #'prot-consult-imenu)
+      (define-key map (kbd "M-s f") #'prot-consult-fd)
+      (define-key map (kbd "M-s s") #'prot-consult-outline)    ; M-s o is `occur'
+      (define-key map (kbd "M-s y") #'prot-consult-yank)
+      (define-key map (kbd "M-s l") #'prot-consult-line))))
 
-(require 'embark)
-(with-eval-after-load 'embark
-  (add-to-list 'prot-emacs-ensure-install 'embark)
-  ;; (with-eval-after-load 'prot-minibuffer)
+(prot-emacs-elpa-package 'embark
   (setq embark-collect-initial-view-alist
         '((file . list)
           (buffer . list)
@@ -480,50 +530,45 @@
     (define-key map (kbd ".") #'embark-find-definition)
     (define-key map (kbd "k") #'describe-keymap)))
 
-(require 'embark-consult)
-(with-eval-after-load 'embark-consult
-  (add-to-list 'prot-emacs-ensure-install 'embark-consult)
+(prot-emacs-elpa-package 'embark-consult
   ;; ;; Use the hook, or check `prot-embark-consult-preview-toggle'.
   ;; :hook (embark-collect-mode-hook . embark-consult-preview-minor-mode)
   (define-key embark-collect-mode-map (kbd "C-j") #'embark-consult-preview-at-point))
 
-(require 'prot-embark)
-(with-eval-after-load 'prot-embark
-  (add-hook 'minibuffer-exit-hook #'prot-embark-clear-live-buffers)
-  (add-hook 'embark-collect-mode-hook #'prot-embark-completions-cursor)
-  (add-hook 'embark-collect-post-revert-hook #'prot-embark-collect-fit-window)
-  (add-hook 'embark-collect-mode-hook #'prot-embark-hl-line)
-  (add-hook 'embark-collect-mode-hook #'prot-embark-display-line-numbers)
-  ;; NOTE: to switch to the live collection buffer, I also use
-  ;; `prot-minibuffer-focus-mini-or-completions' which is bound to
-  ;; "s-v".
-  (let ((map embark-collect-mode-map))
-    (define-key map (kbd "h") #'prot-simple-describe-symbol)  ; from `prot-simple.el'
-    (define-key map (kbd "C-g") #'prot-embark-keyboard-quit)
-    (define-key map (kbd "C-k") #'prot-embark-collection-kill-line)
-    (define-key map (kbd "C-M-n") #'prot-embark-completions-act-next)
-    (define-key map (kbd "C-M-p") #'prot-embark-completions-act-previous)
-    (define-key map (kbd "C-M-j") #'prot-embark-completions-act-current)
-    (define-key map (kbd "C-M-v") #'prot-embark-consult-preview-toggle) ; "view", "visualise" mnemonic
-    (define-key map (kbd "C-n") #'prot-embark-next-line-or-mini)
-    (define-key map (kbd "<down>") #'prot-embark-next-line-or-mini)
-    (define-key map (kbd "C-p") #'prot-embark-previous-line-or-mini)
-    (define-key map (kbd "<up>") #'prot-embark-previous-line-or-mini))
-  (let ((map minibuffer-local-completion-map))
-    (define-key map (kbd "C-n") #'prot-embark-switch-to-completions-top)
-    (define-key map (kbd "<down>") #'prot-embark-switch-to-completions-top)
-    (define-key map (kbd "C-p") #'prot-embark-switch-to-completions-bottom)
-    (define-key map (kbd "<up>") #'prot-embark-switch-to-completions-bottom)
-    (define-key map (kbd "C-l") #'prot-embark-completions-toggle)))
+(with-eval-after-load 'embark
+  (prot-emacs-builtin-package 'prot-embark
+    (add-hook 'minibuffer-exit-hook #'prot-embark-clear-live-buffers)
+    (add-hook 'embark-collect-mode-hook #'prot-embark-completions-cursor)
+    (add-hook 'embark-collect-post-revert-hook #'prot-embark-collect-fit-window)
+    (add-hook 'embark-collect-mode-hook #'prot-embark-hl-line)
+    (add-hook 'embark-collect-mode-hook #'prot-embark-display-line-numbers)
+    ;; NOTE: to switch to the live collection buffer, I also use
+    ;; `prot-minibuffer-focus-mini-or-completions' which is bound to
+    ;; "s-v".
+    (let ((map embark-collect-mode-map))
+      (define-key map (kbd "h") #'prot-simple-describe-symbol)  ; from `prot-simple.el'
+      (define-key map (kbd "C-g") #'prot-embark-keyboard-quit)
+      (define-key map (kbd "C-k") #'prot-embark-collection-kill-line)
+      (define-key map (kbd "C-M-n") #'prot-embark-completions-act-next)
+      (define-key map (kbd "C-M-p") #'prot-embark-completions-act-previous)
+      (define-key map (kbd "C-M-j") #'prot-embark-completions-act-current)
+      (define-key map (kbd "C-M-v") #'prot-embark-consult-preview-toggle) ; "view", "visualise" mnemonic
+      (define-key map (kbd "C-n") #'prot-embark-next-line-or-mini)
+      (define-key map (kbd "<down>") #'prot-embark-next-line-or-mini)
+      (define-key map (kbd "C-p") #'prot-embark-previous-line-or-mini)
+      (define-key map (kbd "<up>") #'prot-embark-previous-line-or-mini))
+    (let ((map minibuffer-local-completion-map))
+      (define-key map (kbd "C-n") #'prot-embark-switch-to-completions-top)
+      (define-key map (kbd "<down>") #'prot-embark-switch-to-completions-top)
+      (define-key map (kbd "C-p") #'prot-embark-switch-to-completions-bottom)
+      (define-key map (kbd "<up>") #'prot-embark-switch-to-completions-bottom)
+      (define-key map (kbd "C-l") #'prot-embark-completions-toggle))))
 
-(require 'keyfreq)
-(with-eval-after-load 'keyfreq
- (add-to-list 'prot-emacs-ensure-install 'keyfreq)
- (keyfreq-mode 1)
- (keyfreq-autosave-mode 1))
+(prot-emacs-elpa-package 'keyfreq
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
 
-(require 'project)
-(with-eval-after-load 'project
+(prot-emacs-builtin-package 'project
   ;; ;; Use this for Emacs 27 (I am on 28)
   ;; (add-to-list 'prot-emacs-ensure-install 'project)
   (setq project-switch-commands
@@ -540,9 +585,8 @@
           (?e "Eshell" project-eshell)))
   (define-key global-map (kbd "C-x p q") #'project-query-replace-regexp)) ; C-x p is `project-prefix-map'
 
-(require 'prot-project)
-(with-eval-after-load 'prot-project
-  (setq prot-project-project-roots '("~/src/"))
+(prot-emacs-builtin-package 'prot-project
+  (setq prot-project-project-roots '("~/src"))
   (setq prot-project-commit-log-limit 25)
   (setq prot-project-large-file-lines 1000)
   (let ((map global-map))
@@ -552,28 +596,24 @@
     (define-key map (kbd "C-x p s") #'prot-project-find-subdir)
     (define-key map (kbd "C-x p t") #'prot-project-retrieve-tag)))
 
-(require 'recentf)
-(with-eval-after-load 'recentf
-  (setq recentf-save-file (concat user-emacs-directory "recentf"))
+(prot-emacs-builtin-package 'recentf
+  (setq recentf-save-file (locate-user-emacs-file "recentf"))
   (setq recentf-max-saved-items 200)
   (setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/sudo:"))
   (add-hook 'after-init-hook #'recentf-mode))
 
-(require 'prot-recentf)
-(with-eval-after-load 'prot-recentf
+(prot-emacs-builtin-package 'prot-recentf
   (add-to-list 'recentf-keep 'prot-recentf-keep-predicate)
   (let ((map global-map))
     (define-key map (kbd "s-r") #'prot-recentf-recent-files)
-    (define-key dp-prefix-map (kbd "r") #'prot-recentf-recent-files)
     (define-key map (kbd "C-x C-r") #'prot-recentf-recent-dirs)))
 
-(require 'prot-embark-extras)
-(with-eval-after-load 'prot-embark-extras
-  (prot-embark-extras-keymaps 1)
-  (prot-embark-extras-setup-packages 1))
+(with-eval-after-load 'embark
+  (prot-emacs-builtin-package 'prot-embark-extras
+    (prot-embark-extras-keymaps 1)
+    (prot-embark-extras-setup-packages 1)))
 
-(require 'dabbrev)
-(with-eval-after-load 'dabbrev
+(prot-emacs-builtin-package 'dabbrev
   (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
   (setq dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
   (setq dabbrev-backward-only nil)
@@ -587,8 +627,7 @@
     (define-key map (kbd "M-/") #'dabbrev-expand)
     (define-key map (kbd "s-/") #'dabbrev-completion)))
 
-(require 'hippie-exp)
-(with-eval-after-load 'hippie-exp
+(prot-emacs-builtin-package 'hippie-exp
   (setq hippie-expand-try-functions-list
         '(try-expand-dabbrev
           try-expand-dabbrev-all-buffers
@@ -606,8 +645,7 @@
   (setq hippie-expand-no-restriction t)
   (define-key global-map (kbd "C-M-/") #'hippie-expand))
 
-(require 'isearch)
-(with-eval-after-load 'isearch
+(prot-emacs-builtin-package 'isearch
   (setq search-highlight t)
   (setq search-whitespace-regexp ".*?")
   (setq isearch-lax-whitespace t)
@@ -624,21 +662,22 @@
     (define-key map (kbd "C-g") #'isearch-cancel) ; instead of `isearch-abort'
     (define-key map (kbd "M-/") #'isearch-complete)))
 
-(require 'replace)
-(with-eval-after-load 'replace
+(prot-emacs-builtin-package 'replace
   (setq list-matching-lines-jump-to-current-line t)
   (add-hook 'occur-mode-hook #'hl-line-mode)
   (add-hook 'occur-mode-hook (lambda ()
-			       (toggle-truncate-lines t)))
+			                   (toggle-truncate-lines t)))
   (define-key global-map (kbd "M-s M-o") #'multi-occur)
   (define-key occur-mode-map (kbd "t") #'toggle-truncate-lines))
 
-(require 'prot-search)
-(with-eval-after-load 'prot-search
+(prot-emacs-builtin-package 'grep)
+
+(prot-emacs-builtin-package 'prot-search
   (let ((map global-map))
     (define-key map (kbd "M-s %") #'prot-search-isearch-replace-symbol)
     (define-key map (kbd "M-s M-<") #'prot-search-isearch-beginning-of-buffer)
     (define-key map (kbd "M-s M->") #'prot-search-isearch-end-of-buffer)
+    (define-key map (kbd "M-s g") #'prot-search-grep)
     (define-key map (kbd "M-s u") #'prot-search-occur-urls)
     (define-key map (kbd "M-s M-u") #'prot-search-occur-browse-url))
   (let ((map isearch-mode-map))
@@ -647,19 +686,14 @@
     (define-key map (kbd "<backspace>") #'prot-search-isearch-abort-dwim)
     (define-key map (kbd "<C-return>") #'prot-search-isearch-other-end)))
 
-(require 're-builder)
-(with-eval-after-load 're-builder
+(prot-emacs-builtin-package 're-builder
   (setq reb-re-syntax 'read))
 
-(require 'visual-regexp)
-(with-eval-after-load 'visual-regexp
-  (add-to-list 'prot-emacs-ensure-install 'visual-regexp)
+(prot-emacs-elpa-package 'visual-regexp
   (setq vr/default-replace-preview nil)
   (setq vr/match-separator-use-custom-face t))
 
-(require 'wgrep)
-(with-eval-after-load 'wgrep
-  (add-to-list 'prot-emacs-ensure-install 'wgrep)
+(prot-emacs-elpa-package 'wgrep
   (setq wgrep-auto-save-buffer t)
   (setq wgrep-change-readonly-file t)
   (let ((map grep-mode-map))
@@ -667,19 +701,14 @@
     (define-key map (kbd "C-x C-q") #'wgrep-change-to-wgrep-mode)
     (define-key map (kbd "C-c C-c") #'wgrep-finish-edit)))
 
-(require 'xref)
-(with-eval-after-load 'xref
-  ;; ;; Use this for Emacs 27 (I am on 28)
-  ;; (add-to-list 'prot-emacs-ensure-install 'xref)
-
+(prot-emacs-builtin-package 'xref
   ;; All those have been changed for Emacs 28
-  (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
-  (setq xref-show-xrefs-function #'xref-show-definitions-completing-read)
+  (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ; for M-.
+  (setq xref-show-xrefs-function #'xref-show-definitions-buffer) ; for grep and the like
   (setq xref-file-name-display 'project-relative)
   (setq xref-search-program 'ripgrep))
 
-(require 'dired)
-(with-eval-after-load 'dired
+(prot-emacs-builtin-package 'dired
   (setq dired-recursive-copies 'always)
   (setq dired-recursive-deletes 'always)
   (setq delete-by-moving-to-trash t)
@@ -689,8 +718,7 @@
   (add-hook 'dired-mode-hook #'dired-hide-details-mode)
   (add-hook 'dired-mode-hook #'hl-line-mode))
 
-(require 'dired-aux)
-(with-eval-after-load 'dired-aux
+(prot-emacs-builtin-package 'dired-aux
   (setq dired-isearch-filenames 'dwim)
   ;; The following variables were introduced in Emacs 27.1
   (setq dired-create-destination-dirs 'ask)
@@ -721,8 +749,7 @@
     (define-key map (kbd "C-x v v") #'dired-vc-next-action)) ; Emacs 28
   (define-key minibuffer-local-filename-completion-map (kbd "C-c d") #'contrib/cd-bookmark))
 
-(require 'dired-x)
-(with-eval-after-load 'dired-x
+(prot-emacs-builtin-package 'dired-x
   (setq dired-clean-up-buffers-too t)
   (setq dired-clean-confirm-killing-deleted-buffers t)
   (setq dired-x-hands-off-my-keys t)    ; easier to show the keys I use
@@ -735,22 +762,18 @@
     (define-key map (kbd "s-J") #'dired-jump-other-window))
   (define-key dired-mode-map (kbd "I") #'dired-info))
 
-(require 'dired-subtree)
-(with-eval-after-load 'dired-subtree
-  (add-to-list 'prot-emacs-ensure-install 'dired-subtree)
+(prot-emacs-elpa-package 'dired-subtree
   (setq dired-subtree-use-backgrounds nil)
   (let ((map dired-mode-map))
     (define-key map (kbd "<tab>") #'dired-subtree-toggle)
     (define-key map (kbd "<C-tab>") #'dired-subtree-cycle)
     (define-key map (kbd "<S-iso-lefttab>") #'dired-subtree-remove)))
 
-(require 'wdired)
-(with-eval-after-load 'wdired
+(prot-emacs-builtin-package 'wdired
   (setq wdired-allow-to-change-permissions t)
   (setq wdired-create-parent-directories t))
 
-(require 'image-dired)
-(with-eval-after-load 'image-dired
+(prot-emacs-builtin-package 'image-dired
   (setq image-dired-external-viewer "xdg-open")
   (setq image-dired-thumb-size 80)
   (setq image-dired-thumb-margin 2)
@@ -760,18 +783,15 @@
     (kbd "<return>") #'image-dired-thumbnail-display-external))
 
 ;; part of `async' package
-(require 'dired-async)
-(with-eval-after-load 'dired-async
+(prot-emacs-builtin-package 'dired-async
   (add-hook 'dired-mode-hook #'dired-async-mode))
 
-(require 'uniquify)
-(with-eval-after-load 'uniquify
+(prot-emacs-builtin-package 'uniquify
   (setq uniquify-buffer-name-style 'forward)
   (setq uniquify-strip-common-suffix t)
   (setq uniquify-after-kill-buffer-p t))
 
-(require 'ibuffer)
-(with-eval-after-load 'ibuffer
+(prot-emacs-builtin-package 'ibuffer
   (setq ibuffer-expert t)
   (setq ibuffer-display-summary nil)
   (setq ibuffer-use-other-window nil)
@@ -802,15 +822,12 @@
     (define-key map (kbd "s n") #'ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
     (define-key map (kbd "/ g") #'ibuffer-filter-by-content)))
 
-(require 'prot-ibuffer)
-(with-eval-after-load 'prot-ibuffer
+(prot-emacs-builtin-package 'prot-ibuffer
   (let ((map global-map))
     (define-key map (kbd "M-s b") #'prot-ibuffer-buffers-major-mode)
     (define-key map (kbd "M-s v") #'prot-ibuffer-buffers-vc-root)))
 
-(require 'scratch)
-(with-eval-after-load 'scratch
-  (add-to-list 'prot-emacs-ensure-install 'scratch)
+(prot-emacs-elpa-package 'scratch
   ;; TODO 2021-01-19: refine `prot/scratch-buffer-setup'
   (defun prot/scratch-buffer-setup ()
     "Add contents to `scratch' buffer and name it accordingly.
@@ -825,17 +842,16 @@ If region is active, add its contents to the new buffer."
                      ""))
            (text (concat string region)))
       (when scratch-buffer
-	(save-excursion
+	    (save-excursion
           (insert text)
           (goto-char (point-min))
           (comment-region (point-at-bol) (point-at-eol)))
-	(forward-line 2))
+	    (forward-line 2))
       (rename-buffer (format "*Scratch for %s*" mode) t)))
   (add-hook 'scratch-create-buffer-hook #'prot/scratch-buffer-setup)
   (define-key global-map (kbd "C-c s") #'scratch))
 
-(require 'window)
-(with-eval-after-load 'window
+(prot-emacs-builtin-package 'window
   (setq display-buffer-alist
         '(;; top side window
           ("\\**prot-elfeed-bongo-queue.*"
@@ -918,18 +934,13 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "C-x +") #'balance-windows-area)
     (define-key map (kbd "s-q") #'window-toggle-side-windows)))
 
-(require 'winner)
-(with-eval-after-load 'winner
+(prot-emacs-builtin-package 'winner
   (add-hook 'after-init-hook #'winner-mode)
   (let ((map global-map))
     (define-key map (kbd "<s-right>") #'winner-redo)
-    (define-key map (kbd "<s-left>") #'winner-undo))
-  (let ((map dp-prefix-map))
-    (define-key map (kbd "<left>") #'winner-undo)
-    (define-key map (kbd "<right>") #'winner-redo)))
+    (define-key map (kbd "<s-left>") #'winner-undo)))
 
-(require 'tab-bar)
-(with-eval-after-load 'tab-bar
+(prot-emacs-builtin-package 'tab-bar
   (setq tab-bar-close-button-show nil)
   (setq tab-bar-close-last-tab-choice 'tab-bar-mode-disable)
   (setq tab-bar-close-tab-select 'recent)
@@ -943,57 +954,43 @@ If region is active, add its contents to the new buffer."
   (tab-bar-history-mode -1)
   (let ((map global-map))
     (define-key map (kbd "<s-tab>") #'tab-next)
-    (define-key map (kbd "<S-s-iso-lefttab>") #'tab-previous))
-  (let ((map dp-prefix-map))
-    (define-key map (kbd "<tab>") #'tab-next)
-    (define-key map (kbd "<S-iso-lefttab>") #'tab-previous)))
+    (define-key map (kbd "<S-s-iso-lefttab>") #'tab-previous)))
 
-(require 'prot-tab)
-(with-eval-after-load 'prot-tab
+(prot-emacs-builtin-package 'prot-tab
   (let ((map global-map))
     (define-key map (kbd "<f8>") #'prot-tab-tab-bar-toggle)
     (define-key map (kbd "C-x t t") #'prot-tab-select-tab-dwim)
-    (define-key map (kbd "s-t") #'prot-tab-select-tab-dwim))
-  (define-key dp-prefix-map (kbd "t") #'prot-tab-select-tab-dwim))
+    (define-key map (kbd "s-t") #'prot-tab-select-tab-dwim)))
 
-(require 'transpose-frame)
-(with-eval-after-load 'transpose-frame
-  (add-to-list 'prot-emacs-ensure-install 'transpose-frame)
+(prot-emacs-elpa-package 'tab-bar-echo-area
+  (tab-bar-echo-area-mode 1))
+
+(prot-emacs-elpa-package 'transpose-frame
   (let ((map global-map))
     (define-key map (kbd "C-s-t") #'flop-frame) ; what I consider "transpose" in this context
-    (define-key map (kbd "C-s-r") #'rotate-frame-clockwise))
-  (let ((map dp-prefix-map))
-    (define-key map (kbd "w t") #'flop-frame) ; what I consider "transpose" in this context
-    (define-key map (kbd "w r") #'rotate-frame-clockwise)))
+    (define-key map (kbd "C-s-r") #'rotate-frame-clockwise)))
 
-(require 'face-remap)
+(prot-emacs-builtin-package 'face-remap)
 
-(require 'olivetti)
-(with-eval-after-load 'olivetti
-  (add-to-list 'prot-emacs-ensure-install 'olivetti)
+(prot-emacs-elpa-package 'olivetti
   (setq olivetti-body-width 0.7)
   (setq olivetti-minimum-body-width 80)
   (setq olivetti-recall-visual-line-mode-entry-state t))
 
-(require 'prot-logos)
-(with-eval-after-load 'prot-logos
+(prot-emacs-builtin-package 'prot-logos
   (setq prot-logos-org-presentation nil)
   (setq prot-logos-variable-pitch nil)
   (setq prot-logos-scroll-lock nil)
   (setq prot-logos-hidden-modeline t)
   (define-key global-map (kbd "<f9>") #'prot-logos-focus-mode))
 
-(require 'deft)
-(with-eval-after-load 'deft
-  (add-to-list 'prot-emacs-ensure-install 'deft)
+(prot-emacs-elpa-package 'deft
   (setq deft-extensions '("md" "txt" "org"))
   (setq deft-default-extension "md")
   (setq deft-directory "~/Documents/notes")
   (setq deft-use-filename-as-title t))
 
-(require 'zetteldeft)
-(with-eval-after-load 'zetteldeft
-  (add-to-list 'prot-emacs-ensure-install 'zetteldeft)
+(prot-emacs-elpa-package 'zetteldeft
   (zetteldeft-set-classic-keybindings)
   (setq zetteldeft-home-id "202101292226") ; the "index" note
   (setq zetteldeft-link-indicator "[[")
@@ -1017,13 +1014,11 @@ If region is active, add its contents to the new buffer."
         (zetteldeft--insert-title title)
         (newline)))))
 
-(require 'tmr)
-(with-eval-after-load 'tmr
+(prot-emacs-builtin-package 'tmr
   (setq tmr-sound-file
         "/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga"))
 
-(require 'diff-mode)
-(with-eval-after-load 'diff-mode
+(prot-emacs-builtin-package 'diff-mode
   (setq diff-default-read-only t)
   (setq diff-advance-after-apply-hunk t)
   (setq diff-update-on-the-fly t)
@@ -1034,8 +1029,7 @@ If region is active, add its contents to the new buffer."
   ;; `prot-diff-modus-themes-diffs'
   (setq diff-font-lock-syntax 'hunk-also))
 
-(require 'prot-diff)
-(with-eval-after-load 'prot-diff
+(prot-emacs-builtin-package 'prot-diff
   (prot-diff-modus-themes-diffs)
   (add-hook 'modus-themes-after-load-theme-hook #'prot-diff-modus-themes-diffs)
 
@@ -1048,8 +1042,7 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "C-c C-b") #'prot-diff-refine-dwim) ; replace `diff-refine-hunk'
     (define-key map (kbd "C-c C-n") #'prot-diff-narrow-dwim)))
 
-(with-eval-after-load 'vc
-
+(prot-emacs-builtin-package 'vc
   ;; Those offer various types of functionality, such as blaming,
   ;; viewing logs, showing a dedicated buffer with changes to affected
   ;; files.
@@ -1061,11 +1054,10 @@ If region is active, add its contents to the new buffer."
 
   ;; This one is for editing commit messages.
   (require 'log-edit)
-  (with-eval-after-load 'log-edit
-    (setq log-edit-confirm 'changed)
-    (setq log-edit-keep-buffer nil)
-    (setq log-edit-require-final-newline t)
-    (setq log-edit-setup-add-author nil))
+  (setq log-edit-confirm 'changed)
+  (setq log-edit-keep-buffer nil)
+  (setq log-edit-require-final-newline t)
+  (setq log-edit-setup-add-author nil)
 
   ;; Note that `prot-vc-git-setup-mode' will run the following when
   ;; activated:
@@ -1093,7 +1085,7 @@ If region is active, add its contents to the new buffer."
 \\(?4:[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}\\) \
 \\(?3:.*?\\):"
           ((1 'log-view-message)
-           (2 'success nil lax)
+           (2 'change-log-list nil lax)
            (3 'change-log-name)
            (4 'change-log-date))))
 
@@ -1117,16 +1109,22 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "d") #'vc-diff)         ; parallel to D: `vc-root-diff'
     (define-key map (kbd "k") #'vc-dir-clean-files)
     (define-key map (kbd "G") #'vc-revert)
+    (let ((prot-vc-git-branch-map (make-sparse-keymap)))
+      (define-key map "B" prot-vc-git-branch-map)
+      (define-key prot-vc-git-branch-map "n" #'vc-create-tag) ; new branch/tag
+      (define-key prot-vc-git-branch-map "s" #'vc-retrieve-tag) ; switch branch/tag
+      (define-key prot-vc-git-branch-map "c" #'prot-vc-git-checkout-remote) ; "checkout" remote
+      (define-key prot-vc-git-branch-map "l" #'vc-print-branch-log))
     (let ((prot-vc-git-stash-map (make-sparse-keymap)))
       (define-key map "S" prot-vc-git-stash-map)
       (define-key prot-vc-git-stash-map "c" 'vc-git-stash) ; "create" named stash
       (define-key prot-vc-git-stash-map "s" 'vc-git-stash-snapshot)))
   (let ((map vc-git-stash-shared-map))
-      (define-key map "a" 'vc-git-stash-apply-at-point)
-      (define-key map "c" 'vc-git-stash) ; "create" named stash
-      (define-key map "D" 'vc-git-stash-delete-at-point)
-      (define-key map "p" 'vc-git-stash-pop-at-point)
-      (define-key map "s" 'vc-git-ostash-snapshot))
+    (define-key map "a" 'vc-git-stash-apply-at-point)
+    (define-key map "c" 'vc-git-stash) ; "create" named stash
+    (define-key map "D" 'vc-git-stash-delete-at-point)
+    (define-key map "p" 'vc-git-stash-pop-at-point)
+    (define-key map "s" 'vc-git-ostash-snapshot))
   (let ((map vc-annotate-mode-map))
     (define-key map (kbd "M-q") #'vc-annotate-toggle-annotation-visibility)
     (define-key map (kbd "C-c C-c") #'vc-annotate-goto-line)
@@ -1140,8 +1138,7 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "F") #'vc-update)
     (define-key map (kbd "P") #'vc-push)))
 
-(require 'prot-vc)
-(with-eval-after-load 'prot-vc
+(prot-emacs-builtin-package 'prot-vc
   (setq prot-vc-log-limit 100)
   (setq prot-vc-log-bulk-action-limit 50)
   (setq prot-vc-git-log-edit-show-commits t)
@@ -1158,7 +1155,8 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "C-x v i") #'prot-vc-git-log-insert-commits)
     (define-key map (kbd "C-x v p") #'prot-vc-project-or-dir)
     (define-key map (kbd "C-x v SPC") #'prot-vc-custom-log)
-    (define-key map (kbd "C-x v g") #'prot-vc-git-log-grep)
+    (define-key map (kbd "C-x v g") #'prot-vc-git-grep)
+    (define-key map (kbd "C-x v G") #'prot-vc-git-log-grep)
     (define-key map (kbd "C-x v c") #'prot-vc-git-patch-dwim)
     (define-key map (kbd "C-x v s") #'prot-vc-git-show)
     (define-key map (kbd "C-x v r") #'prot-vc-git-find-revision)
@@ -1181,9 +1179,7 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "R") #'prot-vc-git-log-reset)
     (define-key map (kbd "w") #'prot-vc-log-kill-hash)))
 
-(require 'magit)
-(with-eval-after-load 'magit
-  (add-to-list 'prot-emacs-ensure-install 'magit)
+(prot-emacs-elpa-package 'magit
   (setq magit-define-global-key-bindings nil)
   (define-key global-map (kbd "C-c g") #'magit-status)
 
@@ -1209,10 +1205,9 @@ If region is active, add its contents to the new buffer."
   (setq magit-repository-directories
         '(("~/src" . 1))))
 
-(require 'smerge-mode)
+(prot-emacs-builtin-package 'smerge-mode)
 
-(require 'ediff)
-(with-eval-after-load 'ediff
+(prot-emacs-builtin-package 'ediff
   (setq ediff-keep-variants nil)
   (setq ediff-make-buffers-readonly-at-startup nil)
   (setq ediff-merge-revisions-with-ancestor t)
@@ -1239,8 +1234,7 @@ sure this is a good approach."
     (interactive)
     (flush-lines ".*prot-ediff.*" (point-min) (point-max) nil)))
 
-(require 'eshell)
-(with-eval-after-load 'eshell
+(prot-emacs-builtin-package 'eshell
   (require 'esh-mode)
   (require 'esh-module)
   (setq eshell-modules-list             ; It works but may need review
@@ -1271,8 +1265,7 @@ sure this is a good approach."
   (setq eshell-hist-ignoredups t)
   (setq eshell-save-history-on-exit t))
 
-(require 'prot-eshell)
-(with-eval-after-load 'prot-eshell
+(prot-emacs-builtin-package 'prot-eshell
   (setq prot-eshell-output-buffer "*Exported Eshell output*")
   (setq prot-eshell-output-delimiter "* * *")
   (define-key global-map (kbd "<s-return>") #'eshell)
@@ -1293,14 +1286,12 @@ sure this is a good approach."
     (define-key map (kbd "C-c C-d") #'prot-eshell-complete-recent-dir)
     (define-key map (kbd "C-c C-s") #'prot-eshell-find-subdirectory-recursive)))
 
-(require 'shell)
-(with-eval-after-load 'shell
+(prot-emacs-builtin-package 'shell
   (setq ansi-color-for-comint-mode t)
   (setq shell-command-prompt-show-cwd t) ; Emacs 27.1
   (define-key global-map (kbd "<s-S-return>") #'shell))
 
-(require 'calendar)
-(with-eval-after-load 'calendar
+(prot-emacs-builtin-package 'calendar
   (setq calendar-mark-diary-entries-flag nil)
   (setq calendar-time-display-form
         '(24-hours ":" minutes
@@ -1313,35 +1304,29 @@ sure this is a good approach."
 
   (add-hook 'calendar-today-visible-hook #'calendar-mark-today))
 
-(require 'org-journal)
-(with-eval-after-load 'org-journal
+(prot-emacs-builtin-package 'org-journal
   (setq org-journal-dir "~/Documents/journal")
   (setq org-journal-file-format "%Y-%m-%d")
-  (setq org-journal-date-format "%A, %d %B %Y")
-  (define-key dp-prefix-map (kbd "j") #'org-journal-new-entry))
+  (setq org-journal-date-format "%A, %d %B %Y"))
 
-(require 'auth-source-pass)
-(with-eval-after-load 'auth-source-pass
-  (add-to-list 'prot-emacs-ensure-install 'auth-source-pass)
+(prot-emacs-elpa-package 'auth-source-pass
   (auth-source-pass-enable))
 (setq user-full-name "David Porter")
 (setq user-mail-address "david@daporter.net")
 
-(require 'mm-encode)
-(with-eval-after-load 'mm-encode
+(prot-emacs-builtin-package 'mm-encode
   (setq mm-encrypt-option 'guided)
   (setq mm-sign-option 'guided))
 
-(require 'mml-sec)
-(with-eval-after-load 'mml-sec
+(prot-emacs-builtin-package 'mml-sec
   (setq mml-secure-openpgp-encrypt-to-self t)
   (setq mml-secure-openpgp-sign-with-sender t)
   (setq mml-secure-smime-encrypt-to-self t)
   (setq mml-secure-smime-sign-with-sender t))
 
-(require 'message)
-(with-eval-after-load 'message
+(prot-emacs-builtin-package 'message
   (setq mail-user-agent 'message-user-agent)
+  (setq mail-header-separator (purecopy "* * *"))
   (setq compose-mail-user-agent-warnings nil)
   (setq message-mail-user-agent nil)    ; default is `gnus'
   (setq mail-signature "David Porter\n")
@@ -1376,8 +1361,7 @@ Add this function to `message-header-setup-hook'."
   (add-hook 'message-header-setup-hook #'prot/message-header-add-gcc)
   (add-hook 'message-setup-hook #'message-sort-headers))
 
-(require 'gnus)
-(with-eval-after-load 'gnus
+(prot-emacs-builtin-package 'gnus
   (require 'gnus-sum)
   (require 'gnus-dired)
   (require 'gnus-topic)
@@ -1543,12 +1527,10 @@ Add this function to `message-header-setup-hook'."
     (define-key map (kbd "C-M-p") #'gnus-summary-prev-group)
     (define-key map (kbd "C-M-^") #'gnus-summary-refer-thread)))
 
-(require 'nnmail)
-(with-eval-after-load 'nnmail
+(prot-emacs-builtin-package 'nnmail
   (setq nnmail-expiry-wait 30))         ; careful with this
 
-(require 'smtpmail)
-(with-eval-after-load 'smtpmail
+(prot-emacs-builtin-package 'smtpmail
   (setq send-mail-function 'smtpmail-send-it)
   (setq smtpmail-smtp-user "david@daporter.net")
   (setq smtpmail-smtp-server "smtp.migadu.com")
@@ -1556,17 +1538,61 @@ Add this function to `message-header-setup-hook'."
   (setq smtpmail-stream-type 'ssl)
   (setq smtpmail-queue-mail nil))
 
-(require 'mbsync)
-(with-eval-after-load 'mbsync
-  (add-to-list 'prot-emacs-ensure-install 'mbsync)
+(prot-emacs-elpa-package 'ebdb
+  (require 'ebdb-gnus)
+  (require 'ebdb-message)
+  (setq ebdb-sources (locate-user-emacs-file "ebdb.gpg"))
+  (setq ebdb-permanent-ignores-file (locate-user-emacs-file "ebdb-permanent-ignores"))
+
+  (setq ebdb-mua-pop-up nil)
+  (setq ebdb-gnus-window-size 0.25)
+  (setq ebdb-mua-default-formatter ebdb-default-multiline-formatter)
+
+  (setq ebdb-mua-auto-update-p 'existing)
+  (setq ebdb-gnus-auto-update-p 'existing)
+  (setq ebdb-mua-reader-update-p 'existing)
+  (setq ebdb-mua-sender-update-p 'create)
+  (setq ebdb-message-auto-update-p 'create)
+
+  (setq ebdb-message-try-all-headers t)
+  (setq ebdb-message-headers
+        '((sender "From" "Resent-From" "Reply-To" "Sender")
+          (recipients "Resent-To" "Resent-Cc" "Resent-CC" "To" "Cc" "CC" "Bcc" "BCC")))
+  (setq ebdb-message-all-addresses t)
+
+  (setq ebdb-complete-mail 'capf)
+  (setq ebdb-mail-avoid-redundancy t)
+  (setq ebdb-completion-display-record nil)
+  (setq ebdb-complete-mail-allow-cycling nil)
+
+  (setq ebdb-record-self "2b34a2ee-7521-454a-8191-3b8ef5153dcc")
+  (setq ebdb-user-name-address-re 'self) ; match the above
+  (setq ebdb-save-on-exit t)
+
+  (setq ebdb-use-diary nil)   ; how can I banish the diary from my life?
+
+  (defun prot/ebdb-message-setup ()
+    "Load EBDB if not done already."
+    (unless ebdb-db-list
+      (ebdb-load)))
+
+  (add-hook 'message-setup-hook #'prot/ebdb-message-setup)
+
+  (let ((map ebdb-mode-map))
+    (define-key map (kbd "D") #'ebdb-delete-field-or-record)
+    (define-key map (kbd "M") #'ebdb-email) ; disables `ebdb-mail-each'
+    (define-key map (kbd "m") #'ebdb-toggle-record-mark)
+    (define-key map (kbd "t") #'ebdb-toggle-all-record-marks)
+    (define-key map (kbd "T") #'ebdb-toggle-records-format) ; disables `ebdb-toggle-all-records-format'
+    (define-key map (kbd "U") #'ebdb-unmark-all-records)))
+
+(prot-emacs-elpa-package 'mbsync
   (setq mbsync-verbose 'verbose)
   (add-hook 'mbsync-exit-hook (lambda ()
                                 (gnus-group-get-new-news 1)))
   (define-key gnus-group-mode-map (kbd "f") #'mbsync))
 
-(require 'elfeed)
-(with-eval-after-load 'elfeed
-  (add-to-list 'prot-emacs-ensure-install 'elfeed)
+(prot-emacs-elpa-package 'elfeed
   (setq elfeed-use-curl t)
   (setq elfeed-curl-max-connections 10)
   (setq elfeed-db-directory (concat user-emacs-directory "elfeed/"))
@@ -1580,7 +1606,9 @@ Add this function to `message-header-setup-hook'."
   (setq elfeed-show-truncate-long-urls t)
   (setq elfeed-show-unique-buffers t)
   (setq elfeed-search-date-format '("%F %R" 16 :left))
-  (require 'prot-elfeed-bongo)
+
+  (prot-emacs-builtin-package 'prot-elfeed-bongo)
+
   (define-key global-map (kbd "C-c e") #'elfeed)
   (let ((map elfeed-search-mode-map))
     (define-key map (kbd "w") #'elfeed-search-yank)
@@ -1589,29 +1617,28 @@ Add this function to `message-header-setup-hook'."
     (define-key map (kbd "b") #'prot-elfeed-bongo-insert-item)
     (define-key map (kbd "h") #'prot-elfeed-bongo-switch-to-playlist)) ; "hop" mnemonic
   (let ((map elfeed-show-mode-map))
-    (define-key map (kbd "w") #'elfeed-show-yank)))
+    (define-key map (kbd "w") #'elfeed-show-yank)
+    (define-key map (kbd "b") #'prot-elfeed-bongo-insert-item)))
 
-(require 'prot-elfeed)
-(with-eval-after-load 'prot-elfeed
-  (setq prot-elfeed-tag-faces t)
-  (prot-elfeed-fontify-tags)
-  (add-hook 'elfeed-search-mode-hook #'prot-elfeed-load-feeds)
-  (let ((map elfeed-search-mode-map))
-    (define-key map (kbd "s") #'prot-elfeed-search-tag-filter)
-    (define-key map (kbd "o") #'prot-elfeed-search-open-other-window)
-    (define-key map (kbd "q") #'prot-elfeed-kill-buffer-close-window-dwim)
-    (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
-    (define-key map (kbd "+") #'prot-elfeed-toggle-tag))
-  (let ((map elfeed-show-mode-map))
-    (define-key map (kbd "a") #'prot-elfeed-show-archive-entry)
-    (define-key map (kbd "e") #'prot-elfeed-show-eww)
-    (define-key map (kbd "q") #'prot-elfeed-kill-buffer-close-window-dwim)
-    (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
-    (define-key map (kbd "+") #'prot-elfeed-toggle-tag)
-    (define-key map (kbd "b") #'elfeed-show-visit)))
+(with-eval-after-load 'elfeed
+  (prot-emacs-builtin-package 'prot-elfeed
+    (setq prot-elfeed-tag-faces t)
+    (prot-elfeed-fontify-tags)
+    (add-hook 'elfeed-search-mode-hook #'prot-elfeed-load-feeds)
+    (let ((map elfeed-search-mode-map))
+      (define-key map (kbd "s") #'prot-elfeed-search-tag-filter)
+      (define-key map (kbd "o") #'prot-elfeed-search-open-other-window)
+      (define-key map (kbd "q") #'prot-elfeed-kill-buffer-close-window-dwim)
+      (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
+      (define-key map (kbd "+") #'prot-elfeed-toggle-tag))
+    (let ((map elfeed-show-mode-map))
+      (define-key map (kbd "a") #'prot-elfeed-show-archive-entry)
+      (define-key map (kbd "e") #'prot-elfeed-show-eww)
+      (define-key map (kbd "q") #'prot-elfeed-kill-buffer-close-window-dwim)
+      (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
+      (define-key map (kbd "+") #'prot-elfeed-toggle-tag))))
 
-(require 'reftex)
-(with-eval-after-load 'reftex
+(prot-emacs-builtin-package 'reftex
   (setq reftex-default-bibliography
         '("~/Documents/bibliography/references.bib"))
 
@@ -1623,8 +1650,7 @@ Add this function to `message-header-setup-hook'."
              (?f . "[#%l]: %a. *%t*. %d, %u, %y, %p %<."))))
       (reftex-citation))))
 
-(require 'bibtex)
-(with-eval-after-load 'bibtex
+(prot-emacs-builtin-package 'bibtex
   (setq bibtex-dialect 'biblatex)
   (setq bibtex-align-at-equal-sign t)
   (setq bibtex-autokey-name-year-separator "")
@@ -1634,8 +1660,7 @@ Add this function to `message-header-setup-hook'."
   (setq bibtex-autokey-titlewords 1)
   (setq bibtex-autokey-titlewords-stretch 0))
 
-(require 'ebib)
-(with-eval-after-load 'ebib
+(prot-emacs-elpa-package 'ebib
   (setq ebib-bibtex-dialect bibtex-dialect)
   (setq ebib-preload-bib-files reftex-default-bibliography)
   (add-to-list 'ebib-reference-templates
@@ -1662,24 +1687,18 @@ must be installed."
 (define-key global-map (kbd "C-c b b") #'dp-insert-zotero-bibliography)
 (define-key global-map (kbd "C-c b c") #'dp-insert-zotero-citation)
 
-(require 'proced)
-(with-eval-after-load 'proced
+(prot-emacs-elpa-package 'proced
   (setq proced-auto-update-flag t)
   (setq proced-auto-update-interval 1)
   (setq proced-descend t)
   (setq proced-filter 'user))
 
-(require 'password-store)
-(with-eval-after-load 'password-store
-  (add-to-list 'prot-emacs-ensure-install 'password-store)
+(prot-emacs-elpa-package 'password-store
   (setq password-store-time-before-clipboard-restore 30))
 
-(require 'pass)
-(with-eval-after-load 'pass
-  (add-to-list 'prot-emacs-ensure-install 'pass))
+(prot-emacs-elpa-package 'pass)
 
-(require 'shr)
-(with-eval-after-load 'shr
+(prot-emacs-builtin-package 'shr
   (setq shr-use-fonts nil)
   (setq shr-use-colors nil)
   (setq shr-max-image-proportion 0.7)
@@ -1688,8 +1707,7 @@ must be installed."
 
 ;; TODO 2021-01-19: Everything about eww is subject to review.  It is
 ;; not in a good state.
-(require 'eww)
-(with-eval-after-load 'eww
+(prot-emacs-builtin-package 'eww
   (setq eww-restore-desktop nil)
   (setq eww-desktop-remove-duplicates t)
   (setq eww-header-line-format "%u")
@@ -1739,18 +1757,12 @@ must be installed."
     (define-key map (kbd "N") #'eww-next-url)
     (define-key map (kbd "P") #'eww-previous-url)))
 
-(require 'debian-el)
-(with-eval-after-load 'debian-el
-  (add-to-list 'prot-emacs-ensure-install 'debian-el))
+(prot-emacs-elpa-package 'debian-el)
 
-(require 'beginend)
-(with-eval-after-load 'beginend
-  (add-to-list 'prot-emacs-ensure-install 'beginend)
+(prot-emacs-elpa-package 'beginend
   (beginend-global-mode 1))
 
-(require 'goto-last-change)
-(with-eval-after-load 'goto-last-change
-  (add-to-list 'prot-emacs-ensure-install 'goto-last-change)
+(prot-emacs-elpa-package 'goto-last-change
   (define-key global-map (kbd "C-z") #'goto-last-change))
 
 (setq mode-line-percent-position '(-3 "%p"))
@@ -1763,15 +1775,15 @@ must be installed."
 ;; because I am using Daniel's `recursion-indicator':
 ;; <https://github.com/minad/recursion-indicator>.
 (setq-default mode-line-modes
-	      (seq-filter (lambda (s)
+	          (seq-filter (lambda (s)
                             (not (and (stringp s)
-				      (string-match-p
-				       "^\\(%\\[\\|%\\]\\)$" s))))
+				                      (string-match-p
+				                       "^\\(%\\[\\|%\\]\\)$" s))))
                           mode-line-modes))
 
 (setq mode-line-compact nil)            ; Emacs 28
 (setq-default mode-line-format
-	      '("%e"
+	          '("%e"
                 mode-line-front-space
                 mode-line-mule-info
                 mode-line-client
@@ -1788,32 +1800,24 @@ must be installed."
                 mode-line-misc-info
                 mode-line-end-spaces))
 
-(require 'moody)
-(with-eval-after-load 'moody
-  (add-to-list 'prot-emacs-ensure-install 'moody))
+(prot-emacs-elpa-package 'moody)
 
-(require 'prot-moody)
-(with-eval-after-load 'prot-moody
+(prot-emacs-builtin-package 'prot-moody
   (prot-moody-set-height -1))
 
-(require 'minions)
-(with-eval-after-load 'minions
-  (add-to-list 'prot-emacs-ensure-install 'minions)
+(prot-emacs-elpa-package 'minions
   (setq minions-mode-line-lighter ";")
   ;; NOTE: This will be expanded whenever I find a mode that should not be hidden
   (setq minions-direct (list 'defining-kbd-macro
                              'flymake-mode))
   (minions-mode 1))
 
-(require 'recursion-indicator)
-(with-eval-after-load 'recursion-indicator
-  (add-to-list 'prot-emacs-ensure-install 'recursion-indicator)
+(prot-emacs-elpa-package 'recursion-indicator
   (setq recursion-indicator-general "&")
   (setq recursion-indicator-minibuffer "@")
   (recursion-indicator-mode 1))
 
-(require 'battery)
-(with-eval-after-load 'battery
+(prot-emacs-builtin-package 'battery
   (setq battery-mode-line-format " [%b%p%%]")
   (setq battery-mode-line-limit 95)
   (setq battery-update-interval 180)
@@ -1821,8 +1825,7 @@ must be installed."
   (setq battery-load-critical 10)
   (add-hook 'after-init-hook #'display-battery-mode))
 
-(require 'time)
-(with-eval-after-load 'time
+(prot-emacs-builtin-package 'time
   (setq display-time-format "%H:%M  %Y-%m-%d")
   ;;;; Covered by `display-time-format'
   ;; (setq display-time-24hr-format t)
@@ -1853,35 +1856,29 @@ must be installed."
 (setq window-divider-default-places 'right-only)
 (add-hook 'after-init-hook #'window-divider-mode)
 
-(require 'fringe)
-(with-eval-after-load 'fringe
+(prot-emacs-builtin-package 'fringe
   (fringe-mode nil)
   (setq-default fringes-outside-margins nil)
   (setq-default indicate-buffer-boundaries nil)
   (setq-default indicate-empty-lines nil)
   (setq-default overflow-newline-into-fringe t))
 
-(require 'prot-sideline)
-(with-eval-after-load 'prot-sideline
+(prot-emacs-builtin-package 'prot-sideline
   (require 'display-line-numbers)
-  (with-eval-after-load 'display-line-numbers
-    ;; Set absolute line numbers.  A value of "relative" is also useful.
-    (setq display-line-numbers-type t)
-    ;; Those two variables were introduced in Emacs 27.1
-    (setq display-line-numbers-major-tick 0)
-    (setq display-line-numbers-minor-tick 0)
-    ;; Use absolute numbers in narrowed buffers
-    (setq-default display-line-numbers-widen t))
+  ;; Set absolute line numbers.  A value of "relative" is also useful.
+  (setq display-line-numbers-type t)
+  ;; Those two variables were introduced in Emacs 27.1
+  (setq display-line-numbers-major-tick 0)
+  (setq display-line-numbers-minor-tick 0)
+  ;; Use absolute numbers in narrowed buffers
+  (setq-default display-line-numbers-widen t)
 
-  (require 'diff-hl)
-  (with-eval-after-load 'diff-hl
-    (add-to-list 'prot-emacs-ensure-install 'diff-hl)
+  (prot-emacs-elpa-package 'diff-hl
     (setq diff-hl-draw-borders nil)
     (setq diff-hl-side 'left))
 
   (require 'hl-line)
-  (with-eval-after-load 'hl-line
-    (setq hl-line-sticky-flag nil))
+  (setq hl-line-sticky-flag nil)
 
   (require 'whitespace)
 
@@ -1890,22 +1887,17 @@ must be installed."
     (define-key map (kbd "<f7>") #'prot-sideline-mode)
     (define-key map (kbd "C-c z") #'delete-trailing-whitespace)))
 
-(require 'prot-outline)
-(with-eval-after-load 'prot-outline
+(prot-emacs-builtin-package 'prot-outline
   (define-key global-map (kbd "<f10>") #'prot-outline-minor-mode-safe))
 
-(require 'outline-minor-faces)
-(with-eval-after-load 'outline-minor-faces
-  (add-to-list 'prot-emacs-ensure-install 'outline-minor-faces)
+(prot-emacs-elpa-package 'outline-minor-faces
   (add-hook 'prot-outline-minor-mode-enter-hook
-	    #'outline-minor-faces-add-font-lock-keywords))
+	        #'outline-minor-faces-add-font-lock-keywords))
 
-(require 'prot-cursor)
-(with-eval-after-load 'prot-cursor
+(prot-emacs-builtin-package 'prot-cursor
   (prot-cursor-presentation-mode -1))
 
-(require 'mouse)
-(with-eval-after-load 'mouse
+(prot-emacs-builtin-package 'mouse
   ;; In Emacs 27+, use Control + mouse wheel to scale text.
   (setq mouse-wheel-scroll-amount
         '(1
@@ -1916,18 +1908,17 @@ must be installed."
   (setq make-pointer-invisible t)
   (setq mouse-wheel-progressive-speed t)
   (setq mouse-wheel-follow-mouse t)
-  (add-hook 'after-init-hook #'mouse-wheel-mode))
+  (add-hook 'after-init-hook #'mouse-wheel-mode)
+  (define-key global-map (kbd "C-M-<mouse-3>") #'mouse-tear-off-window))
 
 (setq-default scroll-preserve-screen-position t)
 (setq-default scroll-conservatively 1) ; affects `scroll-step'
 (setq-default scroll-margin 0)
 
-(require 'delsel)
-(with-eval-after-load 'delsel
+(prot-emacs-builtin-package 'delsel
   (add-hook 'after-init-hook #'delete-selection-mode))
 
-(require 'tooltip)
-(with-eval-after-load 'tooltip
+(prot-emacs-builtin-package 'tooltip
   (setq tooltip-delay 0.5)
   (setq tooltip-short-delay 0.5)
   (setq x-gtk-use-system-tooltips nil)
@@ -1938,16 +1929,13 @@ must be installed."
           (no-special-glyphs . t)))
   (add-hook 'after-init-hook #'tooltip-mode))
 
-(require 'autorevert)
-(with-eval-after-load 'autorevert
+(prot-emacs-builtin-package 'autorevert
   (setq auto-revert-verbose t)
   (add-hook 'after-init-hook #'global-auto-revert-mode))
 
 (setq save-interprogram-paste-before-kill t)
 
-(require 'goggles)
-(with-eval-after-load 'goggles
-  (add-to-list 'prot-emacs-ensure-install 'goggles)
+(prot-emacs-elpa-package 'goggles
   (setq-default goggles-pulse t)
   (goggles-mode 1))
 
@@ -1958,8 +1946,7 @@ must be installed."
 (define-key global-map (kbd "M-z") #'zap-up-to-char)
 (define-key global-map (kbd "s-z") #'repeat)
 
-(require 'package)
-(with-eval-after-load 'package
+(prot-emacs-builtin-package 'package
   ;; All variables are for Emacs 28+
   (setq package-name-column-width 40)
   (setq package-version-column-width 14)
@@ -1967,10 +1954,9 @@ must be installed."
   (setq package-archive-column-width 8)
   (add-hook 'package-menu-mode-hook #'hl-line-mode))
 
-(require 'text-mode)
+(prot-emacs-builtin-package 'text-mode)
 
-(require 'prot-text)
-(with-eval-after-load 'prot-text
+(prot-emacs-builtin-package 'prot-text
   (add-to-list 'auto-mode-alist '("\\(README\\|CHANGELOG\\|COPYING\\|LICENSE\\)$" . text-mode))
   (add-hook 'text-mode-hook #'goto-address-mode)
   (let ((map text-mode-map))
@@ -1978,40 +1964,29 @@ must be installed."
     (define-key map (kbd "M-;") #'prot-text-cite-region))
   (define-key org-mode-map (kbd "M-;") nil))
 
-(require 'markdown-mode)
-(with-eval-after-load 'markdown-mode
-  (add-to-list 'prot-emacs-ensure-install 'markdown-mode)
-  ;; Allows for fenced block focus with C-c ' (same as Org blocks).
-  (require 'edit-indirect)
-  (add-to-list 'prot-emacs-ensure-install 'edit-indirect)
-  (setq markdown-fontify-code-blocks-natively t)
-  (setq markdown-asymmetric-header t)
-  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode)))
+(prot-emacs-elpa-package 'markdown-mode
+  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+  (setq markdown-fontify-code-blocks-natively t))
+;; Allows for fenced block focus with C-c ' (same as Org blocks).
+(prot-emacs-elpa-package 'edit-indirect)
 
-(require 'pandoc-mode)
-(with-eval-after-load 'pandoc-mode
-  (add-to-list 'prot-emacs-ensure-install 'pandoc-mode)
+(prot-emacs-elpa-package 'pandoc-mode
   (add-hook 'markdown-mode-hook #'pandoc-mode)
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
   (add-hook 'pandoc-async-success-hook #'pandoc-view-output))
 
-(require 'yaml-mode)
-(with-eval-after-load 'yaml-mode
-  (add-to-list 'prot-emacs-ensure-install 'yaml-mode)
+(prot-emacs-elpa-package 'yaml-mode
   (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode)))
 
-(require 'css-mode)
-(with-eval-after-load 'css-mode
+(prot-emacs-builtin-package 'css-mode
   (add-to-list 'auto-mode-alist '("\\.css$" . css-mode))
   (add-to-list 'auto-mode-alist '("\\.scss$" . scss-mode))
   (setq css-fontify-colors nil))
 
-(require 'sh-script)
-(with-eval-after-load 'sh-script
+(prot-emacs-builtin-package 'sh-script
   (add-to-list 'auto-mode-alist '("PKGBUILD" . sh-mode)))
 
-(require 'prot-fill)
-(with-eval-after-load 'prot-fill
+(prot-emacs-builtin-package 'prot-fill
   (setq prot-fill-default-column 72)
   (setq prot-fill-prog-mode-column 72)  ; Set this to another value if you want
   ;; Those variables come from various sources, though they feel part of the
@@ -2024,8 +1999,7 @@ must be installed."
   (prot-fill-fill-mode 1)
   (add-hook 'after-init-hook #'column-number-mode))
 
-(require 'newcomment)
-(with-eval-after-load 'newcomment
+(prot-emacs-builtin-package 'newcomment
   (setq comment-empty-lines t)
   (setq comment-fill-column nil)
   (setq comment-multi-line t)
@@ -2034,16 +2008,14 @@ must be installed."
     (define-key map (kbd "C-:") #'comment-kill)         ; C-S-;
     (define-key map (kbd "M-;") #'comment-indent)))
 
-(require 'prot-comment)
-(with-eval-after-load 'prot-comment
+(prot-emacs-builtin-package 'prot-comment
   (setq prot-comment-comment-keywords
         '("TODO" "NOTE" "XXX" "REVIEW" "FIXME"))
   (let ((map global-map))
     (define-key map (kbd "C-;") #'prot-comment-comment-dwim)
     (define-key map (kbd "C-x C-;") #'prot-comment-timestamp-keyword)))
 
-(require 'electric)
-(with-eval-after-load 'electric
+(prot-emacs-builtin-package 'electric
   (setq electric-pair-inhibit-predicate'electric-pair-conservative-inhibit)
   (setq electric-pair-preserve-balance t)
   (setq electric-pair-pairs
@@ -2064,8 +2036,7 @@ must be installed."
   (electric-pair-mode -1)
   (electric-quote-mode -1))
 
-(require 'paren)
-(with-eval-after-load 'paren
+(prot-emacs-builtin-package 'paren
   (setq show-paren-style 'parenthesis)
   (setq show-paren-when-point-in-periphery nil)
   (setq show-paren-when-point-inside-paren nil)
@@ -2076,16 +2047,14 @@ must be installed."
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 
-(require 'flyspell)
-(with-eval-after-load 'flyspell
+(prot-emacs-builtin-package 'flyspell
   (setq flyspell-issue-message-flag nil)
   (setq flyspell-issue-welcome-flag nil)
   (setq ispell-program-name "aspell")
   (setq ispell-dictionary "en_GB")
   (define-key flyspell-mode-map (kbd "C-;") nil))
 
-(require 'prot-spell)
-(with-eval-after-load 'prot-spell
+(prot-emacs-builtin-package 'prot-spell
   (setq prot-spell-dictionaries
         '(("EN English" . "en")
           ("FR Français" . "fr")
@@ -2095,8 +2064,7 @@ must be installed."
     (define-key map (kbd "M-$") #'prot-spell-spell-dwim)
     (define-key map (kbd "C-M-$") #'prot-spell-change-dictionary)))
 
-(require 'flymake)
-(with-eval-after-load 'flymake
+(prot-emacs-builtin-package 'flymake
   (setq flymake-fringe-indicator-position 'left-fringe)
   (setq flymake-suppress-zero-counters t)
   (setq flymake-start-on-flymake-mode t)
@@ -2106,46 +2074,37 @@ must be installed."
   (setq flymake-wrap-around nil)
 
   (add-hook 'markdown-mode-hook #'flymake-mode)
-  
+
   (let ((map flymake-mode-map))
     (define-key map (kbd "C-c ! s") #'flymake-start)
     (define-key map (kbd "C-c ! d") #'flymake-show-diagnostics-buffer)
     (define-key map (kbd "C-c ! n") #'flymake-goto-next-error)
     (define-key map (kbd "C-c ! p") #'flymake-goto-prev-error)))
 
-(require 'flymake-diagnostic-at-point)
-(with-eval-after-load 'flymake-diagnostic-at-point
-  (add-to-list 'prot-emacs-ensure-install 'flymake-diagnostic-at-point)
+(prot-emacs-elpa-package 'flymake-diagnostic-at-point
   (setq flymake-diagnostic-at-point-display-diagnostic-function
         'flymake-diagnostic-at-point-display-minibuffer))
 
-(require 'flymake-proselint)
-(with-eval-after-load 'flymake-proselint
-  (add-to-list 'prot-emacs-ensure-install 'flymake-proselint)
+(prot-emacs-elpa-package 'flymake-proselint
   (add-hook 'markdown-mode-hook #'flymake-proselint-setup)
   (add-hook 'org-mode-hook #'flymake-proselint-setup)
   (add-hook 'text-mode-hook #'flymake-proselint-setup))
 
-(require 'flymake-markdownlint)
-(with-eval-after-load 'flymake-markdownlint
+(prot-emacs-builtin-package 'flymake-markdownlint
   (add-hook 'markdown-mode-hook #'flymake-markdownlint-setup))
 
-(require 'eldoc)
-(with-eval-after-load 'eldoc
+(prot-emacs-builtin-package 'eldoc
   (global-eldoc-mode 1))
 
-(require 'man)
-(with-eval-after-load 'man
+(prot-emacs-builtin-package 'man
   (let ((map Man-mode-map))
     (define-key map (kbd "i") #'Man-goto-section)
     (define-key map (kbd "g") #'Man-update-manpage)))
 
-(require 'server)
-(with-eval-after-load 'server
+(prot-emacs-builtin-package 'server
   (add-hook 'after-init-hook #'server-start))
 
-(require 'desktop)
-(with-eval-after-load 'desktop
+(prot-emacs-builtin-package 'desktop
   (setq desktop-auto-save-timeout 300)
   (setq desktop-path `(,user-emacs-directory))
   (setq desktop-base-file-name "desktop")
@@ -2158,17 +2117,15 @@ must be installed."
   (setq desktop-save 'ask-if-new)
   (desktop-save-mode 1))
 
-(require 'savehist)
-(with-eval-after-load 'savehist
-  (setq savehist-file (concat user-emacs-directory "savehist"))
+(prot-emacs-builtin-package 'savehist
+  (setq savehist-file (locate-user-emacs-file "savehist"))
   (setq history-length 1000)
   (setq history-delete-duplicates t)
   (setq savehist-save-minibuffer-history t)
   (add-hook 'after-init-hook #'savehist-mode))
 
-(require 'saveplace)
-(with-eval-after-load 'saveplace
-  (setq save-place-file (concat user-emacs-directory "saveplace"))
+(prot-emacs-builtin-package 'saveplace
+  (setq save-place-file (locate-user-emacs-file "saveplace"))
   (setq save-place-forget-unreadable-files t)
   (save-place-mode 1))
 
