@@ -1964,6 +1964,9 @@ must be installed."
     (define-key map (kbd "M-;") #'prot-text-cite-region))
   (define-key org-mode-map (kbd "M-;") nil))
 
+(prot-emacs-builtin-package 'titlecase
+  (global-set-key (kbd "C-c t") #'titlecase-dwim))
+
 (prot-emacs-elpa-package 'markdown-mode
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
   (setq markdown-fontify-code-blocks-natively t))
