@@ -1684,9 +1684,6 @@ must be installed."
    "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-citation"
    t))
 
-(define-key global-map (kbd "C-c b b") #'dp-insert-zotero-bibliography)
-(define-key global-map (kbd "C-c b c") #'dp-insert-zotero-citation)
-
 (prot-emacs-elpa-package 'proced
   (setq proced-auto-update-flag t)
   (setq proced-auto-update-interval 1)
@@ -1961,7 +1958,9 @@ must be installed."
   (add-hook 'text-mode-hook #'goto-address-mode)
   (let ((map text-mode-map))
     (define-key map (kbd "<M-return>") #'prot-text-insert-heading)
-    (define-key map (kbd "M-;") #'prot-text-cite-region))
+    (define-key map (kbd "M-;") #'prot-text-cite-region)
+    (define-key map (kbd "C-c b") #'dp-insert-zotero-bibliography)
+    (global-set-key (kbd "C-c c") #'dp-insert-zotero-citation))
   (define-key org-mode-map (kbd "M-;") nil))
 
 (prot-emacs-builtin-package 'titlecase
@@ -2171,3 +2170,5 @@ must be installed."
   (add-hook 'god-mode-disabled-hook #'my-god-mode-update-modeline)
   
   (god-mode))
+
+(global-set-key (kbd "C-c p") #'package-list-packages)
