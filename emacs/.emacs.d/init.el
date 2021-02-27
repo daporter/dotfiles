@@ -2140,3 +2140,34 @@ must be installed."
 (setq kept-new-versions 6)
 (setq kept-old-versions 2)
 (setq create-lockfiles nil)
+
+(prot-emacs-elpa-package 'god-mode
+  (require 'god-mode-isearch)
+  (define-key isearch-mode-map (kbd "<escape>") #'god-mode-isearch-activate)
+  (define-key god-mode-isearch-map (kbd "<escape>") #'god-mode-isearch-disable)
+
+  (global-set-key (kbd "<escape>") #'god-mode-all)
+  (global-set-key (kbd "C-x C-1") #'delete-other-windows)
+  (global-set-key (kbd "C-x C-2") #'split-window-below)
+  (global-set-key (kbd "C-x C-3") #'split-window-right)
+  (global-set-key (kbd "C-x C-0") #'delete-window)
+  (define-key god-local-mode-map (kbd ".") #'repeat)
+
+  (setq god-exempt-major-modes nil)
+  (setq god-exempt-predicates nil)
+  
+  (defun my-god-mode-update-modeline ()
+    (if (bound-and-true-p god-local-mode)
+        (progn
+          (setq cursor-type 'box)
+          (set-face-background 'mode-line
+                               (modus-themes-color 'magenta-subtle-bg)))
+      (progn
+        (setq cursor-type 'bar)
+        (set-face-background 'mode-line
+                             (modus-themes-color 'bg-active)))))
+
+  (add-hook 'god-mode-enabled-hook #'my-god-mode-update-modeline)
+  (add-hook 'god-mode-disabled-hook #'my-god-mode-update-modeline)
+  
+  (god-mode))
