@@ -19,3 +19,7 @@ Patterns *
 Create Both
 #Expunge Both
 SyncState *
+
+# For details of the following setting, see
+# https://vxlabs.com/2021/03/21/mbsync-copyarrivaldate-yes/
+CopyArrivalDate yes
