@@ -279,8 +279,8 @@ expressions."
                       :fixed-pitch-heavy-weight bold
                       :fixed-pitch-height 90
                       :fixed-pitch-line-spacing 1
-                      :variable-pitch-family "FiraGO"
-                      :variable-pitch-height 0.9
+                      :variable-pitch-family "Noto Serif"
+                      :variable-pitch-height 1.1
                       :variable-pitch-regular-weight normal))
 
           (desktop . ( :fixed-pitch-family "Hack"
@@ -288,8 +288,8 @@ expressions."
                        :fixed-pitch-heavy-weight bold
                        :fixed-pitch-height 110
                        :fixed-pitch-line-spacing nil
-                       :variable-pitch-family "FiraGO"
-                       :variable-pitch-height 0.9
+                       :variable-pitch-family "Noto Serif"
+                       :variable-pitch-height 1.1
                        :variable-pitch-regular-weight normal))
 
           (presentation . ( :fixed-pitch-family "Hack"
