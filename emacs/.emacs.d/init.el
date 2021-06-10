@@ -295,7 +295,7 @@ expressions."
           (presentation . ( :fixed-pitch-family "Hack"
                             :fixed-pitch-regular-weight normal
                             :fixed-pitch-heavy-weight bold
-                            :fixed-pitch-height 150
+                            :fixed-pitch-height 130
                             :fixed-pitch-line-spacing nil
                             :variable-pitch-family "Source Sans Pro"
                             :variable-pitch-height 1.0
@@ -941,7 +941,7 @@ If region is active, add its contents to the new buffer."
           ("\\*.*\\(e?shell\\|v?term\\).*"
            (display-buffer-reuse-mode-window display-buffer-at-bottom)
            (window-height . 0.2))
-          ;; below currect window
+          ;; below current window
           ("\\*Calendar.*"
            (display-buffer-reuse-mode-window display-buffer-below-selected)
            (window-height . shrink-window-if-larger-than-buffer))))
@@ -1505,7 +1505,7 @@ Add this function to `message-header-setup-hook'."
             :key ,(kbd "b g"))))
 
 ;;;; Tags
-  (setq notmuch-archive-tags '("-inbox" "+archived"))
+  (setq notmuch-archive-tags '("-inbox" "-unread" "+archived"))
   (setq notmuch-message-replied-tags '("+replied"))
   (setq notmuch-message-forwarded-tags '("+forwarded"))
   (setq notmuch-show-mark-read-tags '("-unread"))
@@ -1545,7 +1545,7 @@ Add this function to `message-header-setup-hook'."
                 "pi[èe]ce\s+jointe?\\|"
                 "συνημμ[εέ]νο\\|επισυν[αά]πτω\\)\\b"))
 
-;;;; Reading messsages
+;;;; Reading messages
   (setq notmuch-show-relative-dates t)
   (setq notmuch-show-all-multipart/alternative-parts nil)
   (setq notmuch-show-indent-messages-width 0)
@@ -1617,7 +1617,7 @@ Add this function to `message-header-setup-hook'."
 (prot-emacs-elpa-package 'ebdb
   (require 'ebdb-message)
   (require 'ebdb-notmuch) ; FIXME 2021-05-13: does not activate the corfu-mode UI
-  (setq ebdb-sources (locate-user-emacs-file "ebdb"))
+  (setq ebdb-sources (locate-user-emacs-file "ebdb.gpg"))
   (setq ebdb-permanent-ignores-file (locate-user-emacs-file "ebdb-permanent-ignores"))
 
   (setq ebdb-mua-pop-up nil)
@@ -1867,7 +1867,7 @@ Add this function to `message-header-setup-hook'."
 (prot-emacs-elpa-package 'moody)
 
 (prot-emacs-builtin-package 'prot-moody
-  ;; Addjust this and then evaluate `prot-moody-set-height'.  Not all
+  ;; Adjust this and then evaluate `prot-moody-set-height'.  Not all
   ;; fonts work equally well with the same value.
   (setq prot-moody-font-height-multiplier 1.35)
 
@@ -1912,7 +1912,7 @@ Add this function to `message-header-setup-hook'."
   (setq display-time-mail-directory nil)
   (setq display-time-mail-function nil)
   (setq display-time-use-mail-icon nil)
-  (setq display-time-mail-string nil)
+  (setq display-time-mail-string "")
   (setq display-time-mail-face nil)
 
 ;;; World clock
@@ -1932,8 +1932,7 @@ Add this function to `message-header-setup-hook'."
   (setq world-clock-timer-enable t)
   (setq world-clock-timer-second 60)
 
-                                        ;(add-hook 'after-init-hook #'display-time-mode)
-  )
+  (add-hook 'after-init-hook #'display-time-mode))
 
 (setq window-divider-default-right-width 1)
 (setq window-divider-default-bottom-width 1)
