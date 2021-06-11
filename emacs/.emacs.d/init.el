@@ -339,7 +339,7 @@ expressions."
   (setq which-key-dont-use-unicode t)
   (setq which-key-add-column-padding 2)
   (setq which-key-show-early-on-C-h nil)
-  (setq which-key-idle-delay most-positive-fixnum) ; set this to something like 0.8
+  (setq which-key-idle-delay 0.8) ; set this to something like 0.8
   (setq which-key-idle-secondary-delay 0.05)
   (setq which-key-popup-type 'side-window)
   (setq which-key-show-prefix 'echo)
