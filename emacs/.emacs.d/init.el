@@ -2332,6 +2332,26 @@ Add this function to `message-header-setup-hook'."
   (add-to-list 'ebib-reference-templates
                '("Book" . "{Author|Editor} ({Date|Year}). {\"Title\".} {Publisher.} {Doi|Url.}")))
 
+(prot-emacs-elpa-package 'debian-el)
+
+(prot-emacs-builtin-package 'titlecase
+  (global-set-key (kbd "C-c t") #'titlecase-dwim))
+
+(prot-emacs-elpa-package 'pandoc-mode
+  (add-hook 'markdown-mode-hook #'pandoc-mode)
+  (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
+  (add-hook 'pandoc-async-success-hook #'pandoc-view-output))
+
+(prot-emacs-builtin-package 'flymake-markdownlint
+  (add-hook 'markdown-mode-hook #'flymake-markdownlint-setup))
+
+(prot-emacs-elpa-package 'anki-editor
+  (define-key org-mode-map (kbd "C-c a n") 'anki-editor-insert-note)
+  (define-key org-mode-map (kbd "C-c a c") 'anki-editor-cloze-region)
+  (define-key org-mode-map (kbd "C-c a p") 'anki-editor-push-notes))
+
+(global-set-key (kbd "C-c p") #'package-list-packages)
+
 (defun dp-insert-zotero-bibliography ()
   "Invoke the Zotero reference chooser and insert the bibliography chosen.
 Note: Zotero must be running and the `Better BibTeX' extension
@@ -2354,20 +2374,18 @@ must be installed."
   (define-key map (kbd "C-c z b") #'dp-insert-zotero-bibliography)
   (define-key map (kbd "C-c z c") #'dp-insert-zotero-citation))
 
-(prot-emacs-elpa-package 'debian-el)
+(defun dp-look-up-in-wiktionary ()
+  "Look up the region or the word at point in Wiktionary.org."
+  (interactive)
+  (let ((word (if (use-region-p)
+                  (buffer-substring-no-properties (region-beginning)
+                                                  (region-end))
+                (current-word))))
+    (browse-url (concat "https://en.wiktionary.org/wiki/"
+                        (replace-regexp-in-string " " "_" word)))))
 
-(global-set-key (kbd "C-c p") #'package-list-packages)
-
-(prot-emacs-builtin-package 'titlecase
-  (global-set-key (kbd "C-c t") #'titlecase-dwim))
-
-(prot-emacs-elpa-package 'pandoc-mode
-  (add-hook 'markdown-mode-hook #'pandoc-mode)
-  (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
-  (add-hook 'pandoc-async-success-hook #'pandoc-view-output))
-
-(prot-emacs-builtin-package 'flymake-markdownlint
-  (add-hook 'markdown-mode-hook #'flymake-markdownlint-setup))
+(global-set-key (kbd "C-c c") 'dp-look-up-in-wiktionary)
 
 (provide 'init)
+
 ;;; init.el ends here
