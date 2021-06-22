@@ -286,8 +286,8 @@ expressions."
           (desktop . ( :fixed-pitch-family "Hack"
                        :fixed-pitch-regular-weight normal
                        :fixed-pitch-heavy-weight bold
-                       :fixed-pitch-height 110
-                       :fixed-pitch-line-spacing nil
+                       :fixed-pitch-height 90
+                       :fixed-pitch-line-spacing 1
                        :variable-pitch-family "Noto Serif"
                        :variable-pitch-height 1.1
                        :variable-pitch-regular-weight normal))
