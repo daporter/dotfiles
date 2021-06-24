@@ -2374,17 +2374,29 @@ must be installed."
   (define-key map (kbd "C-c z b") #'dp-insert-zotero-bibliography)
   (define-key map (kbd "C-c z c") #'dp-insert-zotero-citation))
 
-(defun dp-look-up-in-wiktionary ()
-  "Look up the region or the word at point in Wiktionary.org."
-  (interactive)
+(defun dp--browse-url-word-or-region (url-template)
+  "Browse url using URL-TEMPLATE and the region or the word at point."
   (let ((word (if (use-region-p)
                   (buffer-substring-no-properties (region-beginning)
                                                   (region-end))
-                (current-word))))
-    (browse-url (concat "https://en.wiktionary.org/wiki/"
+                (current-word nil t))))
+    (browse-url (format url-template
                         (replace-regexp-in-string " " "_" word)))))
 
-(global-set-key (kbd "C-c c") 'dp-look-up-in-wiktionary)
+(defun dp-query-wiktionary ()
+  "Query en.wiktionary.org for the region or the word at point."
+  (interactive)
+  (dp--browse-url-word-or-region "https://en.wiktionary.org/wiki/%s#English"))
+
+(defun dp-query-powerthesaurus ()
+  "Query www.powerthesaurus.org for the region or the word at point."
+  (interactive)
+  (dp--browse-url-word-or-region "https://www.powerthesaurus.org/%s/synonyms"))
+
+(global-set-key (kbd "C-c q w") 'dp-query-wiktionary)
+(global-set-key (kbd "C-c q p") 'dp-query-powerthesaurus)
+
+(global-set-key (kbd "M-#") 'mark-end-of-sentence)
 
 (provide 'init)
 
