@@ -2343,6 +2343,7 @@ Add this function to `message-header-setup-hook'."
   (add-hook 'pandoc-async-success-hook #'pandoc-view-output))
 
 (prot-emacs-builtin-package 'flymake-markdownlint
+  (prot-emacs-elpa-package 'flymake-quickdef)
   (add-hook 'markdown-mode-hook #'flymake-markdownlint-setup))
 
 (prot-emacs-elpa-package 'anki-editor
