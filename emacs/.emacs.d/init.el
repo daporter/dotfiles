@@ -280,7 +280,7 @@ expressions."
                       :fixed-pitch-height 90
                       :fixed-pitch-line-spacing 1
                       :variable-pitch-family "Noto Serif"
-                      :variable-pitch-height 1.1
+                      :variable-pitch-height 1.0
                       :variable-pitch-regular-weight normal))
 
           (desktop . ( :fixed-pitch-family "Hack"
@@ -289,7 +289,7 @@ expressions."
                        :fixed-pitch-height 90
                        :fixed-pitch-line-spacing 1
                        :variable-pitch-family "Noto Serif"
-                       :variable-pitch-height 1.1
+                       :variable-pitch-height 1.0
                        :variable-pitch-regular-weight normal))
 
           (presentation . ( :fixed-pitch-family "Hack"
