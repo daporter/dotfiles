@@ -297,7 +297,7 @@ expressions."
                             :fixed-pitch-heavy-weight bold
                             :fixed-pitch-height 130
                             :fixed-pitch-line-spacing nil
-                            :variable-pitch-family "Source Sans Pro"
+                            :variable-pitch-family "Noto Sans SemiCondensed"
                             :variable-pitch-height 1.0
                             :variable-pitch-regular-weight normal))))
 
@@ -1107,7 +1107,6 @@ If region is active, add its contents to the new buffer."
 
   ;; NOTE: I override lots of the defaults
   (let ((map global-map))
-    (define-key map (kbd "C-x v a") #'vc-annotate) ; `vc-update-change-log' is not in git
     (define-key map (kbd "C-x v b") #'vc-retrieve-tag)  ; "branch" switch
     (define-key map (kbd "C-x v t") #'vc-create-tag)
     (define-key map (kbd "C-x v f") #'vc-log-incoming)  ; the actual git fetch
@@ -1115,7 +1114,6 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "C-x v F") #'vc-update)        ; "F" because "P" is push
     (define-key map (kbd "C-x v d") #'vc-diff))
   (let ((map vc-dir-mode-map))
-    (define-key map (kbd "a") #'vc-annotate)
     (define-key map (kbd "b") #'vc-retrieve-tag)
     (define-key map (kbd "t") #'vc-create-tag)
     (define-key map (kbd "O") #'vc-log-outgoing)
@@ -1173,7 +1171,8 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "C-x v SPC") #'prot-vc-custom-log)
     (define-key map (kbd "C-x v g") #'prot-vc-git-grep)
     (define-key map (kbd "C-x v G") #'prot-vc-git-log-grep)
-    (define-key map (kbd "C-x v c") #'prot-vc-git-patch-dwim)
+    (define-key map (kbd "C-x v a") #'prot-vc-git-patch-apply)
+    (define-key map (kbd "C-x v c") #'prot-vc-git-patch-create-dwim)
     (define-key map (kbd "C-x v s") #'prot-vc-git-show)
     (define-key map (kbd "C-x v r") #'prot-vc-git-find-revision)
     (define-key map (kbd "C-x v B") #'prot-vc-git-blame-region-or-file)
@@ -1191,7 +1190,8 @@ If region is active, add its contents to the new buffer."
     (define-key map (kbd "M-r") #'prot-vc-git-log-edit-complete-comment))
   (let ((map log-view-mode-map))
     (define-key map (kbd "<C-tab>") #'prot-vc-log-view-toggle-entry-all)
-    (define-key map (kbd "c") #'prot-vc-git-patch-dwim)
+    (define-key map (kbd "a") #'prot-vc-git-patch-apply)
+    (define-key map (kbd "c") #'prot-vc-git-patch-create-dwim)
     (define-key map (kbd "R") #'prot-vc-git-log-reset)
     (define-key map (kbd "w") #'prot-vc-log-kill-hash)))
 
@@ -1508,16 +1508,6 @@ Add this function to `message-header-setup-hook'."
   (setq notmuch-draft-tags '("+draft"))
   (setq notmuch-draft-folder "Drafts")
   (setq notmuch-draft-save-plaintext 'ask)
-  (setq notmuch-tagging-keys
-        `((,(kbd "a") notmuch-archive-tags "Archive (remove from inbox)")
-          (,(kbd "c") ("+archived" "-inbox" "-list" "-todo" "-ref" "-unread") "Complete and archive")
-          (,(kbd "d") ("+deleted" "-inbox" "-archived" "-unread") "Mark for deletion")
-          (,(kbd "f") ("+flag" "-unread") "Flag as important")
-          ;; (,(kbd "r") notmuch-show-mark-read-tags "Mark as read")
-          (,(kbd "r") ("+ref" "-unread") "Reference for the future")
-          (,(kbd "s") ("+spam" "+deleted" "-inbox" "-unread") "Mark as spam")
-          (,(kbd "t") ("+todo" "-unread") "To-do")
-          (,(kbd "u") ("+unread") "Mark as unread")))
   (setq notmuch-tag-formats
         '(("unread" (propertize tag 'face 'notmuch-tag-unread))
           ("flag" (propertize tag 'face 'notmuch-tag-flagged))))
@@ -1567,6 +1557,20 @@ Add this function to `message-header-setup-hook'."
     (define-key map (kbd "/") #'notmuch-search-filter)))
 
 (prot-emacs-builtin-package 'prot-notmuch
+  ;; Those are for the actions that are available after pressing 'k'
+  ;; (`notmuch-tag-jump').  For direct actions, refer to the key
+  ;; bindings below.
+  (setq notmuch-tagging-keys
+        `((,(kbd "a") notmuch-archive-tags "Archive (remove from inbox)")
+          (,(kbd "c") prot-notmuch-mark-complete-tags "Complete and archive")
+          (,(kbd "d") prot-notmuch-mark-delete-tags "Mark for deletion")
+          (,(kbd "f") prot-notmuch-mark-flag-tags "Flag as important")
+          (,(kbd "s") prot-notmuch-mark-spam-tags "Mark as spam")
+          (,(kbd "t") prot-notmuch-mark-todo-tags "To-do")
+          (,(kbd "x") prot-notmuch-mark-reference-tags "Reference for the future")
+          (,(kbd "r") ("-unread") "Mark as read")
+          (,(kbd "u") ("+unread") "Mark as unread")))
+
   (setq prot-notmuch-search-field-width 100)
   (setq notmuch-hello-sections '(prot-notmuch-hello-insert-saved-searches
                                  ;; prot-notmuch-hello-insert-recent-searches
@@ -1596,8 +1600,23 @@ Add this function to `message-header-setup-hook'."
 
   (add-hook 'notmuch-hello-mode-hook #'prot-notmuch-widget-field-face-remap)
 
-  (define-key notmuch-search-mode-map (kbd "g")
-    #'prot-notmuch-refresh-buffer))
+  (let ((map notmuch-search-mode-map))
+    (define-key map (kbd "a") nil) ; the default is too easy to hit accidentally
+    (define-key map (kbd "A") #'notmuch-search-archive-thread)
+    (define-key map (kbd "D") #'prot-notmuch-search-delete-thread)
+    (define-key map (kbd "T") #'prot-notmuch-search-todo-thread)
+    (define-key map (kbd "X") #'prot-notmuch-search-reference-thread)
+    (define-key map (kbd "C") #'prot-notmuch-search-complete-thread)
+    (define-key map (kbd "S") #'prot-notmuch-search-spam-thread)
+    (define-key map (kbd "g") #'prot-notmuch-refresh-buffer))
+  (let ((map notmuch-show-mode-map))
+    (define-key map (kbd "a") nil) ; the default is too easy to hit accidentally
+    (define-key map (kbd "A") #'notmuch-show-archive-message-then-next-or-next-thread)
+    (define-key map (kbd "D") #'prot-notmuch-show-delete-message)
+    (define-key map (kbd "T") #'prot-notmuch-show-todo-message)
+    (define-key map (kbd "X") #'prot-notmuch-show-reference-message)
+    (define-key map (kbd "C") #'prot-notmuch-show-complete-message)
+    (define-key map (kbd "S") #'prot-notmuch-show-spam-message)))
 
 (prot-emacs-builtin-package 'smtpmail
   (setq smtpmail-default-smtp-server "smtp.migadu.com")
@@ -1727,6 +1746,9 @@ Add this function to `message-header-setup-hook'."
   (setq shr-discard-aria-hidden t)
   (setq shr-cookie-policy nil))
 
+(prot-emacs-builtin-package 'url-cookie
+  (setq url-cookie-untrusted-urls '(".*")))
+
 (prot-emacs-builtin-package 'eww
   (setq eww-restore-desktop t)
   (setq eww-desktop-remove-duplicates t)
@@ -1762,16 +1784,14 @@ Add this function to `message-header-setup-hook'."
   (define-key eww-bookmark-mode-map (kbd "d") #'eww-bookmark-kill)) ; same
 
 (prot-emacs-builtin-package 'prot-eww
+  (setq prot-eww-save-visited-history t) ; also check `prot-eww-save-history-file'
+
   (define-prefix-command 'prot-eww-map)
   (define-key global-map (kbd "C-c w") 'prot-eww-map)
   (define-key global-map (kbd "s-w") 'prot-eww-map)
   (let ((map prot-eww-map))
     (define-key map (kbd "b") #'prot-eww-visit-bookmark)
     (define-key map (kbd "e") #'prot-eww-browse-dwim)
-    (define-key map (kbd "a") #'prot-eww-search-arch-wiki)
-    (define-key map (kbd "A") #'prot-eww-search-arch-aur)
-    (define-key map (kbd "d") #'prot-eww-search-debbugs)
-    (define-key map (kbd "w") #'prot-eww-search-wikipedia)
     (define-key map (kbd "s") #'prot-eww-search-engine))
   (let ((map eww-mode-map))
     (define-key map (kbd "B") #'prot-eww-bookmark-page)
@@ -1782,7 +1802,9 @@ Add this function to `message-header-setup-hook'."
     (define-key map (kbd "o") #'prot-eww-open-in-other-window)
     (define-key map (kbd "E") #'prot-eww-visit-url-on-page)
     (define-key map (kbd "J") #'prot-eww-jump-to-url-on-page)
-    (define-key map (kbd "R") #'prot-eww-readable)))
+    (define-key map (kbd "R") #'prot-eww-readable)
+    (define-key map (kbd "Q") #'prot-eww-quit)))
+
 
 (prot-emacs-elpa-package 'pdf-tools
   (setq pdf-tools-enabled-modes         ; simplified from the defaults
