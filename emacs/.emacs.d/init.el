@@ -803,10 +803,6 @@ expressions."
   (define-key map "f" #'follow-mode)  ; override `font-lock-update'
   (define-key map "r" #'rename-uniquely))
 
-(with-eval-after-load 'org
-  (define-key ctl-x-x-map "i" #'contrib/org-id-headlines)
-  (define-key ctl-x-x-map "h" #'prot/ox-html))
-
 (prot-emacs-builtin-package 'uniquify
   (setq uniquify-buffer-name-style 'forward)
   (setq uniquify-strip-common-suffix t)
