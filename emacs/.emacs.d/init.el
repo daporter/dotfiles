@@ -2264,8 +2264,13 @@ Add this function to `message-header-setup-hook'."
 (setq org-capture-templates
       '(("n" "Note" entry (file "")     ; use `org-default-notes-file’
          "* %<%Y-%m-%d %H:%M>\n  %?\n  %i")))
-(global-set-key (kbd "C-c n") (lambda ()
-                                (interactive) (org-capture nil "n")))
+
+(defun dp-org-capture-note ()
+  "Run `org-capture’ with the Note template."
+  (interactive)
+  (org-capture nil "n"))
+
+(global-set-key (kbd "C-c n") #'dp-org-capture-note)
 
 (prot-emacs-builtin-package 'org-journal
   (setq org-journal-dir "~/journal")
