@@ -1,4 +1,5 @@
 *~
+*.elc
 /bin/bin/pash
 /bin/bin/shfmt
 /bspwm/.config/bspwm/bspwm_colours
@@ -20,7 +21,7 @@
 /emacs/.emacs.d/network-security.data
 /emacs/.emacs.d/nov-places
 /emacs/.emacs.d/org-journal.cache
-/emacs/.emacs.d/package-quickstart.el*
+/emacs/.emacs.d/package-quickstart.el
 /emacs/.emacs.d/projects
 /emacs/.emacs.d/prot-lisp
 /emacs/.emacs.d/recentf
