@@ -2241,6 +2241,14 @@ Add this function to `message-header-setup-hook'."
 (setq user-full-name "David Porter")
 (setq user-mail-address "david@daporter.net")
 
+;; Configure `org-capture’ for quickly storing notes.
+(setq org-default-notes-file "~/Documents/inbox/notes.org")
+(setq org-capture-templates
+      '(("n" "Note" entry (file "")     ; use `org-default-notes-file’
+         "* %<%Y-%m-%d %H:%M>\n  %?\n  %i")))
+(global-set-key (kbd "C-c n") (lambda ()
+                                (interactive) (org-capture nil "n")))
+
 (prot-emacs-builtin-package 'org-journal
   (setq org-journal-dir "~/Documents/journal")
   (setq org-journal-file-format "%Y-%m-%d")
