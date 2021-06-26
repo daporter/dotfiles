@@ -2123,11 +2123,11 @@ Add this function to `message-header-setup-hook'."
           32))
   (setq electric-quote-context-sensitive t)
   (setq electric-quote-paragraph t)
-  (setq electric-quote-string nil)
+  (setq electric-quote-string t)
   (setq electric-quote-replace-double t)
   (electric-indent-mode 1)
-  (electric-pair-mode -1)
-  (electric-quote-mode -1))
+  (electric-pair-mode 1)
+  (electric-quote-mode 1))
 
 (prot-emacs-builtin-package 'paren
   (setq show-paren-style 'parenthesis)
@@ -2312,7 +2312,7 @@ Add this function to `message-header-setup-hook'."
   (setq reftex-default-bibliography
         '("~/Documents/bibliography/references.bib"))
 
-  (defun dp/reftex-citation ()
+  (defun dp-reftex-citation ()
     (interactive)
     (let ((reftex-cite-format
            '((?\C-m . "%l")

@@ -27,13 +27,24 @@
   lctl lmet lalt           spc            ralt rmet      rctl            left down rght
 )
 
+#|
 (deflayer dvorak
   esc   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12        prnt @qwe pause
-  grv   1    2    3    4    5    6    7    8    9    0    [    ]    lsft  ins  home pgup
+  grv   1    2    3    4    5    6    7    8    9    0    [    ]    bspc  ins  home pgup
   bspc  '    ,    .    p    y    f    g    c    r    l    tab  =    \     del  end  pgdn
   pause @ame @oal @esf @uct i    d    @hct @tsf @nal @sme -    ret
-  lsft  ;    q    j    k    x    b    m    w    v    z    /                     up
-  lctl  @num lalt           @sna           @acc rmet      rctl            left down rght
+  esc   ;    q    j    k    x    b    m    w    v    z    /                     up
+  caps  @num lalt           @sna           @acc rmet      rctl            left down rght
+)
+|#
+
+(deflayer dvorak
+  esc   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12        prnt @qwe pause
+  grv   1    2    3    4    5    6    7    8    9    0    [    ]    bspc  ins  home pgup
+  tab   '    ,    .    p    y    f    g    c    r    l    /    =    \     del  end  pgdn
+  pause a    o    e    u    i    d    h    t    n    s    -    ret
+  lsft  ;    q    j    k    x    b    m    w    v    z    rsft                 up
+  lctl  lmet lalt           @sna           @acc rmet      rctl            left down rght
 )
 
 (deflayer navigation
@@ -78,7 +89,7 @@
   dvo (layer-switch dvorak)
 
   sna (tap-hold-next-release 200 spc (layer-toggle navigation))
-  acc (layer-toggle accents)
+  acc (tap-hold-next-release 200 ralt (layer-toggle accents))
   num (layer-toggle numbers)
   
   ame (tap-hold-next-release 200 a lmet)
