@@ -2238,7 +2238,7 @@ Add this function to `message-header-setup-hook'."
 (setq user-mail-address "david@daporter.net")
 
 ;; Configure `org-capture’ for quickly storing notes.
-(setq org-default-notes-file "~/Documents/inbox/notes.org")
+(setq org-default-notes-file "~/inbox/notes.org")
 (setq org-capture-templates
       '(("n" "Note" entry (file "")     ; use `org-default-notes-file’
          "* %<%Y-%m-%d %H:%M>\n  %?\n  %i")))
@@ -2246,14 +2246,14 @@ Add this function to `message-header-setup-hook'."
                                 (interactive) (org-capture nil "n")))
 
 (prot-emacs-builtin-package 'org-journal
-  (setq org-journal-dir "~/Documents/journal")
+  (setq org-journal-dir "~/journal")
   (setq org-journal-file-format "%Y-%m-%d")
   (setq org-journal-date-format "%A, %d %B %Y"))
 
 (prot-emacs-elpa-package 'deft
   (setq deft-extensions '("md" "txt" "org"))
   (setq deft-default-extension "md")
-  (setq deft-directory "~/Documents/notes")
+  (setq deft-directory "~/zettelkasten")
   (setq deft-use-filename-as-title t))
 
 (prot-emacs-elpa-package 'zetteldeft
@@ -2310,7 +2310,7 @@ Add this function to `message-header-setup-hook'."
 
 (prot-emacs-builtin-package 'reftex
   (setq reftex-default-bibliography
-        '("~/Documents/bibliography/references.bib"))
+        '("~/bibliography/references.bib"))
 
   (defun dp-reftex-citation ()
     (interactive)
