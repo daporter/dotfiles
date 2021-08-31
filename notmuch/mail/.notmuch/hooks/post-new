@@ -12,8 +12,9 @@ notmuch tag +inbox +unread -new -- tag:new
 notmuch tag -new -unread +archived +sent -- '(from:"david@daporter.net*" not to:"david@daporter.net*" not tag:list)'
 
 # mailing lists
-notmuch tag -inbox +list +emacs -- from:emacs-humanities@gnu.org or to:emacs-humanities@gnu.org not to:emacs-humanities-owner@gnu.org
-notmuch tag -inbox +list +books -- from:great-conversation@googlegroups.com or to:great-conversation@googlegroups.com
+notmuch tag -inbox +list +books -- to:great-conversation@googlegroups.com or to:GreatConversation@yahoogroups.com
+notmuch tag -inbox +list +emacs -- from:emacs-humanities@gnu.org or to:emacs-humanities@gnu.org
+notmuch tag -inbox +list        -- from:notmuch@notmuchmail.org or to:notmuch@notmuchmail.org
 
 # include mailing lists sent to me into the "inbox"
 notmuch tag +inbox -- '(to:"david@daporter.net" tag:list)'
