@@ -1,7 +1,11 @@
+;;; early-init --- Initialise installed packages
+
+;;; Commentary:
+
+;;; Code:
+
 ;; Initialise installed packages
 (setq package-enable-at-startup t)
-
-(defvar package-quickstart)
 
 ;; Allow loading from the package cache
 (setq package-quickstart t)
