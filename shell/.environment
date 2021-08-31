@@ -2,7 +2,7 @@
 
 # Environment variable settings intended to be shared by all shells.
 
-PATH=$HOME/bin:$HOME/.cabal/bin:$PATH
+PATH=$HOME/bin:$PATH
 export PATH
 
 LANG=en_AU.UTF-8
@@ -10,6 +10,7 @@ export LANG
 
 EDITOR="emacsclient --tty --alternate-editor=vim"
 export EDITOR
+
 VISUAL="emacsclient --create-frame --alternate-editor=vim"
 export VISUAL
 
@@ -19,7 +20,7 @@ export EMAIL
 MAIL=/var/mail/david
 export MAIL
 
-MAILPATH=$MAIL:$HOME/mail/personal/inbox:$HOME/mail/migadu/inbox
+MAILPATH=$MAIL:$HOME/Mail/inbox
 export MAILPATH
 
 # Some programs (such as df, du, and ls) display sizes in “blocks”.  You
@@ -37,3 +38,7 @@ export BLOCKSIZE
 #   the following value:
 PARINIT='78 rTbgqR B=.,?_A_a Q=_s>|'
 export PARINIT
+
+# Set the style of time display used in `ls’.
+TIME_STYLE=long-iso
+export TIME_STYLE
