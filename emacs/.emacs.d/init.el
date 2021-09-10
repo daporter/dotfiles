@@ -258,7 +258,8 @@ STYLES is a list of pattern matching methods that is passed to
                                  (?v "Variables" font-lock-variable-name-face)))))
 (setq register-preview-delay 0.8
       register-preview-function #'consult-register-format)
-(setq consult-find-command "find . -iname *ARG* OPTS")
+(setq consult-find-args "find . -not ( -wholename */.* -prune )")
+(setq consult-preview-key 'any)
 
 ;; Enables previews inside the standard *Completions* buffer.
 (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
@@ -271,16 +272,33 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map (kbd "M-g M-g") #'consult-goto-line)
   (define-key map (kbd "M-K") #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
   (define-key map (kbd "M-F") #'consult-focus-lines) ; same principle
-  (define-key map (kbd "C-x r r") #'consult-register) ; Use the register's prefix
   (define-key map (kbd "M-s M-b") #'consult-buffer)
   (define-key map (kbd "M-s M-f") #'consult-find)
   (define-key map (kbd "M-s M-g") #'consult-grep)
   (define-key map (kbd "M-s M-m") #'consult-mark)
+  (define-key map (kbd "C-x r r") #'consult-register)
   (define-key map (kbd "M-s M-i") #'consult-imenu)
-  (define-key map (kbd "M-s M-l") #'consult-line)
   (define-key map (kbd "M-s M-s") #'consult-outline)
-  (define-key map (kbd "M-s M-y") #'consult-yank))
+  (define-key map (kbd "M-s M-y") #'consult-yank)
+  (define-key map (kbd "M-s M-l") #'consult-line))
 (define-key consult-narrow-map (kbd "?") #'consult-narrow-help)
+
+;;;;;;; Switch to Directories (consult-dir.el)
+
+
+(unless (package-installed-p 'consult-dir)
+  (package-install 'consult-dir))
+(require 'consult-dir)
+
+(setq consult-dir-sources '(consult-dir--source-bookmark
+                            consult-dir--source-default
+                            consult-dir--source-project
+                            consult-dir--source-recentf))
+
+;; Overrides `list-directory' in the `global-map', though I never used
+;; that anyway.
+(dolist (map (list global-map minibuffer-local-filename-completion-map))
+  (define-key map (kbd "C-x C-d") #'consult-dir))
 
 ;;;;;; Extended Minibuffer Actions (embark.el)
 
@@ -949,6 +967,7 @@ images."
 (add-hook 'markdown-mode-hook #'flymake-markdownlint-setup)
 
 ;;;; History and State
+
 (server-start)
 
 (require 'recentf)
