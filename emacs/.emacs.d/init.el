@@ -171,6 +171,16 @@ STYLES is a list of pattern matching methods that is passed to
 (setq resize-mini-windows t)
 (setq minibuffer-eldef-shorten-default t)
 
+;; Grouping of completions for Emacs 28
+(setq completions-group t)
+(setq completions-group-sort nil)
+(setq completions-group-format
+      (concat
+       (propertize "    " 'face 'completions-group-separator)
+       (propertize " %s " 'face 'completions-group-title)
+       (propertize " " 'face 'completions-group-separator
+                   'display '(space :align-to right))))
+
 (file-name-shadow-mode 1)
 (minibuffer-depth-indicate-mode 1)
 (minibuffer-electric-default-mode 1)
@@ -256,6 +266,16 @@ STYLES is a list of pattern matching methods that is passed to
                                  (?p "Packages"  font-lock-constant-face)
                                  (?t "Types"     font-lock-type-face)
                                  (?v "Variables" font-lock-variable-name-face)))))
+(setq consult-bookmark-narrow
+      `((?d "Docview" ,#'doc-view-bookmark-jump)
+        (?e "Eshell" ,#'eshell-bookmark-jump)
+        (?f "File" ,#'bookmark-default-handler)
+        (?h "Help" ,#'help-bookmark-jump)
+        (?i "Info" ,#'Info-bookmark-jump)
+        (?m "Man" ,#'Man-bookmark-jump)
+        (?p "PDF" ,#'pdf-view-bookmark-jump)
+        (?v "VC Dir" ,#'vc-dir-bookmark-jump)
+        (?w "EWW" ,#'prot-eww-bookmark-jump)))
 (setq register-preview-delay 0.8
       register-preview-function #'consult-register-format)
 (setq consult-find-args "find . -not ( -wholename */.* -prune )")
@@ -407,6 +427,17 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map (kbd "/ g") #'ibuffer-filter-by-content))
 
 ;;;; Applications and Utilities
+
+;;;;; Bookmarking
+
+(setq bookmark-use-annotations nil)
+(setq bookmark-automatically-show-annotations t)
+(setq bookmark-fontify nil)
+
+(add-hook 'bookmark-bmenu-mode-hook #'hl-line-mode)
+
+(require 'prot-bookmark)
+(prot-bookmark-extra-keywords 1)
 
 ;;;;; Org Mode
 
