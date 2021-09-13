@@ -566,6 +566,8 @@ must be installed."
 
 ;;;;;; Notmuch
 
+(unless (package-installed-p 'notmuch)
+  (package-install 'notmuch))
 (require 'notmuch)
 
 ;; Account Settings
