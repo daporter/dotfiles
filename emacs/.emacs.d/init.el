@@ -212,9 +212,9 @@ STYLES is a list of pattern matching methods that is passed to
 ;; buffer.  It circumvents the default method of waiting for some user
 ;; input (see `prot-minibuffer-minimum-input') before displaying and
 ;; updating the completions' buffer.
-(setq prot-minibuffer-completion-passlist
-        '( vc-retrieve-tag embark-prefix-help-command org-capture
-           prot-bongo-playlist-insert-playlist-file))
+(setq prot-minibuffer-completion-passlist '(vc-retrieve-tag
+                                            embark-prefix-help-command
+                                            org-capture))
 
 (define-key global-map (kbd "C-x :") #'prot-minibuffer-focus-mini-or-completions)
 (let ((map completion-list-mode-map))
@@ -360,17 +360,17 @@ STYLES is a list of pattern matching methods that is passed to
 (require 'project)
 
 (setq project-switch-commands
-        '((?f "File" project-find-file)
-          (?s "Subdir" prot-project-find-subdir)
-          (?g "Grep" project-find-regexp)
-          (?d "Dired" project-dired)
-          (?b "Buffer" project-switch-to-buffer)
-          (?q "Query replace" project-query-replace-regexp)
-          (?t "Tag switch" prot-project-retrieve-tag)
-          (?m "Magit" prot-project-magit-status)
-          (?v "VC dir" project-vc-dir)
-          (?l "Log VC" prot-project-commit-log)
-          (?e "Eshell" project-eshell)))
+      '((?f "File" project-find-file)
+        (?s "Subdir" prot-project-find-subdir)
+        (?g "Grep" project-find-regexp)
+        (?d "Dired" project-dired)
+        (?b "Buffer" project-switch-to-buffer)
+        (?q "Query replace" project-query-replace-regexp)
+        (?t "Tag switch" prot-project-retrieve-tag)
+        (?m "Magit" prot-project-magit-status)
+        (?v "VC dir" project-vc-dir)
+        (?l "Log VC" prot-project-commit-log)
+        (?e "Eshell" project-eshell)))
 
 (define-key global-map (kbd "C-x p q") #'project-query-replace-regexp)
 
@@ -596,15 +596,17 @@ must be installed."
         (:name "reference" :query "tag:reference not tag:archived" :key "r")
         (:name "todo" :query "tag:todo not tag:archived" :key "t")
         (:name "mailing lists" :query "tag:list" :key "m")
-        ;; Emacs
-        (:name "emacs-devel" :query "from:emacs-devel@gnu.org or to:emacs-devel@gnu.org" :key "ed")
-        (:name "emacs-humanities" :query "from:emacs-humanities@gnu.org or to:emacs-humanities@gnu.org" :key "eh")
+        (:name "emacs-humanities"
+               :query "from:emacs-humanities@gnu.org or to:emacs-humanities@gnu.org"
+               :key "eh")
         ;; CLI tools
-        (:name "notmuch" :query "from:notmuch@notmuchmail.org or to:notmuch@notmuchmail.org" :key "cn")
+        (:name "notmuch"
+               :query "from:notmuch@notmuchmail.org or to:notmuch@notmuchmail.org"
+               :key "cn")
         ;; Books
         (:name "great-conversation"
-         :query "to:great-conversation@googlegroups.com or to:GreatConversation@yahoogroups.com"
-         :key "bg")))
+               :query "to:great-conversation@googlegroups.com or to:GreatConversation@yahoogroups.com"
+               :key "bg")))
 
 ;; Tags
 (setq notmuch-archive-tags '("-inbox" "-unread" "+archived"))
@@ -621,7 +623,7 @@ must be installed."
 ;; Hooks and Keybindings
 (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check)
 (add-hook 'notmuch-show-hook (lambda ()
-			       (setq-local header-line-format nil)))
+			                   (setq-local header-line-format nil)))
 
 (let ((map global-map))
   (define-key map (kbd "C-c m") #'notmuch)
@@ -693,12 +695,12 @@ must be installed."
 (setq elfeed-show-truncate-long-urls t)
 
 (add-hook 'elfeed-search-mode-hook
-	  (lambda ()
-	    (load-file (concat user-emacs-directory "feeds.el.gpg"))))
+	      (lambda ()
+	        (load-file (concat user-emacs-directory "feeds.el.gpg"))))
 
 (add-hook 'elfeed-show-mode-hook
           (lambda ()
-	    (setq-local shr-width (current-fill-column))))
+	        (setq-local shr-width (current-fill-column))))
 
 (define-key global-map (kbd "C-c e") 'elfeed)
 
@@ -795,22 +797,22 @@ images."
       (propertize " Macro" 'face 'mode-line-emphasis))
 
 (setq-default mode-line-format
-              '("%e"
-                mode-line-front-space
-                mode-line-mule-info
-                mode-line-client
-                mode-line-modified
-                mode-line-remote
-                mode-line-frame-identification
-                mode-line-buffer-identification
-                "  "
-                mode-line-position
-                mode-line-modes
-                "  "
-                (vc-mode vc-mode)
-                "  "
-                mode-line-misc-info
-                mode-line-end-spaces))
+	          '("%e"
+		        mode-line-front-space
+		        mode-line-mule-info
+		        mode-line-client
+		        mode-line-modified
+		        mode-line-remote
+		        mode-line-frame-identification
+		        mode-line-buffer-identification
+		        "  "
+		        mode-line-position
+		        mode-line-modes
+		        "  "
+		        (vc-mode vc-mode)
+		        "  "
+		        mode-line-misc-info
+		        mode-line-end-spaces))
 
 ;;;;;; Battery Status
 
@@ -901,7 +903,7 @@ images."
 (setq-default fill-column 72)
 (add-hook 'text-mode-hook #'turn-on-auto-fill)
 (add-hook 'prog-mode-hook (lambda ()
-			    (setq-local fill-column 80)))
+			                (setq-local fill-column 80)))
 
 (column-number-mode 1)
 
