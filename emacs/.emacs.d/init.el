@@ -56,15 +56,15 @@
 
 ;;;;;; Font Configurations
 
-(internal-set-lisp-face-attribute 'default :family "Hack" 0)
-(internal-set-lisp-face-attribute 'default :weight 'normal 0)
+(internal-set-lisp-face-attribute 'default :family "Iosevka Comfy" 0)
+(internal-set-lisp-face-attribute 'default :weight 'book 0)
 (internal-set-lisp-face-attribute 'default :height 90 0)
-(internal-set-lisp-face-attribute 'fixed-pitch :family "Hack" 0)
-(internal-set-lisp-face-attribute 'fixed-pitch :weight 'normal 0)
+(internal-set-lisp-face-attribute 'fixed-pitch :family "Iosevka Comfy" 0)
+(internal-set-lisp-face-attribute 'fixed-pitch :weight 'book 0)
 (internal-set-lisp-face-attribute 'variable-pitch :family "Noto Serif" 0)
 (internal-set-lisp-face-attribute 'variable-pitch :weight 'normal 0)
-(internal-set-lisp-face-attribute 'variable-pitch :height 1.1 0)
-(set-face-attribute 'bold nil :weight 'bold)
+(internal-set-lisp-face-attribute 'variable-pitch :height 1.0 0)
+(set-face-attribute 'bold nil :weight 'extrabold)
 (setq-default line-spacing 2)
 (setq-default text-scale-remap-header-line t)
 (setq x-underline-at-descent-line t)
@@ -247,9 +247,11 @@ STYLES is a list of pattern matching methods that is passed to
 (let ((map minibuffer-local-filename-completion-map))
   (define-key map (kbd "<backspace>") #'prot-minibuffer-backward-updir))
 (add-hook 'minibuffer-setup-hook #'prot-minibuffer-mini-cursor)
-(add-hook 'completion-list-mode-hook #'prot-minibuffer-completions-cursor)
-(add-hook 'completion-list-mode-hook #'prot-minibuffer-hl-line)
-(add-hook 'completion-list-mode-hook #'prot-minibuffer-display-line-numbers)
+(let ((hook 'completion-list-mode-hook))
+  (add-hook hook #'prot-minibuffer-completions-cursor)
+  (add-hook hook #'prot-minibuffer-hl-line)
+  (add-hook hook #'prot-minibuffer-completions-stripes)
+  (add-hook hook #'prot-minibuffer-display-line-numbers))
 
 ;;;;;; Enhanced Minibuffer Commands (consult.el)
 
@@ -336,6 +338,12 @@ STYLES is a list of pattern matching methods that is passed to
         (t . list)))
 (setq embark-collect-live-update-delay 0.5)
 (setq embark-collect-live-initial-delay 0.8)
+
+;; Use alternating backgrounds, if `stripes' is available.
+(with-eval-after-load 'stripes
+  (let ((hook 'embark-collect-mode-hook))
+    (add-hook hook #'stripes-mode)
+    (add-hook hook #'hl-line-mode)))
 
 (define-key global-map (kbd "C-,") #'embark-act)
 (let ((map minibuffer-local-completion-map))
@@ -426,13 +434,50 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map (kbd "s n") #'ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
   (define-key map (kbd "/ g") #'ibuffer-filter-by-content))
 
+;;;;; Window Configuration
+
+;;;;;; Tabs for Window Layouts
+
+(setq tab-bar-close-button-show nil)
+(setq tab-bar-show nil)
+
+(tab-bar-mode -1)                     ; see `prot-tab-status-line'
+(tab-bar-history-mode 1)
+
+(require 'prot-tab)
+
+(setq tab-bar-format
+      '(prot-tab-format-space-single
+        prot-tab-format-mule-info
+        prot-tab-format-modified
+        tab-bar-format-tabs-groups
+        prot-tab-format-space-double
+        prot-tab-format-position
+        prot-tab-format-space-double
+        prot-tab-format-vc
+        prot-tab-format-space-double
+        prot-tab-format-modes
+        tab-bar-format-align-right
+        prot-tab-format-misc-info
+        prot-tab-format-space-double
+        tab-bar-format-global
+        prot-tab-format-space-single))
+
+(add-hook 'after-init-hook #'prot-tab-status-line)
+
+(let ((map global-map))
+  (define-key map (kbd "C-x <right>") #'prot-tab-winner-redo)
+  (define-key map (kbd "C-x <left>") #'prot-tab-winner-undo)
+  (define-key map (kbd "C-<f8>") #'prot-tab-status-line) ; unopinionated alternative: `prot-tab-tab-bar-toggle'
+  (define-key map (kbd "C-x t t") #'prot-tab-select-tab-dwim))
+
 ;;;; Applications and Utilities
 
 ;;;;; Bookmarking
 
 (setq bookmark-use-annotations nil)
 (setq bookmark-automatically-show-annotations t)
-(setq bookmark-fontify nil)
+(setq bookmark-set-fringe-mark t)
 
 (add-hook 'bookmark-bmenu-mode-hook #'hl-line-mode)
 
@@ -627,6 +672,14 @@ must be installed."
 (add-hook 'notmuch-show-hook (lambda ()
 			                   (setq-local header-line-format nil)))
 
+;; Use alternating backgrounds, if `stripes' is available.
+(with-eval-after-load 'stripes
+  (add-hook 'notmuch-search-hook #'stripes-mode)
+  ;; ;; To disable `hl-line-mode':
+  ;; (setq notmuch-search-hook nil)
+  ;; (add-hook 'notmuch-search-hook #'prot-common-disable-hl-line)
+  )
+
 (let ((map global-map))
   (define-key map (kbd "C-c m") #'notmuch)
   (define-key map (kbd "C-x m") #'notmuch-mua-new-mail)) ; override `compose-mail'
@@ -706,42 +759,75 @@ must be installed."
 
 (define-key global-map (kbd "C-c e") 'elfeed)
 
-(provide 'init)
+;; Use alternating backgrounds, if `stripes' is available.
+(add-hook 'elfeed-search-mode-hook #'stripes-mode)
+
+;;;;; Proced
+
+(setq proced-auto-update-flag t)
+(with-eval-after-load 'stripes
+  (add-hook 'proced-mode-hook #'stripes-mode))
+
+(require 'prot-proced)
+(prot-proced-extra-keywords 1)
 
 ;;;;; HTML Rendering and EWW
 
 (setq browse-url-browser-function 'eww-browse-url)
 (setq browse-url-secondary-browser-function 'browse-url-default-browser)
 
-(setq shr-cookie-policy nil)
+(setq shr-use-colors nil)             ; t is bad for accessibility
+(setq shr-use-fonts nil)              ; t is not for me
 (setq shr-max-image-proportion 0.6)
+(setq shr-image-animate nil)          ; No GIFs, thank you!
+(setq shr-discard-aria-hidden t)
+(setq shr-cookie-policy nil)
 
 (setq url-cookie-untrusted-urls '(".*"))
 
 (require 'eww)
 (setq eww-restore-desktop t)
+(setq eww-header-line-format nil)
 (setq eww-search-prefix "https://duckduckgo.com/html/?q=")
 (setq eww-download-directory (expand-file-name "~/Downloads"))
+(setq eww-suggest-uris '(eww-links-at-point
+                         thing-at-point-url-at-point))
 (setq eww-bookmarks-directory (locate-user-emacs-file "eww-bookmarks/"))
 (setq eww-history-limit 150)
 (setq eww-browse-url-new-window-is-tab nil)
 
-(defun dp-eww-readable ()
-  "Use more opinionated `eww-readable'.
-
-Set width is set to `current-fill-column'.  Adjust size of
-images."
-  (interactive)
-  (let ((shr-width (current-fill-column))
-        (shr-max-image-proportion 0.35))
-    (eww-readable)))
-
 (define-key eww-link-keymap (kbd "v") nil) ; stop overriding `eww-view-source'
 (define-key eww-mode-map (kbd "L") #'eww-list-bookmarks)
-(define-key eww-mode-map (kbd "R") #'dp-eww-readable)
 (define-key dired-mode-map (kbd "E") #'eww-open-file) ; to render local HTML files
-(define-key eww-buffers-mode-map (kbd "d") #'eww-bookmark-kill) ; it actually deletes
+(define-key eww-buffers-mode-map (kbd "d") #'eww-bookmark-kill)   ; it actually deletes
 (define-key eww-bookmark-mode-map (kbd "d") #'eww-bookmark-kill) ; same
+
+(require 'prot-eww)
+(setq prot-eww-save-history-file
+      (locate-user-emacs-file "prot-eww-visited-history"))
+(setq prot-eww-save-visited-history t)
+(setq prot-eww-bookmark-link nil)
+
+(add-hook 'prot-eww-history-mode-hook #'hl-line-mode)
+
+(define-prefix-command 'prot-eww-map)
+(define-key global-map (kbd "C-c w") 'prot-eww-map)
+(let ((map prot-eww-map))
+  (define-key map (kbd "b") #'prot-eww-visit-bookmark)
+  (define-key map (kbd "e") #'prot-eww-browse-dwim)
+  (define-key map (kbd "s") #'prot-eww-search-engine))
+(let ((map eww-mode-map))
+  (define-key map (kbd "B") #'prot-eww-bookmark-page)
+  (define-key map (kbd "D") #'prot-eww-download-html)
+  (define-key map (kbd "F") #'prot-eww-find-feed)
+  (define-key map (kbd "H") #'prot-eww-list-history)
+  (define-key map (kbd "b") #'prot-eww-visit-bookmark)
+  (define-key map (kbd "e") #'prot-eww-browse-dwim)
+  (define-key map (kbd "o") #'prot-eww-open-in-other-window)
+  (define-key map (kbd "E") #'prot-eww-visit-url-on-page)
+  (define-key map (kbd "J") #'prot-eww-jump-to-url-on-page)
+  (define-key map (kbd "R") #'prot-eww-readable)
+  (define-key map (kbd "Q") #'prot-eww-quit))
 
 ;;;;; Viewing PDFs
 
@@ -862,8 +948,15 @@ images."
 
 (delete-selection-mode 1)
 
-;;;;; Conveniences and Minor Extras
+;;;;; Alternating Background Highlights (stripes.el)
 
+(unless (package-installed-p 'stripes)
+  (package-install 'stripes))
+(require 'stripes)
+
+(setq stripes-unit 1)
+
+;;;;; Conveniences and Minor Extras
 (setq mode-require-final-newline 'visit-save)
 
 ;;;;;; Auto-Revert Mode
@@ -963,9 +1056,19 @@ images."
 (require 'flymake)
 (setq flymake-suppress-zero-counters t)
 (setq flymake-no-changes-timeout nil)
+(setq flymake-mode-line-format
+      '(""
+        flymake-mode-line-exception
+        flymake-mode-line-counters))
+(setq flymake-mode-line-counter-format
+      '(" "
+        flymake-mode-line-error-counter
+        flymake-mode-line-warning-counter
+        flymake-mode-line-note-counter ""))
+
 (let ((map flymake-mode-map))
   (define-key map (kbd "C-c ! s") #'flymake-start)
-  (define-key map (kbd "C-c ! d") #'flymake-show-diagnostics-buffer)
+  (define-key map (kbd "C-c ! d") #'flymake-show-buffer-diagnostics)
   (define-key map (kbd "C-c ! n") #'flymake-goto-next-error)
   (define-key map (kbd "C-c ! p") #'flymake-goto-prev-error))
 
