@@ -555,6 +555,60 @@ STYLES is a list of pattern matching methods that is passed to
 (define-key org-mode-map (kbd "C-c a c") 'anki-editor-cloze-region)
 (define-key org-mode-map (kbd "C-c a p") 'anki-editor-push-notes)
 
+(define-skeleton anki-vocab-basic
+  "Skeleton of an Anki Basic note for vocab."
+  nil
+  "** Item\n"
+  "    :PROPERTIES:\n"
+  "    :ANKI_NOTE_TYPE: Basic\n"
+  "    :END:\n"
+  "*** Front\n"
+  > _ "\n"
+  "*** Back\n"
+  "*** Extra\n"
+  "*** Source\n"
+  "    /Vocabulaire progressif du français - Débutant, 3^e édition/\n")
+
+(define-skeleton anki-vocab-cloze
+  "Skeleton of an Anki Cloze note for vocab."
+  nil
+  "** Item\n"
+  "    :PROPERTIES:\n"
+  "    :ANKI_NOTE_TYPE: Cloze\n"
+  "    :END:\n"
+  "*** Text\n"
+  > _ "\n"
+  "*** Extra\n"
+  "*** Source\n"
+  "    /Vocabulaire progressif du français - Débutant, 3^e édition/\n")
+
+(define-skeleton anki-communication-basic
+  "Skeleton of an Anki Basic note for communication."
+  nil
+  "** Item\n"
+  "    :PROPERTIES:\n"
+  "    :ANKI_NOTE_TYPE: Basic\n"
+  "    :END:\n"
+  "*** Front\n"
+  > _ "\n"
+  "*** Back\n"
+  "*** Extra\n"
+  "*** Source\n"
+  "    /Communication progressive du français - Débutant, 2^e édition/\n")
+
+(define-skeleton anki-communication-cloze
+  "Skeleton of an Anki Cloze note for communication."
+  nil
+  "** Item\n"
+  "    :PROPERTIES:\n"
+  "    :ANKI_NOTE_TYPE: Cloze\n"
+  "    :END:\n"
+  "*** Text\n"
+  > _ "\n"
+  "*** Extra\n"
+  "*** Source\n"
+  "    /Communication progressive du français - Débutant, 2^e édition/\n")
+
 ;;;;; Zotero Reference Manager
 
 (defun dp-insert-zotero-bibliography ()
