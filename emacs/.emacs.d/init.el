@@ -798,15 +798,13 @@ must be installed."
 (require 'elfeed)
 
 (setq elfeed-db-directory (concat user-emacs-directory "elfeed/"))
+(setq elfeed-enclosure-default-dir "~/Downloads/")
+(setq elfeed-search-filter "@4-months-ago +unread")
 (setq elfeed-sort-order 'ascending)
 (setq elfeed-search-title-max-width 80)
 (setq elfeed-search-title-min-width 30)
 (setq elfeed-search-trailing-width 25)
 (setq elfeed-show-truncate-long-urls t)
-
-(add-hook 'elfeed-search-mode-hook
-	      (lambda ()
-	        (load-file (concat user-emacs-directory "feeds.el.gpg"))))
 
 (add-hook 'elfeed-show-mode-hook
           (lambda ()
@@ -814,8 +812,31 @@ must be installed."
 
 (define-key global-map (kbd "C-c e") 'elfeed)
 
-;; Use alternating backgrounds, if `stripes' is available.
-(add-hook 'elfeed-search-mode-hook #'stripes-mode)
+(with-eval-after-load 'elfeed
+  (require 'prot-elfeed)
+  (setq prot-elfeed-tag-faces t)
+  (prot-elfeed-fontify-tags)
+  (add-hook 'elfeed-search-mode-hook #'prot-elfeed-load-feeds)
+
+  ;; Use alternating backgrounds, if `stripes' is available.
+  (with-eval-after-load 'stripes
+    (add-hook 'elfeed-search-mode-hook #'stripes-mode)
+    ;; ;; To disable `hl-line-mode':
+    ;; (advice-add #'elfeed-search-mode :after #'prot-common-disable-hl-line)
+    )
+
+  (let ((map elfeed-search-mode-map))
+    (define-key map (kbd "s") #'prot-elfeed-search-tag-filter)
+    (define-key map (kbd "o") #'prot-elfeed-search-open-other-window)
+    (define-key map (kbd "q") #'prot-elfeed-kill-buffer-close-window-dwim)
+    (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
+    (define-key map (kbd "+") #'prot-elfeed-toggle-tag))
+  (let ((map elfeed-show-mode-map))
+    (define-key map (kbd "a") #'prot-elfeed-show-archive-entry)
+    (define-key map (kbd "e") #'prot-elfeed-show-eww)
+    (define-key map (kbd "q") #'prot-elfeed-kill-buffer-close-window-dwim)
+    (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
+    (define-key map (kbd "+") #'prot-elfeed-toggle-tag)))
 
 ;;;;; Proced
 
@@ -826,7 +847,7 @@ must be installed."
 (require 'prot-proced)
 (prot-proced-extra-keywords 1)
 
-;;;;; HTML Rendering and EWW
+;;;;; Simple HTML Renderer (shr) and EWW
 
 (setq browse-url-browser-function 'eww-browse-url)
 (setq browse-url-secondary-browser-function 'browse-url-default-browser)
