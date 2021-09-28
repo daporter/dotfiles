@@ -694,6 +694,7 @@ must be installed."
       '((:name "unread (inbox)" :query "tag:unread and tag:inbox" :key "u")
         (:name "unread all" :query "tag:unread not tag:archived" :key "U")
         (:name "inbox" :query "tag:inbox" :key "i")
+        (:name "flagged" :query "tag:flagged" :key "f")
         (:name "reference" :query "tag:reference not tag:archived" :key "r")
         (:name "todo" :query "tag:todo not tag:archived" :key "t")
         (:name "mailing lists" :query "tag:list" :key "m")
