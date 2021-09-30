@@ -484,6 +484,20 @@ STYLES is a list of pattern matching methods that is passed to
 (require 'prot-bookmark)
 (prot-bookmark-extra-keywords 1)
 
+;;;;; Focus Mode
+
+(require 'face-remap)
+
+(unless (package-installed-p 'olivetti)
+  (package-install 'olivetti))
+(require 'olivetti)
+
+(require 'prot-logos)
+(require 'prot-cursor)
+(setq prot-logos-variable-pitch t)
+(setq prot-logos-affect-prot-cursor t)
+(define-key global-map (kbd "C-c f") #'prot-logos-focus-mode)
+
 ;;;;; Org Mode
 
 ;;;;;; Org Capture
@@ -1072,10 +1086,7 @@ must be installed."
 ;;;;; Paragraphs
 
 (setq-default fill-column 72)
-(add-hook 'text-mode-hook #'turn-on-auto-fill)
-(add-hook 'prog-mode-hook (lambda ()
-			                (setq-local fill-column 80)))
-
+(add-hook 'text-mode-hook #'turn-on-visual-line-mode)
 (column-number-mode 1)
 
 ;;;;; Comments
@@ -1099,31 +1110,21 @@ must be installed."
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 
-;;;;; Spellcheck
+;;;;; Spell Checking
 
-(setq ispell-dictionary "en_GB-ise-w_accents")
+(require 'flyspell)
+(setq flyspell-issue-message-flag nil)
+(setq flyspell-issue-welcome-flag nil)
+(setq ispell-dictionary "australian-w_accents")
+(define-key flyspell-mode-map (kbd "C-;") nil)
 
-(setq dp-spell-dictionaries
-      '("en_GB-ise-w_accents" "fr_FR-lrg" "nl" "es"))
-
-(defvar dp-spell--dictionary-hist '()
-  "Input history for `dp-spell-change-dictionary'.")
-
-(defun dp-spell--dictionary-prompt ()
-  "Helper prompt to select from `dp-spell-dictionaries'."
-  (let ((def (car dp-spell--dictionary-hist)))
-    (completing-read
-     (format "Select dictionary [%s]: " def)
-     dp-spell-dictionaries
-     nil t nil 'dp-spell--dictionary-hist def)))
-
-(defun dp-spell-change-dictionary (dictionary)
-  "Select a DICTIONARY from `dp-spell-dictionaries'."
-  (interactive
-   (list (dp-spell--dictionary-prompt)))
-  (ispell-change-dictionary dictionary))
-
-(define-key global-map (kbd "C-M-$") #'dp-spell-change-dictionary)
+(require 'prot-spell)
+(setq prot-spell-dictionaries
+      '(("EN English" . "australian-w_accents")
+        ("FR Français" . "francais-lrg")
+        ("NL Nederlands" . "dutch")
+        ("ES Espanõl" . "español")))
+(define-key global-map (kbd "C-M-$") #'prot-spell-change-dictionary)
 
 ;;;;;; Aode and Text Linters
 
