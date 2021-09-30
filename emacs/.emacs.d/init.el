@@ -283,9 +283,6 @@ STYLES is a list of pattern matching methods that is passed to
 (setq consult-find-args "find . -not ( -wholename */.* -prune )")
 (setq consult-preview-key 'any)
 
-;; Enables previews inside the standard *Completions* buffer.
-(add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
-
 (let ((map global-map))
   (define-key map (kbd "C-x r b") #'consult-bookmark) ; override `bookmark-jump'
   (define-key map (kbd "C-x M-:") #'consult-complex-command)
@@ -298,12 +295,26 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map (kbd "M-s M-f") #'consult-find)
   (define-key map (kbd "M-s M-g") #'consult-grep)
   (define-key map (kbd "M-s M-m") #'consult-mark)
-  (define-key map (kbd "C-x r r") #'consult-register)
-  (define-key map (kbd "M-s M-i") #'consult-imenu)
-  (define-key map (kbd "M-s M-s") #'consult-outline)
-  (define-key map (kbd "M-s M-y") #'consult-yank)
-  (define-key map (kbd "M-s M-l") #'consult-line))
+  (define-key map (kbd "C-x r r") #'consult-register)) ; Use the register's prefix
 (define-key consult-narrow-map (kbd "?") #'consult-narrow-help)
+
+(require 'prot-consult)
+(setq consult-project-root-function #'prot-consult-project-root)
+(setq prot-consult-command-centre-list
+      '(consult-line
+        prot-consult-line
+        consult-mark))
+(setq prot-consult-command-top-list
+      '(consult-outline
+        consult-imenu
+        prot-consult-outline
+        prot-consult-imenu))
+(prot-consult-set-up-hooks-mode 1)
+(let ((map global-map))
+  (define-key map (kbd "M-s M-i") #'prot-consult-imenu)
+  (define-key map (kbd "M-s M-s") #'prot-consult-outline)
+  (define-key map (kbd "M-s M-y") #'prot-consult-yank)
+  (define-key map (kbd "M-s M-l") #'prot-consult-line))
 
 ;;;;;;; Switch to Directories (consult-dir.el)
 
@@ -328,16 +339,17 @@ STYLES is a list of pattern matching methods that is passed to
   (package-install 'embark))
 (require 'embark)
 
-(setq embark-collect-initial-view-alist
-      '((file . list)
-        (buffer . list)
-        (symbol . list)
-        (line . list)
-        (xref-location . list)
-        (kill-ring . zebra)
-        (t . list)))
+(setq embark-collect-initial-view-alist '((t . list)))
+(setq embark-cycle-key (kbd "C-."))   ; see the `embark-act' key
 (setq embark-collect-live-update-delay 0.5)
 (setq embark-collect-live-initial-delay 0.8)
+(setq embark-indicator #'embark-mixed-indicator)
+(setq embark-verbose-indicator-excluded-actions
+      '("\\`embark-collect-" "\\`customize-" "\\(local\\|global\\)-set-key"
+        set-variable embark-cycle embark-export
+        embark-keymap-help embark-become embark-isearch))
+(setq embark-mixed-indicator-delay 1.2)
+(setq embark-verbose-indicator-display-action nil)
 
 ;; Use alternating backgrounds, if `stripes' is available.
 (with-eval-after-load 'stripes
@@ -362,6 +374,14 @@ STYLES is a list of pattern matching methods that is passed to
 (let ((map embark-symbol-map))
   (define-key map (kbd ".") #'embark-find-definition)
   (define-key map (kbd "k") #'describe-keymap))
+
+(unless (package-installed-p 'embark-consult)
+  (package-install 'embark-consult))
+(require 'embark-consult)
+
+(require 'prot-embark)
+(prot-embark-keymaps 1)
+(prot-embark-setup-packages 1)
 
 ;;;;;; Projects
 
