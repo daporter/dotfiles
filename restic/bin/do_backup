@@ -6,8 +6,8 @@
 
 echo "Connecting to network Phunculist"
 if ! nmcli connection up Phunculist; then
-    echo "Unable to connect." >&2
-    exit 1
+	echo "Unable to connect." >&2
+	exit 1
 fi
 echo
 echo "Running restic"
