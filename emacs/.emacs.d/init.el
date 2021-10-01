@@ -478,6 +478,128 @@ STYLES is a list of pattern matching methods that is passed to
 
 ;;;;; Window Configuration
 
+;;;;;; Window Rules and Basic Tweaks
+
+(setq display-buffer-alist
+      `(;; no window
+        ("\\`\\*Async Shell Command\\*\\'"
+         (display-buffer-no-window))
+        ;; top side window
+        ("\\**prot-elfeed-bongo-queue.*"
+         (display-buffer-reuse-window display-buffer-in-side-window)
+         (window-height . 0.16)
+         (side . top)
+         (slot . -2))
+        ("\\*\\(prot-elfeed-mpv-output\\|world-clock\\).*"
+         (display-buffer-in-side-window)
+         (window-height . 0.16)
+         (side . top)
+         (slot . -1))
+        ("\\*\\(Flymake\\|Package-Lint\\).*"
+         (display-buffer-in-side-window)
+         (window-height . 0.16)
+         (side . top)
+         (slot . 0))
+        ("\\*Messages.*"
+         (display-buffer-in-side-window)
+         (window-height . 0.16)
+         (side . top)
+         (slot . 1))
+        ("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\)\\*"
+         (display-buffer-in-side-window)
+         (window-height . 0.16)
+         (side . top)
+         (slot . 2))
+        ;; bottom side window
+        ("\\*Embark Actions.*"
+         (display-buffer-in-side-window)
+         (side . bottom)
+         (slot . -1)
+         (window-height . fit-window-to-buffer)
+         (window-parameters . ((no-other-window . t)
+                               (mode-line-format . none))))
+        ("\\*\\(Embark\\)?.*Completions.*"
+         (display-buffer-in-side-window)
+         (side . bottom)
+         (slot . 0)
+         (window-parameters . ((no-other-window . t)
+                               (mode-line-format . none))))
+        ;; left side window
+        ("\\*Help.*"            ; See the hooks for `visual-line-mode'
+         (display-buffer-in-side-window)
+         (window-width . 0.25)
+         (side . left)
+         (slot . -1))
+        ("\\*Faces\\*"
+         (display-buffer-in-side-window)
+         (window-width . 0.25)
+         (side . left)
+         (slot . 0))
+        ;; right side window
+        ("\\*keycast\\*"
+         (display-buffer-in-side-window)
+         (dedicated . t)
+         (window-width . 0.25)
+         (side . right)
+         (slot . -1)
+         (window-parameters . ((no-other-window . t)
+                               (mode-line-format . none))))
+        ;; bottom buffer (NOT side window)
+        ("\\*\\(Output\\|Register Preview\\).*"
+         (display-buffer-at-bottom))
+        ("\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
+         (display-buffer-reuse-mode-window display-buffer-at-bottom)
+         (window-height . 0.2))
+        ;; ("\\*.*\\(e?shell\\|v?term\\).*"
+        ;;  (display-buffer-reuse-mode-window display-buffer-at-bottom)
+        ;;  (window-height . 0.2))
+        ;; below current window
+        ("\\*\\(Calendar\\|Org Select\\|Bookmark Annotation\\).*"
+         (display-buffer-reuse-mode-window display-buffer-below-selected)
+         (window-height . fit-window-to-buffer))))
+(setq window-combination-resize t)
+(setq even-window-sizes 'height-only)
+(setq switch-to-buffer-in-dedicated-window 'pop)
+
+(add-hook 'help-mode-hook #'visual-line-mode)
+(add-hook 'custom-mode-hook #'visual-line-mode)
+
+(let ((map global-map))
+  (define-key map (kbd "C-x <down>") #'next-buffer)
+  (define-key map (kbd "C-x <up>") #'previous-buffer)
+  (define-key map (kbd "C-x C-n") #'next-buffer)     ; override `set-goal-column'
+  (define-key map (kbd "C-x C-p") #'previous-buffer) ; override `mark-page'
+  (define-key map (kbd "C-x !") #'delete-other-windows-vertically)
+  (define-key map (kbd "C-x _") #'balance-windows)      ; underscore
+  (define-key map (kbd "C-x -") #'fit-window-to-buffer) ; hyphen
+  (define-key map (kbd "C-x +") #'balance-windows-area)
+  (define-key map (kbd "C-x }") #'enlarge-window)
+  (define-key map (kbd "C-x {") #'shrink-window)
+  (define-key map (kbd "C-x >") #'enlarge-window-horizontally) ; override `scroll-right'
+  (define-key map (kbd "C-x <") #'shrink-window-horizontally)) ; override `scroll-left'
+(let ((map resize-window-repeat-map))
+  (define-key map ">" #'enlarge-window-horizontally)
+  (define-key map "<" #'shrink-window-horizontally))
+
+;;;;;; Window History (winner-mode)
+
+(add-hook 'after-init-hook #'winner-mode)
+
+;;;;;; Directional Window Motions (windmove)
+
+(setq windmove-create-window nil)     ; Emacs 27.1
+(let ((map global-map))
+  ;; Those override some commands that are already available with
+  ;; C-M-u, C-M-f, C-M-b.
+  (define-key map (kbd "C-M-<up>") #'windmove-up)
+  (define-key map (kbd "C-M-<right>") #'windmove-right)
+  (define-key map (kbd "C-M-<down>") #'windmove-down)
+  (define-key map (kbd "C-M-<left>") #'windmove-left)
+  (define-key map (kbd "C-M-S-<up>") #'windmove-swap-states-up)
+  (define-key map (kbd "C-M-S-<right>") #'windmove-swap-states-right) ; conflicts with `org-increase-number-at-point'
+  (define-key map (kbd "C-M-S-<down>") #'windmove-swap-states-down)
+  (define-key map (kbd "C-M-S-<left>") #'windmove-swap-states-left))
+
 ;;;;;; Tabs for Window Layouts
 
 (setq tab-bar-close-button-show nil)
@@ -512,6 +634,13 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map (kbd "C-x <left>") #'prot-tab-winner-undo)
   (define-key map (kbd "C-<f8>") #'prot-tab-status-line) ; unopinionated alternative: `prot-tab-tab-bar-toggle'
   (define-key map (kbd "C-x t t") #'prot-tab-select-tab-dwim))
+
+;;;;;; Transposition and Rotation of Windows
+
+(unless (package-installed-p 'transpose-frame)
+  (package-install 'transpose-frame))
+
+(define-key global-map (kbd "C-x M-r") #'rotate-frame-clockwise)
 
 ;;;; Applications and Utilities
 
