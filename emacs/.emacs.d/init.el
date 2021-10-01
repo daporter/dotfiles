@@ -1148,10 +1148,30 @@ must be installed."
 
 ;;;;; Tabs, Indentation, and the TAB Key
 
-(setq-default tab-always-indent 'complete)
-(setq-default tab-first-completion 'word-or-paren-or-punct)
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
+(setq backward-delete-char-untabify-method nil)
+
+;; Use tab characters for indentation in certain modes.
+(dolist (hook '(sh-mode-hook
+                python-mode-hook
+                c-mode-common-hook))
+  (add-hook hook (lambda ()
+                   (setq indent-tabs-mode t))))
+
+(setq-default tab-always-indent 'complete)
+(setq-default tab-first-completion 'word-or-paren-or-punct)
+
+;;;;;; Smart Tabs for Indenting With Tabs and Aligning With Spaces
+
+(unless (package-installed-p 'smart-tabs-mode)
+  (package-install 'smart-tabs-mode))
+(require 'smart-tabs-mode)
+
+(smart-tabs-add-language-support sh sh-mode-hook
+  ((smie-indent-line . sh-basic-offset)))
+
+(smart-tabs-insinuate 'c 'c++ 'java 'javascript 'cperl 'python 'ruby 'sh 'nxml)
 
 ;;;;; Spell Checking
 
