@@ -340,7 +340,6 @@ STYLES is a list of pattern matching methods that is passed to
 
 ;;;;;;; Switch to Directories (consult-dir.el)
 
-
 (unless (package-installed-p 'consult-dir)
   (package-install 'consult-dir))
 (require 'consult-dir)
@@ -1200,7 +1199,7 @@ must be installed."
                    (setq-local whitespace-style
                                (remove 'lines-tail whitespace-style)))))
 
-(define-key global-map (kbd "C-c w") #'delete-trailing-whitespace)
+(define-key global-map (kbd "C-c w") #'whitespace-cleanup)
 
 ;;;;; Outline Mode
 
@@ -1323,6 +1322,15 @@ must be installed."
   ((smie-indent-line . sh-basic-offset)))
 
 (smart-tabs-insinuate 'c 'c++ 'java 'javascript 'cperl 'python 'ruby 'sh 'nxml)
+
+;; `whitespace-cleanup’ shouldn’t touch indentation in modes that use
+;; Smart Tabs mode.
+(dolist (hook '(sh-mode-hook
+                python-mode-hook))
+  (add-hook hook
+            (lambda ()
+              (setq-local whitespace-style
+                          (remove 'indentation whitespace-style)))))
 
 ;;;;; Spell Checking
 
