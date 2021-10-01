@@ -30,7 +30,7 @@
 (put 'dired-find-alternate-file 'disabled nil)
 (put 'overwrite-mode 'disabled t)
 
-(setq initial-buffer-choice t)			; always start with *scratch*
+(setq initial-buffer-choice t)          ; always start with *scratch*
 
 (global-set-key (kbd "C-c p") #'package-list-packages)
 
@@ -759,7 +759,7 @@ must be installed."
 ;; Hooks and Keybindings
 (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check)
 (add-hook 'notmuch-show-hook (lambda ()
-			                   (setq-local header-line-format nil)))
+                               (setq-local header-line-format nil)))
 
 ;; Use alternating backgrounds, if `stripes' is available.
 (with-eval-after-load 'stripes
@@ -842,7 +842,7 @@ must be installed."
 
 (add-hook 'elfeed-show-mode-hook
           (lambda ()
-	        (setq-local shr-width (current-fill-column))))
+            (setq-local shr-width (current-fill-column))))
 
 (define-key global-map (kbd "C-c e") 'elfeed)
 
@@ -995,22 +995,22 @@ must be installed."
       (propertize " Macro" 'face 'mode-line-emphasis))
 
 (setq-default mode-line-format
-	          '("%e"
-		        mode-line-front-space
-		        mode-line-mule-info
-		        mode-line-client
-		        mode-line-modified
-		        mode-line-remote
-		        mode-line-frame-identification
-		        mode-line-buffer-identification
-		        "  "
-		        mode-line-position
-		        mode-line-modes
-		        "  "
-		        (vc-mode vc-mode)
-		        "  "
-		        mode-line-misc-info
-		        mode-line-end-spaces))
+              '("%e"
+                mode-line-front-space
+                mode-line-mule-info
+                mode-line-client
+                mode-line-modified
+                mode-line-remote
+                mode-line-frame-identification
+                mode-line-buffer-identification
+                "  "
+                mode-line-position
+                mode-line-modes
+                "  "
+                (vc-mode vc-mode)
+                "  "
+                mode-line-misc-info
+                mode-line-end-spaces))
 
 ;;;;;; Battery Status
 
@@ -1231,8 +1231,8 @@ must be installed."
   (package-install 'flymake-proselint))
 (require 'flymake-proselint)
 (dolist (hook '(markdown-mode-hook
-		        org-mode-hook
-		        text-mode-hook))
+                org-mode-hook
+                text-mode-hook))
   (add-hook hook #'flymake-proselint-setup))
 
 ;;;;;;; Flymake + Markdown
