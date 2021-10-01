@@ -1028,6 +1028,27 @@ must be installed."
 
 (setq hl-line-sticky-flag nil)
 
+(setq whitespace-line-column nil)       ; if nil, uses fill-column
+(setq whitespace-style '(face
+                         trailing
+                         tabs
+                         spaces
+                         lines-tail
+                         newline
+                         missing-newline-at-eof
+                         empty
+                         indentation
+                         space-before-tab
+                         space-mark
+                         tab-mark
+                         newline-mark))
+
+;; Long lines are allowed in certain modes.
+(dolist (hook '(markdown-mode-hook org-mode-hook))
+  (add-hook hook (lambda ()
+                   (setq-local whitespace-style
+                               (remove 'lines-tail whitespace-style)))))
+
 (define-key global-map (kbd "C-c w") #'delete-trailing-whitespace)
 
 ;;;;; Outline Mode
