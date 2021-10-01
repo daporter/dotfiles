@@ -164,12 +164,18 @@ STYLES is a list of pattern matching methods that is passed to
 (setq completion-category-overrides
       '((file (styles . (partial-completion orderless)))))
 (setq completion-cycle-threshold 2)
+(setq completion-flex-nospace nil)
+(setq completion-pcm-complete-word-inserts-delimiters nil)
+(setq completion-pcm-word-delimiters "-_./:| ")
 (setq completion-show-help nil)
+(setq completion-auto-help t)
+(setq completion-ignore-case t)
+(setq-default case-fold-search t)   ; For general regexp
+
+;; The following two are updated in Emacs 28.  They concern the
+;; *Completions* buffer.
 (setq completions-format 'one-column)
 (setq completions-detailed t)
-(setq enable-recursive-minibuffers t)
-(setq resize-mini-windows t)
-(setq minibuffer-eldef-shorten-default t)
 
 ;; Grouping of completions for Emacs 28
 (setq completions-group t)
@@ -181,10 +187,25 @@ STYLES is a list of pattern matching methods that is passed to
        (propertize " " 'face 'completions-group-separator
                    'display '(space :align-to right))))
 
+(setq read-buffer-completion-ignore-case t)
+(setq read-file-name-completion-ignore-case t)
+
+(setq enable-recursive-minibuffers t)
+(setq read-answer-short t) ; also check `use-short-answers' for Emacs28
+(setq resize-mini-windows t)
+(setq minibuffer-eldef-shorten-default t)
+
+(setq echo-keystrokes 0.25)           ; from the C source code
+
 (file-name-shadow-mode 1)
 (minibuffer-depth-indicate-mode 1)
 (minibuffer-electric-default-mode 1)
 
+(add-hook 'completion-list-mode-hook #'prot-common-truncate-lines-silently) ; from `prot-common.el'
+
+(let ((map completion-list-mode-map))
+  (define-key map (kbd "<tab>") #'choose-completion)
+  (define-key map (kbd "M-v") #'scroll-down-command))
 (let ((map minibuffer-local-completion-map))
   (define-key map (kbd "C-j") #'exit-minibuffer)
   (define-key map (kbd "<tab>") #'minibuffer-force-complete))
@@ -196,7 +217,6 @@ STYLES is a list of pattern matching methods that is passed to
 (setq-default prot-minibuffer-mini-cursors t) ; also check `prot-cursor.el'
 (setq prot-minibuffer-remove-shadowed-file-names t)
 (setq prot-minibuffer-minimum-input 3)
-(setq prot-minibuffer-live-update-delay 0.5)
 
 ;; ;; NOTE: `prot-minibuffer-completion-blocklist' can be used for
 ;; ;; commands with lots of candidates, depending also on how low
@@ -212,9 +232,10 @@ STYLES is a list of pattern matching methods that is passed to
 ;; buffer.  It circumvents the default method of waiting for some user
 ;; input (see `prot-minibuffer-minimum-input') before displaying and
 ;; updating the completions' buffer.
-(setq prot-minibuffer-completion-passlist '(vc-retrieve-tag
-                                            embark-prefix-help-command
-                                            org-capture))
+(setq prot-minibuffer-completion-passlist
+      '( vc-retrieve-tag embark-prefix-help-command org-capture
+         prot-bongo-playlist-insert-playlist-file
+         prot-bookmark-cd-bookmark))
 
 (define-key global-map (kbd "C-x :") #'prot-minibuffer-focus-mini-or-completions)
 (let ((map completion-list-mode-map))
@@ -246,6 +267,7 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map (kbd "C-l") #'prot-minibuffer-toggle-completions)) ; "list" mnemonic
 (let ((map minibuffer-local-filename-completion-map))
   (define-key map (kbd "<backspace>") #'prot-minibuffer-backward-updir))
+
 (add-hook 'minibuffer-setup-hook #'prot-minibuffer-mini-cursor)
 (let ((hook 'completion-list-mode-hook))
   (add-hook hook #'prot-minibuffer-completions-cursor)
