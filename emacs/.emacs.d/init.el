@@ -56,16 +56,17 @@
 
 ;;;;;; Font Configurations
 
-(internal-set-lisp-face-attribute 'default :family "Iosevka Comfy" 0)
-(internal-set-lisp-face-attribute 'default :weight 'book 0)
+(internal-set-lisp-face-attribute 'default :family "Fira Code" 0)
+(internal-set-lisp-face-attribute 'default :weight 'normal 0)
 (internal-set-lisp-face-attribute 'default :height 90 0)
-(internal-set-lisp-face-attribute 'fixed-pitch :family "Iosevka Comfy" 0)
-(internal-set-lisp-face-attribute 'fixed-pitch :weight 'book 0)
+(internal-set-lisp-face-attribute 'default :width 'normal 0)
+(internal-set-lisp-face-attribute 'fixed-pitch :family "Fira Code" 0)
+(internal-set-lisp-face-attribute 'fixed-pitch :weight 'normal 0)
 (internal-set-lisp-face-attribute 'variable-pitch :family "Noto Serif" 0)
 (internal-set-lisp-face-attribute 'variable-pitch :weight 'normal 0)
-(internal-set-lisp-face-attribute 'variable-pitch :height 1.0 0)
-(set-face-attribute 'bold nil :weight 'extrabold)
-(setq-default line-spacing 2)
+(internal-set-lisp-face-attribute 'variable-pitch :height 100 0)
+(set-face-attribute 'bold nil :weight 'bold)
+(setq-default line-spacing 1)
 (setq-default text-scale-remap-header-line t)
 (setq x-underline-at-descent-line t)
 
