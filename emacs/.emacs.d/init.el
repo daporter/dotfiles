@@ -1168,12 +1168,24 @@ must be installed."
 (setq battery-mode-line-limit 95)
 (display-battery-mode 1)
 
-;;;;;; Display Current Time
+;;;;;; Display Current Time (and world-clock)
 
-(setq display-time-format "%Y-%m-%d %H:%M")
+(setq display-time-format "%a %e %b, %H:%M")
 (setq display-time-default-load-average nil)
 (setq display-time-use-mail-icon t)
-(display-time-mode 1)
+
+(setq zoneinfo-style-world-list
+      '(("America/Los_Angeles" "Los Angeles")
+        ("America/New_York" "New York")
+        ("Europe/London" "London")
+        ("Europe/Paris" "Paris")
+        ("Europe/Amsterdam" "Amsterdam")
+        ("Asia/Tokyo" "Tokyo")
+        ("Australia/Brisbane" "Brisbane")
+        ("Australia/Canberra" "Canberra")))
+
+(setq world-clock-time-format "%R %z  %A %d %B")
+(setq world-clock-buffer-name "*world-clock*") ; Placement handled by `display-buffer-alist'
 
 ;;;;; Line Numbers and Relevant Indicators
 
