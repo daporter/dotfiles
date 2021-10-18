@@ -1179,7 +1179,6 @@ must be installed."
 
 (setq hl-line-sticky-flag nil)
 
-(setq whitespace-line-column nil)       ; if nil, uses fill-column
 (setq whitespace-style '(face
                          trailing
                          tabs
@@ -1193,6 +1192,12 @@ must be installed."
                          space-mark
                          tab-mark
                          newline-mark))
+(setq whitespace-line-column nil)       ; if nil, uses fill-column
+(setq whitespace-display-mappings
+      '((tab-mark 9 [9655 9] [183 9])
+        (space-mark 32 [183] [46])
+        (newline-mark 10 [8617 10])
+        (lines-tail 10 [8617 10])))
 
 ;; Long lines are allowed in certain modes.
 (dolist (hook '(markdown-mode-hook org-mode-hook))
