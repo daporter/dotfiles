@@ -1140,10 +1140,16 @@ must be installed."
 
 ;;;;; Mode Line
 
-(setq mode-line-compact 'long)
 (setq mode-line-position-column-line-format '(" %l,%c"))
 (setq mode-line-defining-kbd-macro
       (propertize " Macro" 'face 'mode-line-emphasis))
+
+(setq-default mode-line-modes
+              (seq-filter (lambda (s)
+                            (not (and (stringp s)
+                                      (string-match-p
+                                       "^\\(%\\[\\|%\\]\\)$" s))))
+                          mode-line-modes))
 
 (setq-default mode-line-format
               '("%e"
@@ -1162,6 +1168,25 @@ must be installed."
                 "  "
                 mode-line-misc-info
                 mode-line-end-spaces))
+
+;;;;;; Moody.el
+
+(unless (package-installed-p 'moody)
+  (package-install 'moody))
+(require 'moody)
+(require 'prot-moody)
+(setq prot-moody-font-height-multiplier 1.35)
+
+;; Also check the Modus themes' `modus-themes-mode-line' which can set
+;; the styles specifically for Moody.
+(prot-moody-set-height -1)
+
+;;;;;; Mode Line Recursion Indicators
+
+(unless (package-installed-p 'recursion-indicator)
+  (package-install 'recursion-indicator))
+(require 'recursion-indicator)
+(recursion-indicator-mode 1)
 
 ;;;;;; Battery Status
 
