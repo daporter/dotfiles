@@ -18,4 +18,6 @@ flake8 "$1"
 
 darglint -m "{path}:{line} {msg_id}: {msg}" "$1"
 
-# bandit --format custom --msg-template "{relpath}:{line}: {test_id}: {severity}: {msg}" "$1"
+# bandit --format custom \
+#        --msg-template "{relpath}:{line}: {test_id}: {severity}: {msg}" \
+#        "$1"
