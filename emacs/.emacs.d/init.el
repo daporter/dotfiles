@@ -38,6 +38,24 @@
 
 (setq custom-file (make-temp-file "emacs-custom-")) ; disable it!
 
+;;;;; Common Custom Functions (prot-simple.el)
+
+(require 'prot-simple)
+(setq help-window-select t)
+(prot-simple-rename-help-buffers 1)
+
+;;;;;; Highlight Cursor Position
+
+(require 'prot-pulse)
+(setq prot-pulse-pulse-command-list
+      '(recenter-top-bottom
+        move-to-window-line-top-bottom
+        reposition-window
+        bookmark-jump
+        other-window))
+(prot-pulse-advice-commands-mode 1)
+(define-key global-map (kbd "C-x l") #'prot-pulse-pulse-line)
+
 ;;;;; Modus Themes
 
 (setq modus-themes-bold-constructs t
@@ -482,8 +500,8 @@ STYLES is a list of pattern matching methods that is passed to
 
 (setq display-buffer-alist
       `(;; no window
-        ("\\`\\*Async Shell Command\\*\\'"
-         (display-buffer-no-window))
+        ;;("\\`\\*Async Shell Command\\*\\'"
+        ;; (display-buffer-no-window))
         ;; top side window
         ("\\**prot-elfeed-bongo-queue.*"
          (display-buffer-reuse-window display-buffer-in-side-window)
@@ -495,7 +513,7 @@ STYLES is a list of pattern matching methods that is passed to
          (window-height . 0.16)
          (side . top)
          (slot . -1))
-        ("\\*\\(Flymake\\|Package-Lint\\).*"
+        ("\\*\\(Flymake diagnostics\\|Package-Lint\\).*"
          (display-buffer-in-side-window)
          (window-height . 0.16)
          (side . top)
@@ -505,32 +523,13 @@ STYLES is a list of pattern matching methods that is passed to
          (window-height . 0.16)
          (side . top)
          (slot . 1))
-        ("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\)\\*"
+        ("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\|Flymake log\\)\\*"
          (display-buffer-in-side-window)
          (window-height . 0.16)
          (side . top)
          (slot . 2))
-        ;; bottom side window
-        ("\\*Embark Actions.*"
-         (display-buffer-in-side-window)
-         (side . bottom)
-         (slot . -1)
-         (window-height . fit-window-to-buffer)
-         (window-parameters . ((no-other-window . t)
-                               (mode-line-format . none))))
-        ("\\*\\(Embark\\)?.*Completions.*"
-         (display-buffer-in-side-window)
-         (side . bottom)
-         (slot . 0)
-         (window-parameters . ((no-other-window . t)
-                               (mode-line-format . none))))
         ;; left side window
-        ("\\*Help.*"            ; See the hooks for `visual-line-mode'
-         (display-buffer-in-side-window)
-         (window-width . 0.25)
-         (side . left)
-         (slot . -1))
-        ("\\*Faces\\*"
+        ("\\*Help\\*"             ; See the hooks for `visual-line-mode'
          (display-buffer-in-side-window)
          (window-width . 0.25)
          (side . left)
@@ -544,17 +543,38 @@ STYLES is a list of pattern matching methods that is passed to
          (slot . -1)
          (window-parameters . ((no-other-window . t)
                                (mode-line-format . none))))
+        ;; bottom side window
+        ("\\*Org Select\\*"
+         (display-buffer-in-side-window)
+         (dedicated . t)
+         (side . bottom)
+         (slot . 0)
+         (window-parameters . ((mode-line-format . none))))
         ;; bottom buffer (NOT side window)
-        ("\\*\\(Output\\|Register Preview\\).*"
-         (display-buffer-at-bottom))
-        ("\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
+        ("\\*Embark Actions\\*"
          (display-buffer-reuse-mode-window display-buffer-at-bottom)
-         (window-height . 0.2))
-        ;; ("\\*.*\\(e?shell\\|v?term\\).*"
-        ;;  (display-buffer-reuse-mode-window display-buffer-at-bottom)
-        ;;  (window-height . 0.2))
+         (side . bottom)
+         (slot . -1)
+         (window-height . fit-window-to-buffer)
+         (window-parameters . ((no-other-window . t)
+                               (mode-line-format . none))))
+        ("\\*\\(Embark\\)?.*Completions.*"
+         (display-buffer-reuse-mode-window display-buffer-at-bottom)
+         (side . bottom)
+         (slot . 0)
+         (window-parameters . ((no-other-window . t)
+                               (mode-line-format . none))))
+        ("\\*\\(Output\\|Register Preview\\).*"
+         (display-buffer-reuse-mode-window display-buffer-at-bottom))
         ;; below current window
-        ("\\*\\(Calendar\\|Org Select\\|Bookmark Annotation\\).*"
+        ("\\*.*\\(e?shell\\|v?term\\).*"
+         (display-buffer-reuse-mode-window display-buffer-below-selected))
+        ("\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
+         (display-buffer-reuse-mode-window display-buffer-below-selected)
+         ;; NOTE 2021-10-06: we cannot `fit-window-to-buffer' because
+         ;; the size is not known in advance.
+         (window-height . 0.2))
+        ("\\*\\(Calendar\\|Bookmark Annotation\\).*"
          (display-buffer-reuse-mode-window display-buffer-below-selected)
          (window-height . fit-window-to-buffer))))
 (setq window-combination-resize t)
@@ -632,7 +652,7 @@ STYLES is a list of pattern matching methods that is passed to
 (let ((map global-map))
   (define-key map (kbd "C-x <right>") #'prot-tab-winner-redo)
   (define-key map (kbd "C-x <left>") #'prot-tab-winner-undo)
-  (define-key map (kbd "C-<f8>") #'prot-tab-status-line) ; unopinionated alternative: `prot-tab-tab-bar-toggle'
+  (define-key map (kbd "C-<f8>") #'prot-tab-status-line) ; unopinionated alternative: `prot-tab-bar-toggle'
   (define-key map (kbd "C-x t t") #'prot-tab-select-tab-dwim))
 
 ;;;;;; Transposition and Rotation of Windows
@@ -863,17 +883,17 @@ must be installed."
 (setq notmuch-hello-thousands-separator "")
 
 ;; Search
-(setq notmuch-search-result-format '(("date" . "%12s  ")
-                                     ("count" . "%-7s  ")
-                                     ("authors" . "%-20s  ")
-                                     ("subject" . "%-70s  ")
-                                     ("tags" . "(%s)")))
-(setq notmuch-tree-result-format '(("date" . "%12s  ")
-                                   ("authors" . "%-20s  ")
-                                   ((("tree" . "%s")
-                                     ("subject" . "%s"))
-                                    . " %-70s  ")
-                                   ("tags" . "(%s)")))
+(setq notmuch-search-result-format
+      '(("date" . "%12s  ")
+        ("count" . "%-7s  ")
+        ("authors" . "%-20s  ")
+        ("subject" . "%-70s  ")
+        ("tags" . "(%s)")))
+(setq notmuch-tree-result-format
+      '(("date" . "%12s  ")
+        ("authors" . "%-20s  ")
+        ((("tree" . "%s") ("subject" . "%s")) . " %-70s  ")
+        ("tags" . "(%s)")))
 (setq notmuch-show-empty-saved-searches t)
 (setq notmuch-saved-searches
       '((:name "unread (inbox)" :query "tag:unread and tag:inbox" :key "u")
