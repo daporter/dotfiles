@@ -14,6 +14,7 @@
 /emacs/.emacs.d/diary
 /emacs/.emacs.d/ebdb.gpg
 /emacs/.emacs.d/elfeed
+/emacs/.emacs.d/eln-cache
 /emacs/.emacs.d/elpa
 /emacs/.emacs.d/eshell
 /emacs/.emacs.d/eww-bookmarks
