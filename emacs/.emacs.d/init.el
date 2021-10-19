@@ -74,19 +74,55 @@
 
 ;;;;;; Font Configurations
 
-(internal-set-lisp-face-attribute 'default :family "Fira Code" 0)
-(internal-set-lisp-face-attribute 'default :weight 'normal 0)
-(internal-set-lisp-face-attribute 'default :height 90 0)
-(internal-set-lisp-face-attribute 'default :width 'normal 0)
-(internal-set-lisp-face-attribute 'fixed-pitch :family "Fira Code" 0)
-(internal-set-lisp-face-attribute 'fixed-pitch :weight 'normal 0)
-(internal-set-lisp-face-attribute 'variable-pitch :family "Noto Serif" 0)
-(internal-set-lisp-face-attribute 'variable-pitch :weight 'normal 0)
-(internal-set-lisp-face-attribute 'variable-pitch :height 100 0)
-(set-face-attribute 'bold nil :weight 'bold)
-(setq-default line-spacing 1)
-(setq-default text-scale-remap-header-line t)
+(require 'prot-fonts)
 (setq x-underline-at-descent-line t)
+(setq-default text-scale-remap-header-line t)
+
+(setq prot-fonts-typeface-sets-alist
+        '((small . ( :fixed-pitch-family "IBM Plex Mono"
+                     :fixed-pitch-regular-weight normal
+                     :fixed-pitch-heavy-weight bold
+                     :fixed-pitch-height 70
+                     :fixed-pitch-line-spacing 1
+                     :variable-pitch-family "Noto Serif"
+                     :variable-pitch-height 1.0
+                     :variable-pitch-regular-weight normal))
+
+          (regular . ( :fixed-pitch-family "IBM Plex Mono"
+                       :fixed-pitch-regular-weight normal
+                       :fixed-pitch-heavy-weight bold
+                       :fixed-pitch-height 80
+                       :fixed-pitch-line-spacing nil
+                       :variable-pitch-family "Noto Serif"
+                       :variable-pitch-height 1.1
+                       :variable-pitch-regular-weight normal))
+
+          (medium . ( :fixed-pitch-family "Iosevka Comfy"
+                      :fixed-pitch-regular-weight book
+                      :fixed-pitch-heavy-weight extrabold
+                      :fixed-pitch-height 105
+                      :fixed-pitch-line-spacing nil
+                      :variable-pitch-family "Noto Serif"
+                      :variable-pitch-height 1.0
+                      :variable-pitch-regular-weight normal))
+
+          (large . ( :fixed-pitch-family "Iosevka Comfy"
+                     :fixed-pitch-regular-weight normal
+                     :fixed-pitch-heavy-weight bold
+                     :fixed-pitch-height 135
+                     :fixed-pitch-line-spacing nil
+                     :variable-pitch-family "Noto Serif"
+                     :variable-pitch-height 1.0
+                     :variable-pitch-regular-weight normal))))
+
+(setq prot-fonts-laptop-desktop-keys-list
+      (prot-fonts-laptop-desktop-keys))
+
+(setq prot-fonts-max-small-resolution-width 1366)
+
+(prot-fonts-fonts-per-monitor)
+(add-hook 'modus-themes-after-load-theme-hook #'prot-fonts-restore-last)
+(define-key global-map (kbd "C-c f") #'prot-fonts-set-fonts)
 
 ;;;;; Repeatable Keychords
 
@@ -683,9 +719,8 @@ STYLES is a list of pattern matching methods that is passed to
 
 (require 'prot-logos)
 (require 'prot-cursor)
-(setq prot-logos-variable-pitch t)
 (setq prot-logos-affect-prot-cursor t)
-(define-key global-map (kbd "C-c f") #'prot-logos-focus-mode)
+(define-key global-map (kbd "C-c l") #'prot-logos-focus-mode)
 
 ;;;;; Org Mode
 
