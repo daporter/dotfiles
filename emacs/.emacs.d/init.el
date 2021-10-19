@@ -379,16 +379,14 @@ STYLES is a list of pattern matching methods that is passed to
   (package-install 'embark))
 (require 'embark)
 
+(setq prefix-help-command #'embark-prefix-help-command)
 (setq embark-collect-initial-view-alist '((t . list)))
-(setq embark-cycle-key (kbd "C-."))   ; see the `embark-act' key
-(setq embark-collect-live-update-delay 0.5)
-(setq embark-collect-live-initial-delay 0.8)
+(setq embark-cycle-key (kbd "C-,"))     ; see the `embark-act' key
 (setq embark-indicator #'embark-mixed-indicator)
 (setq embark-verbose-indicator-excluded-actions
       '("\\`embark-collect-" "\\`customize-" "\\(local\\|global\\)-set-key"
         set-variable embark-cycle embark-export
         embark-keymap-help embark-become embark-isearch))
-(setq embark-mixed-indicator-delay 1.2)
 (setq embark-verbose-indicator-display-action nil)
 
 ;; Use alternating backgrounds, if `stripes' is available.
