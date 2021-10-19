@@ -691,7 +691,7 @@ STYLES is a list of pattern matching methods that is passed to
 
 ;;;;;; Org Capture
 
-(setq org-default-notes-file "~/inbox/notes.org")
+(setq org-default-notes-file "~/Dropbox/inbox/notes.org")
 (setq org-capture-templates
       '(("n" "Note" entry (file "")     ; use `org-default-notes-file’
          "* %<%Y-%m-%d %H:%M>\n  %?\n  %i")))
@@ -708,7 +708,7 @@ STYLES is a list of pattern matching methods that is passed to
 (unless (package-installed-p 'org-journal)
   (package-install 'org-journal))
 (require 'org-journal)
-(setq org-journal-dir "~/journal")
+(setq org-journal-dir "~/Dropbox/journal")
 (setq org-journal-file-format "%Y-%m-%d")
 (setq org-journal-date-format "%A, %d %B %Y")
 
@@ -719,7 +719,7 @@ STYLES is a list of pattern matching methods that is passed to
 (require 'deft)
 (setq deft-extensions '("md" "txt" "org"))
 (setq deft-default-extension "md")
-(setq deft-directory "~/zettelkasten")
+(setq deft-directory "~/Dropbox/zettelkasten")
 (setq deft-use-filename-as-title t)
 
 (unless (package-installed-p 'zetteldeft)
