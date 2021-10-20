@@ -17,6 +17,13 @@
 (add-to-list 'load-path (locate-user-emacs-file "lisp"))
 (add-to-list 'load-path (locate-user-emacs-file "prot-lisp"))
 
+;;;;; Set PATH
+
+(unless (package-installed-p 'exec-path-from-shell)
+  (package-install 'exec-path-from-shell))
+(require 'exec-path-from-shell)
+(exec-path-from-shell-initialize)
+
 ;;;;; Some Basic Settings
 
 (setq frame-title-format '("%b"))
