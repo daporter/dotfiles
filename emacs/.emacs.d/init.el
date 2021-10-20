@@ -103,7 +103,7 @@
                       :variable-pitch-family "Noto Serif"
                       :variable-pitch-height 1.1
                       :variable-pitch-regular-weight normal))
-        
+
         (external . ( :fixed-pitch-family "Fira Code"
                       :fixed-pitch-regular-weight normal
                       :fixed-pitch-heavy-weight semibold
@@ -1600,6 +1600,12 @@ must be installed."
 
 (setq-default fill-column 72)
 (add-hook 'text-mode-hook #'turn-on-visual-line-mode)
+
+(unless (package-installed-p 'adaptive-wrap)
+  (package-install 'adaptive-wrap))
+(require 'adaptive-wrap)
+(add-hook 'text-mode-hook #'adaptive-wrap-prefix-mode)
+
 (column-number-mode 1)
 
 ;;;;; Comments
