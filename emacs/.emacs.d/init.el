@@ -1733,6 +1733,7 @@ must be installed."
 (recentf-mode 1)
 
 (require 'desktop)
+(setq desktop-dirname user-emacs-directory)
 (setq desktop-base-file-name "desktop")
 (setq desktop-globals-to-clear nil)
 (setq desktop-restore-eager 0)
