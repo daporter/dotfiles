@@ -86,41 +86,32 @@
 (setq-default text-scale-remap-header-line t)
 
 (setq prot-fonts-typeface-sets-alist
-        '((small . ( :fixed-pitch-family "IBM Plex Mono"
+      '((macbook . ( :fixed-pitch-family "Fira Code"
                      :fixed-pitch-regular-weight normal
-                     :fixed-pitch-heavy-weight bold
-                     :fixed-pitch-height 70
+                     :fixed-pitch-heavy-weight semibold
+                     :fixed-pitch-height 120
                      :fixed-pitch-line-spacing 1
                      :variable-pitch-family "Noto Serif"
-                     :variable-pitch-height 1.0
+                     :variable-pitch-height 1.1
                      :variable-pitch-regular-weight normal))
 
-          (regular . ( :fixed-pitch-family "IBM Plex Mono"
-                       :fixed-pitch-regular-weight normal
-                       :fixed-pitch-heavy-weight bold
-                       :fixed-pitch-height 80
-                       :fixed-pitch-line-spacing nil
-                       :variable-pitch-family "Noto Serif"
-                       :variable-pitch-height 1.1
-                       :variable-pitch-regular-weight normal))
-
-          (medium . ( :fixed-pitch-family "Iosevka Comfy"
-                      :fixed-pitch-regular-weight book
-                      :fixed-pitch-heavy-weight extrabold
-                      :fixed-pitch-height 105
+        (thinkpad . ( :fixed-pitch-family "IBM Plex Mono"
+                      :fixed-pitch-regular-weight normal
+                      :fixed-pitch-heavy-weight bold
+                      :fixed-pitch-height 80
                       :fixed-pitch-line-spacing nil
                       :variable-pitch-family "Noto Serif"
-                      :variable-pitch-height 1.0
+                      :variable-pitch-height 1.1
                       :variable-pitch-regular-weight normal))
-
-          (large . ( :fixed-pitch-family "Iosevka Comfy"
-                     :fixed-pitch-regular-weight normal
-                     :fixed-pitch-heavy-weight bold
-                     :fixed-pitch-height 135
-                     :fixed-pitch-line-spacing nil
-                     :variable-pitch-family "Noto Serif"
-                     :variable-pitch-height 1.0
-                     :variable-pitch-regular-weight normal))))
+        
+        (external . ( :fixed-pitch-family "Fira Code"
+                      :fixed-pitch-regular-weight normal
+                      :fixed-pitch-heavy-weight semibold
+                      :fixed-pitch-height 120
+                      :fixed-pitch-line-spacing 1
+                      :variable-pitch-family "Noto Serif"
+                      :variable-pitch-height 1.1
+                      :variable-pitch-regular-weight normal))))
 
 (setq prot-fonts-laptop-desktop-keys-list
       (prot-fonts-laptop-desktop-keys))
