@@ -1664,7 +1664,6 @@ must be installed."
 (setq flyspell-issue-message-flag nil)
 (setq flyspell-issue-welcome-flag nil)
 (setq ispell-dictionary "australian-w_accents")
-(define-key flyspell-mode-map (kbd "C-;") nil)
 
 (require 'prot-spell)
 (setq prot-spell-dictionaries
@@ -1672,9 +1671,13 @@ must be installed."
         ("FR Français" . "francais-lrg")
         ("NL Nederlands" . "dutch")
         ("ES Espanõl" . "español")))
-(define-key global-map (kbd "C-M-$") #'prot-spell-change-dictionary)
+(let ((map global-map))
+    (define-key map (kbd "M-$") #'prot-spell-spell-dwim)
+    (define-key map (kbd "C-M-$") #'prot-spell-change-dictionary)
+    (define-key map (kbd "C-M-;") #'flyspell-goto-next-error)
+    (define-key map (kbd "C-;") #'flyspell-auto-correct-word))
 
-;;;;;; Aode and Text Linters
+;;;;;; Code and Text Linters
 
 ;;;;;;; Flymake
 
