@@ -86,32 +86,32 @@
 (setq-default text-scale-remap-header-line t)
 
 (setq prot-fonts-typeface-sets-alist
-      '((macbook . ( :fixed-pitch-family "Fira Code"
-                     :fixed-pitch-regular-weight normal
-                     :fixed-pitch-heavy-weight semibold
-                     :fixed-pitch-height 120
-                     :fixed-pitch-line-spacing 1
-                     :variable-pitch-family "Noto Serif"
-                     :variable-pitch-height 1.1
-                     :variable-pitch-regular-weight normal))
-
-        (thinkpad . ( :fixed-pitch-family "IBM Plex Mono"
+      '((thinkpad . ( :fixed-pitch-family "Hack"
                       :fixed-pitch-regular-weight normal
-                      :fixed-pitch-heavy-weight bold
+                      :fixed-pitch-heavy-weight semibold
                       :fixed-pitch-height 80
                       :fixed-pitch-line-spacing nil
                       :variable-pitch-family "Noto Serif"
                       :variable-pitch-height 1.1
                       :variable-pitch-regular-weight normal))
 
-        (external . ( :fixed-pitch-family "Fira Code"
+        (external . ( :fixed-pitch-family "Hack"
                       :fixed-pitch-regular-weight normal
                       :fixed-pitch-heavy-weight semibold
-                      :fixed-pitch-height 120
+                      :fixed-pitch-height 90
                       :fixed-pitch-line-spacing 1
                       :variable-pitch-family "Noto Serif"
                       :variable-pitch-height 1.1
-                      :variable-pitch-regular-weight normal))))
+                      :variable-pitch-regular-weight normal))
+
+        (macbook . ( :fixed-pitch-family "Fira Code"
+                     :fixed-pitch-regular-weight normal
+                     :fixed-pitch-heavy-weight semibold
+                     :fixed-pitch-height 120
+                     :fixed-pitch-line-spacing 1
+                     :variable-pitch-family "Noto Serif"
+                     :variable-pitch-height 1.1
+                     :variable-pitch-regular-weight normal))))
 
 (setq prot-fonts-laptop-desktop-keys-list
       (prot-fonts-laptop-desktop-keys))
