@@ -996,6 +996,7 @@ sure this is a good approach."
 (setq org-journal-dir "~/Dropbox/journal")
 (setq org-journal-file-format "%Y-%m-%d")
 (setq org-journal-date-format "%A, %d %B %Y")
+(define-key global-map (kbd "C-c j") #'org-journal-new-entry)
 
 ;;;;; Deft and Zetteldeft
 
