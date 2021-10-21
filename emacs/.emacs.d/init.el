@@ -39,7 +39,7 @@
 
 (setq initial-buffer-choice t)          ; always start with *scratch*
 
-(global-set-key (kbd "C-c p") #'package-list-packages)
+(define-key global-map (kbd "C-c p") #'package-list-packages)
 
 ;;;; Base Settings
 
@@ -637,20 +637,46 @@ STYLES is a list of pattern matching methods that is passed to
 
 (add-hook 'after-init-hook #'winner-mode)
 
-;;;;;; Directional Window Motions (windmove)
+;;;;;; Quickly Switch Windows (ace-window)
 
-(setq windmove-create-window nil)     ; Emacs 27.1
-(let ((map global-map))
-  ;; Those override some commands that are already available with
-  ;; C-M-u, C-M-f, C-M-b.
-  (define-key map (kbd "C-M-<up>") #'windmove-up)
-  (define-key map (kbd "C-M-<right>") #'windmove-right)
-  (define-key map (kbd "C-M-<down>") #'windmove-down)
-  (define-key map (kbd "C-M-<left>") #'windmove-left)
-  (define-key map (kbd "C-M-S-<up>") #'windmove-swap-states-up)
-  (define-key map (kbd "C-M-S-<right>") #'windmove-swap-states-right) ; conflicts with `org-increase-number-at-point'
-  (define-key map (kbd "C-M-S-<down>") #'windmove-swap-states-down)
-  (define-key map (kbd "C-M-S-<left>") #'windmove-swap-states-left))
+(unless (package-installed-p 'ace-window)
+  (package-install 'ace-window))
+(require 'ace-window)
+
+(setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n))
+(setq aw-dispatch-alist
+	  '((?b aw-switch-buffer-in-window "Select Buffer")
+	    (?B aw-switch-buffer-other-window "Switch Buffer Other Window")
+        (?s aw-swap-window "Swap Windows")
+	    (?c aw-copy-window "Copy Window")
+	    (?m aw-move-window "Move Window")
+	    (?x aw-delete-window "Delete Window")
+	    (?O delete-other-windows "Delete Other Windows")
+	    (?f aw-flip-window)
+	    (?+ aw-split-window-fair "Split Fair Window")
+	    (?- aw-split-window-vert "Split Vert Window")
+	    (?| aw-split-window-horz "Split Horz Window")
+	    (?? aw-show-dispatch-help)))
+
+(define-key global-map (kbd "C-x o") #'ace-window)
+
+(eval-when-compile
+  (defmacro my/embark-ace-action (fn)
+    `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
+       (interactive)
+       (with-demoted-errors "%s"
+         (require 'ace-window)
+         (let ((aw-dispatch-always t))
+           (aw-switch-to-window (aw-select nil))
+           (call-interactively (symbol-function ',fn)))))))
+
+(define-key embark-file-map (kbd "o")
+            (my/embark-ace-action find-file))
+(define-key embark-buffer-map (kbd "o")
+            (my/embark-ace-action switch-to-buffer))
+(define-key embark-bookmark-map (kbd "o")
+            (my/embark-ace-action bookmark-jump))
+
 
 ;;;;;; Tabs for Window Layouts
 
