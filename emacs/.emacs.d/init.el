@@ -974,6 +974,23 @@ sure this is a good approach."
 
 ;;;;; Org Mode
 
+(setq org-list-allow-alphabetical t)
+
+(setq org-cite-global-bibliography
+      '("~/Dropbox/bibliography/bibliography.bib"))
+
+;;;;;; CSL Export Processor
+
+;; `citeproc’ is required by `oc-csl’
+(unless (package-installed-p 'citeproc)
+  (package-install 'citeproc))
+(require 'citeproc)
+
+(require 'oc-csl)
+(setq org-cite-csl-styles-dir "~/Dropbox/bibliography")
+(setq org-cite-export-processors
+      '((t csl "modern-language-association.csl")))
+
 ;;;;;; Org Capture
 
 (setq org-default-notes-file "~/Dropbox/inbox/notes.org")
