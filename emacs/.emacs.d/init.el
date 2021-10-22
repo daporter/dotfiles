@@ -1017,41 +1017,27 @@ sure this is a good approach."
 (setq org-journal-date-format "%A, %d %B %Y")
 (define-key global-map (kbd "C-c j") #'org-journal-new-entry)
 
-;;;;; Deft and Zetteldeft
+;;;;;; Deft
 
 (unless (package-installed-p 'deft)
   (package-install 'deft))
 (require 'deft)
-(setq deft-extensions '("md" "txt" "org"))
-(setq deft-default-extension "md")
 (setq deft-directory "~/Dropbox/zettelkasten")
-(setq deft-use-filename-as-title t)
+(setq deft-default-extension "org")
+(setq deft-extensions '("org" "md" "txt"))
 
-(unless (package-installed-p 'zetteldeft)
-  (package-install 'zetteldeft))
-(require 'zetteldeft)
-(zetteldeft-set-classic-keybindings)
-(setq zetteldeft-home-id "202101292226") ; the "index" note
-(setq zetteldeft-link-indicator "[[")
-(setq zetteldeft-link-suffix "]]")
-(setq zetteldeft-title-prefix "# ")
-(setq zetteldeft-list-prefix "* ")
-(setq zetteldeft-id-format "%Y%m%d%H%M")
-(setq zetteldeft-id-regex "[0-9]\\{12\\}")
-(font-lock-add-keywords 'markdown-mode
-                        `((,zetteldeft-id-regex
-                           . font-lock-constant-face)))
+;;;;;; Org Roam
 
-;; Zetteldeft doesn't include the ID in the titles it generates. This function
-;; fixes that.
-(defun dp-zetteldeft-insert-title ()
-  "Insert a title based on the file name."
-  (interactive)
-  (let ((title (file-name-base (buffer-file-name))))
-    (save-excursion
-      (goto-char (point-min))
-      (zetteldeft--insert-title title)
-      (newline))))
+(unless (package-installed-p 'org-roam)
+  (package-install 'org-roam))
+(require 'org-roam)
+
+(setq org-roam-directory "~/Dropbox/zettelkasten")
+(org-roam-db-autosync-mode)
+
+(let ((map global-map))
+  (define-key map (kbd "C-c z i") #'org-roam-node-insert)
+  (define-key map (kbd "C-c z f") #'org-roam-node-find))
 
 ;;;;; Anki Card Creation
 
