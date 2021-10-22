@@ -1022,11 +1022,35 @@ sure this is a good approach."
 (unless (package-installed-p 'deft)
   (package-install 'deft))
 (require 'deft)
+
 (setq deft-directory "~/Dropbox/zettelkasten")
 (setq deft-default-extension "org")
-(setq deft-extensions '("org" "md" "txt"))
+(setq deft-use-filter-string-for-filename t)
+
+(advice-add 'deft-parse-title :override
+            (lambda (file contents)
+              (if deft-use-filename-as-title
+                  (deft-base-filename file)
+                (let* ((case-fold-search 't)
+                       (begin (string-match "title: " contents))
+                       (end-of-begin (match-end 0))
+                       (end (string-match "\n" contents begin)))
+                  (if begin
+                      (substring contents end-of-begin end)
+                    (format "%s" file))))))
+
+(setq deft-strip-summary-regexp
+      (concat "\\("
+              "[\n\t]"
+              "\\|^#\\+[[:alpha:]_]+:.*$" ; org-mode metadata
+		      "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
+              "\\)"))
+
+(define-key global-map (kbd "C-c z d") 'deft)
 
 ;;;;;; Org Roam
+
+(setq org-roam-v2-ack t)
 
 (unless (package-installed-p 'org-roam)
   (package-install 'org-roam))
