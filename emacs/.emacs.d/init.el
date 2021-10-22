@@ -645,18 +645,18 @@ STYLES is a list of pattern matching methods that is passed to
 
 (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n))
 (setq aw-dispatch-alist
-	  '((?b aw-switch-buffer-in-window "Select Buffer")
-	    (?B aw-switch-buffer-other-window "Switch Buffer Other Window")
+      '((?b aw-switch-buffer-in-window "Select Buffer")
+        (?B aw-switch-buffer-other-window "Switch Buffer Other Window")
         (?s aw-swap-window "Swap Windows")
-	    (?c aw-copy-window "Copy Window")
-	    (?m aw-move-window "Move Window")
-	    (?x aw-delete-window "Delete Window")
-	    (?O delete-other-windows "Delete Other Windows")
-	    (?f aw-flip-window)
-	    (?+ aw-split-window-fair "Split Fair Window")
-	    (?- aw-split-window-vert "Split Vert Window")
-	    (?| aw-split-window-horz "Split Horz Window")
-	    (?? aw-show-dispatch-help)))
+        (?c aw-copy-window "Copy Window")
+        (?m aw-move-window "Move Window")
+        (?x aw-delete-window "Delete Window")
+        (?O delete-other-windows "Delete Other Windows")
+        (?f aw-flip-window)
+        (?+ aw-split-window-fair "Split Fair Window")
+        (?- aw-split-window-vert "Split Vert Window")
+        (?| aw-split-window-horz "Split Horz Window")
+        (?? aw-show-dispatch-help)))
 
 (define-key global-map (kbd "C-x o") #'ace-window)
 
@@ -1303,6 +1303,7 @@ must be installed."
 
 (with-eval-after-load 'elfeed
   (require 'prot-elfeed)
+  (setq prot-elfeed-feeds-file (concat user-emacs-directory "feeds.el"))
   (setq prot-elfeed-tag-faces t)
   (prot-elfeed-fontify-tags)
   (add-hook 'elfeed-search-mode-hook #'prot-elfeed-load-feeds)
@@ -1699,10 +1700,10 @@ must be installed."
         ("NL Nederlands" . "dutch")
         ("ES Espanõl" . "español")))
 (let ((map global-map))
-    (define-key map (kbd "M-$") #'prot-spell-spell-dwim)
-    (define-key map (kbd "C-M-$") #'prot-spell-change-dictionary)
-    (define-key map (kbd "C-M-;") #'flyspell-goto-next-error)
-    (define-key map (kbd "C-;") #'flyspell-auto-correct-word))
+  (define-key map (kbd "M-$") #'prot-spell-spell-dwim)
+  (define-key map (kbd "C-M-$") #'prot-spell-change-dictionary)
+  (define-key map (kbd "C-M-;") #'flyspell-goto-next-error)
+  (define-key map (kbd "C-;") #'flyspell-auto-correct-word))
 
 ;;;;;; Code and Text Linters
 
