@@ -993,8 +993,10 @@ sure this is a good approach."
 (unless (package-installed-p 'org-journal)
   (package-install 'org-journal))
 (require 'org-journal)
+
 (setq org-journal-dir "~/Dropbox/journal")
-(setq org-journal-file-format "%Y-%m-%d")
+(setq org-journal-file-format "%Y-%m-%d.org")
+(setq org-journal-date-prefix "#+title: ")
 (setq org-journal-date-format "%A, %d %B %Y")
 (define-key global-map (kbd "C-c j") #'org-journal-new-entry)
 
