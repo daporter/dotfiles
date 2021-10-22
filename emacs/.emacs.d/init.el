@@ -1102,8 +1102,8 @@ sure this is a good approach."
 
 ;;;;; Zotero Reference Manager
 
-(defun dp-insert-zotero-bibliography ()
-  "Invoke the Zotero reference chooser and insert the bibliography chosen.
+(defun dp-insert-zotero-reference ()
+  "Invoke the Zotero reference chooser and insert the chosen reference.
 Note: Zotero must be running and the `Better BibTeX' extension
 must be installed."
   (interactive)
@@ -1112,7 +1112,7 @@ must be installed."
    t))
 
 (defun dp-insert-zotero-citation ()
-  "Invoke the Zotero reference chooser and insert the bibliography chosen.
+  "Invoke the Zotero reference chooser and insert the chosen citation.
 Note: Zotero must be running and the `Better BibTeX' extension
 must be installed."
   (interactive)
@@ -1120,7 +1120,7 @@ must be installed."
    "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-citation"
    t))
 
-(define-key global-map (kbd "C-c z b") #'dp-insert-zotero-bibliography)
+(define-key global-map (kbd "C-c z r") #'dp-insert-zotero-reference)
 (define-key global-map (kbd "C-c z c") #'dp-insert-zotero-citation)
 
 ;;;;; Email Settings
