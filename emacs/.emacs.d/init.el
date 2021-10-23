@@ -88,7 +88,7 @@
 (setq prot-fonts-typeface-sets-alist
       '((thinkpad . ( :fixed-pitch-family "Hack"
                       :fixed-pitch-regular-weight normal
-                      :fixed-pitch-heavy-weight semibold
+                      :fixed-pitch-heavy-weight bold
                       :fixed-pitch-height 80
                       :fixed-pitch-line-spacing nil
                       :variable-pitch-family "Noto Serif"
@@ -97,7 +97,7 @@
 
         (external . ( :fixed-pitch-family "Hack"
                       :fixed-pitch-regular-weight normal
-                      :fixed-pitch-heavy-weight semibold
+                      :fixed-pitch-heavy-weight bold
                       :fixed-pitch-height 90
                       :fixed-pitch-line-spacing 1
                       :variable-pitch-family "Noto Serif"
