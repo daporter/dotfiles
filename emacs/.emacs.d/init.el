@@ -309,6 +309,7 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map (kbd "M-g M-g") #'consult-goto-line)
   (define-key map (kbd "M-K") #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
   (define-key map (kbd "M-F") #'consult-focus-lines) ; same principle
+  (define-key map (kbd "M-s M-!") #'consult-flymake)
   (define-key map (kbd "M-s M-b") #'consult-buffer)
   (define-key map (kbd "M-s M-f") #'consult-find)
   (define-key map (kbd "M-s M-g") #'consult-grep)
