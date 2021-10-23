@@ -220,15 +220,8 @@ STYLES is a list of pattern matching methods that is passed to
 (setq completion-flex-nospace nil)
 (setq completion-pcm-complete-word-inserts-delimiters nil)
 (setq completion-pcm-word-delimiters "-_./:| ")
-(setq completion-show-help nil)
-(setq completion-auto-help t)
 (setq completion-ignore-case t)
 (setq-default case-fold-search t)   ; For general regexp
-
-;; The following two are updated in Emacs 28.  They concern the
-;; *Completions* buffer.
-(setq completions-format 'one-column)
-(setq completions-detailed t)
 
 ;; Grouping of completions for Emacs 28
 (setq completions-group t)
@@ -254,79 +247,29 @@ STYLES is a list of pattern matching methods that is passed to
 (minibuffer-depth-indicate-mode 1)
 (minibuffer-electric-default-mode 1)
 
-(add-hook 'completion-list-mode-hook #'prot-common-truncate-lines-silently) ; from `prot-common.el'
-
-(let ((map completion-list-mode-map))
-  (define-key map (kbd "<tab>") #'choose-completion)
-  (define-key map (kbd "M-v") #'scroll-down-command))
-(let ((map minibuffer-local-completion-map))
-  (define-key map (kbd "C-j") #'exit-minibuffer)
-  (define-key map (kbd "<tab>") #'minibuffer-force-complete))
 (let ((map minibuffer-local-must-match-map))
   ;; I use this prefix for other searches
   (define-key map (kbd "M-s") nil))
 
-(require 'prot-minibuffer)
-(setq-default prot-minibuffer-mini-cursors t) ; also check `prot-cursor.el'
-(setq prot-minibuffer-remove-shadowed-file-names t)
-(setq prot-minibuffer-minimum-input 3)
+(require 'mct)
+(setq mct-remove-shadowed-file-names t) ; when `file-name-shadow-mode' is enabled
+(setq mct-hide-completion-mode-line t)
+(setq mct-show-completion-line-numbers nil)
+(setq mct-apply-completion-stripes t)
+(setq mct-minimum-input 3)
+(setq mct-live-update-delay 0.6)
+(setq mct-completion-blocklist nil)
+(setq mct-completion-passlist '(embark-prefix-help-command
+                                Info-goto-node
+                                Info-index
+                                Info-menu
+                                vc-retrieve-tag
+                                prot-bookmark-cd-bookmark
+                                prot-bongo-playlist-insert-playlist-file))
 
-;; ;; NOTE: `prot-minibuffer-completion-blocklist' can be used for
-;; ;; commands with lots of candidates, depending also on how low
-;; ;; `prot-minibuffer-minimum-input' is.  With my current settings,
-;; ;; this is not required, otherwise I would use this list:
-;;
-;; '( describe-symbol describe-function
-;;    describe-variable execute-extended-command
-;;    insert-char)
-(setq prot-minibuffer-completion-blocklist nil)
+(mct-mode 1)
 
-;; This is for commands that should always pop up the completions'
-;; buffer.  It circumvents the default method of waiting for some user
-;; input (see `prot-minibuffer-minimum-input') before displaying and
-;; updating the completions' buffer.
-(setq prot-minibuffer-completion-passlist
-      '( vc-retrieve-tag embark-prefix-help-command org-capture
-         prot-bongo-playlist-insert-playlist-file
-         prot-bookmark-cd-bookmark))
-
-(define-key global-map (kbd "C-x :") #'prot-minibuffer-focus-mini-or-completions)
-(let ((map completion-list-mode-map))
-  (define-key map (kbd "h") #'prot-simple-describe-symbol) ; from `prot-simple.el'
-  (define-key map (kbd "M-g") #'prot-minibuffer-choose-completion-number)
-  (define-key map (kbd "M-e") #'prot-minibuffer-edit-completion)
-  (define-key map (kbd "C-g") #'prot-minibuffer-keyboard-quit-dwim)
-  (define-key map (kbd "C-n") #'prot-minibuffer-next-completion-or-mini)
-  (define-key map (kbd "<down>") #'prot-minibuffer-next-completion-or-mini)
-  (define-key map (kbd "C-p") #'prot-minibuffer-previous-completion-or-mini)
-  (define-key map (kbd "<up>") #'prot-minibuffer-previous-completion-or-mini)
-  (define-key map (kbd "<right>") #'prot-minibuffer-completion-next-group)
-  (define-key map (kbd "<left>") #'prot-minibuffer-completion-previous-group)
-  (define-key map (kbd "<return>") #'prot-minibuffer-choose-completion-exit)
-  (define-key map (kbd "<M-return>") #'prot-minibuffer-choose-completion-dwim)
-  (define-key map (kbd "M-<") #'prot-minibuffer-beginning-of-buffer)
-  ;; Those are generic actions for the "*Completions*" buffer, though
-  ;; I normally use `embark'.
-  (define-key map (kbd "w") #'prot-minibuffer-completions-kill-symbol-at-point)
-  (define-key map (kbd "i") #'prot-minibuffer-completions-insert-symbol-at-point)
-  (define-key map (kbd "j") #'prot-minibuffer-completions-insert-symbol-at-point-exit))
-(let ((map minibuffer-local-completion-map))
-  (define-key map (kbd "M-g") #'prot-minibuffer-choose-completion-number)
-  (define-key map (kbd "M-e") #'prot-minibuffer-edit-completion)
-  (define-key map (kbd "C-n") #'prot-minibuffer-switch-to-completions-top)
-  (define-key map (kbd "<down>") #'prot-minibuffer-switch-to-completions-top)
-  (define-key map (kbd "C-p") #'prot-minibuffer-switch-to-completions-bottom)
-  (define-key map (kbd "<up>") #'prot-minibuffer-switch-to-completions-bottom)
-  (define-key map (kbd "C-l") #'prot-minibuffer-toggle-completions)) ; "list" mnemonic
-(let ((map minibuffer-local-filename-completion-map))
-  (define-key map (kbd "<backspace>") #'prot-minibuffer-backward-updir))
-
-(add-hook 'minibuffer-setup-hook #'prot-minibuffer-mini-cursor)
-(let ((hook 'completion-list-mode-hook))
-  (add-hook hook #'prot-minibuffer-completions-cursor)
-  (add-hook hook #'prot-minibuffer-hl-line)
-  (add-hook hook #'prot-minibuffer-completions-stripes)
-  (add-hook hook #'prot-minibuffer-display-line-numbers))
+(define-key global-map (kbd "C-x :") #'mct-focus-mini-or-completions)
 
 ;;;;;; Enhanced Minibuffer Commands (consult.el)
 
@@ -594,8 +537,7 @@ STYLES is a list of pattern matching methods that is passed to
          (display-buffer-reuse-mode-window display-buffer-at-bottom)
          (side . bottom)
          (slot . 0)
-         (window-parameters . ((no-other-window . t)
-                               (mode-line-format . none))))
+         (window-parameters . ((no-other-window . t))))
         ("\\*\\(Output\\|Register Preview\\).*"
          (display-buffer-reuse-mode-window display-buffer-at-bottom))
         ;; below current window
@@ -1043,7 +985,7 @@ sure this is a good approach."
       (concat "\\("
               "[\n\t]"
               "\\|^#\\+[[:alpha:]_]+:.*$" ; org-mode metadata
-		      "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
+              "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
               "\\)"))
 
 (define-key global-map (kbd "C-c z d") 'deft)
