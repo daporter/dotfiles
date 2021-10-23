@@ -916,6 +916,7 @@ sure this is a good approach."
 
 ;;;;; Org Mode
 
+(setq org-directory "~/Dropbox/org")
 (setq org-list-allow-alphabetical t)
 
 (setq org-cite-global-bibliography
@@ -933,19 +934,56 @@ sure this is a good approach."
 (setq org-cite-export-processors
       '((t csl "modern-language-association.csl")))
 
-;;;;;; Org Capture
+;;;;;; Org-GTD
+
+(unless (package-installed-p 'org-gtd)
+  (package-install 'org-gtd))
+(require 'org-gtd)
+
+(setq org-gtd-directory "~/Dropbox/gtd/")
+
+(setq org-agenda-property-list '("DELEGATED_TO"))
+
+(setq org-edna-use-inheritance t)
+(org-edna-mode 1)
+
+(setq org-agenda-files `(,org-gtd-directory))
+
+;; A useful view to see what can be accomplished today.
+(setq org-agenda-custom-commands
+      '(("g" "Scheduled today and all NEXT items" ((agenda "" ((org-agenda-span 1)))
+                                                   (todo "NEXT")))))
 
 (setq org-default-notes-file "~/Dropbox/inbox/notes.org")
+
 (setq org-capture-templates
-      '(("n" "Note" entry (file "")     ; use `org-default-notes-file’
-         "* %<%Y-%m-%d %H:%M>\n  %?\n  %i")))
+      `(("i" "Inbox"
+         entry (file ,(org-gtd-inbox-path))
+         "* %?\n%U\n\n  %i"
+         :kill-buffer t)
+        ("l" "Todo with link"
+         entry (file ,(org-gtd-inbox-path))
+         "* %?\n%U\n\n  %i\n  %a"
+         :kill-buffer t)
+        ("n" "Note"
+         entry (file "")     ; use `org-default-notes-file’
+         "* %<%Y-%m-%d %H:%M>\n\n%?\n%i")))
 
-(defun dp-org-capture-note ()
-  "Run `org-capture’ with the Note template."
-  (interactive)
-  (org-capture nil "n"))
+(let ((map global-map))
+  (define-key map (kbd "C-c d a") (lambda ()
+                                    (interactive)
+                                    (org-agenda nil "g")))
+  (define-key map (kbd "C-c d c") #'org-gtd-capture)
+  (define-key map (kbd "C-c d f") #'org-gtd-clarify-finalize)
+  (define-key map (kbd "C-c d n") #'org-gtd-show-all-next)
+  (define-key map (kbd "C-c d p") #'org-gtd-process-inbox)
+  (define-key map (kbd "C-c d s") #'org-gtd-show-stuck-projects))
 
-(define-key global-map (kbd "C-c n") #'dp-org-capture-note)
+;;;;;; Org Agenda
+
+(setq org-agenda-include-diary t)
+(setq org-agenda-restore-windows-after-quit t)
+(setq org-agenda-sticky t)
 
 ;;;;;; Org Journal
 
