@@ -918,6 +918,7 @@ sure this is a good approach."
 
 ;;;;; Org Mode
 
+(require 'org)
 (setq org-directory "~/Dropbox/org")
 (setq org-list-allow-alphabetical t)
 (setq org-hide-emphasis-markers t)
