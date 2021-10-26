@@ -1139,6 +1139,12 @@ sure this is a good approach."
   (define-key map (kbd "C-c z i") #'org-roam-node-insert)
   (define-key map (kbd "C-c z f") #'org-roam-node-find))
 
+(setq org-roam-capture-templates
+      '(("d" "default" plain "%?"
+         :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                            "#+title: ${title}\n\n<one-sentence description of the content>\n\n* References:\n\n1. ")
+         :unnarrowed t)))
+
 ;;;;; Anki Card Creation
 
 (unless (package-installed-p 'anki-editor)
