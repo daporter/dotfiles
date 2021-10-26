@@ -1014,6 +1014,73 @@ sure this is a good approach."
 (setq org-scheduled-past-days 365)
 (setq org-deadline-past-days 365)
 
+;;;;;; Calendar and Diary
+
+(require 'calendar)
+(setq calendar-mark-diary-entries-flag t)
+(setq calendar-mark-holidays-flag t)
+(setq calendar-time-display-form
+      '(24-hours ":" minutes
+                 (when time-zone
+                   (format "(%s)" time-zone))))
+(setq calendar-week-start-day 1)      ; Monday
+(setq calendar-date-style 'iso)
+(setq calendar-date-display-form calendar-iso-date-display-form)
+(setq calendar-time-zone-style 'numeric)
+
+(require 'solar)
+(setq calendar-latitude 48.86
+      calendar-longitude 2.35)
+
+(require 'cal-dst)
+(setq calendar-standard-time-zone-name "+0100")
+(setq calendar-daylight-time-zone-name "+0200")
+
+(require 'diary-lib)
+(setq diary-date-forms diary-iso-date-forms)
+(setq diary-comment-start ";;")
+(setq diary-nonmarking-symbol "!")
+(setq diary-number-of-entries 2)
+(setq diary-mail-days 2)
+(setq diary-abbreviated-year-flag nil)
+
+(add-hook 'calendar-today-visible-hook #'calendar-mark-today)
+(add-hook 'diary-list-entries-hook 'diary-sort-entries t)
+(add-hook 'diary-mode-hook #'goto-address-mode) ; buttonise plain text links
+
+;; These presuppose (setq diary-display-function #'diary-fancy-display)
+(add-hook 'diary-list-entries-hook 'diary-include-other-diary-files)
+(add-hook 'diary-mark-entries-hook 'diary-mark-included-diary-files)
+
+(require 'appt)
+(setq appt-warning-time-regexp "appt \\([0-9]+\\)")
+(setq appt-message-warning-time 15)
+
+(run-at-time 10 nil #'appt-activate 1))
+
+(require 'holidays)
+(setq calendar-christian-all-holidays-flag nil)
+
+(setq holiday-other-holidays
+      '((holiday-fixed 01 26 "Australia Day holiday")
+        (holiday-fixed 03 14 "Canberra Day holiday")
+        (holiday-fixed 04 15 "Good Friday holiday")
+        (holiday-fixed 05 26 "Ascension Day holiday")
+        (holiday-fixed 06 06 "White Monday/Pentecôte holiday")
+        (holiday-fixed 06 13 "Queen's Birthday holiday")
+        (holiday-fixed 07 14 "Bastille Day/Fête Nationale holiday")
+        (holiday-fixed 08 15 "Assumption of Mary/Assomption holiday")
+        (holiday-fixed 10 03 "Labour Day (Aus) holiday")
+        (holiday-fixed 11 01 "All saints/Toussaint holiday")
+        (holiday-fixed 11 11 "Armistice Day 1918 holiday")
+        (holiday-fixed 12 26 "Boxing Day holiday")
+        (holiday-fixed 12 27 "Christmas in lieu holiday")))
+
+(setq calendar-holidays (append holiday-christian-holidays
+                                holiday-solar-holidays
+                                holiday-local-holidays
+                                holiday-other-holidays))
+
 ;;;;;; Org Journal
 
 (unless (package-installed-p 'org-journal)
