@@ -920,9 +920,21 @@ sure this is a good approach."
 
 (setq org-directory "~/Dropbox/org")
 (setq org-list-allow-alphabetical t)
+(setq org-hide-emphasis-markers t)
+(setq org-hide-macro-markers t)
+(setq org-hide-leading-stars nil)
+(setq org-modules '(ol-info ol-eww))
+(setq org-fontify-quote-and-verse-blocks t)
+
+(setq org-todo-keyword-faces '(("WAIT" . '(bold org-todo))
+                               ("CANCEL" . '(bold org-done))))
+
+(add-hook 'org-follow-link-hook #'prot-pulse-recentre-top)
 
 (setq org-cite-global-bibliography
       '("~/Dropbox/bibliography/bibliography.bib"))
+
+(define-key org-mode-map (kbd "C-c L") #'org-toggle-link-display)
 
 ;;;;;; CSL Export Processor
 
@@ -983,9 +995,24 @@ sure this is a good approach."
 
 ;;;;;; Org Agenda
 
+(setq org-agenda-window-setup 'current-window)
+
+(setq org-agenda-sorting-strategy
+      '(((agenda habit-down time-up priority-down category-keep)
+         (todo priority-down category-keep)
+         (tags priority-down category-keep)
+         (search category-keep))))
+
+(setq org-agenda-bulk-mark-char "#")
+
 (setq org-agenda-include-diary t)
-(setq org-agenda-restore-windows-after-quit t)
-(setq org-agenda-sticky t)
+
+(setq org-deadline-warning-days 5)
+(setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+(setq org-agenda-skip-timestamp-if-deadline-is-shown t)
+(setq org-agenda-skip-deadline-prewarning-if-scheduled 1)
+(setq org-scheduled-past-days 365)
+(setq org-deadline-past-days 365)
 
 ;;;;;; Org Journal
 
