@@ -1056,7 +1056,7 @@ sure this is a good approach."
 (setq appt-warning-time-regexp "appt \\([0-9]+\\)")
 (setq appt-message-warning-time 15)
 
-(run-at-time 10 nil #'appt-activate 1))
+(run-at-time 10 nil #'appt-activate 1)
 
 (require 'holidays)
 (setq calendar-christian-all-holidays-flag nil)
