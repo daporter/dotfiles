@@ -86,12 +86,12 @@
 ;; When scaling headings, use the “Major Second” (1.125) scale.  See
 ;; <https://type-scale.com/>.
 (setq modus-themes-scale-headings t)
-(setq modus-themes-scale-title 1.802
-      modus-themes-scale-4 1.602
-      modus-themes-scale-3 1.424
-      modus-themes-scale-2 1.266
-      modus-themes-scale-1 1.125
-      modus-themes-scale-small 0.889)
+(setq modus-themes-scale-title 1.383
+      modus-themes-scale-4 1.296
+      modus-themes-scale-3 1.215
+      modus-themes-scale-2 1.138
+      modus-themes-scale-1 1.067
+      modus-themes-scale-small 0.937)
 
 (load-theme 'modus-operandi)
 
@@ -100,6 +100,7 @@
 ;;;;;; Font Configurations
 
 (setq-default text-scale-remap-header-line t)
+(setq-default line-spacing 0.1)
 
 (defun dp-set-preferred-faces ()
   "Set the fonts, sizes, and weights I prefer."
@@ -108,7 +109,7 @@
    '(bold           ((t :weight semi-bold)))
    '(italic         ((t :family "Hack" :height 0.95)))
    '(fixed-pitch    ((t :family "Fira Code" :height 110)))
-   '(variable-pitch ((t :family "ETBembo" :height 1.2)))))
+   '(variable-pitch ((t :family "Libre Caslon Text")))))
 
 (dp-set-preferred-faces)
 (add-hook 'modus-themes-after-load-theme-hook #'dp-set-preferred-faces)
@@ -917,8 +918,6 @@ sure this is a good approach."
 (setq org-hide-leading-stars nil)
 (setq org-modules '(ol-info ol-eww))
 (setq org-fontify-quote-and-verse-blocks t)
-
-(set-face-attribute 'org-document-title nil :family "ETBembo")
 
 (setq org-todo-keyword-faces '(("WAIT" . '(bold org-todo))
                                ("CANCEL" . '(bold org-done))))
