@@ -1764,9 +1764,12 @@ must be installed."
 ;; Use tab characters for indentation in certain modes.
 (dolist (hook '(sh-mode-hook
                 python-mode-hook
-                c-mode-common-hook))
+                c-mode-common-hook
+                nxml-mode-hook))
   (add-hook hook (lambda ()
                    (setq indent-tabs-mode t))))
+
+(add-hook 'nxml-mode-hook (lambda () (setq tab-width 2)))
 
 (setq-default tab-always-indent 'complete)
 (setq-default tab-first-completion 'word-or-paren-or-punct)
@@ -1785,7 +1788,8 @@ must be installed."
 ;; `whitespace-cleanup’ shouldn’t touch indentation in modes that use
 ;; Smart Tabs mode.
 (dolist (hook '(sh-mode-hook
-                python-mode-hook))
+                python-mode-hook
+                nxml-mode-hook))
   (add-hook hook
             (lambda ()
               (setq-local whitespace-style
