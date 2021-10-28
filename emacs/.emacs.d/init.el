@@ -65,15 +65,33 @@
 
 ;;;;; Modus Themes
 
-(setq modus-themes-bold-constructs t
-      modus-themes-slanted-constructs t
-      modus-themes-completions 'opinionated
-      modus-themes-lang-checkers 'subtle-foreground-straight-underline
-      modus-themes-region 'bg-only
-      modus-themes-diffs 'desaturated
-      modus-themes-org-blocks 'grayscale
-      modus-themes-headings '((t . section))
-      modus-themes-variable-pitch-headings t)
+;; Note: All customisation options must be evaluated before loading a
+;; theme.
+(setq modus-themes-bold-constructs t)
+(setq modus-themes-slanted-constructs t)
+(setq modus-themes-syntax '(green-strings))
+(setq modus-themes-mixed-fonts t)
+(setq modus-themes-links '())
+(setq modus-themes-completions 'opinionated)
+(setq modus-themes-mail-citations 'faint)
+(setq modus-themes-lang-checkers '(background))
+(setq modus-themes-hl-line '(intense))
+(setq modus-themes-region 'bg-only)
+(setq modus-themes-diffs 'desaturated)
+(setq modus-themes-org-blocks 'gray-background)
+(setq modus-themes-variable-pitch-headings t)
+
+(setq modus-themes-headings '((t . (overline background))))
+
+;; When scaling headings, use the “Major Second” (1.125) scale.  See
+;; <https://type-scale.com/>.
+(setq modus-themes-scale-headings t)
+(setq modus-themes-scale-title 1.802
+      modus-themes-scale-4 1.602
+      modus-themes-scale-3 1.424
+      modus-themes-scale-2 1.266
+      modus-themes-scale-1 1.125
+      modus-themes-scale-small 0.889)
 
 (load-theme 'modus-operandi)
 
@@ -81,46 +99,19 @@
 
 ;;;;;; Font Configurations
 
-(require 'prot-fonts)
-(setq x-underline-at-descent-line t)
 (setq-default text-scale-remap-header-line t)
 
-(setq prot-fonts-typeface-sets-alist
-      '((thinkpad . ( :fixed-pitch-family "Hack"
-                      :fixed-pitch-regular-weight normal
-                      :fixed-pitch-heavy-weight bold
-                      :fixed-pitch-height 80
-                      :fixed-pitch-line-spacing nil
-                      :variable-pitch-family "Noto Serif"
-                      :variable-pitch-height 1.1
-                      :variable-pitch-regular-weight normal))
+(defun dp-set-preferred-faces ()
+  "Set the fonts, sizes, and weights I prefer."
+  (custom-set-faces
+   '(default        ((t :family "Fira Code" :height 110)))
+   '(bold           ((t :weight semi-bold)))
+   '(italic         ((t :family "Hack" :height 0.95)))
+   '(fixed-pitch    ((t :family "Fira Code" :height 110)))
+   '(variable-pitch ((t :family "ETBembo" :height 1.2)))))
 
-        (external . ( :fixed-pitch-family "Hack"
-                      :fixed-pitch-regular-weight normal
-                      :fixed-pitch-heavy-weight bold
-                      :fixed-pitch-height 90
-                      :fixed-pitch-line-spacing 1
-                      :variable-pitch-family "Noto Serif"
-                      :variable-pitch-height 1.1
-                      :variable-pitch-regular-weight normal))
-
-        (macbook . ( :fixed-pitch-family "Fira Code"
-                     :fixed-pitch-regular-weight normal
-                     :fixed-pitch-heavy-weight semibold
-                     :fixed-pitch-height 120
-                     :fixed-pitch-line-spacing 1
-                     :variable-pitch-family "Noto Serif"
-                     :variable-pitch-height 1.1
-                     :variable-pitch-regular-weight normal))))
-
-(setq prot-fonts-laptop-desktop-keys-list
-      (prot-fonts-laptop-desktop-keys))
-
-(setq prot-fonts-max-small-resolution-width 1366)
-
-(prot-fonts-fonts-per-monitor)
-(add-hook 'modus-themes-after-load-theme-hook #'prot-fonts-restore-last)
-(define-key global-map (kbd "C-c f") #'prot-fonts-set-fonts)
+(dp-set-preferred-faces)
+(add-hook 'modus-themes-after-load-theme-hook #'dp-set-preferred-faces)
 
 ;;;;; Repeatable Keychords
 
@@ -926,6 +917,8 @@ sure this is a good approach."
 (setq org-hide-leading-stars nil)
 (setq org-modules '(ol-info ol-eww))
 (setq org-fontify-quote-and-verse-blocks t)
+
+(set-face-attribute 'org-document-title nil :family "ETBembo")
 
 (setq org-todo-keyword-faces '(("WAIT" . '(bold org-todo))
                                ("CANCEL" . '(bold org-done))))
