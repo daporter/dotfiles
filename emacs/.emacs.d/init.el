@@ -83,9 +83,9 @@
 
 (setq modus-themes-headings '((t . (overline background))))
 
+(setq modus-themes-scale-headings nil)
 ;; When scaling headings, use the “Major Second” (1.125) scale.  See
 ;; <https://type-scale.com/>.
-(setq modus-themes-scale-headings t)
 (setq modus-themes-scale-title 1.383
       modus-themes-scale-4 1.296
       modus-themes-scale-3 1.215
