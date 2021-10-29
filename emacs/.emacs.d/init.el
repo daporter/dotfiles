@@ -222,14 +222,15 @@ STYLES is a list of pattern matching methods that is passed to
 ;;;;;; Minibuffer Configurations
 
 (setq completion-styles
-      '(substring initials flex partial-completion orderless))
+      '(basic substring initials flex partial-completion orderless))
 (setq completion-category-overrides
-      '((file (styles . (partial-completion orderless)))))
+      '((file (styles . (basic partial-completion orderless)))))
 (setq completion-cycle-threshold 2)
 (setq completion-flex-nospace nil)
 (setq completion-pcm-complete-word-inserts-delimiters nil)
 (setq completion-pcm-word-delimiters "-_./:| ")
 (setq completion-ignore-case t)
+(setq completions-detailed t)
 (setq-default case-fold-search t)   ; For general regexp
 
 ;; Grouping of completions for Emacs 28
@@ -269,13 +270,13 @@ STYLES is a list of pattern matching methods that is passed to
 (setq mct-minimum-input 3)
 (setq mct-live-update-delay 0.6)
 (setq mct-completion-blocklist nil)
-(setq mct-completion-passlist '(embark-prefix-help-command
-                                Info-goto-node
-                                Info-index
-                                Info-menu
-                                vc-retrieve-tag
-                                prot-bookmark-cd-bookmark
-                                prot-bongo-playlist-insert-playlist-file))
+(setq mct-completion-passlist
+      '( embark-prefix-help-command Info-goto-node
+         Info-index Info-menu vc-retrieve-tag
+         prot-bookmark-cd-bookmark
+         prot-bongo-playlist-insert-playlist-file))
+
+
 
 (mct-mode 1)
 
@@ -316,7 +317,7 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map (kbd "C-x M-:") #'consult-complex-command)
   (define-key map (kbd "C-x M-m") #'consult-minor-mode-menu)
   (define-key map (kbd "C-x M-k") #'consult-kmacro)
-  (define-key map (kbd "M-g M-g") #'consult-goto-line)
+  (define-key map [remap goto-line] #'consult-goto-line)
   (define-key map (kbd "M-K") #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
   (define-key map (kbd "M-F") #'consult-focus-lines) ; same principle
   (define-key map (kbd "M-s M-!") #'consult-flymake)
@@ -438,6 +439,7 @@ STYLES is a list of pattern matching methods that is passed to
 (setq dired-listing-switches "-AFGhlv")
 (setq dired-dwim-target t)
 (setq dired-auto-revert-buffer #'dired-directory-changed-p) ; also see `dired-do-revert-buffer'
+(setq dired-make-directory-clickable t)
 
 (add-hook 'dired-mode-hook #'dired-hide-details-mode)
 (add-hook 'dired-mode-hook #'hl-line-mode)
@@ -539,15 +541,11 @@ STYLES is a list of pattern matching methods that is passed to
         ;; bottom buffer (NOT side window)
         ("\\*Embark Actions\\*"
          (display-buffer-reuse-mode-window display-buffer-at-bottom)
-         (side . bottom)
-         (slot . -1)
          (window-height . fit-window-to-buffer)
          (window-parameters . ((no-other-window . t)
                                (mode-line-format . none))))
         ("\\*\\(Embark\\)?.*Completions.*"
          (display-buffer-reuse-mode-window display-buffer-at-bottom)
-         (side . bottom)
-         (slot . 0)
          (window-parameters . ((no-other-window . t))))
         ("\\*\\(Output\\|Register Preview\\).*"
          (display-buffer-reuse-mode-window display-buffer-at-bottom))
