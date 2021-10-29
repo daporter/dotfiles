@@ -105,11 +105,11 @@
 (defun dp-set-fonts-external ()
   "Set my preferred fonts for my external monitor."
   (custom-set-faces
-   '(default        ((t :family "Fira Code" :height 110)))
+   '(default        ((t :family "Fira Code" :height 90)))
    '(bold           ((t :weight semi-bold)))
    '(italic         ((t :family "Hack" :height 0.95)))
-   '(fixed-pitch    ((t :family "Fira Code" :height 110)))
-   '(variable-pitch ((t :family "Libre Caslon Text")))))
+   '(fixed-pitch    ((t :family "Fira Code" :height 90)))
+   '(variable-pitch ((t :family "Libre Caslon Text" :height 1.1)))))
 
 (defun dp-set-fonts-macbook ()
   "Set my preferred fonts for my MacBook Air."
