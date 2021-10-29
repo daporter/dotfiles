@@ -107,7 +107,7 @@
   (custom-set-faces
    '(default        ((t :family "Fira Code" :height 90)))
    '(bold           ((t :weight semi-bold)))
-   '(italic         ((t :family "Hack" :height 0.95)))
+   '(italic         ((t :family "Hack")))
    '(fixed-pitch    ((t :family "Fira Code" :height 90)))
    '(variable-pitch ((t :family "Libre Caslon Text" :height 1.1)))))
 
