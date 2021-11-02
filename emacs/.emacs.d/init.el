@@ -965,6 +965,7 @@ sure this is a good approach."
 (setq org-gtd-directory "~/Dropbox/gtd/")
 
 (setq org-agenda-property-list '("DELEGATED_TO"))
+(setq org-agenda-todo-ignore-scheduled t)
 
 (setq org-edna-use-inheritance t)
 (org-edna-mode 1)
