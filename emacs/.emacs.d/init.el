@@ -114,9 +114,9 @@
 (defun dp-set-fonts-macbook ()
   "Set my preferred fonts for my MacBook Air."
   (custom-set-faces
-   '(default        ((t :family "Fira Code" :height 125)))
+   '(default        ((t :family "Fira Code" :height 95)))
    '(bold           ((t :weight semi-bold)))
-   '(fixed-pitch    ((t :family "Fira Code" :height 125)))
+   '(fixed-pitch    ((t :family "Fira Code" :height 95)))
    '(variable-pitch ((t :family "Libre Caslon Text")))))
 
 (defun dp-set-fonts ()
@@ -131,9 +131,6 @@
 (dp-set-fonts)
 (add-hook 'modus-themes-after-load-theme-hook #'dp-set-fonts)
 
-;;;;; Repeatable Keychords
-
-(repeat-mode 1)
 
 ;;;;; Keychord Hints
 
@@ -454,12 +451,6 @@ STYLES is a list of pattern matching methods that is passed to
 
 ;;;;; Working With Buffers
 
-;;;;;; Keymap for Buffers
-
-(let ((map ctl-x-x-map))
-  (define-key map "e" #'eval-buffer)
-  (define-key map "f" #'follow-mode)  ; override `font-lock-update'
-  (define-key map "r" #'rename-uniquely))
 
 ;;;;;; Unique Names for Buffers
 
@@ -588,9 +579,6 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map (kbd "C-x {") #'shrink-window)
   (define-key map (kbd "C-x >") #'enlarge-window-horizontally) ; override `scroll-right'
   (define-key map (kbd "C-x <") #'shrink-window-horizontally)) ; override `scroll-left'
-(let ((map resize-window-repeat-map))
-  (define-key map ">" #'enlarge-window-horizontally)
-  (define-key map "<" #'shrink-window-horizontally))
 
 ;;;;;; Window History (winner-mode)
 
@@ -951,18 +939,6 @@ sure this is a good approach."
       '("~/Sync/bibliography/bibliography.bib"))
 
 (define-key org-mode-map (kbd "C-c L") #'org-toggle-link-display)
-
-;;;;;; CSL Export Processor
-
-;; `citeproc’ is required by `oc-csl’
-(unless (package-installed-p 'citeproc)
-  (package-install 'citeproc))
-(require 'citeproc)
-
-(require 'oc-csl)
-(setq org-cite-csl-styles-dir "~/Sync/bibliography")
-(setq org-cite-export-processors
-      '((t csl "modern-language-association.csl")))
 
 ;;;;;; Org-GTD
 
