@@ -276,8 +276,6 @@ STYLES is a list of pattern matching methods that is passed to
          prot-bookmark-cd-bookmark
          prot-bongo-playlist-insert-playlist-file))
 
-
-
 (mct-mode 1)
 
 (define-key global-map (kbd "C-x :") #'mct-focus-mini-or-completions)
@@ -926,7 +924,7 @@ sure this is a good approach."
 ;;;;; Org Mode
 
 (require 'org)
-(setq org-directory "~/Dropbox/org")
+(setq org-directory "~/Sync/org")
 (setq org-list-allow-alphabetical t)
 (setq org-hide-emphasis-markers t)
 (setq org-hide-macro-markers t)
@@ -940,7 +938,7 @@ sure this is a good approach."
 (add-hook 'org-follow-link-hook #'prot-pulse-recentre-top)
 
 (setq org-cite-global-bibliography
-      '("~/Dropbox/bibliography/bibliography.bib"))
+      '("~/Sync/bibliography/bibliography.bib"))
 
 (define-key org-mode-map (kbd "C-c L") #'org-toggle-link-display)
 
@@ -952,7 +950,7 @@ sure this is a good approach."
 (require 'citeproc)
 
 (require 'oc-csl)
-(setq org-cite-csl-styles-dir "~/Dropbox/bibliography")
+(setq org-cite-csl-styles-dir "~/Sync/bibliography")
 (setq org-cite-export-processors
       '((t csl "modern-language-association.csl")))
 
@@ -962,7 +960,7 @@ sure this is a good approach."
   (package-install 'org-gtd))
 (require 'org-gtd)
 
-(setq org-gtd-directory "~/Dropbox/gtd/")
+(setq org-gtd-directory "~/Sync/gtd/")
 
 (setq org-agenda-property-list '("DELEGATED_TO"))
 (setq org-agenda-todo-ignore-scheduled t)
@@ -977,7 +975,7 @@ sure this is a good approach."
       '(("g" "Scheduled today and all NEXT items" ((agenda "" ((org-agenda-span 1)))
                                                    (todo "NEXT")))))
 
-(setq org-default-notes-file "~/Dropbox/inbox/notes.org")
+(setq org-default-notes-file "~/Sync/inbox/notes.org")
 
 (setq org-capture-templates
       `(("i" "Inbox"
@@ -1096,7 +1094,7 @@ sure this is a good approach."
   (package-install 'org-journal))
 (require 'org-journal)
 
-(setq org-journal-dir "~/Dropbox/journal")
+(setq org-journal-dir "~/Sync/journal")
 (setq org-journal-file-format "%Y-%m-%d.org")
 (setq org-journal-date-prefix "#+title: ")
 (setq org-journal-date-format "%A, %d %B %Y")
@@ -1108,7 +1106,7 @@ sure this is a good approach."
   (package-install 'deft))
 (require 'deft)
 
-(setq deft-directory "~/Dropbox/zettelkasten")
+(setq deft-directory "~/Sync/zettelkasten")
 (setq deft-default-extension "org")
 (setq deft-use-filter-string-for-filename t)
 
@@ -1141,7 +1139,7 @@ sure this is a good approach."
   (package-install 'org-roam))
 (require 'org-roam)
 
-(setq org-roam-directory "~/Dropbox/zettelkasten")
+(setq org-roam-directory "~/Sync/zettelkasten")
 (org-roam-db-autosync-mode)
 
 (let ((map global-map))
@@ -1249,6 +1247,7 @@ must be installed."
   (package-install 'auth-source-pass))
 (require 'auth-source-pass)
 
+(setq auth-source-pass-filename "~/Sync/password-store")
 (auth-source-pass-enable)
 
 (setq user-full-name "David Porter")
