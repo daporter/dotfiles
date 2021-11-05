@@ -1,108 +1,34 @@
-#| --------------------------------------------------------------------------
-
-(deflayer name
-  _    _    _    _    _    _    _    _    _    _    _    _    _          _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _     _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _     _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _                    _
-  _    _    _              _              _    _         _               _    _    _
-)
---
--------------------------------------------------------------------------- |#
-
 (defcfg
   input  (device-file "/dev/input/by-id/usb-04d9_USB-HID_Keyboard-event-kbd")
-  output (uinput-sink "KMonad: KD87"
-                       "sleep 0.2s; xset r rate 230 70; sleep 0.2s; setxkbmap us -option compose:rwin")
-  cmp-seq rmet
+  output (uinput-sink "KMonad: KD87")
 )
 
 (defsrc
-  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12        prnt slck pause
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc  ins  home pgup
-  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \     del  end  pgdn
-  caps a    s    d    f    g    h    j    k    l    ;    '    ret
-  lsft z    x    c    v    b    n    m    ,    .    /    rsft                 up
-  lctl lmet lalt           spc            ralt rmet      rctl            left down rght
-)
-
-#|
-(deflayer dvorak
-  esc   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12        prnt @qwe pause
-  grv   1    2    3    4    5    6    7    8    9    0    [    ]    bspc  ins  home pgup
-  bspc  '    ,    .    p    y    f    g    c    r    l    tab  =    \     del  end  pgdn
-  pause @ame @oal @esf @uct i    d    @hct @tsf @nal @sme -    ret
-  esc   ;    q    j    k    x    b    m    w    v    z    /                     up
-  caps  @num lalt           @sna           @acc rmet      rctl            left down rght
-)
-|#
-
-(deflayer dvorak
-  esc   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12        prnt @qwe pause
-  grv   1    2    3    4    5    6    7    8    9    0    [    ]    bspc  ins  home pgup
-  tab   '    ,    .    p    y    f    g    c    r    l    /    =    \     del  end  pgdn
-  pause a    o    e    u    i    d    h    t    n    s    -    ret
-  lsft  ;    q    j    k    x    b    m    w    v    z    rsft                 up
-  lctl  lmet lalt           @sna           @acc rmet      rctl            left down rght
-)
-
-(deflayer navigation
-  _    _    _    _    _    _    _    _    _    _    _    _    _          _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _     _    _    _
-  _    _    _    pgup _    _    _    _    up   _    _    _    _    _     _    _    _
-  _    _    home pgdn end  _    _    left down rght _    _    _
-  _    _    @cut @cpy @pst _    _    _    _    _    _    _                    _
-  _    _    _              XX             _    _         _               _    _    _
-)
- 
-(deflayer accents
-  _    _    _    _    _    _    _    _    _    _    _    _    _          _    _    _
-  _    ¡    _    _    €    £    _    _    _    «    »    ©    ×    _     _    _    _
-  _    â    ë    ê    û    î    _    ÿ    _    _    _    ¿    …    _     _    _    _
-  _    à    ô    é    ù    ï    _    _    _    ñ    _    _    _
-  _    æ    œ    è    ü    ç    _    _    _    _    _    _                    _
-  _    _    _              _              XX   _         -               _    _    _
-  )
-
-(deflayer numbers
-  _    _    _    _    _    _    _    _    _    _    _    _    _          _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _    _     _    _    _
-  _    _    _    _    _    _    _    1    2    3    .    /    _    _     _    _    _
-  _    _    _    _    _    _    _    4    5    6    0    -    _
-  _    _    _    _    _    _    _    7    8    9    +    _                    _
-  _    _    _              _              _    _         _               _    _    _
-)
-
-
-(deflayer qwerty
-  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12        prnt @dvo pause
-  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc  ins  home pgup
-  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \     del  end  pgdn
-  caps a    s    d    f    g    h    j    k    l    ;    '    ret
-  lsft z    x    c    v    b    n    m    ,    .    /    rsft                 up
-  lctl lmet lalt           spc            @acc rmet      rctl            left down rght
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10 f11  f12      prnt slck pause
+  grv  1    2    3    4    5    6    7    8    9    0   -    =   bspc ins  home pgup
+  tab  q    w    e    r    t    y    u    i    o    p   [    ]   \    del  end  pgdn
+  caps a    s    d    f    g    h    j    k    l    ;   '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /   rsft               up
+  lctl lmet lalt           spc            ralt rmet     rctl          left down rght
 )
 
 (defalias
-  qwe (layer-switch qwerty)
-  dvo (layer-switch dvorak)
-
-  sna (tap-hold-next-release 200 spc (layer-toggle navigation))
-  acc (tap-hold-next-release 200 ralt (layer-toggle accents))
-  num (layer-toggle numbers)
-  
-  ame (tap-hold-next-release 200 a lmet)
+  amt (tap-hold-next-release 200 a lmet)
   oal (tap-hold-next-release 200 o lalt)
   esf (tap-hold-next-release 200 e lsft)
   uct (tap-hold-next-release 200 u lctl)
 
   hct (tap-hold-next-release 200 h rctl)
   tsf (tap-hold-next-release 200 t rsft)
-  nal (tap-hold-next-release 200 n lalt) ;; ralt is level3_switch
-  sme (tap-hold-next-release 200 s lmet) ;; rmet is compose
+  nal (tap-hold-next-release 200 n ralt)
+  smt (tap-hold-next-release 200 s rmet)
+)
 
-  cut C-x
-  cpy C-c
-  pst C-v
+(deflayer dvorak
+ esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12      prnt slck pause
+ grv  1    2    3    4    5    6    7    8    9    0    [    ]   bspc ins  home pgup
+ tab  '    ,    .    p    y    f    g    c    r    l    /    =   \    del  end  pgdn
+ caps @amt @oal @esf @uct i    d    @hct @tsf @nal @smt -    ret
+ lsft ;    q    j    k    x    b    m    w    v    z    rsft               up
+ lctl lmet lalt           spc            ralt rmet      rctl          left down rght
 )

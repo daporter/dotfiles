@@ -1,5 +1,5 @@
-*~
 *.elc
+*~
 /bin/bin/pash
 /bin/bin/shfmt
 /bspwm/.config/bspwm/bspwm_colours
@@ -19,6 +19,7 @@
 /emacs/.emacs.d/eshell
 /emacs/.emacs.d/eww-bookmarks
 /emacs/.emacs.d/feeds.el
+/emacs/.emacs.d/lisp/kbd-mode
 /emacs/.emacs.d/lisp/mct
 /emacs/.emacs.d/network-security.data
 /emacs/.emacs.d/nov-places

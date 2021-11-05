@@ -1582,6 +1582,11 @@ must be installed."
 
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
+;;;;; Kbd-Mode for KMonad
+
+(add-to-list 'load-path (locate-user-emacs-file "lisp/kbd-mode"))
+(require 'kbd-mode)
+
 ;;;; General Interface and Interactions
 
 ;;;;; Mode Line
