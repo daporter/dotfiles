@@ -1428,7 +1428,19 @@ must be installed."
           (lambda ()
             (setq-local shr-width (current-fill-column))))
 
-(define-key global-map (kbd "C-c e") 'elfeed)
+(defun dp-elfeed-load-db-and-start ()
+  "Load the Elfeed db from disk and start Elfeed."
+  (interactive)
+  (elfeed-db-load)
+  (elfeed))
+
+(defun dp-elfeed-save-db-and-bury ()
+  "Save the Elfeed db to disk and bury the Elfeed buffer."
+  (interactive)
+  (elfeed-db-save)
+  (quit-window))
+
+(define-key global-map (kbd "C-c e") 'dp-elfeed-load-db-and-start)
 
 (with-eval-after-load 'elfeed
   (require 'prot-elfeed)
@@ -1447,13 +1459,13 @@ must be installed."
   (let ((map elfeed-search-mode-map))
     (define-key map (kbd "s") #'prot-elfeed-search-tag-filter)
     (define-key map (kbd "o") #'prot-elfeed-search-open-other-window)
-    (define-key map (kbd "q") #'prot-elfeed-kill-buffer-close-window-dwim)
+    (define-key map (kbd "q") #'dp-elfeed-save-db-and-bury)
     (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
     (define-key map (kbd "+") #'prot-elfeed-toggle-tag))
   (let ((map elfeed-show-mode-map))
     (define-key map (kbd "a") #'prot-elfeed-show-archive-entry)
     (define-key map (kbd "e") #'prot-elfeed-show-eww)
-    (define-key map (kbd "q") #'prot-elfeed-kill-buffer-close-window-dwim)
+    (define-key map (kbd "q") #'dp-elfeed-save-db-and-bury)
     (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
     (define-key map (kbd "+") #'prot-elfeed-toggle-tag)))
 
