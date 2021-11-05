@@ -427,6 +427,16 @@ STYLES is a list of pattern matching methods that is passed to
 
 (define-key global-map (kbd "C-x p q") #'project-query-replace-regexp)
 
+;;;;; Avy
+
+(unless (package-installed-p 'avy)
+  (package-install 'avy))
+(require 'avy)
+
+(setq avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s ?l))
+
+(define-key global-map (kbd "M-j") #'avy-goto-char-timer)
+
 ;;;; Directory, Buffer, Window Management
 
 ;;;;; Dired
