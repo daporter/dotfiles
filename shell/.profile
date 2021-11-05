@@ -42,3 +42,9 @@ export PARINIT
 # Set the style of time display used in `ls’.
 TIME_STYLE=long-iso
 export TIME_STYLE
+
+for sh in "$HOME"/.profile.d/*.sh ; do
+    # shellcheck source=/dev/null
+    [[ -e $sh ]] && . "$sh"
+done
+unset -v sh
