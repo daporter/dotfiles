@@ -1228,8 +1228,8 @@ must be installed."
 
 ;;;;;; Client-Agnostic Email Settings
 
-(unless (package-installed-p 'auth-source-pass)
-  (package-install 'auth-source-pass))
+;(unless (package-installed-p 'auth-source-pass)
+;  (package-install 'auth-source-pass))
 (require 'auth-source-pass)
 
 (setq auth-source-pass-filename "~/Sync/password-store")
