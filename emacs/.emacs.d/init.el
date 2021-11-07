@@ -114,9 +114,9 @@
 (defun dp-set-fonts-macbook ()
   "Set my preferred fonts for my MacBook Air."
   (custom-set-faces
-   '(default        ((t :family "Fira Code" :height 95)))
+   '(default        ((t :family "Fira Code" :height 90)))
    '(bold           ((t :weight semi-bold)))
-   '(fixed-pitch    ((t :family "Fira Code" :height 95)))
+   '(fixed-pitch    ((t :family "Fira Code" :height 90)))
    '(variable-pitch ((t :family "Libre Caslon Text")))))
 
 (defun dp-set-fonts ()
@@ -130,7 +130,6 @@
 
 (dp-set-fonts)
 (add-hook 'modus-themes-after-load-theme-hook #'dp-set-fonts)
-
 
 ;;;;; Keychord Hints
 
