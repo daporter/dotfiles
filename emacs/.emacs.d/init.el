@@ -1745,6 +1745,14 @@ must be installed."
   (package-install 'markdown-mode))
 (require 'markdown-mode)
 
+;;;;;; YAML
+
+(unless (package-installed-p 'yaml-mode)
+  (package-install 'yaml-mode))
+(require 'yaml-mode)
+
+(add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
+
 ;;;;; Paragraphs
 
 (setq-default fill-column 72)
