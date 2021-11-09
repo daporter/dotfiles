@@ -1,6 +1,12 @@
 #!/bin/sh
 #
-# Environment variable settings intended to be shared by all shells.
+# This file is sourced once by the login shell.
+
+# Future interactive shell invocations will process any file pointed to by $ENV.
+if [ -r "$HOME"/.kshrc ]; then
+	ENV=$HOME/.kshrc
+	export ENV
+fi
 
 PATH=$HOME/bin:$PATH
 export PATH
@@ -29,6 +35,10 @@ export MAILPATH
 BLOCKSIZE=K
 export BLOCKSIZE
 
+# Set the style of time display used in `ls’.
+TIME_STYLE=long-iso
+export TIME_STYLE
+
 # The `par` paragraph formatter.
 #
 # From the par man page:
@@ -39,12 +49,11 @@ export BLOCKSIZE
 PARINIT='78 rTbgqR B=.,?_A_a Q=_s>|'
 export PARINIT
 
-# Set the style of time display used in `ls’.
-TIME_STYLE=long-iso
-export TIME_STYLE
-
-for sh in "$HOME"/.profile.d/*.sh ; do
-    # shellcheck source=/dev/null
-    [[ -e $sh ]] && . "$sh"
-done
-unset -v sh
+if [ -d "$HOME"/.profile.d ]; then
+	for sh in "$HOME"/.profile.d/*.sh; do
+		if [ -r "$sh" ]; then
+			. "$sh"
+		fi
+	done
+	unset sh
+fi
