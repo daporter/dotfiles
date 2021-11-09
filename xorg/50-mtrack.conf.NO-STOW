@@ -1,12 +1,27 @@
+# This file should be placed in /etc/X11/xorg.conf.d/
+
 Section "InputClass"
 	MatchIsTouchpad "on"
 	Identifier "Touchpads"
 	Driver "mtrack"
-    Option "Sensitivity" "0.15"
-    Option "ScrollUpButton" "5"
-    Option "ScrollDownButton" "4"
+
+    # The faster you move, the more distance pointer will travel, using
+    # "polynomial" profile.
+    Option "AccelerationProfile" "2"
+
+    # Trackpad sensitivity.
+    Option "Sensitivity" "0.07"
+
+    # Ignore touches that are determined to be thumbs or palms.
 	Option "IgnoreThumb" "true"
     Option "DisableOnThumb" "true"
 	Option "IgnorePalm" "true"
     Option "DisableOnPalm" "true"
+
+    # Use natural scrolling with two fingers.
+    Option "ScrollUpButton" "5"
+    Option "ScrollDownButton" "4"
+
+    # Use ScrollDistance to tweak scroll sensitivity, not ScrollSensivity.
+    Option "ScrollDistance" "400"
 EndSection
