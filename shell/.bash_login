@@ -1,0 +1,3 @@
+#!/bin/bash
+
+SVDIR=$HOME/service sv up syncthing
