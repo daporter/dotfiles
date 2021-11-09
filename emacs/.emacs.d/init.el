@@ -1785,13 +1785,15 @@ must be installed."
 (setq-default indent-tabs-mode nil)
 (setq backward-delete-char-untabify-method nil)
 
+(defun dp-turn-on-indent-tabs-mode ()
+  (setq indent-tabs-mode t))
+
 ;; Use tab characters for indentation in certain modes.
 (dolist (hook '(sh-mode-hook
                 python-mode-hook
                 c-mode-common-hook
                 nxml-mode-hook))
-  (add-hook hook (lambda ()
-                   (setq indent-tabs-mode t))))
+  (add-hook hook #'dp-turn-on-indent-tabs-mode))
 
 (add-hook 'nxml-mode-hook (lambda () (setq tab-width 2)))
 
@@ -1809,15 +1811,16 @@ must be installed."
 
 (smart-tabs-insinuate 'c 'c++ 'java 'javascript 'cperl 'python 'ruby 'sh 'nxml)
 
+(defun dp-set-local-whitespace-style ()
+  (setq-local whitespace-style
+              (remove 'indentation whitespace-style)))
+
 ;; `whitespace-cleanup’ shouldn’t touch indentation in modes that use
 ;; Smart Tabs mode.
 (dolist (hook '(sh-mode-hook
                 python-mode-hook
                 nxml-mode-hook))
-  (add-hook hook
-            (lambda ()
-              (setq-local whitespace-style
-                          (remove 'indentation whitespace-style)))))
+  (add-hook hook #'dp-set-local-whitespace-style))
 
 ;;;;; Spell Checking
 
@@ -1872,7 +1875,9 @@ must be installed."
 (unless (package-installed-p 'flymake-shellcheck)
   (package-install 'flymake-shellcheck))
 (require 'flymake-shellcheck)
-(add-hook 'sh-mode-hook 'flymake-shellcheck-load)
+(let ((hook 'sh-mode-hook))
+  (add-hook hook #'flymake-shellcheck-load)
+  (add-hook hook #'flymake-mode))
 
 ;;;;;;; Flymake + Proselint
 
@@ -1882,7 +1887,8 @@ must be installed."
 (dolist (hook '(markdown-mode-hook
                 org-mode-hook
                 text-mode-hook))
-  (add-hook hook #'flymake-proselint-setup))
+  (add-hook hook #'flymake-proselint-setup)
+  (add-hook hook #'flymake-mode))
 
 ;;;;;;; Flymake + Markdown
 
@@ -1891,7 +1897,9 @@ must be installed."
 (require 'flymake-quickdef)
 
 (require 'flymake-markdownlint)
-(add-hook 'markdown-mode-hook #'flymake-markdownlint-setup)
+(let ((hook 'markdown-mode-hook))
+  (add-hook hook #'flymake-markdownlint-setup)
+  (add-hook hook #'flymake-mode))
 
 ;;;; History and State
 
