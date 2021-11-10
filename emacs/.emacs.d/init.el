@@ -114,13 +114,14 @@
 (setq-default text-scale-remap-header-line t)
 (setq-default line-spacing 0.1)
 
-;; Set my preferred fonts.
-(custom-set-faces
- '(default        ((t :family "Fira Code" :height 90)))
- '(bold           ((t :weight semi-bold)))
- '(italic         ((t :family "Hack")))
- '(fixed-pitch    ((t :family "Fira Code" :height 90)))
- '(variable-pitch ((t :family "Libre Caslon Text" :height 1.1))))
+(defun dp-set-fonts ()
+  "Set my preferred fonts."
+  (custom-set-faces
+   '(default        ((t :family "Fira Code" :height 90)))
+   '(bold           ((t :weight semi-bold)))
+   '(italic         ((t :family "Hack")))
+   '(fixed-pitch    ((t :family "Fira Code" :height 90)))
+   '(variable-pitch ((t :family "Libre Caslon Text" :height 1.1)))))
 
 (add-hook 'modus-themes-after-load-theme-hook #'dp-set-fonts)
 
