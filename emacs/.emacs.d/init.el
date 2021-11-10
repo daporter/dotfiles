@@ -43,7 +43,9 @@
 
 ;;;; Base Settings
 
-(setq custom-file (make-temp-file "emacs-custom-")) ; disable it!
+;;;;; Make Custom UI code disposable
+
+(setq custom-file (make-temp-file "emacs-custom-"))
 
 ;;;;; Common Custom Functions (prot-simple.el)
 
@@ -95,6 +97,16 @@
 
 (load-theme 'modus-operandi)
 
+;;;;; LIN is Noticeable (lin.el)
+
+(require 'lin)
+(setq lin-foreground-override nil)
+
+(dolist (hook '(elfeed-search-mode-hook
+                notmuch-search-mode-hook
+                log-view-mode-hook))
+    (add-hook hook #'lin-mode))
+
 ;;;;; Typeface Configurations
 
 ;;;;;; Font Configurations
@@ -130,6 +142,14 @@
 
 (dp-set-fonts)
 (add-hook 'modus-themes-after-load-theme-hook #'dp-set-fonts)
+
+;;;;; Repeatable Keychords
+
+(repeat-mode 1)
+
+;;;;; Handle performance for very long lines (so-long.el)
+
+(global-so-long-mode 1)
 
 ;;;;; Keychord Hints
 
@@ -262,7 +282,7 @@ STYLES is a list of pattern matching methods that is passed to
 (setq mct-remove-shadowed-file-names t) ; when `file-name-shadow-mode' is enabled
 (setq mct-hide-completion-mode-line t)
 (setq mct-show-completion-line-numbers nil)
-(setq mct-apply-completion-stripes t)
+(setq mct-apply-completion-stripes nil)
 (setq mct-minimum-input 3)
 (setq mct-live-update-delay 0.6)
 (setq mct-completion-blocklist nil)
@@ -450,6 +470,12 @@ STYLES is a list of pattern matching methods that is passed to
 
 ;;;;; Working With Buffers
 
+;;;;;; Keymap for Buffers
+
+(let ((map ctl-x-x-map))
+  (define-key map "e" #'eval-buffer)
+  (define-key map "f" #'follow-mode)  ; override `font-lock-update'
+  (define-key map "r" #'rename-uniquely))
 
 ;;;;;; Unique Names for Buffers
 
@@ -578,6 +604,8 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map (kbd "C-x {") #'shrink-window)
   (define-key map (kbd "C-x >") #'enlarge-window-horizontally) ; override `scroll-right'
   (define-key map (kbd "C-x <") #'shrink-window-horizontally)) ; override `scroll-left'
+(let ((map resize-window-repeat-map))
+  (define-key map ">" #'enlarge-window-horizontally))
 
 ;;;;;; Window History (winner-mode)
 
@@ -1394,7 +1422,7 @@ must be installed."
 (setq elfeed-enclosure-default-dir "~/Downloads/")
 (setq elfeed-search-filter "@4-months-ago +unread")
 (setq elfeed-sort-order 'ascending)
-(setq elfeed-search-title-max-width 80)
+(setq elfeed-search-title-max-width 160)
 (setq elfeed-search-title-min-width 30)
 (setq elfeed-search-trailing-width 25)
 (setq elfeed-show-truncate-long-urls t)
@@ -1640,8 +1668,27 @@ must be installed."
 
 ;;;;; Line Numbers and Relevant Indicators
 
-(setq hl-line-sticky-flag nil)
+(require 'prot-sideline)
+(require 'display-line-numbers)
+;; Set absolute line numbers.  A value of "relative" is also useful.
+(setq display-line-numbers-type t)
+;; Those two variables were introduced in Emacs 27.1
+(setq display-line-numbers-major-tick 0)
+(setq display-line-numbers-minor-tick 0)
+;; Use absolute numbers in narrowed buffers
+(setq-default display-line-numbers-widen t)
 
+(unless (package-installed-p 'diff-hl)
+  (package-install 'diff-hl))
+(require 'diff-hl)
+(setq diff-hl-draw-borders nil)
+(setq diff-hl-side 'left)
+
+(require 'hl-line)
+(setq hl-line-sticky-flag nil)
+(setq hl-line-overlay-priority -50) ; emacs28
+
+(require 'whitespace)
 (setq whitespace-style '(face
                          trailing
                          tabs
