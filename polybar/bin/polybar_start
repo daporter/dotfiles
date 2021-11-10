@@ -5,4 +5,4 @@ pkill -x polybar
 # Wait until the processes have been terminated.
 while pgrep -x polybar >/dev/null; do sleep 1; done
 
-polybar top &
+polybar bspwm &

@@ -1,5 +1,5 @@
 [colors]
-include-file = ~/.config/polybar/colors
+include-file = ~/.config/polybar/config_colors
 
 [settings]
 format-foreground =
@@ -8,9 +8,8 @@ format-foreground =
 margin-top = 0
 margin-bottom = 0
 
-[bar/top]
-bottom = false
-
+[bar/bspwm]
+bottom = true
 width = 100%
 height = 18
 radius = 0

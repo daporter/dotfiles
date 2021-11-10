@@ -6,16 +6,19 @@
 #
 # f == bspwm focus mode (my script)
 # s == reload sxhkd
-# p == reload polybar
+# p == reload polybar (NOTE: check the panel names in its config)
 # x == reload the Xresources file
-#mod4 + x ; e ; {f,s,p,t,x}
-mod4 + x ; e ; {s,p,x}
+mod4 + x ; e ; {f,s,p,t,x}
     { \
-    # bspwm_focus_mode, \
+    bspwm_focus_mode, \
     pkill -USR1 -x sxhkd && notify-send -i key_bindings "Reloaded key bindings", \
-    pkill -x polybar && polybar top &, \
+    # pkill -x polybar && polybar "$DESKTOP_SESSION" &, \
+    pkill -x polybar && polybar bspwm &, \
     xrdb -I "$HOME" -merge "$HOME"/.Xresources \
     }
+
+mod4 + F5
+     delight
 
 #
 # wm independent hotkeys
@@ -23,7 +26,7 @@ mod4 + x ; e ; {s,p,x}
 
 # terminal emulator
 super + Return
-    alacritty
+    xterm
 
 # program launcher
 super + @space

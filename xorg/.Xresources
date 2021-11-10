@@ -1,10 +1,21 @@
+!
+! ~/.Xresources
+!
+
+! Description
+! ===========
+!
+! This file is part of my dotfiles and is meant to work with the rest of
+! my custom desktop session: https://gitlab.com/protesilaos/dotfiles
+
+
 ! Font settings (for programs that do not support fontconfig)
 ! ===========================================================
 Xft*antialias: 1
 Xft*rgba: rgb
 Xft*autohint: 0
 Xft*hinting: 1
-Xft*hintstyle: hintfull
+Xft*hintstyle: hintslight
 Xft*lcdfilter: lcddefault
 
 ! xterm
@@ -21,6 +32,7 @@ xterm*dynamicColors: true
 xterm*toolBar: false
 xterm*scrollBar: false
 xterm*geometry: 80x24
+xterm*internalBorder: 0
 
 ! Cursor
 ! Allowing the cursor to use the reverse colour of the background or
@@ -48,10 +60,10 @@ xterm*highlightTextColor: XtDefaultBackground
 
 ! Font settings
 xterm*faceName: Monospace
+xterm*faceSize: 9
 xterm*renderFont: true
 xterm*boldColors: false
-xterm*faceSize:  9
-xterm*faceSize1: 11
+xterm*faceSize1: 9.5
 xterm*faceSize2: 12
 xterm*faceSize3: 15
 xterm*faceSize4: 18.25
@@ -59,6 +71,7 @@ xterm*faceSize5: 20.5
 xterm*faceSize6: 25.5
 xterm*forceBoxChars: false
 xterm*limitFontsets: 5
+xterm*scaleHeight: 1.0
 
 ! Scroll and output
 xterm*jumpScroll: true
@@ -73,6 +86,15 @@ xterm*backarrowKey: false
 xterm*metaSendsEscape: true
 xterm*ttyModes: erase ^?
 
-*.internalBorder: 10
+! Key bindings.  Use C-S-{c,v} to copy/paste as in GNOME terminal.  The
+! keys "Prior" and "Next" represent PgUp and PgDown respectively.
+xterm*selectToClipboard: true
+xterm*translations: #override \n\
+	Ctrl Shift <KeyPress>C: select-end(SELECT, CLIPBOARD) \n\
+	Ctrl Shift <KeyPress>V: insert-selection(SELECT, CLIPBOARD) \n\
+	Ctrl Shift <KeyPress>Next: smaller-vt-font() \n\
+	Ctrl Shift <KeyPress>Prior: larger-vt-font() \n\
+	Ctrl Shift <KeyPress>Home: set-vt-font(d)
 
-!#include ".local/share/my_colours/active-theme.Xcolors"
+! DO NOT EDIT THIS.  IT IS CONTROLLED PROGRAMMATICALLY.
+#include ".config/xterm/xterm_active_theme"

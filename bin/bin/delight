@@ -136,7 +136,7 @@ _polybar ()
     esac
 
     # [ -n "$1" ] && polybar "$DESKTOP_SESSION" &
-    polybar top &
+    [ -n "$1" ] && polybar bspwm &
 }
 
 _feh ()
@@ -381,24 +381,21 @@ _sway ()
 
 #### Sessions
 
-# case "$DESKTOP_SESSION"
-# in
-#     bspwm)
-#         wm_theme="$HOME"/.config/bspwm/active-theme
-#         _bspwm
-#         ;;
-#     herbstluftwm)
-#         wm_theme="$HOME"/.config/herbstluftwm/active-theme
-#         _hlwm
-#         ;;
-#     sway)
-#         wm_theme="$HOME"/.config/sway/active-theme
-#         _sway
-#         ;;
-#     gnome) _gnome ;;
-#     xfce)  _xfce  ;;
+case "$DESKTOP_SESSION"
+in
+    bspwm|"")
+        wm_theme="$HOME"/.config/bspwm/active-theme
+        _bspwm
+        ;;
+    herbstluftwm)
+        wm_theme="$HOME"/.config/herbstluftwm/active-theme
+        _hlwm
+        ;;
+    sway)
+        wm_theme="$HOME"/.config/sway/active-theme
+        _sway
+        ;;
+    gnome) _gnome ;;
+    xfce)  _xfce  ;;
 
-# esac
-
-wm_theme="$HOME"/.config/bspwm/active-theme
-_bspwm
+esac
