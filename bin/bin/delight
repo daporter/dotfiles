@@ -1,0 +1,404 @@
+#!/bin/bash
+
+# Delight (DE light) --- Toggle DE/WM and Emacs themes
+#
+# Copyright (c) 2020-2021  Protesilaos Stavrou <info@protesilaos.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+### Commentary:
+#
+# Simple tool to switch between light and dark themes.  Primarily
+# centred around my BSPWM or Sway setup.  For the standard DEs, this has
+# been tested with GNOME version 3.36 and Xfce 4.16.
+#
+# Part of my dotfiles: <https://gitlab.com/protesilaos/dotfiles>.
+
+### Code:
+
+#### General
+
+_depcheck ()
+{
+    command -v "$1" > /dev/null || { echo "Missing dependency: $1."; return 1; }
+}
+
+_sed ()
+{
+    # NOTE 2021-08-27: Confirm the following.
+    #
+	# If we run this asynchronously other processes might fail to get
+	# the new colours.  To my knowledge as of 2019-06-27, this appears
+	# to be better than using sleep and/or until...
+	sed --follow-symlinks -i "$@"
+}
+
+_emacs ()
+{
+    _depcheck emacs
+
+    pgrep -x emacs > /dev/null || return 1
+
+    # Just switch to the appropriate theme for Emacs:
+    # https://gitlab.com/protesilaos/modus-themes
+    case "$1"
+    in
+        l*) emacsclient -e "(modus-themes-load-operandi)" > /dev/null ;;
+        d*) emacsclient -e "(modus-themes-load-vivendi)"  > /dev/null ;;
+    esac
+}
+
+_xterm ()
+{
+    _depcheck xterm
+
+    xresources="$HOME"/.Xresources
+    active_theme="$HOME"/.config/xterm/xterm_active_theme
+
+    [ -f "$xresources" ] || { echo "No Xresources file"; exit 1; }
+    [ -f "$active_theme" ] || { echo "No active Xresources theme"; exit 1; }
+    [ -f "$wm_theme" ] || { echo "No WM session theme"; exit 1; }
+
+    case "$(cat "$wm_theme")"
+    in
+        light) _sed "s,vivendi,operandi," "$active_theme" ;;
+        dark)  _sed "s,operandi,vivendi," "$active_theme" ;;
+    esac
+    
+    xrdb -I "$HOME" -merge "$xresources"
+
+    # Another one of my scripts for live recolouring running terminal
+    # emulators, by using escape sequences.
+    repaint_terminals &
+}
+
+
+_alacritty ()
+{
+    _depcheck alacritty
+
+    active_theme="$HOME"/.config/alacritty/modus-themes-active.yml
+
+    [ -f "$active_theme" ] || { echo "No alacritty theme. Did you 'stow' your configurations?"; return 1; }
+
+    case "$(cat "$wm_theme")"
+    in
+        light) _sed "s,vivendi,operandi," "$active_theme" ;;
+        dark)  _sed "s,operandi,vivendi," "$active_theme" ;;
+    esac
+}
+
+# TODO 2021-08-27: dunst
+
+#### BSPWM and HerbstluftWM (I configure them almost identically)
+
+_rofi ()
+{
+    _depcheck rofi
+
+    active_theme="$HOME"/.config/rofi/themes/modus-themes-active.rasi
+
+    [ -f "$active_theme" ] || { echo "No rofi theme. Did you 'stow' your configurations?"; return 1; }
+
+    case "$(cat "$wm_theme")"
+    in
+        light) echo -e '@import "modus-operandi.rasi"' > "$active_theme" ;;
+        dark)  echo -e '@import "modus-vivendi.rasi"' > "$active_theme"  ;;
+    esac
+}
+
+_polybar ()
+{
+    _depcheck polybar
+
+    pgrep -x polybar > /dev/null && pkill -x polybar
+
+    active_theme="$HOME"/.config/polybar/config_colors
+
+    [ -f "$active_theme" ] || { echo "No active theme"; exit 1; }
+    [ -f "$wm_theme" ] || { echo "No WM session theme"; exit 1; }
+
+    case "$(cat "$wm_theme")"
+    in
+        light) _sed "s,vivendi,operandi," "$active_theme" ;;
+        dark)  _sed "s,operandi,vivendi," "$active_theme" ;;
+    esac
+
+    # [ -n "$1" ] && polybar "$DESKTOP_SESSION" &
+    polybar top &
+}
+
+_feh ()
+{
+    _depcheck feh
+
+    image_light="$HOME"/Sync/pictures/light.jpg
+    image_dark="$HOME"/Sync/pictures/dark.jpg
+
+    case "$(cat "$wm_theme")"
+    in
+        light) [ -f "$image_light" ] && feh --bg-fill "$image_light" ;;
+        dark)  [ -f "$image_dark" ]  && feh --bg-fill "$image_dark"  ;;
+    esac
+}
+
+_xsettingsd ()
+{
+	_gtk_common ()
+    {
+		# # GTK 2
+		# _sed "s,\(gtk-theme-name=\).*,\1\'${1}\', ; s,\(gtk-icon-theme-name=\).*,\1\'${2}\'," \
+        #      "$HOME"/.gtkrc-2.0
+
+		# GTK 3
+		_sed "s,\(gtk-theme-name=\).*,\1${1}, ; s,\(gtk-icon-theme-name=\).*,\1${2}," \
+             "$HOME"/.config/gtk-3.0/settings.ini
+	}
+
+	_gtk_live ()
+    {
+		_depcheck xsettingsd
+
+        xsettingsd="$HOME"/.config/xsettingsd/xsettingsd.conf
+
+        if [ -f "$xsettingsd" ]
+        then
+            _sed "s,\(.*\/ThemeName\) \"[a-zA-Z-]*\",\1 \"${1}\"," "$xsettingsd"
+            _sed "s,\(.*\/IconThemeName\) \"[a-zA-Z-]*\",\1 \"${2}\"," "$xsettingsd"
+        fi
+
+        # This is a very lightweight program that simply loads the
+        # settings it reads from the file.  Kill and run again to read
+        # the new values.
+        pgrep -xo xsettingsd > /dev/null && pkill -xo xsettingsd
+        xsettingsd -c "$xsettingsd" &
+	}
+
+	case "$1"
+    in
+		light)
+			_gtk_common 'Adwaita' 'Adwaita'
+			_gtk_live 'Adwaita' 'Adwaita'
+			;;
+		dark)
+			_gtk_common 'Adwaita-dark' 'Adwaita'
+			_gtk_live 'Adwaita-dark' 'Adwaita'
+			;;
+	esac
+}
+
+_bspwm ()
+{
+    _depcheck bspwm
+
+    theme="$HOME"/.config/bspwm/active-theme
+
+    if [ "$(cat "$theme")" = light ]
+    then
+        style=dark
+    else
+        style=light
+    fi
+
+    echo "$style" > "$theme"
+
+    _depcheck bspwm_conf_colors && bspwm_conf_colors
+    _emacs "$style" &
+    _xsettingsd "$style" &
+    _xterm &
+    # # NOTE 2021-09-25: I tried alacritty for a while, but the way it
+    # reads the fonts on Xorg makes the point size larger than expected.
+    # Also, it seems to miss some smaller sizes, so I cannot use it
+    # exactly how I want to.  Everything is fine on Wayland with Sway...
+    #
+    # _alacritty &
+    _feh &
+    _rofi &
+
+    focus_mode_status="$HOME"/.config/bspwm/bspwm_focus_mode_status
+
+    if [ "$(sed 1q "$focus_mode_status")" = off ]
+    then
+        _polybar launch
+    else
+        # Just update the colours, but do not launch the process.
+        _polybar
+    fi
+}
+
+_hlwm ()
+{
+    _depcheck herbstluftwm
+
+    theme="$HOME"/.config/herbstluftwm/active-theme
+
+    if [ "$(cat "$theme")" = light ]
+    then
+        style=dark
+    else
+        style=light
+    fi
+
+    echo "$style" > "$theme"
+
+    _depcheck herbstluftwm_conf_colors && herbstluftwm_conf_colors
+    _emacs "$style" &
+    _xsettingsd "$style" &
+    _xterm &
+    # # NOTE 2021-09-25: I tried alacritty for a while, but the way it
+    # reads the fonts on Xorg makes the point size larger than expected.
+    # Also, it seems to miss some smaller sizes, so I cannot use it
+    # exactly how I want to.  Everything is fine on Wayland with Sway...
+    #
+    # _alacritty &
+    _feh &
+    _rofi &
+
+    _polybar launch
+}
+
+#### Gnome
+
+_ggtk ()
+{
+    gsettings "$1" org.gnome.desktop.interface gtk-theme "${@:2}"
+}
+
+# Get the theme
+_gget ()
+{
+    _ggtk 'get'
+}
+
+# Set the theme
+_gset ()
+{
+    _ggtk 'set' "$1"
+}
+
+_gnome ()
+{
+    if [ "$(_gget)" = "'Adwaita'" ]
+    then
+        style=dark
+        _gset 'Adwaita-dark'
+    else
+        style=light
+        _gset 'Adwaita'
+    fi
+
+    _emacs "$style"
+}
+
+#### Xfce
+
+_xfquery ()
+{
+    xfconf-query -c xfwm4 -p /general/theme
+}
+
+_xfquerys ()
+{
+    xfconf-query -c "$1" -p "$2" -s "$3"
+}
+
+_xfce ()
+{
+    if [ "$(_xfquery)" = 'Adwaita' ]
+    then
+        style=dark
+        _xfquerys 'xfwm4' '/general/theme' 'Adwaita-dark'
+        _xfquerys 'xsettings' '/Net/ThemeName' 'Adwaita-dark'
+    else
+        style=light
+        _xfquerys 'xfwm4' '/general/theme' 'Adwaita'
+        _xfquerys 'xsettings' '/Net/ThemeName' 'Adwaita'
+    fi
+
+    _emacs "$style"
+}
+
+#### Sway
+
+_swaybg ()
+{
+    _depcheck swaybg
+
+    image_light="$HOME"/Pictures/light.jpg
+    image_dark="$HOME"/Pictures/dark.jpg
+    image_current="$HOME"/Pictures/current.jpg
+
+    case "$(cat "$HOME"/.config/sway/active-theme)"
+    in
+        light) [ -f "$image_light" ] && cp "$image_light" "$image_current" ;;
+        dark)  [ -f "$image_dark" ]  && cp "$image_dark" "$image_current"  ;;
+    esac
+
+    swaymsg 'output * bg ~/Pictures/current.jpg fill'
+}
+
+# TODO 2021-09-20: How to update the bar's colours without reloading the
+# sway config?
+_sway ()
+{
+    _depcheck sway
+    theme="$HOME"/.config/sway/active-theme
+
+    if [ "$(cat "$theme")" = light ]
+    then
+        style=dark
+        gtk_theme='Adwaita-dark'
+
+        swaymsg client.focused "#323232" "#323232" "#ffffff" "#ff8059" "#00bcff"
+        swaymsg client.unfocused "#1e1e1e" "#1e1e1e" "#a8a8a8" "#323232" "#323232"
+    else
+        style=light
+        gtk_theme='Adwaita'
+
+        swaymsg client.focused "#d7d7d7" "#d7d7d7" "#000000" "#a60000" "#0000c0"
+        swaymsg client.unfocused "#efefef" "#efefef" "#505050" "#d7d7d7" "#d7d7d7"
+    fi
+
+    echo "$style" > "$theme"
+
+    _emacs "$style" &
+    _alacritty &
+    _swaybg &
+    # Sway can actually re-use GNOME's settings
+    _gset "$gtk_theme" &
+}
+
+#### Sessions
+
+# case "$DESKTOP_SESSION"
+# in
+#     bspwm)
+#         wm_theme="$HOME"/.config/bspwm/active-theme
+#         _bspwm
+#         ;;
+#     herbstluftwm)
+#         wm_theme="$HOME"/.config/herbstluftwm/active-theme
+#         _hlwm
+#         ;;
+#     sway)
+#         wm_theme="$HOME"/.config/sway/active-theme
+#         _sway
+#         ;;
+#     gnome) _gnome ;;
+#     xfce)  _xfce  ;;
+
+# esac
+
+wm_theme="$HOME"/.config/bspwm/active-theme
+_bspwm
