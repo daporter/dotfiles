@@ -939,6 +939,10 @@ sure this is a good approach."
 (setq org-modules '(ol-info ol-eww))
 (setq org-fontify-quote-and-verse-blocks t)
 
+;; Refile targets can be headings in the current file.
+(setq org-refile-targets '((nil :maxlevel . 5)
+                           (org-agenda-files :maxlevel . 5)))
+
 (setq org-todo-keyword-faces '(("WAIT" . '(bold org-todo))
                                ("CANCEL" . '(bold org-done))))
 
