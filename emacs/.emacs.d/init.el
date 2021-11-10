@@ -105,7 +105,7 @@
 (dolist (hook '(elfeed-search-mode-hook
                 notmuch-search-mode-hook
                 log-view-mode-hook))
-    (add-hook hook #'lin-mode))
+  (add-hook hook #'lin-mode))
 
 ;;;;; Typeface Configurations
 
@@ -1256,8 +1256,6 @@ must be installed."
 
 ;;;;;; Client-Agnostic Email Settings
 
-;(unless (package-installed-p 'auth-source-pass)
-;  (package-install 'auth-source-pass))
 (require 'auth-source-pass)
 
 (setq auth-source-pass-filename "~/Sync/password-store")
@@ -1709,13 +1707,19 @@ must be installed."
         (newline-mark 10 [8617 10])
         (lines-tail 10 [8617 10])))
 
+(defun dp-whitespace-style-allow-long-lines ()
+  "Set `whitespace-style’ to allow long lines."
+  (setq-local whitespace-style
+              (remove 'lines-tail whitespace-style)))
+
 ;; Long lines are allowed in certain modes.
 (dolist (hook '(markdown-mode-hook org-mode-hook))
-  (add-hook hook (lambda ()
-                   (setq-local whitespace-style
-                               (remove 'lines-tail whitespace-style)))))
+  (add-hook hook #'dp-whitespace-style-allow-long-lines))
 
-(define-key global-map (kbd "C-c w") #'whitespace-cleanup)
+(let ((map global-map))
+  (define-key map (kbd "<f6>") #'prot-sideline-negative-space-toggle)
+  (define-key map (kbd "<f7>") #'prot-sideline-mode)
+  (define-key map (kbd "C-c w") #'whitespace-cleanup))
 
 ;;;;; Outline Mode
 
@@ -1833,6 +1837,7 @@ must be installed."
 (setq backward-delete-char-untabify-method nil)
 
 (defun dp-turn-on-indent-tabs-mode ()
+  "Enable `indent-tabs-mode’."
   (setq indent-tabs-mode t))
 
 ;; Use tab characters for indentation in certain modes.
@@ -1842,7 +1847,11 @@ must be installed."
                 nxml-mode-hook))
   (add-hook hook #'dp-turn-on-indent-tabs-mode))
 
-(add-hook 'nxml-mode-hook (lambda () (setq tab-width 2)))
+(defun dp-set-tab-width-nxml-mode ()
+  "Set my preferred ‘tab-width’ for `nxml-mode’."
+  (setq tab-width 2))
+
+(add-hook 'nxml-mode-hook #'dp-set-tab-width-nxml-mode)
 
 (setq-default tab-always-indent 'complete)
 (setq-default tab-first-completion 'word-or-paren-or-punct)
@@ -1858,7 +1867,8 @@ must be installed."
 
 (smart-tabs-insinuate 'c 'c++ 'java 'javascript 'cperl 'python 'ruby 'sh 'nxml)
 
-(defun dp-set-local-whitespace-style ()
+(defun dp-whitespace-style-ignore-indentation ()
+  "Set `whitespace-style’ to ignore ignore indentation."
   (setq-local whitespace-style
               (remove 'indentation whitespace-style)))
 
@@ -1867,7 +1877,7 @@ must be installed."
 (dolist (hook '(sh-mode-hook
                 python-mode-hook
                 nxml-mode-hook))
-  (add-hook hook #'dp-set-local-whitespace-style))
+  (add-hook hook #'dp-whitespace-style-ignore-indentation))
 
 ;;;;; Spell Checking
 
