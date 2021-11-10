@@ -114,33 +114,14 @@
 (setq-default text-scale-remap-header-line t)
 (setq-default line-spacing 0.1)
 
-(defun dp-set-fonts-external ()
-  "Set my preferred fonts for my external monitor."
-  (custom-set-faces
-   '(default        ((t :family "Fira Code" :height 90)))
-   '(bold           ((t :weight semi-bold)))
-   '(italic         ((t :family "Hack")))
-   '(fixed-pitch    ((t :family "Fira Code" :height 90)))
-   '(variable-pitch ((t :family "Libre Caslon Text" :height 1.1)))))
+;; Set my preferred fonts.
+(custom-set-faces
+ '(default        ((t :family "Fira Code" :height 90)))
+ '(bold           ((t :weight semi-bold)))
+ '(italic         ((t :family "Hack")))
+ '(fixed-pitch    ((t :family "Fira Code" :height 90)))
+ '(variable-pitch ((t :family "Libre Caslon Text" :height 1.1))))
 
-(defun dp-set-fonts-macbook ()
-  "Set my preferred fonts for my MacBook Air."
-  (custom-set-faces
-   '(default        ((t :family "Fira Code" :height 90)))
-   '(bold           ((t :weight semi-bold)))
-   '(fixed-pitch    ((t :family "Fira Code" :height 90)))
-   '(variable-pitch ((t :family "Libre Caslon Text")))))
-
-(defun dp-set-fonts ()
-  "Set my preferred fonts according to the display."
-  (let ((display-width (display-pixel-width)))
-    (cond ((= display-width 1366)
-           (dp-set-fonts-macbook))
-          ((= display-width 1920)
-           (dp-set-fonts-external))
-          (t (message "Unable to set fonts")))))
-
-(dp-set-fonts)
 (add-hook 'modus-themes-after-load-theme-hook #'dp-set-fonts)
 
 ;;;;; Repeatable Keychords
