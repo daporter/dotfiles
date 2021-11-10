@@ -1908,14 +1908,15 @@ must be installed."
 (setq flymake-diagnostic-at-point-display-diagnostic-function
       'flymake-diagnostic-at-point-display-minibuffer)
 
+(add-hook 'prog-mode-hook #'flymake-mode)
+
 ;;;;;;; Flymake + Shellcheck
 
 (unless (package-installed-p 'flymake-shellcheck)
   (package-install 'flymake-shellcheck))
 (require 'flymake-shellcheck)
 (let ((hook 'sh-mode-hook))
-  (add-hook hook #'flymake-shellcheck-load)
-  (add-hook hook #'flymake-mode))
+  (add-hook hook #'flymake-shellcheck-load))
 
 ;;;;;;; Flymake + Proselint
 
