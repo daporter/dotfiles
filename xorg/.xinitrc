@@ -22,7 +22,14 @@ xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation" 1
 xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Button" 2
 xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Axes" 6 7 4 5
 
+# TODO: Make this an runit service to ensure there is not more than one
+# process.
 picom &
+
+# TODO: Make this an runit service to ensure there is not more than one
+# process.
+redshift &
+
 dunst &
 sxhkd &
 
