@@ -258,7 +258,8 @@ STYLES is a list of pattern matching methods that is passed to
   ;; I use this prefix for other searches
   (define-key map (kbd "M-s") nil))
 
-(add-to-list 'load-path (locate-user-emacs-file "lisp/mct"))
+(unless (package-installed-p 'mct)
+  (package-install 'mct))
 (require 'mct)
 (setq mct-remove-shadowed-file-names t) ; when `file-name-shadow-mode' is enabled
 (setq mct-hide-completion-mode-line t)
