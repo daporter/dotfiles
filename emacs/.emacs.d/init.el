@@ -77,7 +77,6 @@
 (setq modus-themes-completions 'opinionated)
 (setq modus-themes-mail-citations 'faint)
 (setq modus-themes-lang-checkers '(background))
-(setq modus-themes-hl-line '(intense))
 (setq modus-themes-region 'bg-only)
 (setq modus-themes-diffs 'desaturated)
 (setq modus-themes-org-blocks 'gray-background)
@@ -1019,6 +1018,8 @@ sure this is a good approach."
 (setq org-agenda-skip-deadline-prewarning-if-scheduled 1)
 (setq org-scheduled-past-days 365)
 (setq org-deadline-past-days 365)
+
+(add-hook 'org-agenda-mode-hook #'hl-line-mode)
 
 ;;;;;; Calendar and Diary
 
