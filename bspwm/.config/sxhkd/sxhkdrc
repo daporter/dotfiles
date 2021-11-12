@@ -8,7 +8,7 @@
 # s == reload sxhkd
 # p == reload polybar (NOTE: check the panel names in its config)
 # x == reload the Xresources file
-mod4 + x ; e ; {f,s,p,t,x}
+mod4 + e ; {f,s,p,t,x}
     { \
     bspwm_focus_mode, \
     pkill -USR1 -x sxhkd && notify-send -i key_bindings "Reloaded key bindings", \
@@ -19,6 +19,13 @@ mod4 + x ; e ; {f,s,p,t,x}
 
 mod4 + F5
      delight
+
+mod4 + e ; d ; {q,Q,c,h}
+     dunstctl {close,close-all,context,history-pop}
+
+# 'dunst_toggle_notify' is a shell script of mine.  Check my dotfiles.
+mod4 + e ; d ; p
+     dunst_toggle_notify
 
 #
 # wm independent hotkeys
@@ -31,9 +38,6 @@ super + Return
 # program launcher
 super + @space
 	rofi -show drun
-
-mod4 + x ; {x,b}
-     rofi -show {drun,window}
 
 # make sxhkd reload its configuration files:
 super + Escape

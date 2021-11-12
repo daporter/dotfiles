@@ -103,7 +103,9 @@
 
 (dolist (hook '(elfeed-search-mode-hook
                 notmuch-search-mode-hook
-                log-view-mode-hook))
+                log-view-mode-hook
+                package-menu-mode-hook
+                ibuffer-mode-hook))
   (add-hook hook #'lin-mode))
 
 ;;;;; Typeface Configurations
