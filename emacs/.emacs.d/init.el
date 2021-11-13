@@ -1985,8 +1985,3 @@ must be installed."
 (setq create-lockfiles nil)
 
 ;;; init.el ends here
-
-;; Local Variables:
-;; outline-regexp: ";;;;* [^ \t\n]"
-;; eval: (progn (outline-minor-mode 1) (outline-hide-body))
-;; End:
