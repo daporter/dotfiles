@@ -102,7 +102,7 @@ ramp-capacity-3 = 
 ramp-capacity-4 = 
 
 ramp-capacity-0-foreground = ${colors.red}
-ramp-capacity-1-foreground = ${colors.red}
+ramp-capacity-1-foreground = ${colors.magenta}
 
 [module/wlan]
 type = internal/network
