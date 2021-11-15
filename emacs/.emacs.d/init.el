@@ -1410,7 +1410,7 @@ must be installed."
 (setq elfeed-enclosure-default-dir "~/Downloads/")
 (setq elfeed-search-filter "@4-months-ago +unread")
 (setq elfeed-sort-order 'ascending)
-(setq elfeed-search-title-max-width 160)
+(setq elfeed-search-title-max-width 100)
 (setq elfeed-search-title-min-width 30)
 (setq elfeed-search-trailing-width 25)
 (setq elfeed-show-truncate-long-urls t)
