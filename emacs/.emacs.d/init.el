@@ -435,9 +435,96 @@ STYLES is a list of pattern matching methods that is passed to
   (package-install 'avy))
 (require 'avy)
 
-(setq avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s ?l))
+(setq avy-keys '(?u ?h ?e ?t ?a ?s ?o ?n))
 
-(define-key global-map (kbd "M-j") #'avy-goto-char-timer)
+(define-key global-map (kbd "M-o") #'avy-goto-char-timer)
+
+;;;;;; Avy Actions
+
+;; See https://karthinks.com/software/avy-can-do-anything/
+
+(defun avy-action-mark-to-char (pt)
+  (activate-mark)
+  (goto-char pt))
+
+(defun avy-action-copy-whole-line (pt)
+  (save-excursion
+    (goto-char pt)
+    (cl-destructuring-bind (start . end)
+        (bounds-of-thing-at-point 'line)
+      (copy-region-as-kill start end)))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(defun avy-action-kill-whole-line (pt)
+  (save-excursion
+    (goto-char pt)
+    (kill-whole-line))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(defun avy-action-yank-whole-line (pt)
+  (avy-action-copy-whole-line pt)
+  (save-excursion (yank))
+  t)
+
+(defun avy-action-teleport-whole-line (pt)
+  (avy-action-kill-whole-line pt)
+  (save-excursion (yank)) t)
+
+(defun avy-action-mark-to-char (pt)
+  (activate-mark)
+  (goto-char pt))
+
+(defun avy-action-define (pt)
+  (save-excursion
+    (goto-char pt)
+    (dictionary-search-dwim))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(defun avy-action-describe-symbol (pt)
+  (save-excursion
+    (goto-char pt)
+    (describe-symbol (symbol-at-point)))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(defun avy-action-embark (pt)
+  (unwind-protect
+      (save-excursion
+        (goto-char pt)
+        (embark-act))
+    (select-window
+     (cdr (ring-ref avy-ring 0))))
+  t)
+
+;; Note: these keys must be distinct from the value of `avy-keys’.
+(setq avy-dispatch-alist '((?  . avy-action-mark)
+                           (?m . avy-action-mark-to-char)
+                           (?i . avy-action-ispell)
+                           (?z . avy-action-zap-to-char)
+                           (?, . avy-action-embark)
+                           (?= . avy-action-define)
+                           (?l . avy-action-describe-symbol)
+
+                           (11 . avy-action-kill-line) ; C-k
+                           (25 . avy-action-yank-line) ; C-y
+
+                           (?k . avy-action-kill-stay)
+                           (?y . avy-action-yank)
+                           (?p . avy-action-teleport)
+
+                           (?W . avy-action-copy-whole-line)
+                           (?K . avy-action-kill-whole-line)
+                           (?Y . avy-action-yank-whole-line)
+                           (?P . avy-action-teleport-whole-line)))
+
+(define-key isearch-mode-map (kbd "M-o") 'avy-isearch)
 
 ;;;; Directory, Buffer, Window Management
 
