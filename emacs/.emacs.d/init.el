@@ -124,6 +124,8 @@
    '(fixed-pitch    ((t :family "Fira Code" :height 90)))
    '(variable-pitch ((t :family "Libre Caslon Text" :height 1.1)))))
 
+(dp-set-fonts)
+
 (add-hook 'modus-themes-after-load-theme-hook #'dp-set-fonts)
 
 ;;;;; Repeatable Keychords
