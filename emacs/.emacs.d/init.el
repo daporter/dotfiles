@@ -262,21 +262,20 @@ STYLES is a list of pattern matching methods that is passed to
   ;; I use this prefix for other searches
   (define-key map (kbd "M-s") nil))
 
+;;;;;;; Minibuffer and Completions in Tandem (mct.el)
+
 (unless (package-installed-p 'mct)
   (package-install 'mct))
 (require 'mct)
-(setq mct-remove-shadowed-file-names t) ; when `file-name-shadow-mode' is enabled
+
 (setq mct-hide-completion-mode-line t)
-(setq mct-show-completion-line-numbers nil)
-(setq mct-apply-completion-stripes nil)
-(setq mct-minimum-input 3)
-(setq mct-live-update-delay 0.6)
-(setq mct-completion-blocklist nil)
-(setq mct-completion-passlist
-      '( embark-prefix-help-command Info-goto-node
-         Info-index Info-menu vc-retrieve-tag
-         prot-bookmark-cd-bookmark
-         prot-bongo-playlist-insert-playlist-file))
+(setq mct-remove-shadowed-file-names t)
+(setq mct-apply-completion-stripes t)
+(setq mct-completion-passlist '(embark-prefix-help-command
+                                Info-goto-node
+                                Info-index
+                                Info-menu
+                                vc-retrieve-tag))
 
 (mct-mode 1)
 
