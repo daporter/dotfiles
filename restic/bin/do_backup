@@ -2,16 +2,53 @@
 #
 # Run a backup of my home directory.
 
-. "$HOME/.profile.d/restic.sh"
+_wlan_connect () {
+	if ! nmcli connection up Phunculist; then
+		echo 'Unable to connect. Exiting.'
+		exit 1
+	fi
+}
 
-echo "Connecting to network Phunculist"
-if ! nmcli connection up Phunculist; then
-	echo "Unable to connect." >&2
-	exit 1
-fi
-echo
-echo "Running restic"
-restic --password-command="pass restic" \
-       --exclude-file="$HOME/.config/restic/restic-exclude.txt" \
-       --verbose \
-       backup "$HOME"
+_prepare () {
+	. "$HOME"/.profile.d/restic.sh
+}
+
+_do_backup () {
+	exclude=$HOME/.config/restic/restic-exclude.txt
+	if ! restic --exclude-file="$exclude" backup "$HOME"; then
+		echo 'Unable to perform backup. Exiting.'
+		exit 1
+	fi
+}
+
+_remove_old_snapshots () {
+	# Keep the most recent 7 daily snapshots, then 4 (remember, 7
+	# dailies already include a week!)  last-day-of-the-weeks and 11 or
+	# 12 last-day-of-the-months (11 or 12 depends if the 5 weeklies
+	# cross a month). And finally 100 last-day-of-the-year snapshots. All
+	# other snapshots are removed.
+	restic forget \
+	       --keep-daily 7 \
+	       --keep-weekly 5 \
+	       --keep-monthly 12 \
+	       --keep-yearly 100 \
+	       --prune
+}
+
+_verify () {
+	if ! restic check; then
+		echo 'Unable to verify repository.'
+	fi
+}
+
+echo '---------------Starting backup---------------'
+echo '* Connecting to wlan'
+_wlan_connect
+_prepare
+echo '* Performing backup'
+_do_backup
+echo '* Removing old snapshots'
+_remove_old_snapshots
+echo '* Verifying the repository'
+_verify
+echo '---------------Backup finished----------------'

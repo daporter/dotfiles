@@ -1,3 +1,7 @@
 #!/bin/sh
 
-export RESTIC_REPOSITORY=rest:http://beilen:8000/
+RESTIC_REPOSITORY=rest:http://beilen:8000/
+export RESTIC_REPOSITORY
+
+RESTIC_PASSWORD_COMMAND="pass restic"
+export RESTIC_PASSWORD_COMMAND
