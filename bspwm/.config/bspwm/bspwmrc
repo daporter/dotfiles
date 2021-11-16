@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Check for and configure any connected external display.
-bspwm_conf_xrandr
-
 # Define desktop[s] [per monitor].
 bspwm_conf_desktops
 
