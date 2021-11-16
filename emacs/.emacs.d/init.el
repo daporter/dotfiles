@@ -413,6 +413,7 @@ STYLES is a list of pattern matching methods that is passed to
 
 (require 'project)
 
+(setq project-list-file "~/Sync/emacs/projects")
 (setq project-switch-commands
       '((?f "File" project-find-file)
         (?s "Subdir" prot-project-find-subdir)
@@ -770,6 +771,7 @@ STYLES is a list of pattern matching methods that is passed to
 
 ;;;;; Bookmarking
 
+(setq bookmark-default-file "~/Sync/emacs/bookmarks")
 (setq bookmark-use-annotations nil)
 (setq bookmark-automatically-show-annotations t)
 (setq bookmark-set-fringe-mark t)
@@ -1453,8 +1455,8 @@ must be installed."
 (require 'ebdb)
 (require 'ebdb-message)
 (require 'ebdb-notmuch)
-(setq ebdb-sources (locate-user-emacs-file "ebdb.gpg"))
-(setq ebdb-permanent-ignores-file (locate-user-emacs-file "ebdb-permanent-ignores"))
+(setq ebdb-sources "~/Sync/emacs/ebdb.gpg")
+(setq ebdb-permanent-ignores-file "~/Sync/emacs/ebdb-permanent-ignores")
 
 (setq ebdb-mua-pop-up nil)
 (setq ebdb-default-window-size 0.25)
@@ -1494,7 +1496,7 @@ must be installed."
   (package-install 'elfeed))
 (require 'elfeed)
 
-(setq elfeed-db-directory (concat user-emacs-directory "elfeed/"))
+(setq elfeed-db-directory "~/Sync/emacs/elfeed/")
 (setq elfeed-enclosure-default-dir "~/Downloads/")
 (setq elfeed-search-filter "@4-months-ago +unread")
 (setq elfeed-sort-order 'ascending)
@@ -1523,7 +1525,7 @@ must be installed."
 
 (with-eval-after-load 'elfeed
   (require 'prot-elfeed)
-  (setq prot-elfeed-feeds-file (concat user-emacs-directory "feeds.el"))
+  (setq prot-elfeed-feeds-file "~/Sync/emacs/feeds.el")
   (setq prot-elfeed-tag-faces t)
   (prot-elfeed-fontify-tags)
   (add-hook 'elfeed-search-mode-hook #'prot-elfeed-load-feeds)
@@ -1578,7 +1580,7 @@ must be installed."
 (setq eww-download-directory (expand-file-name "~/Downloads"))
 (setq eww-suggest-uris '(eww-links-at-point
                          thing-at-point-url-at-point))
-(setq eww-bookmarks-directory (locate-user-emacs-file "eww-bookmarks/"))
+(setq eww-bookmarks-directory "~/Sync/emacs/eww-bookmarks/")
 (setq eww-history-limit 150)
 (setq eww-browse-url-new-window-is-tab nil)
 
