@@ -1,8 +1,12 @@
 #!/bin/sh
 
-bspc monitor -d I II III IV
+# Check for and configure any connected external display.
+bspwm_conf_xrandr
 
-bspc config border_width          1
+# Define desktop[s] [per monitor].
+bspwm_conf_desktops
+
+bspc config border_width          2
 bspc config window_gap            2
 bspc config split_ratio           0.5
 bspc config focus_follows_pointer true

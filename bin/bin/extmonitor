@@ -17,10 +17,10 @@ _switch() {
 
 case $1 in
 	connect)
-		_is_connected DP1 && _switch LVDS1 DP1
+		_is_connected DP-1 && _switch LVDS-1 DP-1
 		;;
 	disconnect)
-		_switch DP1 LVDS1
+		_switch DP-1 LVDS-1
 		;;
 	*)
 		echo "Usage: $0 connect|disconnect" >&2

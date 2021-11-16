@@ -17,10 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 
-xrandr --output VGA-1 --brightness 0.935 --gamma 1:1:1
-
-
-
+#xrandr --output VGA-1 --brightness 0.935 --gamma 1:1:1
 
 ## NOTE 2021-08-27: Below are old configurations.  Keeping them here for
 ## future reference.
@@ -34,9 +31,14 @@ xrandr --output VGA-1 --brightness 0.935 --gamma 1:1:1
 # # if a program such as `redshift' is running.
 # _laptop() {
 # 	xrandr --output LVDS-1 --mode 1366x768 --pos 0x0 \
-#            --brightness 1.0 --gamma 0.76:0.75:0.68 \
-#            "$@"
+	#            --brightness 1.0 --gamma 0.76:0.75:0.68 \
+	#            "$@"
 # }
+_laptop() {
+	xrandr --output LVDS-1 --mode 1600x900 \
+	       --brightness 1.0 --gamma 0.76:0.75:0.68 \
+	       "$@"
+}
 # 
 # _multihead() {
 # 	_laptop
@@ -46,6 +48,14 @@ xrandr --output VGA-1 --brightness 0.935 --gamma 1:1:1
 # 	# to be the left- and top- most monitor.
 # 	xrandr --output VGA-1 --primary --mode 1920x1080 --pos 1366x0
 # }
+_multihead() {
+	_laptop
+
+	# Configure the external display on the DP port.  Making it the
+	# `primary' can cause problems in certain contexts that assume this
+	# to be the left- and top- most monitor.
+	xrandr --output DP-1 --primary --mode 1920x1080
+}
 # 
 # # Conditions for running this script
 # # ----------------------------------
@@ -64,3 +74,8 @@ xrandr --output VGA-1 --brightness 0.935 --gamma 1:1:1
 # else
 #     _laptop --primary
 # fi
+if [ -n "$(xrandr --query | grep 'DP-1 connected')" ]; then
+	_multihead
+else
+	_laptop --primary
+fi
