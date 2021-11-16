@@ -5,15 +5,16 @@
 # The following commands are:
 #
 # f == bspwm focus mode (my script)
-# s == reload sxhkd
+# m == configure monitors
 # p == reload polybar (NOTE: check the panel names in its config)
+# s == reload sxhkd
 # x == reload the Xresources file
-mod4 + e ; {f,s,p,t,x}
+mod4 + e ; {f,m,p,s,x}
     { \
     bspwm_focus_mode, \
-    pkill -USR1 -x sxhkd && notify-send -i key_bindings "Reloaded key bindings", \
-    # pkill -x polybar && polybar "$DESKTOP_SESSION" &, \
+    configure_monitors, \
     pkill -x polybar && polybar bspwm &, \
+    pkill -USR1 -x sxhkd && notify-send -i key_bindings "Reloaded key bindings", \
     xrdb -I "$HOME" -merge "$HOME"/.Xresources \
     }
 
