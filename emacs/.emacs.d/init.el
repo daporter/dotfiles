@@ -822,7 +822,8 @@ STYLES is a list of pattern matching methods that is passed to
 (define-key global-map (kbd "C-x v =") #'prot-diff-buffer-dwim)
 (let ((map diff-mode-map))
   (define-key map (kbd "C-c C-b") #'prot-diff-refine-cycle) ; replace `diff-refine-hunk'
-  (define-key map (kbd "C-c C-n") #'prot-diff-narrow-dwim))
+  (define-key map (kbd "C-c C-n") #'prot-diff-narrow-dwim)
+  (define-key map (kbd "M-o") nil))     ; I use M-o for Avy
 
 ;;;;;;; Version Control Framework (vc.el and prot-vc.el)
 
