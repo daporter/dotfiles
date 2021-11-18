@@ -29,7 +29,7 @@ font-1 = "Arimo Nerd Font:pixelsize=9;2"
 
 modules-left = bspwm bspwm_panel_monocle
 modules-center = date
-modules-right = xkeyboard memory cpu coretemp filesystem notmuch backlight battery wlan powermenu
+modules-right = xkeyboard memory cpu coretemp filesystem notmuch backlight battery wifi powermenu
 
 wm-restack = bspwm
 override-redirect = false
@@ -104,9 +104,9 @@ ramp-capacity-4 = 
 ramp-capacity-0-foreground = ${colors.red}
 ramp-capacity-1-foreground = ${colors.magenta}
 
-[module/wlan]
+[module/wifi]
 type = internal/network
-interface = wlp2s0
+interface = ${env:WIFI_INTERFACE:wlp2s0}
 interval = 5.0
 
 format-connected = 直 <label-connected>
