@@ -1,3 +1,7 @@
+# For details of the following setting, see
+# https://vxlabs.com/2021/03/21/mbsync-copyarrivaldate-yes/
+CopyArrivalDate yes
+
 IMAPAccount migadu
 Host imap.migadu.com
 User david@daporter.net
@@ -13,13 +17,8 @@ Inbox ~/Mail/inbox
 SubFolders Verbatim
 
 Channel primary
-Master :migadu:
-Slave :local:
+Far :migadu:
+Near :local:
 Patterns *
 Create Both
-#Expunge Both
 SyncState *
-
-# For details of the following setting, see
-# https://vxlabs.com/2021/03/21/mbsync-copyarrivaldate-yes/
-CopyArrivalDate yes

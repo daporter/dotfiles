@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# This hook is invoked by the `new’ command before scanning or importing
+# new messages into the database. If this hook exits with a non-zero
+# status, notmuch will abort further processing of the `new’ command.
+
+# Before syncing with the upstream mail server, move messages into
+# Maildir folders according to their tags.  The makes our sorting of
+# messages available when using other mail readers.
+#
+# Note that in move mode, `afew’ calls `notmuch new’ after moving mails
+# around.  We therefore use `--notmuch-args=--no-hooks’ to avoid loops.
+afew --move-mails --notmuch-args=--no-hooks
+
+mbsync --all

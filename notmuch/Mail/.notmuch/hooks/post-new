@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# This hook is invoked by the `new’ command after new messages have been
+# imported into the database and initial tags have been applied. The
+# hook will not be run if there have been any errors during the scan or
+# import.
+
+# For the configuration of `afew’, see ~/.config/afew/config
+afew --tag --new
+
+# Mailing lists.
+notmuch tag -inbox +lists +list/great-conversation \
+        -- to:great-conversation@googlegroups.com or to:GreatConversation@yahoogroups.com
+notmuch tag -inbox +lists +list/emacs-humanities \
+        -- from:emacs-humanities@gnu.org or to:emacs-humanities@gnu.org
+notmuch tag -inbox +lists +list/notmuch \
+        -- from:notmuch@notmuchmail.org or to:notmuch@notmuchmail.org

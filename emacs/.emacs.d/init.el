@@ -1364,8 +1364,7 @@ must be installed."
 
 ;;;;;; Notmuch
 
-(unless (package-installed-p 'notmuch)
-  (package-install 'notmuch))
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/notmuch")
 (require 'notmuch)
 
 ;; Account Settings
@@ -1395,19 +1394,16 @@ must be installed."
         (:name "inbox" :query "tag:inbox" :key "i")
         (:name "flagged" :query "tag:flagged" :key "f")
         (:name "reference" :query "tag:reference not tag:archived" :key "r")
-        (:name "todo" :query "tag:todo not tag:archived" :key "t")
-        (:name "mailing lists" :query "tag:list" :key "m")
-        (:name "emacs-humanities"
-               :query "from:emacs-humanities@gnu.org or to:emacs-humanities@gnu.org"
-               :key "eh")
-        ;; CLI tools
-        (:name "notmuch"
-               :query "from:notmuch@notmuchmail.org or to:notmuch@notmuchmail.org"
-               :key "cn")
-        ;; Books
-        (:name "great-conversation"
-               :query "to:great-conversation@googlegroups.com or to:GreatConversation@yahoogroups.com"
-               :key "bg")))
+        (:name "emacs-humanities" :query "tag:list/emacs-humanities" :key "e")
+        (:name "notmuch" :query "tag:list/notmuch" :key "n")
+        (:name "great-conversation" :query "tag:list/great-conversation" :key "g")
+        (:name "mailing lists" :query "tag:lists" :key "m")))
+
+(setq notmuch-tagging-keys '(("r" notmuch-show-mark-read-tags "Mark read")
+                             ("a" notmuch-archive-tags "Archive")
+                             ("f" ("+flagged") "Flag")
+                             ("s" ("+spam" "-inbox") "Mark as spam")
+                             ("d" ("+deleted" "-inbox") "Delete")))
 
 ;; Tags
 (setq notmuch-archive-tags '("-inbox" "-unread" "+archived"))

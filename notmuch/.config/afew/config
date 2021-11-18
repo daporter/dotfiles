@@ -1,0 +1,30 @@
+[MailMover]
+folders = inbox
+
+# If using mbsync, this must be True.
+rename = True
+
+# 1. Move all messages in the inbox tagged “spam” to the folder Junk.
+# 2. Move all messages in the inbox tagged “deleted” to the folder
+#    Trash.
+inbox = 'tag:spam':Junk 'tag:deleted':Trash
+
+# Add tag “spam” to all messages tha have the header “X-Spam-Flag”.
+[SpamFilter]
+
+# Tag all messages by me as “sent”.
+[SentMailsFilter]
+sent_tag = sent
+
+# Remove the “new” tag from all messages from me so they won’t have the
+# “inbox” tag added by the InboxFilter.
+[ArchiveSentMailsFilter]
+
+# For messages in certain folders, tag them according to the folder name
+[FolderNameFilter]
+folder_explicit_list = Drafts Trash Archive
+folder_transforms = Drafts:draft Trash:deleted Archive:archived
+
+# Remove the “new” tag and add the “inbox” tag to any message that isn’t
+# spam.
+[InboxFilter]
