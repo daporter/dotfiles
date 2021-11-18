@@ -1,16 +1,24 @@
 #!/bin/sh
 
-bold=$(tput bold)
-reset=$(tput sgr0)
-
-PROMPT_DIRTRIM=2
-
-if [ -n "$SSH_CONNECTION" ]; then
-	PS1="\[$bold\]\u@\h:\w \$\[$reset\] "
+# Determine which (Bourne-compatible) shell we’re running under.
+if [ -n "$ZSH_VERSION" ]; then
+	CURRENT_SHELL='zsh'
+elif [ -n "$BASH_VERSION" ]; then
+	CURRENT_SHELL='bash'
+elif [ -n "$KSH_VERSION" ]; then
+	CURRENT_SHELL='ksh'
+elif [ -n "$FCEDIT" ]; then
+	CURRENT_SHELL='ksh'
+elif [ -n "$PS3" ]; then
+	CURRENT_SHELL='unknown'
 else
-	PS1="\[$bold\]\w \$\[$reset\] "
+	CURRENT_SHELL='sh'
 fi
-PS2="> "
 
-export PS1
-export PS2
+if [ "$CURRENT_SHELL" != 'sh' ] && [ "$TERM" != 'dumb' ]; then
+	if [ -n "$SSH_CONNECTION" ]; then
+		PS1="\u@\h:\w \$ "
+	else
+		PS1="\w \$ "
+	fi
+fi
