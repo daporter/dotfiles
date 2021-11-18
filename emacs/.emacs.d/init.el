@@ -254,6 +254,11 @@ STYLES is a list of pattern matching methods that is passed to
 
 (setq echo-keystrokes 0.25)           ; from the C source code
 
+(setq minibuffer-prompt-properties
+      '(read-only t cursor-intangible t face minibuffer-prompt))
+
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
 (file-name-shadow-mode 1)
 (minibuffer-depth-indicate-mode 1)
 (minibuffer-electric-default-mode 1)
@@ -310,6 +315,8 @@ STYLES is a list of pattern matching methods that is passed to
       register-preview-function #'consult-register-format)
 (setq consult-find-args "find . -not ( -wholename */.* -prune )")
 (setq consult-preview-key 'any)
+
+(add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
 
 (let ((map global-map))
   (define-key map (kbd "C-x r b") #'consult-bookmark) ; override `bookmark-jump'
