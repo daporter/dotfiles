@@ -27,9 +27,9 @@ module-margin-right = 1
 font-0 = "Monospace:size=8:hintstyle=hintslight;2"
 font-1 = "Arimo Nerd Font:pixelsize=9;2"
 
-modules-left = bspwm bspwm_panel_monocle
+modules-left = bspwm bspwm_panel_monocle xkeyboard
 modules-center = date
-modules-right = xkeyboard memory cpu coretemp filesystem notmuch backlight battery wifi powermenu
+modules-right = notmuch memory cpu coretemp filesystem backlight battery wifi powermenu
 
 wm-restack = bspwm
 override-redirect = false
