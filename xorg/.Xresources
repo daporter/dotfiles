@@ -32,7 +32,6 @@ xterm*dynamicColors: true
 xterm*toolBar: false
 xterm*scrollBar: false
 xterm*geometry: 80x24
-xterm*internalBorder: 0
 
 ! Cursor
 ! Allowing the cursor to use the reverse colour of the background or
@@ -41,26 +40,17 @@ xterm*internalBorder: 0
 ! cursor is not a block character (cursorUnderLine: true).
 xterm*cursorColor: reverse
 xterm*cursorBlink: true
-xterm*cursorOffTime: 300
 xterm*cursorOnTime: 800
-xterm*cursorUnderLine: false
-xterm*pointerShape: XTerm
 
 ! Bell
-xterm*bellIsUrgent: false
-xterm*bellSupressTime: 100
-xterm*marginBell: false
 xterm*visualBell: true
 
 ! Text highlighting
-xterm*highlightColor: XtDefaultForeground
-xterm*highlightReverse: true
 xterm*highlightSelection: true
-xterm*highlightTextColor: XtDefaultBackground
 
 ! Font settings
-xterm*faceName: Monospace
-xterm*faceSize: 9
+xterm*faceName: Fira Mono
+!xterm*faceSize: 9
 xterm*renderFont: true
 xterm*boldColors: false
 xterm*faceSize1: 9.5
@@ -71,7 +61,6 @@ xterm*faceSize5: 20.5
 xterm*faceSize6: 25.5
 xterm*forceBoxChars: false
 xterm*limitFontsets: 5
-xterm*scaleHeight: 1.0
 
 ! Scroll and output
 xterm*jumpScroll: true
