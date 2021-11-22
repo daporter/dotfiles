@@ -1105,9 +1105,26 @@ sure this is a good approach."
 
 (setq org-agenda-sorting-strategy
       '((agenda habit-down time-up deadline-up priority-down)
-        (todo priority-down category-keep timestamp-up)
+        (todo priority-down timestamp-up)
         (tags priority-down category-keep)
         (search category-keep)))
+
+;; Make a subtask inherit the priority of its parent.
+(defun dp-org-inherited-priority (s)
+  (cond
+   ;; Priority cookie in this heading.
+   ((string-match org-priority-regexp s)
+    (* 1000 (- org-priority-lowest
+               (org-priority-to-value (match-string 2 s)))))
+   ;; No priority cookie, but already at highest level.
+   ((not (org-up-heading-safe))
+    (* 1000 (- org-priority-lowest org-priority-default)))
+   ;; Look for the parent's priority.
+   (t
+    (dp-org-inherited-priority (org-get-heading)))))
+
+(setq org-priority-get-priority-function
+      #'dp-org-inherited-priority)
 
 (setq org-agenda-bulk-mark-char "#")
 
