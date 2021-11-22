@@ -1197,9 +1197,7 @@ sure this is a good approach."
 
 (setq org-journal-dir "~/Sync/journal")
 (setq org-journal-file-format "%Y-%m-%d.org")
-(setq org-journal-date-prefix "#+title: ")
 (setq org-journal-date-format "%A, %d %B %Y")
-(define-key global-map (kbd "C-c j") #'org-journal-new-entry)
 
 ;;;;;; Deft
 
@@ -1403,6 +1401,7 @@ must be installed."
         (:name "flagged" :query "tag:flagged" :key "f")
         (:name "reference" :query "tag:reference not tag:archived" :key "r")
         (:name "emacs-humanities" :query "tag:list/emacs-humanities" :key "e")
+        (:name "emacs-paris" :query "tag:list/emacs-paris" :key "p")
         (:name "notmuch" :query "tag:list/notmuch" :key "n")
         (:name "great-conversation" :query "tag:list/great-conversation" :key "g")
         (:name "mailing lists" :query "tag:lists" :key "m")))
@@ -2013,6 +2012,7 @@ ARG is non-nil, query for word to search."
 (require 'flymake)
 (setq flymake-suppress-zero-counters t)
 (setq flymake-no-changes-timeout nil)
+(setq flymake-fringe-indicator-position nil)
 (setq flymake-mode-line-format
       '(""
         flymake-mode-line-exception
