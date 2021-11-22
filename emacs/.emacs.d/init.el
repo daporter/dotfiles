@@ -1104,10 +1104,10 @@ sure this is a good approach."
 (setq org-agenda-window-setup 'current-window)
 
 (setq org-agenda-sorting-strategy
-      '(((agenda habit-down time-up priority-down category-keep)
-         (todo priority-down category-keep)
-         (tags priority-down category-keep)
-         (search category-keep))))
+      '((agenda habit-down time-up deadline-up priority-down)
+        (todo priority-down category-keep timestamp-up)
+        (tags priority-down category-keep)
+        (search category-keep)))
 
 (setq org-agenda-bulk-mark-char "#")
 
@@ -1116,7 +1116,6 @@ sure this is a good approach."
 (setq org-deadline-warning-days 5)
 (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
 (setq org-agenda-skip-timestamp-if-deadline-is-shown t)
-(setq org-agenda-skip-deadline-prewarning-if-scheduled 1)
 (setq org-scheduled-past-days 365)
 (setq org-deadline-past-days 365)
 
