@@ -41,6 +41,9 @@ picom &
 # process.
 redshift &
 
+pipewire &
+pipewire-pulse &
+
 dunst &
 sxhkd &
 
