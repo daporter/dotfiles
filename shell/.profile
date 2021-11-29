@@ -11,6 +11,9 @@ fi
 PATH=$HOME/bin:$PATH
 export PATH
 
+XDG_RUNTIME_DIR=/run/user/$(id -u)
+export XDG_RUNTIME_DIR
+
 LANG=en_AU.UTF-8
 export LANG
 
