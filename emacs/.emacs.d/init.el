@@ -7,9 +7,8 @@
 ;;;; Initial Settings
 
 (require 'package)
-
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
 (require 'vc)
 (setq vc-follow-symlinks t) ; because my dotfiles are managed this way
