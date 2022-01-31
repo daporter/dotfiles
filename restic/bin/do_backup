@@ -13,6 +13,7 @@ _do_backup () {
 		echo 'Unable to perform backup. Exiting.'
 		exit 1
 	fi
+	echo
 }
 
 _verify () {
@@ -24,6 +25,7 @@ _verify () {
 		echo 'Cannot verify repository.'
 		exit 1
 	fi
+	echo
 }
 
 _remove_old_snapshots () {
@@ -44,6 +46,6 @@ _remove_old_snapshots () {
 	fi
 }
 
-echo '⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻Backup started⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻'
+echo ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻ Backup started: "$(date '+%a %H:%M')" ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
 _prepare && _do_backup && _verify && _remove_old_snapshots
-echo '⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻Backup finished⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻'
+echo ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻ Backup finished: "$(date '+%a %H:%M')" ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
