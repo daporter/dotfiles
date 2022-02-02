@@ -1508,6 +1508,14 @@ must be installed."
   (define-key map (kbd "T") #'ebdb-toggle-records-format) ; disables `ebdb-toggle-all-records-format'
   (define-key map (kbd "U") #'ebdb-unmark-all-records))
 
+;;;;; Bongo Music Manager
+
+(unless (package-installed-p 'bongo)
+  (package-install 'bongo))
+(require 'bongo)
+
+(setq bongo-enabled-backends '(mpv vlc))
+
 ;;;;; Elfeed Feed Reader
 
 (unless (package-installed-p 'elfeed)
