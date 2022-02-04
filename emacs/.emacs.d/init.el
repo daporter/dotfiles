@@ -1037,13 +1037,7 @@ sure this is a good approach."
 (setq org-hide-leading-stars nil)
 (setq org-modules '(ol-info ol-eww))
 (setq org-fontify-quote-and-verse-blocks t)
-
-;; Refile targets can be headings in the current file.
-(setq org-refile-targets '((nil :maxlevel . 5)
-                           (org-agenda-files :maxlevel . 5)))
-
-(setq org-todo-keyword-faces '(("WAIT" . '(bold org-todo))
-                               ("CANCEL" . '(bold org-done))))
+(setq org-default-notes-file "~/Sync/inbox/notes.org")
 
 (add-hook 'org-follow-link-hook #'prot-pulse-recentre-top)
 
@@ -1060,43 +1054,16 @@ sure this is a good approach."
 
 (setq org-gtd-directory "~/Sync/gtd/")
 
-(setq org-agenda-property-list '("DELEGATED_TO"))
-(setq org-agenda-todo-ignore-scheduled t)
-
 (setq org-edna-use-inheritance t)
 (org-edna-mode 1)
 
-(setq org-agenda-files `(,org-gtd-directory))
-
-;; A useful view to see what can be accomplished today.
-(setq org-agenda-custom-commands
-      '(("g" "Scheduled today and all NEXT items" ((agenda "" ((org-agenda-span 1)))
-                                                   (todo "NEXT")))))
-
-(setq org-default-notes-file "~/Sync/inbox/notes.org")
-
-(setq org-capture-templates
-      `(("i" "Inbox"
-         entry (file ,(org-gtd-inbox-path))
-         "* %?\n%U\n\n  %i"
-         :kill-buffer t)
-        ("l" "Todo with link"
-         entry (file ,(org-gtd-inbox-path))
-         "* %?\n%U\n\n  %i\n  %a"
-         :kill-buffer t)
-        ("n" "Note"
-         entry (file "")     ; use `org-default-notes-file’
-         "* %<%Y-%m-%d %H:%M>\n\n%?\n%i")))
-
 (let ((map global-map))
-  (define-key map (kbd "C-c d a") (lambda ()
-                                    (interactive)
-                                    (org-agenda nil "g")))
   (define-key map (kbd "C-c d c") #'org-gtd-capture)
-  (define-key map (kbd "C-c d f") #'org-gtd-clarify-finalize)
+  (define-key map (kbd "C-c d e") #'org-gtd-engage)
   (define-key map (kbd "C-c d n") #'org-gtd-show-all-next)
   (define-key map (kbd "C-c d p") #'org-gtd-process-inbox)
   (define-key map (kbd "C-c d s") #'org-gtd-show-stuck-projects))
+(define-key org-gtd-process-map (kbd "C-c c") #'org-gtd-choose)
 
 ;;;;;; Org Agenda
 
@@ -1126,9 +1093,8 @@ sure this is a good approach."
       #'dp-org-inherited-priority)
 
 (setq org-agenda-bulk-mark-char "#")
-
 (setq org-agenda-include-diary t)
-
+(setq org-agenda-todo-ignore-scheduled t)
 (setq org-deadline-warning-days 5)
 (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
 (setq org-agenda-skip-timestamp-if-deadline-is-shown t)
