@@ -46,11 +46,7 @@
 
 (setq custom-file (make-temp-file "emacs-custom-"))
 
-;;;;; Common Custom Functions (prot-simple.el)
-
-(require 'prot-simple)
 (setq help-window-select t)
-(prot-simple-rename-help-buffers 1)
 
 ;;;;;; Highlight Cursor Position
 
@@ -157,59 +153,22 @@
   (package-install 'orderless))
 (require 'orderless)
 
-(defun dp-orderless-literal-dispatcher (pattern _index _total)
-  "Literal style dispatcher using the equals sign as a suffix.
-It matches PATTERN _INDEX and _TOTAL according to how Orderless
-parses its input."
-  (when (string-suffix-p "=" pattern)
-    `(orderless-literal . ,(substring pattern 0 -1))))
-
-(defun dp-orderless-initialism-dispatcher (pattern _index _total)
-  "Leading initialism  dispatcher using the comma suffix.
-It matches PATTERN _INDEX and _TOTAL according to how Orderless
-parses its input."
-  (when (string-suffix-p "," pattern)
-    `(orderless-strict-leading-initialism . ,(substring pattern 0 -1))))
-
-(defun dp-orderless-flex-dispatcher (pattern _index _total)
-  "Flex  dispatcher using the tilde suffix.
-It matches PATTERN _INDEX and _TOTAL according to how Orderless
-parses its input."
-  (when (string-suffix-p "~" pattern)
-    `(orderless-flex . ,(substring pattern 0 -1))))
-
-(defvar orderless-matching-styles)
-
-(defun dp-orderless-with-styles (cmd &optional styles)
-  "Call CMD with optional orderless STYLES.
-
-STYLES is a list of pattern matching methods that is passed to
-`orderless-matching-styles'.  Its fallback value is that of
-`dp-orderless-alternative-styles'."
-  (let ((orderless-matching-styles (or styles dp-orderless-alternative-styles))
-        (this-command cmd))
-    (call-interactively cmd)))
-
-(setq dp-orderless-default-styles
+(setq orderless-matching-styles
       '(orderless-prefixes
         orderless-strict-leading-initialism
+        orderless-flex
         orderless-regexp))
-(setq dp-orderless-alternative-styles
-      '(orderless-literal
-        orderless-prefixes
-        orderless-strict-leading-initialism
-        orderless-regexp))
-
-(setq orderless-component-separator " +")
-(setq orderless-matching-styles dp-orderless-default-styles)
 (setq orderless-style-dispatchers
-      '(dp-orderless-literal-dispatcher
-        dp-orderless-initialism-dispatcher
-        dp-orderless-flex-dispatcher))
+      '(prot-orderless-literal-dispatcher
+        prot-orderless-initialism-dispatcher
+        prot-orderless-flex-dispatcher))
+
 ;; SPC should never complete: use it for `orderless' groups.
 (let ((map minibuffer-local-completion-map))
   (define-key map (kbd "SPC") nil)
   (define-key map (kbd "?") nil))
+
+(require 'prot-orderless)
 
 ;;;;;; Completion Annotations (Marginalia)
 
@@ -221,10 +180,13 @@ STYLES is a list of pattern matching methods that is passed to
 
 ;;;;;; Minibuffer Configurations
 
-(setq completion-styles
-      '(basic substring initials flex partial-completion orderless))
+(setq completion-styles '(orderless)) ; also see `completion-category-overrides'
+(setq completion-category-defaults nil)
 (setq completion-category-overrides
-      '((file (styles . (basic partial-completion orderless)))))
+      '((file (styles . (basic partial-completion orderless)))
+        (imenu (styles . (basic substring orderless)))
+        (consult-location (styles . (basic substring orderless)))))
+
 (setq completion-cycle-threshold 2)
 (setq completion-flex-nospace nil)
 (setq completion-pcm-complete-word-inserts-delimiters nil)
@@ -262,9 +224,8 @@ STYLES is a list of pattern matching methods that is passed to
 (minibuffer-depth-indicate-mode 1)
 (minibuffer-electric-default-mode 1)
 
-(let ((map minibuffer-local-must-match-map))
-  ;; I use this prefix for other searches
-  (define-key map (kbd "M-s") nil))
+;; I use this prefix for other searches
+(define-key minibuffer-local-must-match-map (kbd "M-s") nil)
 
 ;;;;;;; Minibuffer and Completions in Tandem (mct.el)
 
@@ -272,18 +233,35 @@ STYLES is a list of pattern matching methods that is passed to
   (package-install 'mct))
 (require 'mct)
 
-(setq mct-hide-completion-mode-line t)
 (setq mct-remove-shadowed-file-names t)
+(setq mct-hide-completion-mode-line t)
 (setq mct-apply-completion-stripes t)
 (setq mct-completion-passlist '(embark-prefix-help-command
+                                vc-retrieve-tag
                                 Info-goto-node
-                                Info-index
-                                Info-menu
-                                vc-retrieve-tag))
+                                kill-ring
+                                bookmark
+                                buffer
+                                consult-location
+                                info-menu
+                                file
+                                imenu))
 
-(mct-mode 1)
+(setq mct-completion-window-size (cons #'mct--frame-height-fraction 1))
 
+(mct-minibuffer-mode 1)
+(mct-region-mode 1) ; NOTE 2022-01-15: This is new and remains experimental
+
+(define-key minibuffer-local-completion-map (kbd "<tab>") #'minibuffer-force-complete)
 (define-key global-map (kbd "C-x :") #'mct-focus-mini-or-completions)
+
+;;; Minibuffer History (savehist-mode)
+
+(require 'savehist)
+(setq savehist-file (locate-user-emacs-file "savehist"))
+(setq history-length 10000)
+(setq history-delete-duplicates t)
+(savehist-mode 1)
 
 ;;;;;; Enhanced Minibuffer Commands (consult.el)
 
@@ -291,7 +269,8 @@ STYLES is a list of pattern matching methods that is passed to
   (package-install 'consult))
 (require 'consult)
 
-(setq completion-in-region-function #'consult-completion-in-region)
+(setq consult-line-numbers-widen t)
+;; (setq completion-in-region-function #'consult-completion-in-region)
 (setq consult-narrow-key ">")
 (setq consult-imenu-config
       '((emacs-lisp-mode :toplevel "Functions"
@@ -315,6 +294,9 @@ STYLES is a list of pattern matching methods that is passed to
 (setq consult-find-args "find . -not ( -wholename */.* -prune )")
 (setq consult-preview-key 'any)
 
+(setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
+(add-hook 'consult-after-jump-hook #'prot-pulse-recentre-top) ; see `prot-pulse.el'
+
 (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
 
 (let ((map global-map))
@@ -325,31 +307,19 @@ STYLES is a list of pattern matching methods that is passed to
   (define-key map [remap goto-line] #'consult-goto-line)
   (define-key map (kbd "M-K") #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
   (define-key map (kbd "M-F") #'consult-focus-lines) ; same principle
-  (define-key map (kbd "M-s M-!") #'consult-flymake)
   (define-key map (kbd "M-s M-b") #'consult-buffer)
   (define-key map (kbd "M-s M-f") #'consult-find)
   (define-key map (kbd "M-s M-g") #'consult-grep)
+  (define-key map (kbd "M-s M-h") #'consult-history)
+  (define-key map (kbd "M-s M-i") #'consult-imenu)
+  (define-key map (kbd "M-s M-l") #'consult-line)
   (define-key map (kbd "M-s M-m") #'consult-mark)
-  (define-key map (kbd "C-x r r") #'consult-register)) ; Use the register's prefix
+  (define-key map (kbd "M-s M-s") #'consult-outline)
+  (define-key map (kbd "M-s M-y") #'consult-yank-pop)
+  (define-key map (kbd "C-x r r") #'consult-register) ; Use the register's prefix
+  (define-key map (kbd "M-s M-!") #'consult-flymake)
+  (define-key map (kbd "M-s M-b") #'consult-buffer))
 (define-key consult-narrow-map (kbd "?") #'consult-narrow-help)
-
-(require 'prot-consult)
-(setq consult-project-root-function #'prot-consult-project-root)
-(setq prot-consult-command-centre-list
-      '(consult-line
-        prot-consult-line
-        consult-mark))
-(setq prot-consult-command-top-list
-      '(consult-outline
-        consult-imenu
-        prot-consult-outline
-        prot-consult-imenu))
-(prot-consult-set-up-hooks-mode 1)
-(let ((map global-map))
-  (define-key map (kbd "M-s M-i") #'prot-consult-imenu)
-  (define-key map (kbd "M-s M-s") #'prot-consult-outline)
-  (define-key map (kbd "M-s M-y") #'prot-consult-yank)
-  (define-key map (kbd "M-s M-l") #'prot-consult-line))
 
 ;;;;;;; Switch to Directories (consult-dir.el)
 
@@ -376,7 +346,8 @@ STYLES is a list of pattern matching methods that is passed to
 (setq prefix-help-command #'embark-prefix-help-command)
 (setq embark-collect-initial-view-alist '((t . list)))
 (setq embark-cycle-key (kbd "C-,"))     ; see the `embark-act' key
-(setq embark-indicator #'embark-mixed-indicator)
+(setq embark-indicators '(embark-mixed-indicator
+                          embark-highlight-indicator))
 (setq embark-verbose-indicator-excluded-actions
       '("\\`embark-collect-" "\\`customize-" "\\(local\\|global\\)-set-key"
         set-variable embark-cycle embark-export
@@ -2074,12 +2045,6 @@ ARG is non-nil, query for word to search."
 (dolist (symbol '(kill-ring log-edit-comment-ring))
   (add-to-list 'desktop-globals-to-save symbol))
 (desktop-save-mode 1)
-
-(require 'savehist)
-(setq savehist-file (locate-user-emacs-file "savehist"))
-(setq history-length 10000)
-(setq history-delete-duplicates t)
-(savehist-mode 1)
 
 (require 'saveplace)
 (setq save-place-file (locate-user-emacs-file "saveplace"))
