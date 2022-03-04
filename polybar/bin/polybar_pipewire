@@ -1,0 +1,22 @@
+#!/bin/sh
+
+MUTED_COLOR="%{F#6b6b6b}"
+
+if [ "$1" = "increase" ]; then
+	pamixer --increase 2
+elif [ "$1" = "decrease" ]; then
+	pamixer --decrease 2
+elif [ "$1" = "toggle-mute" ]; then
+	pamixer --toggle-mute
+fi
+
+VOLUME=$(pamixer --get-volume)
+IS_MUTED=$(pamixer --get-mute)
+
+if [ "${IS_MUTED}" = "true" ]; then
+	echo "${MUTED_COLOR}"
+elif [ "${VOLUME}" -le '40' ]; then
+	echo " ${VOLUME}%"
+else
+	echo " ${VOLUME}%"
+fi

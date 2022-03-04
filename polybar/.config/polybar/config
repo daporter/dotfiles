@@ -29,7 +29,7 @@ font-1 = "Arimo Nerd Font:pixelsize=9;2"
 
 modules-left = bspwm bspwm_panel_monocle xkeyboard
 modules-center = date
-modules-right = notmuch memory cpu coretemp filesystem backlight battery wifi powermenu
+modules-right = notmuch pipewire backlight memory cpu coretemp filesystem battery wifi powermenu
 
 wm-restack = bspwm
 override-redirect = false
@@ -146,6 +146,16 @@ exec-if = command -v notmuch
 interval = 120
 
 format = @<label>
+
+[module/pipewire]
+type = custom/script
+exec = ~/bin/polybar_pipewire
+
+label= %output%
+
+click-left = ~/bin/polybar_pipewire toggle-mute
+scroll-up = ~/bin/polybar_pipewire increase
+scroll-down = ~/bin/polybar_pipewire decrease
 
 [module/date]
 type = custom/script
