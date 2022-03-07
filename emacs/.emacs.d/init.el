@@ -1395,13 +1395,7 @@ must be installed."
 
 ;;;;;; Sending Email
 
-(require 'smtpmail)
-(setq smtpmail-default-smtp-server "smtp.migadu.com")
-(setq smtpmail-smtp-server "smtp.migadu.com")
-(setq smtpmail-smtp-user "david@daporter.net")
-(setq smtpmail-smtp-service 465)
-(setq smtpmail-stream-type 'ssl)
-(setq send-mail-function 'smtpmail-send-it)
+(setq send-mail-function 'sendmail-send-it)
 
 ;;;;;; EBDB
 

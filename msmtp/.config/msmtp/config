@@ -1,0 +1,16 @@
+defaults
+auth           on
+tls            on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+tls_starttls   off
+syslog         on
+
+account        migadu
+host           smtp.migadu.com
+port           465
+from           david@daporter.net
+user           david@daporter.net
+passwordeval   "pass migadu.com/david@daporter.net"
+
+account default : migadu
+aliases        /etc/aliases
