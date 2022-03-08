@@ -134,17 +134,10 @@ format-mounted-prefix = " "
 [module/notmuch]
 type = custom/script
 exec = ~/bin/polybar_notmuch_count
-
-; Conditional command that, if defined, needs to exit successfully
-; before the main exec command is invoked.
-; Default: ""
 exec-if = command -v notmuch
-
-; Seconds to sleep between updates
-; Default: 5 (0 if `tail = true`)
 interval = 120
 
-format = @<label>
+format-prefix = " "
 
 [module/pipewire]
 type = custom/script
