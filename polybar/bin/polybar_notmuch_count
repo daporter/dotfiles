@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,8 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-[ "$(command -v notmuch 2> /dev/null)" ] || { echo "Missing 'notmuch' dependency"; exit 1; }
+if [ -z "$(command -v notmuch 2> /dev/null)" ]; then
+	echo "Missing 'notmuch' dependency"
+	exit 1
+fi
 
-count="$(notmuch count tag:unread and tag:inbox)"
-
-[ "$count" -gt 0 ] && echo "$count"
+notmuch count tag:unread and tag:inbox
