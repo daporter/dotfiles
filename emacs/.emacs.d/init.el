@@ -21,6 +21,8 @@
 (unless (package-installed-p 'exec-path-from-shell)
   (package-install 'exec-path-from-shell))
 (require 'exec-path-from-shell)
+(setq exec-path-from-shell-variables
+      '("PATH" "MANPATH" "SSH_AUTH_SOCK"))
 (exec-path-from-shell-initialize)
 
 ;;;;; Some Basic Settings
