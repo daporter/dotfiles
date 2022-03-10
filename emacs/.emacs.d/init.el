@@ -1029,7 +1029,7 @@ sure this is a good approach."
 (org-edna-mode 1)
 
 (let ((map global-map))
-  (define-key map (kbd "C-c d c") #'org-gtd-capture)
+  (define-key map (kbd "C-c c") #'org-gtd-capture)
   (define-key map (kbd "C-c d e") #'org-gtd-engage)
   (define-key map (kbd "C-c d n") #'org-gtd-show-all-next)
   (define-key map (kbd "C-c d p") #'org-gtd-process-inbox)
