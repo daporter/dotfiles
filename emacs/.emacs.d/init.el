@@ -21,6 +21,8 @@
 (unless (package-installed-p 'exec-path-from-shell)
   (package-install 'exec-path-from-shell))
 (require 'exec-path-from-shell)
+(setq exec-path-from-shell-variables
+      '("PATH" "MANPATH" "SSH_AUTH_SOCK"))
 (exec-path-from-shell-initialize)
 
 ;;;;; Some Basic Settings
@@ -1029,7 +1031,7 @@ sure this is a good approach."
 (org-edna-mode 1)
 
 (let ((map global-map))
-  (define-key map (kbd "C-c d c") #'org-gtd-capture)
+  (define-key map (kbd "C-c c") #'org-gtd-capture)
   (define-key map (kbd "C-c d e") #'org-gtd-engage)
   (define-key map (kbd "C-c d n") #'org-gtd-show-all-next)
   (define-key map (kbd "C-c d p") #'org-gtd-process-inbox)
