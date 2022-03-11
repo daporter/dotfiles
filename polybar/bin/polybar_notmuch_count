@@ -18,4 +18,10 @@ if [ -z "$(command -v notmuch 2> /dev/null)" ]; then
 	exit 1
 fi
 
-notmuch count tag:unread and tag:inbox
+COUNT=$(notmuch count tag:unread and tag:inbox)
+
+if [ "$COUNT" -eq 0 ]; then
+	echo
+else
+	echo " $COUNT"
+fi

@@ -137,8 +137,6 @@ exec = ~/bin/polybar_notmuch_count
 exec-if = command -v notmuch
 interval = 120
 
-format-prefix = " "
-
 [module/pipewire]
 type = custom/script
 exec = ~/bin/polybar_pipewire
