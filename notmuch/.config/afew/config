@@ -5,9 +5,9 @@ folders = inbox
 rename = True
 
 # 1. Move all messages in the inbox tagged “spam” to the folder Junk.
-# 2. Move all messages in the inbox tagged “deleted” to the folder
-#    Trash.
-inbox = 'tag:spam':Junk 'tag:deleted':Trash
+# 2. Move all messages in the inbox tagged “deleted” to the folder Trash.
+# 3. Move all messages in the inbox tagged “archived” to the folder Archive.
+inbox = 'tag:spam':Junk 'tag:deleted':Trash 'tag:archived':Archive
 
 # Add tag “spam” to all messages tha have the header “X-Spam-Flag”.
 [SpamFilter]
