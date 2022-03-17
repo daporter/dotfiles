@@ -16,15 +16,6 @@
 (add-to-list 'load-path (locate-user-emacs-file "lisp"))
 (add-to-list 'load-path (locate-user-emacs-file "prot-lisp"))
 
-;;;;; Set PATH
-
-(unless (package-installed-p 'exec-path-from-shell)
-  (package-install 'exec-path-from-shell))
-(require 'exec-path-from-shell)
-(setq exec-path-from-shell-variables
-      '("PATH" "MANPATH" "SSH_AUTH_SOCK"))
-(exec-path-from-shell-initialize)
-
 ;;;;; Some Basic Settings
 
 (setq frame-title-format '("%b"))
@@ -44,23 +35,29 @@
 
 ;;;; Base Settings
 
+;;;;; Highlight Cursor Position
+
+;(unless (package-installed-p 'pulsar)
+;  (package-install 'pulsar))
+(require 'pulsar)
+
+(define-key global-map (kbd "C-x l") #'pulsar-pulse-line) ; override `count-lines-page'
+
 ;;;;; Make Custom UI code disposable
 
 (setq custom-file (make-temp-file "emacs-custom-"))
 
 (setq help-window-select t)
 
-;;;;;; Highlight Cursor Position
+;;;;; Propagation of Shell Environment Variables
 
-(require 'prot-pulse)
-(setq prot-pulse-pulse-command-list
-      '(recenter-top-bottom
-        move-to-window-line-top-bottom
-        reposition-window
-        bookmark-jump
-        other-window))
-(prot-pulse-advice-commands-mode 1)
-(define-key global-map (kbd "C-x l") #'prot-pulse-pulse-line)
+(unless (package-installed-p 'exec-path-from-shell)
+  (package-install 'exec-path-from-shell))
+(require 'exec-path-from-shell)
+
+(setq exec-path-from-shell-variables
+      '("PATH" "MANPATH" "SSH_AUTH_SOCK"))
+(exec-path-from-shell-initialize)
 
 ;;;;; Modus Themes
 
@@ -106,8 +103,6 @@
   (add-hook hook #'lin-mode))
 
 ;;;;; Typeface Configurations
-
-;;;;;; Font Configurations
 
 (setq-default text-scale-remap-header-line t)
 (setq-default line-spacing 0.1)
@@ -229,7 +224,7 @@
 ;; I use this prefix for other searches
 (define-key minibuffer-local-must-match-map (kbd "M-s") nil)
 
-;;;;;;; Minibuffer and Completions in Tandem (mct.el)
+;;;;;; Minibuffer and Completions in Tandem (mct.el)
 
 (unless (package-installed-p 'mct)
   (package-install 'mct))
@@ -257,7 +252,7 @@
 (define-key minibuffer-local-completion-map (kbd "<tab>") #'minibuffer-force-complete)
 (define-key global-map (kbd "C-x :") #'mct-focus-mini-or-completions)
 
-;;; Minibuffer History (savehist-mode)
+;;;;;; Minibuffer History (savehist-mode)
 
 (require 'savehist)
 (setq savehist-file (locate-user-emacs-file "savehist"))
@@ -408,102 +403,12 @@
 
 (define-key global-map (kbd "C-x p q") #'project-query-replace-regexp)
 
-;;;;; Avy
+;;;;;; Completion for Recent Files and Directories
 
-(unless (package-installed-p 'avy)
-  (package-install 'avy))
-(require 'avy)
-
-(setq avy-keys '(?u ?h ?e ?t ?a ?s ?o ?n))
-
-(define-key global-map (kbd "M-o") #'avy-goto-char-timer)
-
-;;;;;; Avy Actions
-
-;; See https://karthinks.com/software/avy-can-do-anything/
-
-(defun avy-action-mark-to-char (pt)
-  (activate-mark)
-  (goto-char pt))
-
-(defun avy-action-copy-whole-line (pt)
-  (save-excursion
-    (goto-char pt)
-    (cl-destructuring-bind (start . end)
-        (bounds-of-thing-at-point 'line)
-      (copy-region-as-kill start end)))
-  (select-window
-   (cdr (ring-ref avy-ring 0)))
-  t)
-
-(defun avy-action-kill-whole-line (pt)
-  (save-excursion
-    (goto-char pt)
-    (kill-whole-line))
-  (select-window
-   (cdr (ring-ref avy-ring 0)))
-  t)
-
-(defun avy-action-yank-whole-line (pt)
-  (avy-action-copy-whole-line pt)
-  (save-excursion (yank))
-  t)
-
-(defun avy-action-teleport-whole-line (pt)
-  (avy-action-kill-whole-line pt)
-  (save-excursion (yank)) t)
-
-(defun avy-action-mark-to-char (pt)
-  (activate-mark)
-  (goto-char pt))
-
-(defun avy-action-define (pt)
-  (save-excursion
-    (goto-char pt)
-    (dictionary-search-dwim))
-  (select-window
-   (cdr (ring-ref avy-ring 0)))
-  t)
-
-(defun avy-action-describe-symbol (pt)
-  (save-excursion
-    (goto-char pt)
-    (describe-symbol (symbol-at-point)))
-  (select-window
-   (cdr (ring-ref avy-ring 0)))
-  t)
-
-(defun avy-action-embark (pt)
-  (unwind-protect
-      (save-excursion
-        (goto-char pt)
-        (embark-act))
-    (select-window
-     (cdr (ring-ref avy-ring 0))))
-  t)
-
-;; Note: these keys must be distinct from the value of `avy-keys’.
-(setq avy-dispatch-alist '((?  . avy-action-mark)
-                           (?m . avy-action-mark-to-char)
-                           (?i . avy-action-ispell)
-                           (?z . avy-action-zap-to-char)
-                           (?, . avy-action-embark)
-                           (?= . avy-action-define)
-                           (?l . avy-action-describe-symbol)
-
-                           (11 . avy-action-kill-line) ; C-k
-                           (25 . avy-action-yank-line) ; C-y
-
-                           (?k . avy-action-kill-stay)
-                           (?y . avy-action-yank)
-                           (?p . avy-action-teleport)
-
-                           (?W . avy-action-copy-whole-line)
-                           (?K . avy-action-kill-whole-line)
-                           (?Y . avy-action-yank-whole-line)
-                           (?P . avy-action-teleport-whole-line)))
-
-(define-key isearch-mode-map (kbd "M-o") 'avy-isearch)
+(require 'recentf)
+(setq recentf-max-saved-items 200)
+(setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/sudo:"))
+(recentf-mode 1)
 
 ;;;; Directory, Buffer, Window Management
 
@@ -663,47 +568,6 @@
 
 (add-hook 'after-init-hook #'winner-mode)
 
-;;;;;; Quickly Switch Windows (ace-window)
-
-(unless (package-installed-p 'ace-window)
-  (package-install 'ace-window))
-(require 'ace-window)
-
-(setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n))
-(setq aw-dispatch-alist
-      '((?b aw-switch-buffer-in-window "Select Buffer")
-        (?B aw-switch-buffer-other-window "Switch Buffer Other Window")
-        (?s aw-swap-window "Swap Windows")
-        (?c aw-copy-window "Copy Window")
-        (?m aw-move-window "Move Window")
-        (?x aw-delete-window "Delete Window")
-        (?O delete-other-windows "Delete Other Windows")
-        (?f aw-flip-window)
-        (?+ aw-split-window-fair "Split Fair Window")
-        (?- aw-split-window-vert "Split Vert Window")
-        (?| aw-split-window-horz "Split Horz Window")
-        (?? aw-show-dispatch-help)))
-
-(define-key global-map (kbd "C-x o") #'ace-window)
-
-(eval-when-compile
-  (defmacro my/embark-ace-action (fn)
-    `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
-       (interactive)
-       (with-demoted-errors "%s"
-         (require 'ace-window)
-         (let ((aw-dispatch-always t))
-           (aw-switch-to-window (aw-select nil))
-           (call-interactively (symbol-function ',fn)))))))
-
-(define-key embark-file-map (kbd "o")
-            (my/embark-ace-action find-file))
-(define-key embark-buffer-map (kbd "o")
-            (my/embark-ace-action switch-to-buffer))
-(define-key embark-bookmark-map (kbd "o")
-            (my/embark-ace-action bookmark-jump))
-
-
 ;;;;;; Tabs for Window Layouts
 
 (setq tab-bar-close-button-show nil)
@@ -746,6 +610,47 @@
 
 (define-key global-map (kbd "C-x M-r") #'rotate-frame-clockwise)
 
+;;;;;; Quickly Switch Windows (ace-window)
+
+(unless (package-installed-p 'ace-window)
+  (package-install 'ace-window))
+(require 'ace-window)
+
+(setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n))
+(setq aw-dispatch-alist
+      '((?b aw-switch-buffer-in-window "Select Buffer")
+        (?B aw-switch-buffer-other-window "Switch Buffer Other Window")
+        (?s aw-swap-window "Swap Windows")
+        (?c aw-copy-window "Copy Window")
+        (?m aw-move-window "Move Window")
+        (?x aw-delete-window "Delete Window")
+        (?O delete-other-windows "Delete Other Windows")
+        (?f aw-flip-window)
+        (?+ aw-split-window-fair "Split Fair Window")
+        (?- aw-split-window-vert "Split Vert Window")
+        (?| aw-split-window-horz "Split Horz Window")
+        (?? aw-show-dispatch-help)))
+
+(define-key global-map (kbd "C-x o") #'ace-window)
+
+(eval-when-compile
+  (defmacro my/embark-ace-action (fn)
+    `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
+       (interactive)
+       (with-demoted-errors "%s"
+         (require 'ace-window)
+         (let ((aw-dispatch-always t))
+           (aw-switch-to-window (aw-select nil))
+           (call-interactively (symbol-function ',fn)))))))
+
+(define-key embark-file-map (kbd "o")
+            (my/embark-ace-action find-file))
+(define-key embark-buffer-map (kbd "o")
+            (my/embark-ace-action switch-to-buffer))
+(define-key embark-bookmark-map (kbd "o")
+            (my/embark-ace-action bookmark-jump))
+
+
 ;;;; Applications and Utilities
 
 ;;;;; Bookmarking
@@ -760,7 +665,7 @@
 (require 'prot-bookmark)
 (prot-bookmark-extra-keywords 1)
 
-;;;;; Focus Mode
+;;;;; Focus Mode (logos.el)
 
 (unless (package-installed-p 'olivetti)
   (package-install 'olivetti))
@@ -768,15 +673,14 @@
 
 (setq olivetti-recall-visual-line-mode-entry-state t)
 
+;; XXX: This is a temporary workaround.
+(require 'outline)
+
 (unless (package-installed-p 'logos)
   (package-install 'logos))
 (require 'logos)
 
 (setq logos-outlines-are-pages t)
-(setq logos-outline-regexp-alist
-      `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos--page-delimiter))
-        (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos--page-delimiter))
-        (t . ,(or outline-regexp logos--page-delimiter))))
 
 ;; These apply when `logos-focus-mode' is enabled.  Their value is
 ;; buffer-local.
@@ -807,9 +711,9 @@
 
 (add-hook 'logos-page-motion-hook #'prot/logos--recenter-top)
 
-;;;;;; Version Control Tools
+;;;;; Version Control Tools
 
-;;;;;;; Diff Mode
+;;;;;; Diff Mode
 
 (setq diff-default-read-only t)
 (setq diff-refine nil)         ; I do it on demand
@@ -831,7 +735,7 @@
   (define-key map (kbd "C-c C-n") #'prot-diff-narrow-dwim)
   (define-key map (kbd "M-o") nil))     ; I use M-o for Avy
 
-;;;;;;; Version Control Framework (vc.el and prot-vc.el)
+;;;;;; Version Control Framework (vc.el and prot-vc.el)
 
 (require 'vc)
 ;; Those offer various types of functionality, such as blaming,
@@ -972,7 +876,7 @@
   (define-key map (kbd "R") #'prot-vc-git-log-reset)
   (define-key map (kbd "w") #'prot-vc-log-kill-hash))
 
-;;;;;;; Magit
+;;;;;; Magit
 
 (unless (package-installed-p 'magit)
   (package-install 'magit))
@@ -1003,7 +907,7 @@
 (setq magit-repository-directories
       '(("~/src" . 1)))
 
-;;;;;;; Smerge and Ediff
+;;;;;; Smerge and Ediff
 
 (require 'smerge-mode)
 
@@ -1052,6 +956,15 @@ sure this is a good approach."
       '("~/Sync/bibliography/bibliography.bib"))
 
 (define-key org-mode-map (kbd "C-c L") #'org-toggle-link-display)
+
+;;;;;; Prettier Org Constructs (org-modern.el)
+
+(unless (package-installed-p 'org-modern)
+  (package-install 'org-modern))
+(require 'org-modern)
+
+(add-hook 'org-mode-hook #'org-modern-mode)
+(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 
 ;;;;;; Org-GTD
 
@@ -1110,7 +1023,38 @@ sure this is a good approach."
 
 (add-hook 'org-agenda-mode-hook #'hl-line-mode)
 
-;;;;;; Calendar and Diary
+;;;;;; Org Journal
+
+(unless (package-installed-p 'org-journal)
+  (package-install 'org-journal))
+(require 'org-journal)
+
+(setq org-journal-dir "~/Sync/journal")
+(setq org-journal-file-format "%Y-%m-%d.org")
+(setq org-journal-date-format "%A, %d %B %Y")
+
+;;;;;; Org Roam
+
+(setq org-roam-v2-ack t)
+
+(unless (package-installed-p 'org-roam)
+  (package-install 'org-roam))
+(require 'org-roam)
+
+(setq org-roam-directory "~/Sync/zettelkasten")
+(org-roam-db-autosync-mode)
+
+(let ((map global-map))
+  (define-key map (kbd "C-c z i") #'org-roam-node-insert)
+  (define-key map (kbd "C-c z f") #'org-roam-node-find))
+
+(setq org-roam-capture-templates
+      '(("d" "default" plain "%?"
+         :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                            "#+title: ${title}\n\n<one-sentence description of the content>\n\n* References\n\n1. ")
+         :unnarrowed t)))
+
+;;;;; Calendar and Diary
 
 (require 'calendar)
 (setq calendar-mark-diary-entries-flag t)
@@ -1176,155 +1120,6 @@ sure this is a good approach."
                                 holiday-solar-holidays
                                 holiday-local-holidays
                                 holiday-other-holidays))
-
-;;;;;; Org Journal
-
-(unless (package-installed-p 'org-journal)
-  (package-install 'org-journal))
-(require 'org-journal)
-
-(setq org-journal-dir "~/Sync/journal")
-(setq org-journal-file-format "%Y-%m-%d.org")
-(setq org-journal-date-format "%A, %d %B %Y")
-
-;;;;;; Deft
-
-(unless (package-installed-p 'deft)
-  (package-install 'deft))
-(require 'deft)
-
-(setq deft-directory "~/Sync/zettelkasten")
-(setq deft-default-extension "org")
-(setq deft-use-filter-string-for-filename t)
-
-(advice-add 'deft-parse-title :override
-            (lambda (file contents)
-              (if deft-use-filename-as-title
-                  (deft-base-filename file)
-                (let* ((case-fold-search 't)
-                       (begin (string-match "title: " contents))
-                       (end-of-begin (match-end 0))
-                       (end (string-match "\n" contents begin)))
-                  (if begin
-                      (substring contents end-of-begin end)
-                    (format "%s" file))))))
-
-(setq deft-strip-summary-regexp
-      (concat "\\("
-              "[\n\t]"
-              "\\|^#\\+[[:alpha:]_]+:.*$" ; org-mode metadata
-              "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
-              "\\)"))
-
-(define-key global-map (kbd "C-c z d") 'deft)
-
-;;;;;; Org Roam
-
-(setq org-roam-v2-ack t)
-
-(unless (package-installed-p 'org-roam)
-  (package-install 'org-roam))
-(require 'org-roam)
-
-(setq org-roam-directory "~/Sync/zettelkasten")
-(org-roam-db-autosync-mode)
-
-(let ((map global-map))
-  (define-key map (kbd "C-c z i") #'org-roam-node-insert)
-  (define-key map (kbd "C-c z f") #'org-roam-node-find))
-
-(setq org-roam-capture-templates
-      '(("d" "default" plain "%?"
-         :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                            "#+title: ${title}\n\n<one-sentence description of the content>\n\n* References\n\n1. ")
-         :unnarrowed t)))
-
-;;;;; Anki Card Creation
-
-(unless (package-installed-p 'anki-editor)
-  (package-install 'anki-editor))
-(require 'anki-editor)
-
-(define-key org-mode-map (kbd "C-c a n") 'anki-editor-insert-note)
-(define-key org-mode-map (kbd "C-c a c") 'anki-editor-cloze-region)
-(define-key org-mode-map (kbd "C-c a p") 'anki-editor-push-notes)
-
-(define-skeleton anki-vocab-basic
-  "Skeleton of an Anki Basic note for vocab."
-  nil
-  "** Item\n"
-  "    :PROPERTIES:\n"
-  "    :ANKI_NOTE_TYPE: Basic\n"
-  "    :END:\n"
-  "*** Front\n"
-  > _ "\n"
-  "*** Back\n"
-  "*** Extra\n"
-  "*** Source\n"
-  "    /Vocabulaire progressif du français - Débutant, 3^e édition/\n")
-
-(define-skeleton anki-vocab-cloze
-  "Skeleton of an Anki Cloze note for vocab."
-  nil
-  "** Item\n"
-  "    :PROPERTIES:\n"
-  "    :ANKI_NOTE_TYPE: Cloze\n"
-  "    :END:\n"
-  "*** Text\n"
-  > _ "\n"
-  "*** Extra\n"
-  "*** Source\n"
-  "    /Vocabulaire progressif du français - Débutant, 3^e édition/\n")
-
-(define-skeleton anki-communication-basic
-  "Skeleton of an Anki Basic note for communication."
-  nil
-  "** Item\n"
-  "    :PROPERTIES:\n"
-  "    :ANKI_NOTE_TYPE: Basic\n"
-  "    :END:\n"
-  "*** Front\n"
-  > _ "\n"
-  "*** Back\n"
-  "*** Extra\n"
-  "*** Source\n"
-  "    /Communication progressive du français - Débutant, 2^e édition/\n")
-
-(define-skeleton anki-communication-cloze
-  "Skeleton of an Anki Cloze note for communication."
-  nil
-  "** Item\n"
-  "    :PROPERTIES:\n"
-  "    :ANKI_NOTE_TYPE: Cloze\n"
-  "    :END:\n"
-  "*** Text\n"
-  > _ "\n"
-  "*** Extra\n"
-  "*** Source\n"
-  "    /Communication progressive du français - Débutant, 2^e édition/\n")
-
-;;;;; Zotero Reference Manager
-
-(defun dp-insert-zotero-reference ()
-  "Invoke the Zotero reference chooser and insert the chosen reference.
-Note: Zotero must be running and the `Better BibTeX' extension
-must be installed."
-  (interactive)
-  (shell-command
-   "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-bibliography"
-   t))
-
-(defun dp-insert-zotero-citation ()
-  "Invoke the Zotero reference chooser and insert the chosen citation.
-Note: Zotero must be running and the `Better BibTeX' extension
-must be installed."
-  (interactive)
-  (shell-command
-   "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-citation"
-   t))
-
-(define-key global-map (kbd "C-c z r") #'dp-insert-zotero-reference)
-(define-key global-map (kbd "C-c z c") #'dp-insert-zotero-citation)
 
 ;;;;; Email Settings
 
@@ -1610,6 +1405,124 @@ must be installed."
   (define-key map (kbd "R") #'prot-eww-readable)
   (define-key map (kbd "Q") #'prot-eww-quit))
 
+;;;;; Deft
+
+(unless (package-installed-p 'deft)
+  (package-install 'deft))
+(require 'deft)
+
+(setq deft-directory "~/Sync/zettelkasten")
+(setq deft-default-extension "org")
+(setq deft-use-filter-string-for-filename t)
+
+(advice-add 'deft-parse-title :override
+            (lambda (file contents)
+              (if deft-use-filename-as-title
+                  (deft-base-filename file)
+                (let* ((case-fold-search 't)
+                       (begin (string-match "title: " contents))
+                       (end-of-begin (match-end 0))
+                       (end (string-match "\n" contents begin)))
+                  (if begin
+                      (substring contents end-of-begin end)
+                    (format "%s" file))))))
+
+(setq deft-strip-summary-regexp
+      (concat "\\("
+              "[\n\t]"
+              "\\|^#\\+[[:alpha:]_]+:.*$" ; org-mode metadata
+              "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
+              "\\)"))
+
+(define-key global-map (kbd "C-c z d") 'deft)
+
+;;;;; Zotero Reference Manager
+
+(defun dp-insert-zotero-reference ()
+  "Invoke the Zotero reference chooser and insert the chosen reference.
+Note: Zotero must be running and the `Better BibTeX' extension
+must be installed."
+  (interactive)
+  (shell-command
+   "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-bibliography"
+   t))
+
+(defun dp-insert-zotero-citation ()
+  "Invoke the Zotero reference chooser and insert the chosen citation.
+Note: Zotero must be running and the `Better BibTeX' extension
+must be installed."
+  (interactive)
+  (shell-command
+   "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-citation"
+   t))
+
+(define-key global-map (kbd "C-c z r") #'dp-insert-zotero-reference)
+(define-key global-map (kbd "C-c z c") #'dp-insert-zotero-citation)
+
+;;;;; Anki Card Creation
+
+(unless (package-installed-p 'anki-editor)
+  (package-install 'anki-editor))
+(require 'anki-editor)
+
+(define-key org-mode-map (kbd "C-c a n") 'anki-editor-insert-note)
+(define-key org-mode-map (kbd "C-c a c") 'anki-editor-cloze-region)
+(define-key org-mode-map (kbd "C-c a p") 'anki-editor-push-notes)
+
+(define-skeleton anki-vocab-basic
+  "Skeleton of an Anki Basic note for vocab."
+  nil
+  "** Item\n"
+  "    :PROPERTIES:\n"
+  "    :ANKI_NOTE_TYPE: Basic\n"
+  "    :END:\n"
+  "*** Front\n"
+  > _ "\n"
+  "*** Back\n"
+  "*** Extra\n"
+  "*** Source\n"
+  "    /Vocabulaire progressif du français - Débutant, 3^e édition/\n")
+
+(define-skeleton anki-vocab-cloze
+  "Skeleton of an Anki Cloze note for vocab."
+  nil
+  "** Item\n"
+  "    :PROPERTIES:\n"
+  "    :ANKI_NOTE_TYPE: Cloze\n"
+  "    :END:\n"
+  "*** Text\n"
+  > _ "\n"
+  "*** Extra\n"
+  "*** Source\n"
+  "    /Vocabulaire progressif du français - Débutant, 3^e édition/\n")
+
+(define-skeleton anki-communication-basic
+  "Skeleton of an Anki Basic note for communication."
+  nil
+  "** Item\n"
+  "    :PROPERTIES:\n"
+  "    :ANKI_NOTE_TYPE: Basic\n"
+  "    :END:\n"
+  "*** Front\n"
+  > _ "\n"
+  "*** Back\n"
+  "*** Extra\n"
+  "*** Source\n"
+  "    /Communication progressive du français - Débutant, 2^e édition/\n")
+
+(define-skeleton anki-communication-cloze
+  "Skeleton of an Anki Cloze note for communication."
+  nil
+  "** Item\n"
+  "    :PROPERTIES:\n"
+  "    :ANKI_NOTE_TYPE: Cloze\n"
+  "    :END:\n"
+  "*** Text\n"
+  > _ "\n"
+  "*** Extra\n"
+  "*** Source\n"
+  "    /Communication progressive du français - Débutant, 2^e édition/\n")
+
 ;;;;; Viewing PDFs
 
 (unless (package-installed-p 'pdf-tools)
@@ -1687,6 +1600,104 @@ ARG is non-nil, query for word to search."
 
 ;;;; General Interface and Interactions
 
+;;;;; Jump to Visible Position (avy)
+
+(unless (package-installed-p 'avy)
+  (package-install 'avy))
+(require 'avy)
+
+(setq avy-keys '(?u ?h ?e ?t ?a ?s ?o ?n))
+
+(define-key global-map (kbd "C-.") #'avy-goto-char-timer)
+
+;;;;;; Custom Actions
+
+;; See https://karthinks.com/software/avy-can-do-anything/
+
+(defun avy-action-mark-to-char (pt)
+  (activate-mark)
+  (goto-char pt))
+
+(defun avy-action-copy-whole-line (pt)
+  (save-excursion
+    (goto-char pt)
+    (cl-destructuring-bind (start . end)
+        (bounds-of-thing-at-point 'line)
+      (copy-region-as-kill start end)))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(defun avy-action-kill-whole-line (pt)
+  (save-excursion
+    (goto-char pt)
+    (kill-whole-line))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(defun avy-action-yank-whole-line (pt)
+  (avy-action-copy-whole-line pt)
+  (save-excursion (yank))
+  t)
+
+(defun avy-action-teleport-whole-line (pt)
+  (avy-action-kill-whole-line pt)
+  (save-excursion (yank)) t)
+
+(defun avy-action-mark-to-char (pt)
+  (activate-mark)
+  (goto-char pt))
+
+(defun avy-action-define (pt)
+  (save-excursion
+    (goto-char pt)
+    (dictionary-search-dwim))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(defun avy-action-describe-symbol (pt)
+  (save-excursion
+    (goto-char pt)
+    (describe-symbol (symbol-at-point)))
+  (select-window
+   (cdr (ring-ref avy-ring 0)))
+  t)
+
+(defun avy-action-embark (pt)
+  (unwind-protect
+      (save-excursion
+        (goto-char pt)
+        (embark-act))
+    (select-window
+     (cdr (ring-ref avy-ring 0))))
+  t)
+
+;; Note: these keys must be distinct from the value of `avy-keys’.
+(setq avy-dispatch-alist '((?  . avy-action-mark)
+                           (?m . avy-action-mark-to-char)
+                           (?i . avy-action-ispell)
+                           (?z . avy-action-zap-to-char)
+                           (?, . avy-action-embark)
+                           (?= . avy-action-define)
+                           (?l . avy-action-describe-symbol)
+
+                           (11 . avy-action-kill-line) ; C-k
+                           (25 . avy-action-yank-line) ; C-y
+
+                           (?k . avy-action-kill-stay)
+                           (?y . avy-action-yank)
+                           (?p . avy-action-teleport)
+
+                           (?W . avy-action-copy-whole-line)
+                           (?K . avy-action-kill-whole-line)
+                           (?Y . avy-action-yank-whole-line)
+                           (?P . avy-action-teleport-whole-line)))
+
+(define-key isearch-mode-map (kbd "M-o") 'avy-isearch)
+
+
 ;;;;; Mode Line
 
 (setq mode-line-position-column-line-format '(" %l,%c"))
@@ -1760,6 +1771,12 @@ ARG is non-nil, query for word to search."
 
 (setq world-clock-time-format "%R %z  %A %d %B")
 (setq world-clock-buffer-name "*world-clock*") ; Placement handled by `display-buffer-alist'
+
+;;;;; Window Divider Mode
+
+(setq window-divider-default-right-width 1)
+(setq window-divider-default-bottom-width 1)
+(setq window-divider-default-places 'right-only)
 
 ;;;;; Line Numbers and Relevant Indicators
 
@@ -1855,7 +1872,10 @@ ARG is non-nil, query for word to search."
 (setq stripes-unit 1)
 
 ;;;;; Conveniences and Minor Extras
-(setq mode-require-final-newline 'visit-save)
+
+;;;;;; Automatic Time Stamps for Files
+
+(add-hook 'before-save-hook #'time-stamp)
 
 ;;;;;; Auto-Revert Mode
 
@@ -1865,14 +1885,9 @@ ARG is non-nil, query for word to search."
 
 (setq save-interprogram-paste-before-kill t)
 
-;;;;;; Goggles
+;;;;;; Newline Characters for File Ending
 
-(unless (package-installed-p 'goggles)
-  (package-install 'goggles))
-(require 'goggles)
-(setq-default goggles-pulse t)
-(dolist (mode '(prog-mode-hook text-mode-hook))
-  (add-hook mode #'goggles-mode))
+(setq mode-require-final-newline 'visit-save)
 
 ;;;;;; Package Lists
 
@@ -1881,6 +1896,15 @@ ARG is non-nil, query for word to search."
 ;;;; Language Settings for Prose and Code
 
 ;;;;; Support for Various Major Modes
+
+;;;;;; Emacs Lisp
+
+(defun dp-setup-emacs-lisp-mode ()
+  "Set up Emacs Lisp mode according to my preferences."
+  (setq outline-regexp ";;;+ [^ ]")
+  (outline-minor-mode 1))
+
+(add-hook 'emacs-lisp-mode-hook #'dp-setup-emacs-lisp-mode)
 
 ;;;;;; Plain Text
 
@@ -1995,9 +2019,9 @@ ARG is non-nil, query for word to search."
   (define-key map (kbd "C-M-;") #'flyspell-goto-next-error)
   (define-key map (kbd "C-;") #'flyspell-auto-correct-word))
 
-;;;;;; Code and Text Linters
+;;;;; Code and Text Linters
 
-;;;;;;; Flymake
+;;;;;; Flymake
 
 (require 'flymake)
 (setq flymake-suppress-zero-counters t)
@@ -2027,26 +2051,27 @@ ARG is non-nil, query for word to search."
 
 (add-hook 'prog-mode-hook #'flymake-mode)
 
-;;;;;;; Flymake + Shellcheck
+;;;;;; Flymake + Shellcheck
 
 (unless (package-installed-p 'flymake-shellcheck)
   (package-install 'flymake-shellcheck))
 (require 'flymake-shellcheck)
-(let ((hook 'sh-mode-hook))
-  (add-hook hook #'flymake-shellcheck-load))
 
-;;;;;;; Flymake + Proselint
+(add-hook 'sh-mode-hook #'flymake-shellcheck-load)
+
+;;;;;; Flymake + Proselint
 
 (unless (package-installed-p 'flymake-proselint)
   (package-install 'flymake-proselint))
 (require 'flymake-proselint)
+
 (dolist (hook '(markdown-mode-hook
                 org-mode-hook
                 text-mode-hook))
   (add-hook hook #'flymake-proselint-setup)
   (add-hook hook #'flymake-mode))
 
-;;;;;;; Flymake + Markdown
+;;;;;; Flymake + Markdown
 
 (unless (package-installed-p 'flymake-quickdef)
   (package-install 'flymake-quickdef))
@@ -2057,14 +2082,15 @@ ARG is non-nil, query for word to search."
   (add-hook hook #'flymake-markdownlint-setup)
   (add-hook hook #'flymake-mode))
 
+;;;;; Eldoc
+
+(global-eldoc-mode 1)
+
 ;;;; History and State
 
-(server-start)
+;;;;; Emacs Server and Desktop
 
-(require 'recentf)
-(setq recentf-max-saved-items 200)
-(setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/sudo:"))
-(recentf-mode 1)
+(server-start)
 
 (require 'desktop)
 (setq desktop-dirname user-emacs-directory)
@@ -2076,9 +2102,13 @@ ARG is non-nil, query for word to search."
   (add-to-list 'desktop-globals-to-save symbol))
 (desktop-save-mode 1)
 
+;;;;; Record Various Types of History
+
 (require 'saveplace)
 (setq save-place-file (locate-user-emacs-file "saveplace"))
 (save-place-mode 1)
+
+;;;;; Backups
 
 (setq backup-directory-alist
       `(("." . ,(concat user-emacs-directory "backup/"))))
