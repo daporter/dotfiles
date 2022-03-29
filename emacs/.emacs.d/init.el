@@ -90,17 +90,12 @@
 
 (load-theme 'modus-operandi)
 
-;;;;; LIN is Noticeable (lin.el)
+;;;;; Enhancements to hl-line-mode (lin.el)
 
+(add-to-list 'load-path "~/.emacs.d/lisp/lin")
 (require 'lin)
-(setq lin-foreground-override nil)
 
-(dolist (hook '(elfeed-search-mode-hook
-                notmuch-search-mode-hook
-                log-view-mode-hook
-                package-menu-mode-hook
-                ibuffer-mode-hook))
-  (add-hook hook #'lin-mode))
+(lin-setup)
 
 ;;;;; Typeface Configurations
 
