@@ -35,10 +35,10 @@
 
 ;;;; Base Settings
 
-;;;;; Highlight Cursor Position
+;;;;; Highlight Cursor Position (pulsar.el)
 
-;(unless (package-installed-p 'pulsar)
-;  (package-install 'pulsar))
+(unless (package-installed-p 'pulsar)
+  (package-install 'pulsar))
 (require 'pulsar)
 
 (define-key global-map (kbd "C-x l") #'pulsar-pulse-line) ; override `count-lines-page'
