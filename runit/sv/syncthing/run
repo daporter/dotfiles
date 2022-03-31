@@ -1,4 +1,4 @@
 #!/bin/sh
 
 exec 2>&1
-exec syncthing -logflags=0 -no-restart
+exec syncthing --logfile=/tmp/syncthing.log --no-restart
