@@ -405,6 +405,26 @@
 (setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/sudo:"))
 (recentf-mode 1)
 
+;;;;;; In-Buffer Completions
+
+;;;;;;; CAPE (Extra completion-at-point Backends)
+
+(unless (package-installed-p 'cape)
+  (package-install 'cape))
+(require 'cape)
+
+(setq cape-dabbrev-min-length 3)
+(dolist (backend '(cape-symbol cape-keyword cape-file cape-dabbrev))
+  (add-to-list 'completion-at-point-functions backend))
+
+;;;;;;; Corfu (Completion Overlay Region FUnction)
+
+(unless (package-installed-p 'corfu)
+  (package-install 'corfu))
+(require 'corfu)
+
+(corfu-global-mode 1)
+
 ;;;; Directory, Buffer, Window Management
 
 ;;;;; Dired
