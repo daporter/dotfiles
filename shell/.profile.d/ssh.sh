@@ -2,4 +2,4 @@
 #
 # Start the SSH agent.
 
-eval "$(keychain --clear --eval)"
+eval "$(keychain --eval)"
