@@ -970,6 +970,9 @@ sure this is a good approach."
 (setq org-cite-global-bibliography
       '("~/Sync/bibliography/bibliography.bib"))
 
+(setq org-capture-templates
+      '(("n" "Note" entry (file "") "* %U\n\n%?" :empty-lines-before 1)))
+
 (define-key org-mode-map (kbd "C-c L") #'org-toggle-link-display)
 
 ;;;;;; Prettier Org Constructs (org-modern.el)
