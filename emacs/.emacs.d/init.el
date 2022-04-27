@@ -41,6 +41,7 @@
   (package-install 'pulsar))
 (require 'pulsar)
 
+(pulsar-global-mode 1)
 (define-key global-map (kbd "C-x l") #'pulsar-pulse-line) ; override `count-lines-page'
 
 ;;;;; Make Custom UI code disposable
@@ -95,25 +96,48 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/lin")
 (require 'lin)
 
-(lin-setup)
+(lin-global-mode 1)
 
-;;;;; Typeface Configurations
+;;;;; Font Configurations (fontaine.el)
+
+;; (unless (package-installed-p 'fontaine)
+;;   (package-install 'fontaine))
+(require 'fontaine)
 
 (setq-default text-scale-remap-header-line t)
-(setq-default line-spacing 0.1)
 
-(defun dp-set-fonts ()
-  "Set my preferred fonts."
-  (custom-set-faces
-   '(default        ((t :family "Fira Code" :height 90)))
-   '(bold           ((t :weight semi-bold)))
-   '(italic         ((t :family "Hack")))
-   '(fixed-pitch    ((t :family "Fira Code" :height 90)))
-   '(variable-pitch ((t :family "Libre Caslon Text" :height 1.1)))))
+(setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
-(dp-set-fonts)
+(setq fontaine-presets
+      '((regular
+         :default-family "Fira Code"
+         :default-weight normal
+         :default-height 90
+         :fixed-pitch-family nil ; falls back to :default-family
+         :fixed-pitch-weight nil ; falls back to :default-weight
+         :fixed-pitch-height 1.0
+         :variable-pitch-family "Libre Caslon Text"
+         :variable-pitch-weight normal
+         :variable-pitch-height 1.1
+         :bold-family nil ; use whatever the underlying face has
+         :bold-weight semi-bold
+         :italic-family "Hack"
+         :italic-slant italic
+         :line-spacing 0.1)))
 
-(add-hook 'modus-themes-after-load-theme-hook #'dp-set-fonts)
+(fontaine-restore-latest-preset)
+
+;; Set `fontaine-recovered-preset' or fall back to desired style from
+;; `fontaine-presets'.
+(if fontaine-recovered-preset
+    (fontaine-set-preset fontaine-recovered-preset)
+  (fontaine-set-preset 'regular))
+
+;; The other side of `fontaine-restore-latest-preset'.
+(add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
+
+(define-key global-map (kbd "C-c f") #'fontaine-set-preset)
+(define-key global-map (kbd "C-c F") #'fontaine-set-face-font)
 
 ;;;;; Repeatable Keychords
 
@@ -170,82 +194,48 @@
 
 (marginalia-mode 1)
 
-;;;;;; Minibuffer Configurations
+;;;;;; Minibuffer and Vertico Configurations
 
-(setq completion-styles '(orderless)) ; also see `completion-category-overrides'
+(setq completion-styles '(basic orderless)) ; also see `completion-category-overrides'
 (setq completion-category-defaults nil)
 (setq completion-category-overrides
       '((file (styles . (basic partial-completion orderless)))
+        (project-file (styles . (basic substring partial-completion orderless)))
         (imenu (styles . (basic substring orderless)))
+        (kill-ring (styles . (basic substring orderless)))
         (consult-location (styles . (basic substring orderless)))))
 
-(setq completion-cycle-threshold 2)
-(setq completion-flex-nospace nil)
-(setq completion-pcm-complete-word-inserts-delimiters nil)
-(setq completion-pcm-word-delimiters "-_./:| ")
 (setq completion-ignore-case t)
-(setq completions-detailed t)
-(setq-default case-fold-search t)   ; For general regexp
-
-;; Grouping of completions for Emacs 28
-(setq completions-group t)
-(setq completions-group-sort nil)
-(setq completions-group-format
-      (concat
-       (propertize "    " 'face 'completions-group-separator)
-       (propertize " %s " 'face 'completions-group-title)
-       (propertize " " 'face 'completions-group-separator
-                   'display '(space :align-to right))))
-
 (setq read-buffer-completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
+(setq-default case-fold-search t)   ; For general regexp
 
 (setq enable-recursive-minibuffers t)
-(setq read-answer-short t) ; also check `use-short-answers' for Emacs28
 (setq resize-mini-windows t)
 (setq minibuffer-eldef-shorten-default t)
 
+(setq read-answer-short t) ; also check `use-short-answers' for Emacs28
 (setq echo-keystrokes 0.25)           ; from the C source code
 
+;; Do not allow the cursor to move inside the minibuffer prompt.  I
+;; got this from the documentation of Daniel Mendler's Vertico
+;; package: <https://github.com/minad/vertico>.
 (setq minibuffer-prompt-properties
       '(read-only t cursor-intangible t face minibuffer-prompt))
 
 (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
+;; Also adapted from Vertico.
+(defun crm-indicator (args)
+  "Add prompt indicator to `completing-read-multiple' filter ARGS."
+  ;; The `error' face just makes the text red.
+  (cons (concat (propertize "[CRM] " 'face 'error) (car args)) (cdr args)))
+
+(advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
 (file-name-shadow-mode 1)
 (minibuffer-depth-indicate-mode 1)
 (minibuffer-electric-default-mode 1)
-
-;; I use this prefix for other searches
-(define-key minibuffer-local-must-match-map (kbd "M-s") nil)
-
-;;;;;; Minibuffer and Completions in Tandem (mct.el)
-
-(unless (package-installed-p 'mct)
-  (package-install 'mct))
-(require 'mct)
-
-(setq mct-remove-shadowed-file-names t)
-(setq mct-hide-completion-mode-line t)
-(setq mct-apply-completion-stripes t)
-(setq mct-completion-passlist '(embark-prefix-help-command
-                                vc-retrieve-tag
-                                Info-goto-node
-                                kill-ring
-                                bookmark
-                                buffer
-                                consult-location
-                                info-menu
-                                file
-                                imenu))
-
-(setq mct-completion-window-size (cons #'mct--frame-height-fraction 1))
-
-(mct-minibuffer-mode 1)
-(mct-region-mode 1) ; NOTE 2022-01-15: This is new and remains experimental
-
-(define-key minibuffer-local-completion-map (kbd "<tab>") #'minibuffer-force-complete)
-(define-key global-map (kbd "C-x :") #'mct-focus-mini-or-completions)
 
 ;;;;;; Minibuffer History (savehist-mode)
 
@@ -254,6 +244,28 @@
 (setq history-length 10000)
 (setq history-delete-duplicates t)
 (savehist-mode 1)
+
+;;;;;; Vertico
+
+(unless (package-installed-p 'vertico)
+  (package-install 'vertico))
+(require 'vertico)
+
+(setq vertico-scroll-margin 0)
+(setq vertico-resize nil)
+(setq vertico-cycle t)
+
+(vertico-mode 1)
+
+(let ((map vertico-map))
+  (define-key map (kbd "M-,") #'vertico-quick-insert)
+  (define-key map (kbd "M-.") #'vertico-quick-exit))
+
+;; This works with `file-name-shadow-mode'.  When you are in a
+;; sub-directory and use, say, `find-file' to go to your home '~/' or
+;; root '/' directory, Vertico will clear the old path to keep only
+;; your current input.
+(add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
 
 ;;;;;; Enhanced Minibuffer Commands (consult.el)
 
@@ -336,14 +348,13 @@
 (require 'embark)
 
 (setq prefix-help-command #'embark-prefix-help-command)
-(setq embark-collect-initial-view-alist '((t . list)))
 (setq embark-cycle-key (kbd "C-,"))     ; see the `embark-act' key
+(setq embark-confirm-act-all nil)
 (setq embark-indicators '(embark-mixed-indicator
                           embark-highlight-indicator))
 (setq embark-verbose-indicator-excluded-actions
-      '("\\`embark-collect-" "\\`customize-" "\\(local\\|global\\)-set-key"
-        set-variable embark-cycle embark-export
-        embark-keymap-help embark-become embark-isearch))
+      '("\\`customize-" "\\(local\\|global\\)-set-key"
+        set-variable embark-cycle embark-keymap-help embark-isearch))
 (setq embark-verbose-indicator-display-action nil)
 
 ;; Use alternating backgrounds, if `stripes' is available.
@@ -353,13 +364,10 @@
     (add-hook hook #'hl-line-mode)))
 
 (define-key global-map (kbd "C-,") #'embark-act)
+(define-key embark-collect-mode-map (kbd "C-,") #'embark-act)
 (let ((map minibuffer-local-completion-map))
   (define-key map (kbd "C-,") #'embark-act)
-  (define-key map (kbd "C->") #'embark-become)
-  (define-key map (kbd "M-q") #'embark-collect-toggle-view))
-(let ((map embark-collect-mode-map))
-  (define-key map (kbd "C-,") #'embark-act)
-  (define-key map (kbd "M-q") #'embark-collect-toggle-view))
+  (define-key map (kbd "C->") #'embark-become))
 (let ((map embark-region-map))
   (define-key map (kbd "a") #'align-regexp)
   (define-key map (kbd "i") #'epa-import-keys-region)
@@ -407,6 +415,23 @@
 
 ;;;;;; In-Buffer Completions
 
+;;;;;;; Corfu (In-Buffer Completion Popup)
+
+(unless (package-installed-p 'corfu)
+  (package-install 'corfu))
+(require 'corfu)
+
+(global-corfu-mode 1)
+
+;; Adapted from Corfu's manual.
+(defun contrib/corfu-enable-always-in-minibuffer ()
+  "Enable Corfu in the minibuffer if Vertico is not active.
+Useful for prompts such as `eval-expression' and `shell-command'."
+  (unless (bound-and-true-p vertico--input)
+    (corfu-mode 1)))
+
+(add-hook 'minibuffer-setup-hook #'contrib/corfu-enable-always-in-minibuffer 1)
+
 ;;;;;;; CAPE (Extra completion-at-point Backends)
 
 (unless (package-installed-p 'cape)
@@ -417,13 +442,11 @@
 (dolist (backend '(cape-symbol cape-keyword cape-file cape-dabbrev))
   (add-to-list 'completion-at-point-functions backend))
 
-;;;;;;; Corfu (Completion Overlay Region FUnction)
+;;;;;;; Enhance Command-Line Completion (pcmpl-args)
 
-(unless (package-installed-p 'corfu)
-  (package-install 'corfu))
-(require 'corfu)
-
-(corfu-global-mode 1)
+(unless (package-installed-p 'pcmpl-args)
+  (package-install 'pcmpl-args))
+(require 'pcmpl-args)
 
 ;;;; Directory, Buffer, Window Management
 
@@ -973,6 +996,12 @@ sure this is a good approach."
 (setq org-capture-templates
       '(("n" "Note" entry (file "") "* %U\n\n%?" :empty-lines-before 1)))
 
+;;;;;; Hooks and Key Bindings
+
+(dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
+  (add-hook hook #'pulsar-recenter-top)
+  (add-hook hook #'pulsar-reveal-entry))
+
 (define-key org-mode-map (kbd "C-c L") #'org-toggle-link-display)
 
 ;;;;;; Prettier Org Constructs (org-modern.el)
@@ -1157,8 +1186,8 @@ sure this is a good approach."
 (setq mail-signature "David Porter\n")
 (setq message-signature "David Porter\n")
 (setq message-citation-line-format "On %Y-%m-%d, %R %z, %f wrote:\n")
-(setq message-citation-line-function
-      'message-insert-formatted-citation-line)
+(setq message-citation-line-function nil)
+(setq message-ignored-cited-headers nil) ; default is "." for all headers
 (setq message-confirm-send nil)
 (setq message-kill-buffer-on-exit t)
 (setq message-wide-reply-confirm-recipients t)
