@@ -16,4 +16,4 @@ notmuch tag -inbox +lists +list/emacs-humanities \
 notmuch tag -inbox +lists +list/notmuch \
         -- from:notmuch@notmuchmail.org or to:notmuch@notmuchmail.org
 notmuch tag -inbox +lists +list/emacs-paris \
-        -- from:ateliers-paris@emacs-doctor.com or to:ateliers-paris@emacs-doctor.com
+        -- from:~bzg/emacsfr@lists.sr.ht or to:~bzg/emacsfr@lists.sr.ht
