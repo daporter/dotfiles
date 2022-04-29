@@ -275,7 +275,7 @@
         (?h "Help" ,#'help-bookmark-jump)
         (?i "Info" ,#'Info-bookmark-jump)
         (?m "Man" ,#'Man-bookmark-jump)
-        (?p "PDF" ,#'pdf-view-bookmark-jump)
+        ;; (?p "PDF" ,#'pdf-view-bookmark-jump)
         (?v "VC Dir" ,#'vc-dir-bookmark-jump)
         (?w "EWW" ,#'prot-eww-bookmark-jump)))
 (setq register-preview-delay 0.8
@@ -283,10 +283,9 @@
 (setq consult-find-args "find . -not ( -wholename */.* -prune )")
 (setq consult-preview-key 'any)
 
-(setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
-(add-hook 'consult-after-jump-hook #'prot-pulse-recentre-top) ; see `prot-pulse.el'
-
 (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
+
+(require 'consult-imenu) ; the `imenu' extension is in its own file
 
 (let ((map global-map))
   (define-key map (kbd "C-x r b") #'consult-bookmark) ; override `bookmark-jump'
@@ -309,6 +308,10 @@
   (define-key map (kbd "M-s M-!") #'consult-flymake)
   (define-key map (kbd "M-s M-b") #'consult-buffer))
 (define-key consult-narrow-map (kbd "?") #'consult-narrow-help)
+
+(setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
+(dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
+  (add-hook 'consult-after-jump-hook fn))
 
 ;;;;;;; Switch to Directories (consult-dir.el)
 
