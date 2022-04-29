@@ -76,17 +76,13 @@
 (setq modus-themes-org-blocks 'gray-background)
 (setq modus-themes-variable-pitch-headings t)
 
-(setq modus-themes-headings '((t . (overline background))))
-
-(setq modus-themes-scale-headings nil)
 ;; When scaling headings, use the “Major Second” (1.125) scale.  See
 ;; <https://type-scale.com/>.
-(setq modus-themes-scale-title 1.383
-      modus-themes-scale-4 1.296
-      modus-themes-scale-3 1.215
-      modus-themes-scale-2 1.138
-      modus-themes-scale-1 1.067
-      modus-themes-scale-small 0.937)
+(setq modus-themes-headings
+      '((1 . (monochrome 1.15))
+        (2 . (monochrome 1.1))
+        (3 . (monochrome 1.05))
+        (t . (monochrome))))
 
 (load-theme 'modus-operandi)
 
@@ -989,6 +985,9 @@ sure this is a good approach."
   (add-hook hook #'pulsar-recenter-top)
   (add-hook hook #'pulsar-reveal-entry))
 
+;; Use dynamically-numbered headings.
+(add-hook 'org-mode-hook #'org-num-mode)
+
 (define-key org-mode-map (kbd "C-c L") #'org-toggle-link-display)
 
 ;;;;;; Prettier Org Constructs (org-modern.el)
@@ -996,6 +995,8 @@ sure this is a good approach."
 (unless (package-installed-p 'org-modern)
   (package-install 'org-modern))
 (require 'org-modern)
+
+(setq org-modern-hide-stars t)
 
 (add-hook 'org-mode-hook #'org-modern-mode)
 (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
