@@ -109,20 +109,10 @@
 
 (setq fontaine-presets
       '((regular
-         :default-family "Fira Code"
-         :default-weight normal
-         :default-height 90
-         :fixed-pitch-family nil ; falls back to :default-family
-         :fixed-pitch-weight nil ; falls back to :default-weight
-         :fixed-pitch-height 1.0
-         :variable-pitch-family "Libre Caslon Text"
-         :variable-pitch-weight normal
-         :variable-pitch-height 1.1
-         :bold-family nil ; use whatever the underlying face has
-         :bold-weight semi-bold
          :italic-family "Hack"
-         :italic-slant italic
-         :line-spacing 0.1)))
+         :variable-pitch-family "Libre Caslon Text"
+         :variable-pitch-height 1.1
+         :line-spacing 0.2)))
 
 (fontaine-restore-latest-preset)
 
@@ -708,9 +698,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (package-install 'olivetti))
 (require 'olivetti)
 
-(setq olivetti-recall-visual-line-mode-entry-state t)
+(setq olivetti-body-width 80)
 
-;; XXX: This is a temporary workaround.
 (require 'outline)
 
 (unless (package-installed-p 'logos)
@@ -722,9 +711,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 ;; These apply when `logos-focus-mode' is enabled.  Their value is
 ;; buffer-local.
 (setq-default logos-hide-mode-line t)
-(setq-default logos-scroll-lock nil)
-(setq-default logos-variable-pitch nil)
-(setq-default logos-buffer-read-only nil)
+(setq-default logos-variable-pitch t)
+(setq-default logos-buffer-read-only t)
 (setq-default logos-olivetti t)
 
 (let ((map global-map))
