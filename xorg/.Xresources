@@ -50,10 +50,10 @@ xterm*highlightSelection: true
 
 ! Font settings
 xterm*faceName: Fira Mono
-xterm*faceSize: 9
+xterm*faceSize: 10
 xterm*renderFont: true
 xterm*boldColors: false
-xterm*faceSize1: 9.5
+xterm*faceSize1: 10.5
 xterm*faceSize2: 12
 xterm*faceSize3: 15
 xterm*faceSize4: 18.25
@@ -61,6 +61,7 @@ xterm*faceSize5: 20.5
 xterm*faceSize6: 25.5
 xterm*forceBoxChars: false
 xterm*limitFontsets: 5
+xterm*.scaleHeight: 1.1
 
 ! Scroll and output
 xterm*jumpScroll: true
