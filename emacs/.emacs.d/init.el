@@ -2058,9 +2058,9 @@ ARG is non-nil, query for word to search."
 ;;;;;; Flymake
 
 (require 'flymake)
+(setq flymake-fringe-indicator-position 'left-fringe)
 (setq flymake-suppress-zero-counters t)
 (setq flymake-no-changes-timeout nil)
-(setq flymake-fringe-indicator-position nil)
 (setq flymake-mode-line-format
       '(""
         flymake-mode-line-exception
