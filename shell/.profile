@@ -17,10 +17,10 @@ export XDG_RUNTIME_DIR
 LANG=en_AU.UTF-8
 export LANG
 
-EDITOR="emacsclient --tty --alternate-editor=vim"
+EDITOR="emacsclient --create-frame"
 export EDITOR
 
-VISUAL="emacsclient --create-frame --alternate-editor=vim"
+VISUAL="emacsclient --create-frame"
 export VISUAL
 
 EMAIL=david@daporter.net
