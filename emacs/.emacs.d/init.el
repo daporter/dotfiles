@@ -68,7 +68,7 @@
 (setq modus-themes-slanted-constructs t)
 (setq modus-themes-syntax '(green-strings))
 (setq modus-themes-mixed-fonts t)
-(setq modus-themes-links '())
+(setq modus-themes-links '(no-underline faint))
 (setq modus-themes-mail-citations 'faint)
 (setq modus-themes-lang-checkers '(background))
 (setq modus-themes-region '(bg-only))
@@ -76,12 +76,9 @@
 (setq modus-themes-org-blocks 'gray-background)
 (setq modus-themes-variable-pitch-headings t)
 
-;; When scaling headings, use the “Major Second” (1.125) scale.  See
-;; <https://type-scale.com/>.
 (setq modus-themes-headings
-      '((1 . (monochrome 1.15))
-        (2 . (monochrome 1.1))
-        (3 . (monochrome 1.05))
+      '((1 . (overline monochrome 1.25))
+        (2 . (monochrome 1.15))
         (t . (monochrome))))
 
 (load-theme 'modus-operandi)
