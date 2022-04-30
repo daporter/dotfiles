@@ -985,9 +985,6 @@ sure this is a good approach."
   (add-hook hook #'pulsar-recenter-top)
   (add-hook hook #'pulsar-reveal-entry))
 
-;; Use dynamically-numbered headings.
-(add-hook 'org-mode-hook #'org-num-mode)
-
 (define-key org-mode-map (kbd "C-c L") #'org-toggle-link-display)
 
 ;;;;;; Prettier Org Constructs (org-modern.el)
