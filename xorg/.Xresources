@@ -49,8 +49,8 @@ xterm*visualBell: true
 xterm*highlightSelection: true
 
 ! Font settings
-xterm*faceName: Fira Mono
-xterm*faceSize: 10
+xterm*faceName: Monospace
+xterm*faceSize: 9.5
 xterm*renderFont: true
 xterm*boldColors: false
 xterm*faceSize1: 10.5

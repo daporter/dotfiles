@@ -105,9 +105,9 @@
 
 (setq fontaine-presets
       '((regular
-         :italic-family "Hack"
+         :default-height 105
          :variable-pitch-family "Libre Caslon Text"
-         :variable-pitch-height 1.1
+         :variable-pitch-height 1.15
          :line-spacing 0.2)))
 
 (fontaine-restore-latest-preset)
