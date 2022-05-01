@@ -1065,6 +1065,8 @@ sure this is a good approach."
 (setq org-journal-file-format "%Y-%m-%d.org")
 (setq org-journal-date-format "%A, %d %B %Y")
 
+(define-key global-map (kbd "C-c j") #'org-journal-new-entry)
+
 ;;;;;; Org Roam
 
 (setq org-roam-v2-ack t)
