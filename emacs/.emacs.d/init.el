@@ -92,8 +92,8 @@
 
 ;;;;; Font Configurations (fontaine.el)
 
-;; (unless (package-installed-p 'fontaine)
-;;   (package-install 'fontaine))
+(unless (package-installed-p 'fontaine)
+  (package-install 'fontaine))
 (require 'fontaine)
 
 (setq-default text-scale-remap-header-line t)
