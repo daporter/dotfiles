@@ -10,7 +10,6 @@
 (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
-(require 'vc)
 (setq vc-follow-symlinks t) ; because my dotfiles are managed this way
 
 (add-to-list 'load-path (locate-user-emacs-file "lisp"))
@@ -221,7 +220,6 @@
 
 ;;;;;; Minibuffer History (savehist-mode)
 
-(require 'savehist)
 (setq savehist-file (locate-user-emacs-file "savehist"))
 (setq history-length 10000)
 (setq history-delete-duplicates t)
@@ -373,8 +371,6 @@
 
 ;;;;;; Projects
 
-(require 'project)
-
 (setq project-list-file "~/Sync/emacs/projects")
 (setq project-switch-commands
       '((?f "File" project-find-file)
@@ -393,7 +389,6 @@
 
 ;;;;;; Completion for Recent Files and Directories
 
-(require 'recentf)
 (setq recentf-max-saved-items 200)
 (setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/sudo:"))
 (recentf-mode 1)
@@ -459,7 +454,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 ;;;;;; Unique Names for Buffers
 
-(require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
 
 ;;;;;; Ibuffer and Extras
@@ -758,7 +752,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 ;;;;;; Version Control Framework (vc.el and prot-vc.el)
 
-(require 'vc)
 ;; Those offer various types of functionality, such as blaming,
 ;; viewing logs, showing a dedicated buffer with changes to affected
 ;; files.
