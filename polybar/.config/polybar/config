@@ -17,13 +17,13 @@ border-size = 0
 background = ${colors.bgmain}
 foreground = ${colors.fgmain}
 
-padding-left = 0
-padding-right = 1
+padding-left = 1
+padding-right = 2
 
-module-margin-left = 1
-module-margin-right = 1
+module-margin-left = 2
+module-margin-right = 3
 
-font-0 = "Monospace:size=8:hintstyle=hintslight;2"
+font-0 = "IBM Plex Sans:size=9:hintstyle=hintslight;2"
 font-1 = "Arimo Nerd Font:pixelsize=9;2"
 
 modules-left = bspwm bspwm_panel_monocle xkeyboard
@@ -89,7 +89,7 @@ full-at = 98
 
 format-charging = <ramp-capacity> <label-charging>
 format-discharging = <ramp-capacity> <label-discharging>
-format-full-prefix = " "
+format-full-prefix = "  "
 
 label-discharging = %time%
 time-format = %H:%M
