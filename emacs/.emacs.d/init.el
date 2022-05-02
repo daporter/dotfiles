@@ -1020,8 +1020,8 @@ sure this is a good approach."
         (tags priority-down category-keep)
         (search category-keep)))
 
-;; Make a subtask inherit the priority of its parent.
 (defun dp-org-inherited-priority (s)
+  "Make subtask S inherit the priority of its parent."
   (cond
    ;; Priority cookie in this heading.
    ((string-match org-priority-regexp s)
