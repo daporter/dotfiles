@@ -1090,7 +1090,6 @@ sure this is a good approach."
 
 ;;;;; Calendar and Diary
 
-(require 'calendar)
 (setq calendar-mark-diary-entries-flag t)
 (setq calendar-mark-holidays-flag t)
 (setq calendar-time-display-form
@@ -1102,15 +1101,13 @@ sure this is a good approach."
 (setq calendar-date-display-form calendar-iso-date-display-form)
 (setq calendar-time-zone-style 'numeric)
 
-(require 'solar)
 (setq calendar-latitude 48.86
       calendar-longitude 2.35)
 
-(require 'cal-dst)
 (setq calendar-standard-time-zone-name "+0100")
 (setq calendar-daylight-time-zone-name "+0200")
 
-(require 'diary-lib)
+(setq diary-file "~/Sync/emacs/diary")
 (setq diary-date-forms diary-iso-date-forms)
 (setq diary-comment-start ";;")
 (setq diary-nonmarking-symbol "!")
@@ -1126,13 +1123,11 @@ sure this is a good approach."
 (add-hook 'diary-list-entries-hook 'diary-include-other-diary-files)
 (add-hook 'diary-mark-entries-hook 'diary-mark-included-diary-files)
 
-(require 'appt)
 (setq appt-warning-time-regexp "appt \\([0-9]+\\)")
 (setq appt-message-warning-time 15)
 
 (run-at-time 10 nil #'appt-activate 1)
 
-(require 'holidays)
 (setq calendar-christian-all-holidays-flag nil)
 
 (setq holiday-other-holidays
