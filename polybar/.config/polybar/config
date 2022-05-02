@@ -23,7 +23,7 @@ padding-right = 2
 module-margin-left = 2
 module-margin-right = 3
 
-font-0 = "IBM Plex Sans:size=9:hintstyle=hintslight;2"
+font-0 = "Roboto:size=9:hintstyle=hintslight;2"
 font-1 = "Arimo Nerd Font:pixelsize=9;2"
 
 modules-left = bspwm bspwm_panel_monocle xkeyboard
@@ -56,20 +56,20 @@ label-marked-foreground = ${colors.red}
 
 label-focused = %name%
 label-focused-background = ${colors.bgalt}
-label-focused-padding = 1
+label-focused-padding = 2
 
 label-occupied = " %name%^ "
 label-occupied-foreground = ${colors.fgalt}
-label-occupied-padding = 0
+label-occupied-padding = 1
 
 label-urgent = " %name%! "
 label-urgent-font = 2
 label-urgent-foreground = ${colors.red}
-label-urgent-padding = 0
+label-urgent-padding = 1
 
 label-empty = " %name% "
 label-empty-foreground = ${colors.fgalt}
-label-empty-padding = 0
+label-empty-padding = 1
 
 [module/bspwm_panel_monocle]
 type = custom/script
@@ -149,7 +149,7 @@ scroll-down = ~/bin/polybar_pipewire decrease
 
 [module/date]
 type = custom/script
-exec = date '+%a %-d %b %R'
+exec = date '+%a, %-d %b ∙ %R'
 interval = 60
 
 [module/coretemp]
