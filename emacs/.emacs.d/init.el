@@ -84,7 +84,8 @@
 
 ;;;;; Enhancements to hl-line-mode (lin.el)
 
-(add-to-list 'load-path "~/.emacs.d/lisp/lin")
+(unless (package-installed-p 'lin)
+  (package-install 'lin))
 (require 'lin)
 
 (lin-global-mode 1)
