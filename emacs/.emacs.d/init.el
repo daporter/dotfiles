@@ -1807,11 +1807,6 @@ must be installed."
 
 (add-hook 'emacs-lisp-mode-hook #'dp-setup-emacs-lisp-mode)
 
-;;;;;; Plain Text
-
-(require 'titlecase)
-(keymap-set global-map "C-c t" 'titlecase-dwim)
-
 ;;;;;; Markdown
 
 (unless (package-installed-p 'markdown-mode)
@@ -1838,7 +1833,15 @@ must be installed."
 
 (column-number-mode 1)
 
-;;;;; Comments
+;;;;;; Titlecasing
+
+(unless (package-installed-p 'titlecase)
+  (package-install 'titlecase))
+(require 'titlecase)
+
+(setq titlecase-style 'mla)
+
+(keymap-set global-map "C-c t" 'titlecase-dwim)
 
 ;;;;; Electric Behaviour
 
