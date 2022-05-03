@@ -634,38 +634,21 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n))
 (setq aw-dispatch-alist
-      '((?b aw-switch-buffer-in-window "Select Buffer")
-        (?B aw-switch-buffer-other-window "Switch Buffer Other Window")
-        (?s aw-swap-window "Swap Windows")
-        (?c aw-copy-window "Copy Window")
-        (?m aw-move-window "Move Window")
-        (?x aw-delete-window "Delete Window")
-        (?O delete-other-windows "Delete Other Windows")
-        (?f aw-flip-window)
-        (?+ aw-split-window-fair "Split Fair Window")
-        (?- aw-split-window-vert "Split Vert Window")
-        (?| aw-split-window-horz "Split Horz Window")
+      '((?b aw-switch-buffer-in-window
+            "Select buffer in window and switch")
+        (?B aw-switch-buffer-other-window
+            "Select buffer in window without switching")
+        (?s aw-swap-window "Swap windows")
+        (?c aw-copy-window "Copy window")
+        (?m aw-move-window "Move window")
+        (?x aw-delete-window "Delete window")
+        (?O delete-other-windows "Delete other windows")
+        (?+ aw-split-window-fair "Split window fairly")
+        (?- aw-split-window-vert "Split window vertically")
+        (?| aw-split-window-horz "Split window horizontally")
         (?? aw-show-dispatch-help)))
 
 (keymap-set global-map "C-x o" #'ace-window)
-
-(eval-when-compile
-  (defmacro my/embark-ace-action (fn)
-    `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
-       (interactive)
-       (with-demoted-errors "%s"
-         (require 'ace-window)
-         (let ((aw-dispatch-always t))
-           (aw-switch-to-window (aw-select nil))
-           (call-interactively (symbol-function ',fn)))))))
-
-(keymap-set embark-file-map "o"
-            (my/embark-ace-action find-file))
-(keymap-set embark-buffer-map "o"
-            (my/embark-ace-action switch-to-buffer))
-(keymap-set embark-bookmark-map "o"
-            (my/embark-ace-action bookmark-jump))
-
 
 ;;;; Applications and Utilities
 
@@ -746,8 +729,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (keymap-set global-map "C-x v =" #'prot-diff-buffer-dwim)
 (let ((map diff-mode-map))
   (keymap-set map "C-c C-b" #'prot-diff-refine-cycle) ; replace `diff-refine-hunk'
-  (keymap-set map "C-c C-n" #'prot-diff-narrow-dwim)
-  (keymap-set map "M-o" nil))     ; I use M-o for Avy
+  (keymap-set map "C-c C-n" #'prot-diff-narrow-dwim))
 
 ;;;;;; Version Control Framework (vc.el and prot-vc.el)
 
@@ -1636,97 +1618,11 @@ ARG is non-nil, query for word to search."
   (package-install 'avy))
 (require 'avy)
 
+(setq avy-all-windows nil)              ; only the current window
+(setq avy-all-windows-alt t)            ;  all windows with C-u
 (setq avy-keys '(?u ?h ?e ?t ?a ?s ?o ?n))
 
 (keymap-set global-map "C-." #'avy-goto-char-timer)
-
-;;;;;; Custom Actions
-
-;; See https://karthinks.com/software/avy-can-do-anything/
-
-(defun avy-action-mark-to-char (pt)
-  (activate-mark)
-  (goto-char pt))
-
-(defun avy-action-copy-whole-line (pt)
-  (save-excursion
-    (goto-char pt)
-    (cl-destructuring-bind (start . end)
-        (bounds-of-thing-at-point 'line)
-      (copy-region-as-kill start end)))
-  (select-window
-   (cdr (ring-ref avy-ring 0)))
-  t)
-
-(defun avy-action-kill-whole-line (pt)
-  (save-excursion
-    (goto-char pt)
-    (kill-whole-line))
-  (select-window
-   (cdr (ring-ref avy-ring 0)))
-  t)
-
-(defun avy-action-yank-whole-line (pt)
-  (avy-action-copy-whole-line pt)
-  (save-excursion (yank))
-  t)
-
-(defun avy-action-teleport-whole-line (pt)
-  (avy-action-kill-whole-line pt)
-  (save-excursion (yank)) t)
-
-(defun avy-action-mark-to-char (pt)
-  (activate-mark)
-  (goto-char pt))
-
-(defun avy-action-define (pt)
-  (save-excursion
-    (goto-char pt)
-    (dictionary-search-dwim))
-  (select-window
-   (cdr (ring-ref avy-ring 0)))
-  t)
-
-(defun avy-action-describe-symbol (pt)
-  (save-excursion
-    (goto-char pt)
-    (describe-symbol (symbol-at-point)))
-  (select-window
-   (cdr (ring-ref avy-ring 0)))
-  t)
-
-(defun avy-action-embark (pt)
-  (unwind-protect
-      (save-excursion
-        (goto-char pt)
-        (embark-act))
-    (select-window
-     (cdr (ring-ref avy-ring 0))))
-  t)
-
-;; Note: these keys must be distinct from the value of `avy-keys’.
-(setq avy-dispatch-alist '((?  . avy-action-mark)
-                           (?m . avy-action-mark-to-char)
-                           (?i . avy-action-ispell)
-                           (?z . avy-action-zap-to-char)
-                           (?, . avy-action-embark)
-                           (?= . avy-action-define)
-                           (?l . avy-action-describe-symbol)
-
-                           (11 . avy-action-kill-line) ; C-k
-                           (25 . avy-action-yank-line) ; C-y
-
-                           (?k . avy-action-kill-stay)
-                           (?y . avy-action-yank)
-                           (?p . avy-action-teleport)
-
-                           (?W . avy-action-copy-whole-line)
-                           (?K . avy-action-kill-whole-line)
-                           (?Y . avy-action-yank-whole-line)
-                           (?P . avy-action-teleport-whole-line)))
-
-(keymap-set isearch-mode-map "M-o" 'avy-isearch)
-
 
 ;;;;; Mode Line
 
