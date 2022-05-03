@@ -978,7 +978,15 @@ sure this is a good approach."
   (add-hook hook #'pulsar-recenter-top)
   (add-hook hook #'pulsar-reveal-entry))
 
-(define-key org-mode-map (kbd "C-c L") #'org-toggle-link-display)
+(defun dp-org-remove-embark-binding ()
+  "Remove local binding \"C-,\" from Org Mode.
+
+This is necessary because \"C-,\" is bound globally to `embark-act’."
+  (keymap-unset org-mode-map "C-,"))
+
+(add-hook 'org-mode-hook #'dp-org-remove-embark-binding)
+
+(keymap-set org-mode-map "C-c L" #'org-toggle-link-display)
 
 ;;;;;; Prettier Org Constructs (org-modern.el)
 
