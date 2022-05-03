@@ -1978,14 +1978,11 @@ must be installed."
 
 ;;;;;; Flymake + Markdown
 
-(unless (package-installed-p 'flymake-quickdef)
-  (package-install 'flymake-quickdef))
-(require 'flymake-quickdef)
-
+(unless (package-installed-p 'flymake-markdownlint)
+  (package-install 'flymake-markdownlint))
 (require 'flymake-markdownlint)
-(let ((hook 'markdown-mode-hook))
-  (add-hook hook #'flymake-markdownlint-setup)
-  (add-hook hook #'flymake-mode))
+
+(add-hook 'markdown-mode-hook #'flymake-markdownlint-setup)
 
 ;;;;; Eldoc
 
