@@ -1734,8 +1734,7 @@ must be installed."
 
 (let ((map global-map))
   (keymap-set map "<f6>" #'prot-sideline-negative-space-toggle)
-  (keymap-set map "<f7>" #'prot-sideline-mode)
-  (keymap-set map "C-c w" #'whitespace-cleanup))
+  (keymap-set map "<f7>" #'prot-sideline-mode))
 
 ;;;;; Outline Mode
 
