@@ -1586,30 +1586,6 @@ must be installed."
 (add-to-list 'load-path (locate-user-emacs-file "lisp/kbd-mode"))
 (require 'kbd-mode)
 
-;;;;; Dictionary
-
-(unless (package-installed-p 'dictionary)
-  (package-install 'dictionary))
-(require 'dictionary)
-
-(setq dictionary-server "dict.org")
-
-;; See: https://karthinks.com/software/avy-can-do-anything
-(defun dictionary-search-dwim (&optional arg)
-  "Search for definition of word at point.
-If region is active, search for contents of region instead.  If
-ARG is non-nil, query for word to search."
-  (interactive "P")
-  (if arg
-      (dictionary-search nil)
-    (if (use-region-p)
-        (dictionary-search (buffer-substring-no-properties
-                            (region-beginning)
-                            (region-end)))
-      (if (thing-at-point 'word)
-          (dictionary-lookup-definition)
-        (dictionary-search-dwim '(4))))))
-
 ;;;; General Interface and Interactions
 
 ;;;;; Jump to Visible Position (avy)
