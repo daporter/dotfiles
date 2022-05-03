@@ -336,7 +336,7 @@
 (require 'embark)
 
 (setq prefix-help-command #'embark-prefix-help-command)
-(setq embark-cycle-key (kbd "C-,"))     ; see the `embark-act' key
+(setq embark-cycle-key (kbd "M-."))     ; see the `embark-act' key
 (setq embark-confirm-act-all nil)
 (setq embark-indicators '(embark-mixed-indicator
                           embark-highlight-indicator))
@@ -345,26 +345,16 @@
         set-variable embark-cycle embark-keymap-help embark-isearch))
 (setq embark-verbose-indicator-display-action nil)
 
-;; Use alternating backgrounds, if `stripes' is available.
-(with-eval-after-load 'stripes
-  (let ((hook 'embark-collect-mode-hook))
-    (add-hook hook #'stripes-mode)
-    (add-hook hook #'hl-line-mode)))
-
-(keymap-set global-map "C-," #'embark-act)
-(keymap-set embark-collect-mode-map "C-," #'embark-act)
-(let ((map minibuffer-local-completion-map))
-  (keymap-set map "C-," #'embark-act)
-  (keymap-set map "C->" #'embark-become))
-(let ((map embark-region-map))
-  (keymap-set map "a" #'align-regexp)
-  (keymap-set map "i" #'epa-import-keys-region)
-  (keymap-set map "r" #'repunctuate-sentences) ; overrides `rot13-region'
-  (keymap-set map "s" #'sort-lines)
-  (keymap-set map "u" #'untabify))
-(let ((map embark-symbol-map))
-  (keymap-set map "." #'embark-find-definition)
-  (keymap-set map "k" #'describe-keymap))
+;; The command ‘embark-dwim’ executes the default action at point, while
+;; `embark-act’ displays a menu of actions.  With my home-row modifiers,
+;; ‘C-.’ can be seen as a left-click at point and and ‘M-.’ as a
+;; right-click context menu.  The keybindings are mnemonic, since both
+;; act at the point (‘.’).
+(keymap-set global-map "C-." #'embark-dwim) ; like left-click
+(keymap-set global-map "M-." #'embark-act)  ; like right-click
+(keymap-set global-map "C-h B" #'embark-bindings)
+(keymap-set embark-collect-mode-map "M-." #'embark-act)
+(keymap-set embark-symbol-map "k" #'describe-keymap)
 
 (unless (package-installed-p 'embark-consult)
   (package-install 'embark-consult))
@@ -1667,7 +1657,7 @@ must be installed."
 (setq avy-all-windows-alt t)            ;  all windows with C-u
 (setq avy-keys '(?u ?h ?e ?t ?a ?s ?o ?n))
 
-(keymap-set global-map "C-." #'avy-goto-char-timer)
+(keymap-set global-map "C-," #'avy-goto-char-timer)
 
 ;;;;; Mode Line
 
