@@ -934,6 +934,20 @@ sure this is a good approach."
   (interactive)
   (flush-lines ".*prot-ediff.*" (point-min) (point-max) nil))
 
+;;;;; Command-Line Shells
+
+;;;;;; Eshell
+
+(add-to-list 'eshell-modules-list 'eshell-tramp)
+(add-to-list 'eshell-modules-list 'eshell-elecslash)
+
+(setenv "PAGER" "cat") ; solves issues, such as with 'git log' and the default 'less'
+
+(setq password-cache-expiry 600)
+(setq eshell-hist-ignoredups t)
+
+(keymap-set eshell-mode-map "C-x DEL" #'eshell-kill-input)
+
 ;;;;; Org Mode
 
 (require 'org)
