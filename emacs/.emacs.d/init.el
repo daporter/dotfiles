@@ -1085,8 +1085,9 @@ This is necessary because \"C-,\" is bound globally to `embark-act’."
 (org-roam-db-autosync-mode)
 
 (let ((map global-map))
-  (keymap-set map "C-c z i" #'org-roam-node-insert)
-  (keymap-set map "C-c z f" #'org-roam-node-find))
+  (keymap-set map "C-c z f" #'org-roam-node-find)
+  (keymap-set map "C-c z i" #'org-roam-node-insert))
+(keymap-set org-mode-map "C-c z t" #'org-roam-buffer-toggle)
 
 (setq org-roam-capture-templates
       '(("d" "default" plain "%?"
