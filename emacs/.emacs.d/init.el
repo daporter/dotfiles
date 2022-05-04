@@ -1341,7 +1341,7 @@ This is necessary because \"C-,\" is bound globally to `embark-act’."
 (defun dp-elfeed-save-db-and-bury ()
   "Save the Elfeed db to disk and bury the Elfeed buffer."
   (interactive)
-  (elfeed-db-save)
+  (elfeed-db-unload)
   (quit-window))
 
 (keymap-set global-map "C-c e" 'dp-elfeed-load-db-and-start)
@@ -1369,7 +1369,6 @@ This is necessary because \"C-,\" is bound globally to `embark-act’."
   (let ((map elfeed-show-mode-map))
     (keymap-set map "a" #'prot-elfeed-show-archive-entry)
     (keymap-set map "e" #'prot-elfeed-show-eww)
-    (keymap-set map "q" #'dp-elfeed-save-db-and-bury)
     (keymap-set map "v" #'prot-elfeed-mpv-dwim)
     (keymap-set map "+" #'prot-elfeed-toggle-tag)))
 
