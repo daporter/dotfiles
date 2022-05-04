@@ -959,37 +959,120 @@ sure this is a good approach."
 ;;;;; Org Mode
 
 (require 'org)
+
 (setq org-directory "~/Sync/org")
+
+(setq org-M-RET-may-split-line '((default . nil)))
 (setq org-list-allow-alphabetical t)
-(setq org-hide-emphasis-markers t)
-(setq org-hide-macro-markers t)
-(setq org-hide-leading-stars nil)
+(setq org-structure-template-alist
+        '(("s" . "src")
+          ("S" . "src sh")
+          ("E" . "src emacs-lisp")
+          ("e" . "example")
+          ("q" . "quote")
+          ("v" . "verse")
+          ("V" . "verbatim")
+          ("c" . "center")
+          ("C" . "comment")))
+(setq org-catch-invisible-edits 'show)
 (setq org-modules '(ol-info ol-eww))
-(setq org-fontify-quote-and-verse-blocks t)
-(setq org-default-notes-file "~/Sync/inbox/notes.org")
 
-(add-hook 'org-follow-link-hook #'prot-pulse-recentre-top)
+;;;;;; TODO
 
-(setq org-cite-global-bibliography
-      '("~/Sync/bibliography/bibliography.bib"))
+(setq org-enforce-todo-dependencies t)
+(setq org-enforce-todo-checkbox-dependencies t)
+(setq org-track-ordered-property-with-tag t)
+
+;;;;;; Capture
 
 (setq org-capture-templates
-      '(("n" "Note" entry (file "") "* %U\n\n%?" :empty-lines-before 1)))
+      `(("n" "Note" entry
+         (file "")
+         ,(concat "* %U\n"
+                  "\n"
+                  "%i\n"
+                  "%?\n"
+                  "%l")
+         :empty-lines-after 1)))
+
+;;;;;; Agenda
+
+;;;;;;; Basic Agenda Setup
+
+(setq org-default-notes-file "~/Sync/inbox/notes.org")
+(setq org-agenda-window-setup 'current-window)
+
+;;;;;;; Agenda View
+
+(setq org-agenda-sorting-strategy
+      '((agenda habit-down time-up deadline-up priority-down)
+        (todo priority-down timestamp-up)
+        (tags priority-down category-keep)
+        (search category-keep)))
+
+(defun dp-org-inherited-priority (s)
+  "Make subtask S inherit the priority of its parent."
+  (cond
+   ;; Priority cookie in this heading.
+   ((string-match org-priority-regexp s)
+    (* 1000 (- org-priority-lowest
+               (org-priority-to-value (match-string 2 s)))))
+   ;; No priority cookie, but already at highest level.
+   ((not (org-up-heading-safe))
+    (* 1000 (- org-priority-lowest org-priority-default)))
+   ;; Look for the parent's priority.
+   (t
+    (dp-org-inherited-priority (org-get-heading)))))
+
+(setq org-priority-get-priority-function
+      #'dp-org-inherited-priority)
+
+;;;;;;; Agenda Marks
+
+(setq org-agenda-bulk-mark-char "#")
+
+;;;;;;; Agenda Diary Entries
+
+(setq org-agenda-include-diary t)
+
+;;;;;;; Agenda Items With Scheduled and Deadline Timestamps
+
+(setq org-deadline-warning-days 5)
+(setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+(setq org-agenda-skip-timestamp-if-deadline-is-shown t)
+(setq org-agenda-skip-deadline-prewarning-if-scheduled 1)
+(setq org-agenda-search-headline-for-time nil)
+(setq org-scheduled-past-days 365)
+(setq org-deadline-past-days 365)
+(setq org-agenda-time-leading-zero t)
+(setq org-agenda-current-time-string
+      (concat "Now " (make-string 70 ?-)))
+(setq org-agenda-time-grid
+      '((daily today require-timed)
+        (0600 0700 0800 0900 1000 1100
+              1200 1300 1400 1500 1600
+              1700 1800 1900 2000 2100)
+        " ....." "-----------------"))
+
+;;;;;;; Agenda Global To-Do List
+
+(setq org-agenda-todo-ignore-scheduled t)
 
 ;;;;;; Hooks and Key Bindings
 
-(dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
+(dolist (hook '(org-agenda-after-show-hook
+                org-follow-link-hook))
   (add-hook hook #'pulsar-recenter-top)
   (add-hook hook #'pulsar-reveal-entry))
 
+;; This is necessary because "C-," is my binding for activating Avy.
 (defun dp-org-remove-embark-binding ()
-  "Remove local binding \"C-,\" from Org Mode.
-
-This is necessary because \"C-,\" is bound globally to `embark-act’."
+  "Remove local binding \"C-,\" from Org Mode."
   (keymap-unset org-mode-map "C-,"))
 
 (add-hook 'org-mode-hook #'dp-org-remove-embark-binding)
 
+(keymap-set global-map "C-c l" #'org-store-link)
 (keymap-set org-mode-map "C-c L" #'org-toggle-link-display)
 
 ;;;;;; Prettier Org Constructs (org-modern.el)
@@ -1021,44 +1104,6 @@ This is necessary because \"C-,\" is bound globally to `embark-act’."
   (keymap-set map "C-c d p" #'org-gtd-process-inbox)
   (keymap-set map "C-c d s" #'org-gtd-show-stuck-projects))
 (keymap-set org-gtd-process-map "C-c c" #'org-gtd-choose)
-
-;;;;;; Org Agenda
-
-(setq org-agenda-window-setup 'current-window)
-
-(setq org-agenda-sorting-strategy
-      '((agenda habit-down time-up deadline-up priority-down)
-        (todo priority-down timestamp-up)
-        (tags priority-down category-keep)
-        (search category-keep)))
-
-(defun dp-org-inherited-priority (s)
-  "Make subtask S inherit the priority of its parent."
-  (cond
-   ;; Priority cookie in this heading.
-   ((string-match org-priority-regexp s)
-    (* 1000 (- org-priority-lowest
-               (org-priority-to-value (match-string 2 s)))))
-   ;; No priority cookie, but already at highest level.
-   ((not (org-up-heading-safe))
-    (* 1000 (- org-priority-lowest org-priority-default)))
-   ;; Look for the parent's priority.
-   (t
-    (dp-org-inherited-priority (org-get-heading)))))
-
-(setq org-priority-get-priority-function
-      #'dp-org-inherited-priority)
-
-(setq org-agenda-bulk-mark-char "#")
-(setq org-agenda-include-diary t)
-(setq org-agenda-todo-ignore-scheduled t)
-(setq org-deadline-warning-days 5)
-(setq org-agenda-skip-scheduled-if-deadline-is-shown t)
-(setq org-agenda-skip-timestamp-if-deadline-is-shown t)
-(setq org-scheduled-past-days 365)
-(setq org-deadline-past-days 365)
-
-(add-hook 'org-agenda-mode-hook #'hl-line-mode)
 
 ;;;;;; Org Journal
 
