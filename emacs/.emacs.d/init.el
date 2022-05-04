@@ -308,7 +308,8 @@
 (keymap-set consult-narrow-map "?" #'consult-narrow-help)
 
 (setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
-(dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
+(dolist (fn '(pulsar-recenter-top
+              pulsar-reveal-entry))
   (add-hook 'consult-after-jump-hook fn))
 
 ;;;;;;; Switch to Directories (consult-dir.el)
@@ -324,7 +325,8 @@
 
 ;; Overrides `list-directory' in the `global-map', though I never used
 ;; that anyway.
-(dolist (map (list global-map minibuffer-local-filename-completion-map))
+(dolist (map '(global-map
+               minibuffer-local-filename-completion-map))
   (keymap-set map "C-x C-d" #'consult-dir))
 
 ;;;;;; Extended Minibuffer Actions (embark.el)
@@ -422,7 +424,10 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (require 'cape)
 
 (setq cape-dabbrev-min-length 3)
-(dolist (backend '(cape-symbol cape-keyword cape-file cape-dabbrev))
+(dolist (backend '(cape-symbol
+                   cape-keyword
+                   cape-file
+                   cape-dabbrev))
   (add-to-list 'completion-at-point-functions backend))
 
 ;;;;;;; Enhance Command-Line Completion (pcmpl-args)
@@ -1486,8 +1491,9 @@ must be installed."
    "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-citation"
    t))
 
-(keymap-set global-map "C-c z r" #'dp-insert-zotero-reference)
-(keymap-set global-map "C-c z c" #'dp-insert-zotero-citation)
+(let ((map global-map))
+  (keymap-set map "C-c z c" #'dp-insert-zotero-citation)
+  (keymap-set map "C-c z r" #'dp-insert-zotero-reference))
 
 ;;;;; Anki Card Creation
 
@@ -1747,7 +1753,8 @@ must be installed."
               (remove 'lines-tail whitespace-style)))
 
 ;; Long lines are allowed in certain modes.
-(dolist (hook '(markdown-mode-hook org-mode-hook))
+(dolist (hook '(markdown-mode-hook
+                org-mode-hook))
   (add-hook hook #'dp-whitespace-style-allow-long-lines))
 
 (let ((map global-map))
@@ -2017,7 +2024,8 @@ must be installed."
 (setq desktop-globals-to-clear nil)
 (setq desktop-restore-eager 0)
 (setq desktop-restore-frames nil)
-(dolist (symbol '(kill-ring log-edit-comment-ring))
+(dolist (symbol '(kill-ring
+                  log-edit-comment-ring))
   (add-to-list 'desktop-globals-to-save symbol))
 (desktop-save-mode 1)
 
