@@ -239,15 +239,10 @@
   (package-install 'vertico))
 (require 'vertico)
 
-(setq vertico-scroll-margin 0)
 (setq vertico-resize nil)
 (setq vertico-cycle t)
 
 (vertico-mode 1)
-
-(let ((map vertico-map))
-  (keymap-set map "M-," #'vertico-quick-insert)
-  (keymap-set map "M-." #'vertico-quick-exit))
 
 ;; This works with `file-name-shadow-mode'.  When you are in a
 ;; sub-directory and use, say, `find-file' to go to your home '~/' or
