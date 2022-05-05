@@ -323,11 +323,8 @@
                             consult-dir--source-project
                             consult-dir--source-recentf))
 
-;; Overrides `list-directory' in the `global-map', though I never used
-;; that anyway.
-(dolist (map '(global-map
-               minibuffer-local-filename-completion-map))
-  (keymap-set map "C-x C-d" #'consult-dir))
+(keymap-set global-map "C-x C-d" #'consult-dir)
+(keymap-set minibuffer-local-filename-completion-map "C-x C-d" #'consult-dir)
 
 ;;;;;; Extended Minibuffer Actions (embark.el)
 
