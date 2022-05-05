@@ -1055,12 +1055,13 @@ sure this is a good approach."
   (add-hook hook #'pulsar-recenter-top)
   (add-hook hook #'pulsar-reveal-entry))
 
-;; This is necessary because "C-," is my binding for activating Avy.
-(defun dp-org-remove-embark-binding ()
-  "Remove local binding \"C-,\" from Org Mode."
+(defun dp-org-enable-avy-binding ()
+  "Remove local binding \"C-,\" from Org Mode.
+
+\"C-,\" is my binding for activating Avy."
   (keymap-unset org-mode-map "C-,"))
 
-(add-hook 'org-mode-hook #'dp-org-remove-embark-binding)
+(add-hook 'org-mode-hook #'dp-org-enable-avy-binding)
 
 (keymap-set global-map "C-c l" #'org-store-link)
 (keymap-set org-mode-map "C-c L" #'org-toggle-link-display)
