@@ -2,24 +2,23 @@
 #
 # Connect to or disconnect from an external monitor.
 #
-# NOTE: Assumes the external monitor is connected via DisplayPort and is
-# therefore named DP-1.
+# NOTE: Assumes the external monitor is connected via DisplayPort and
+# named DP-1.
 
 _external_is_connected () {
 	xrandr --query | grep -q 'DP-1 connected'
 }
 
-_switch() {
-	xrandr --output "$1" --off
-	xrandr --output "$2" --auto --primary
+_external () {
+	xrandr --output DP-1 \
+	       --mode 1920x1080 \
+	       "$@"
 }
 
-_switch_to_external () {
-	_switch LVDS-1 DP-1
-}
-
-_switch_to_built_in () {
-	_switch DP-1 LVDS-1
+_laptop () {
+	xrandr --output LVDS-1 \
+	       --mode 1600x900 \
+	       "$@"
 }
 
 _reconfigure_wallpaper () {
@@ -27,8 +26,11 @@ _reconfigure_wallpaper () {
 }
 
 if _external_is_connected; then
-	_switch_to_external
+	_external --primary
+	_laptop
 else
-	_switch_to_built_in
+	_laptop --primary
+	_external --off
 fi
+
 _reconfigure_wallpaper
