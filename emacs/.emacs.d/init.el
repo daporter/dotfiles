@@ -954,6 +954,9 @@ sure this is a good approach."
 
 (setq org-M-RET-may-split-line '((default . nil)))
 (setq org-list-allow-alphabetical t)
+(setq org-catch-invisible-edits 'show)
+(setq org-hide-emphasis-markers t)
+(setq org-modules '(ol-info ol-eww))
 (setq org-structure-template-alist
         '(("s" . "src")
           ("S" . "src sh")
@@ -964,8 +967,6 @@ sure this is a good approach."
           ("V" . "verbatim")
           ("c" . "center")
           ("C" . "comment")))
-(setq org-catch-invisible-edits 'show)
-(setq org-modules '(ol-info ol-eww))
 
 ;;;;;; TODO
 
