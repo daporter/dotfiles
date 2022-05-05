@@ -2053,6 +2053,14 @@ must be installed."
 
 (add-hook 'markdown-mode-hook #'flymake-markdownlint-setup)
 
+;;;;;; Flymake + CSS
+
+(unless (package-installed-p 'flymake-css)
+  (package-install 'flymake-css))
+(require 'flymake-css)
+
+(add-hook 'css-mode-hook 'flymake-css-load)
+
 ;;;;; Eldoc
 
 (global-eldoc-mode 1)
