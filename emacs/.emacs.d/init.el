@@ -1606,7 +1606,7 @@ must be installed."
         pdf-outline-minor-mode
         pdf-misc-size-indication-minor-mode
         pdf-occur-global-minor-mode))
-(setq pdf-view-display-size 'fit-height)
+(setq-default pdf-view-display-size 'fit-page)
 (setq pdf-view-max-image-width 1080)
 (setq pdf-outline-imenu-use-flat-menus t)
 
