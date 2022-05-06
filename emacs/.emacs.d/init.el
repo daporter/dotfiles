@@ -1140,9 +1140,11 @@ sure this is a good approach."
 (keymap-set org-mode-map "C-c z t" #'org-roam-buffer-toggle)
 
 (setq org-roam-capture-templates
-      '(("d" "default" plain "%?"
+      '(("d" "default" plain
+         (file "~/Sync/org/zettel_template.org")
          :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                            "#+title: ${title}\n\n<one-sentence description of the content>\n\n* References\n\n1. ")
+                            "#+title: ${title}\n")
+         :empty-lines-before 1
          :unnarrowed t)))
 
 ;;;;; Calendar and Diary
