@@ -1086,12 +1086,22 @@ sure this is a good approach."
 (setq org-edna-use-inheritance t)
 (org-edna-mode 1)
 
+(defun my/goto-first-agenda-item ()
+  "Move point to the beginning of the first agenda item."
+  (interactive)
+  (goto-char (point-min))
+  (org-agenda-next-item 1))
+
+;; Go to first agenda item after `org-gtd-engage’ is run.
+(advice-add 'org-gtd-engage :after #'my/goto-first-agenda-item)
+
 (let ((map global-map))
   (keymap-set map "C-c c" #'org-gtd-capture)
   (keymap-set map "C-c d e" #'org-gtd-engage)
   (keymap-set map "C-c d n" #'org-gtd-show-all-next)
   (keymap-set map "C-c d p" #'org-gtd-process-inbox)
   (keymap-set map "C-c d s" #'org-gtd-show-stuck-projects))
+(keymap-set org-agenda-mode-map "g" #'org-gtd-engage)
 (keymap-set org-gtd-process-map "C-c c" #'org-gtd-choose)
 
 ;;;;;; Org Journal
