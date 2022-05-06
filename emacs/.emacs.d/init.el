@@ -955,15 +955,15 @@ sure this is a good approach."
 (setq org-hide-emphasis-markers t)
 (setq org-modules '(ol-info ol-eww))
 (setq org-structure-template-alist
-        '(("s" . "src")
-          ("S" . "src sh")
-          ("E" . "src emacs-lisp")
-          ("e" . "example")
-          ("q" . "quote")
-          ("v" . "verse")
-          ("V" . "verbatim")
-          ("c" . "center")
-          ("C" . "comment")))
+      '(("s" . "src")
+        ("S" . "src sh")
+        ("E" . "src emacs-lisp")
+        ("e" . "example")
+        ("q" . "quote")
+        ("v" . "verse")
+        ("V" . "verbatim")
+        ("c" . "center")
+        ("C" . "comment")))
 
 ;;;;;; TODO
 
