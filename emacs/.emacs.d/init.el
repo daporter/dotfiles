@@ -932,15 +932,19 @@ sure this is a good approach."
 
 ;;;;;; Eshell
 
-(add-to-list 'eshell-modules-list 'eshell-tramp)
-(add-to-list 'eshell-modules-list 'eshell-elecslash)
-
 (setenv "PAGER" "cat") ; solves issues, such as with 'git log' and the default 'less'
 
 (setq password-cache-expiry 600)
-(setq eshell-hist-ignoredups t)
 
-(keymap-set eshell-mode-map "C-x DEL" #'eshell-kill-input)
+(defun my/setup-eshell ()
+  (progn
+    (setq eshell-hist-ignoredups t)
+    (dolist (module '(eshell-tramp
+		      eshell-elecslash))
+      (add-to-list 'eshell-modules-list module))
+    (keymap-set eshell-mode-map "C-x DEL" #'eshell-kill-input)))
+
+(add-hook 'eshell-load-hook #'my/setup-eshell)
 
 ;;;;; Org Mode
 
