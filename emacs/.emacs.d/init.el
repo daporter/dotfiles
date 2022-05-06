@@ -110,9 +110,8 @@
 
 (setq fontaine-presets
       '((regular
-         :default-height 105
-         :variable-pitch-family "IBM Plex Serif Text"
-         :line-spacing 0.2)))
+         :default-height 100
+         :variable-pitch-family "Sans Serif")))
 
 (fontaine-restore-latest-preset)
 
