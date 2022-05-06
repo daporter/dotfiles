@@ -1631,6 +1631,14 @@ must be installed."
 (add-hook 'pdf-tools-enabled-hook #'dp-pdf-tools-midnight-mode-toggle)
 (add-hook 'modus-themes-after-load-theme-hook #'dp-pdf-tools-midnight-mode-toggle)
 
+;;;;;; Open PDFs From Org Mode
+
+(unless (package-installed-p 'org-pdftools)
+  (package-install 'org-pdftools))
+(require 'org-pdftools)
+
+(add-hook 'org-mode-hook 'org-pdftools-setup-link)
+
 ;;;;; Viewing EPUBs
 
 (unless (package-installed-p 'nov)
