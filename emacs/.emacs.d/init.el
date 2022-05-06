@@ -1089,6 +1089,9 @@ sure this is a good approach."
 (setq org-edna-use-inheritance t)
 (org-edna-mode 1)
 
+;; I don’t use tags.
+(remove-hook 'org-gtd-process-item-hooks 'org-set-tags-command)
+
 (defun my/goto-first-agenda-item ()
   "Move point to the beginning of the first agenda item."
   (interactive)
