@@ -936,15 +936,16 @@ sure this is a good approach."
 
 (setq password-cache-expiry 600)
 
-(defun my/setup-eshell ()
-  (progn
-    (setq eshell-hist-ignoredups t)
-    (dolist (module '(eshell-tramp
-		      eshell-elecslash))
-      (add-to-list 'eshell-modules-list module))
-    (keymap-set eshell-mode-map "C-x DEL" #'eshell-kill-input)))
+(with-eval-after-load "esh-mode"
+  (keymap-set eshell-mode-map "C-x DEL" #'eshell-kill-input))
 
-(add-hook 'eshell-load-hook #'my/setup-eshell)
+(with-eval-after-load "em-hist"
+  (setq eshell-hist-ignoredups t))
+
+(with-eval-after-load "esh-module"
+  (dolist (module '(eshell-tramp
+                    eshell-elecslash))
+    (add-to-list 'eshell-modules-list module)))
 
 ;;;;; Org Mode
 
