@@ -962,6 +962,13 @@ sure this is a good approach."
                     eshell-elecslash))
     (add-to-list 'eshell-modules-list module)))
 
+;;;;; Sudo
+
+(unless (package-installed-p 'sudo-edit)
+  (package-install 'sudo-edit))
+
+(define-key embark-file-map (kbd "S") 'sudo-edit-find-file)
+
 ;;;;; Org Mode
 
 (require 'org)
