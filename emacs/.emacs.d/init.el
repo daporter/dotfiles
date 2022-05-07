@@ -642,8 +642,23 @@ Useful for prompts such as `eval-expression' and `shell-command'."
         (?- aw-split-window-vert "Split window vertically")
         (?| aw-split-window-horz "Split window horizontally")
         (?? aw-show-dispatch-help)))
+(setq aw-dispatch-always t)
 
-(keymap-set global-map "C-x o" #'ace-window)
+(keymap-set global-map "M-o" #'ace-window)
+
+(eval-when-compile
+  (defmacro my/embark-ace-action (fn)
+    `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
+       (interactive)
+       (with-demoted-errors "%s"
+         (require 'ace-window)
+         (let ((aw-dispatch-always t))
+           (aw-switch-to-window (aw-select nil))
+           (call-interactively (symbol-function ',fn)))))))
+
+(keymap-set embark-file-map     "o" (my/embark-ace-action find-file))
+(keymap-set embark-buffer-map   "o" (my/embark-ace-action switch-to-buffer))
+(keymap-set embark-bookmark-map "o" (my/embark-ace-action bookmark-jump))
 
 ;;;; Applications and Utilities
 
