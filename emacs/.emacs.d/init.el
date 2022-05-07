@@ -285,25 +285,25 @@
 (require 'consult-imenu) ; the `imenu' extension is in its own file
 
 (let ((map global-map))
-  (keymap-set map "C-x r b" #'consult-bookmark) ; override `bookmark-jump'
-  (keymap-set map "C-x M-:" #'consult-complex-command)
-  (keymap-set map "C-x M-m" #'consult-minor-mode-menu)
-  (keymap-set map "C-x M-k" #'consult-kmacro)
   (keymap-set map "<remap> <goto-line>" #'consult-goto-line)
-  (keymap-set map "M-K" #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
+  (keymap-set map "C-x M-:" #'consult-complex-command)
+  (keymap-set map "C-x M-k" #'consult-kmacro)
+  (keymap-set map "C-x M-m" #'consult-minor-mode-menu)
+  (keymap-set map "C-x r b" #'consult-bookmark) ; override `bookmark-jump'
+  (keymap-set map "C-x r r" #'consult-register) ; Use the register's prefix
   (keymap-set map "M-F" #'consult-focus-lines) ; same principle
+  (keymap-set map "M-K" #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
+  (keymap-set map "M-s M-!" #'consult-flymake)
   (keymap-set map "M-s M-b" #'consult-buffer)
+  (keymap-set map "M-s M-c" #'consult-locate)
   (keymap-set map "M-s M-f" #'consult-find)
   (keymap-set map "M-s M-g" #'consult-grep)
   (keymap-set map "M-s M-h" #'consult-history)
   (keymap-set map "M-s M-i" #'consult-imenu)
   (keymap-set map "M-s M-l" #'consult-line)
   (keymap-set map "M-s M-m" #'consult-mark)
-  (keymap-set map "M-s M-s" #'consult-outline)
-  (keymap-set map "M-s M-y" #'consult-yank-pop)
-  (keymap-set map "C-x r r" #'consult-register) ; Use the register's prefix
-  (keymap-set map "M-s M-!" #'consult-flymake)
-  (keymap-set map "M-s M-b" #'consult-buffer))
+  (keymap-set map "M-s M-o" #'consult-outline)
+  (keymap-set map "M-s M-y" #'consult-yank-pop))
 (keymap-set consult-narrow-map "?" #'consult-narrow-help)
 
 (setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
