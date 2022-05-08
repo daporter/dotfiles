@@ -2008,8 +2008,6 @@ must be installed."
 
 ;;;;;; Flymake
 
-(autoload #'flymake-mode "flymake")
-
 (setq flymake-fringe-indicator-position 'left-fringe)
 (setq flymake-suppress-zero-counters t)
 (setq flymake-no-changes-timeout nil)
