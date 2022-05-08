@@ -1831,17 +1831,6 @@ must be installed."
 ;;;;; Outline Mode
 
 (setq-default outline-minor-mode-highlight 'override)
-(setq-default outline-minor-mode-cycle t)
-(let ((map outline-minor-mode-map))
-  (keymap-set map "C-<tab>" #'outline-cycle)
-  (keymap-set map "<backtab>" #'outline-cycle-buffer) ; S-TAB
-  (keymap-set map "C-c C-n" #'outline-next-visible-heading)
-  (keymap-set map "C-c C-p" #'outline-previous-visible-heading)
-  (keymap-set map "C-c C-f" #'outline-forward-same-level)
-  (keymap-set map "C-c C-b" #'outline-backward-same-level)
-  (keymap-set map "C-c C-a" #'outline-show-all)
-  (keymap-set map "C-c C-o" #'outline-hide-other)
-  (keymap-set map "C-c C-u" #'outline-up-heading))
 
 ;;;;; Cursor and Mouse Settings
 
