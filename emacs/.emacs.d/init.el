@@ -30,14 +30,14 @@
 
 (setq initial-buffer-choice t)          ; always start with *scratch*
 
-(defun dp-quit-or-restart (&optional restart)
+(defun my/quit-or-restart (&optional restart)
   "Quit Emacs or restart it with RESTART."
   (interactive "P")
   (if restart
       (restart-emacs)
     (save-buffers-kill-terminal t)))
 
-(keymap-set global-map "C-x C-c" #'dp-quit-or-restart)
+(keymap-set global-map "C-x C-c" #'my/quit-or-restart)
 (keymap-set global-map "C-c p" #'package-list-packages)
 
 ;;;; Base Settings
@@ -1016,7 +1016,7 @@ sure this is a good approach."
         (tags priority-down category-keep)
         (search category-keep)))
 
-(defun dp-org-inherited-priority (s)
+(defun my/org-inherited-priority (s)
   "Make subtask S inherit the priority of its parent."
   (cond
    ;; Priority cookie in this heading.
@@ -1028,10 +1028,10 @@ sure this is a good approach."
     (* 1000 (- org-priority-lowest org-priority-default)))
    ;; Look for the parent's priority.
    (t
-    (dp-org-inherited-priority (org-get-heading)))))
+    (my/org-inherited-priority (org-get-heading)))))
 
 (setq org-priority-get-priority-function
-      #'dp-org-inherited-priority)
+      #'my/org-inherited-priority)
 
 ;;;;;;; Agenda Marks
 
@@ -1071,13 +1071,13 @@ sure this is a good approach."
   (add-hook hook #'pulsar-recenter-top)
   (add-hook hook #'pulsar-reveal-entry))
 
-(defun dp-org-enable-avy-binding ()
+(defun my/org-enable-avy-binding ()
   "Remove local binding \"C-,\" from Org Mode.
 
 \"C-,\" is my binding for activating Avy."
   (keymap-unset org-mode-map "C-,"))
 
-(add-hook 'org-mode-hook #'dp-org-enable-avy-binding)
+(add-hook 'org-mode-hook #'my/org-enable-avy-binding)
 
 (keymap-set global-map "C-c l" #'org-store-link)
 
@@ -1393,19 +1393,19 @@ sure this is a good approach."
           (lambda ()
             (setq-local shr-width (current-fill-column))))
 
-(defun dp-elfeed-load-db-and-start ()
+(defun my/elfeed-load-db-and-start ()
   "Load the Elfeed db from disk and start Elfeed."
   (interactive)
   (elfeed-db-load)
   (elfeed))
 
-(defun dp-elfeed-save-db-and-bury ()
+(defun my/elfeed-save-db-and-bury ()
   "Save the Elfeed db to disk and bury the Elfeed buffer."
   (interactive)
   (elfeed-db-unload)
   (quit-window))
 
-(keymap-set global-map "C-c e" 'dp-elfeed-load-db-and-start)
+(keymap-set global-map "C-c e" 'my/elfeed-load-db-and-start)
 
 (with-eval-after-load 'elfeed
   (progn
@@ -1425,7 +1425,7 @@ sure this is a good approach."
   (let ((map elfeed-search-mode-map))
     (keymap-set map "s" #'prot-elfeed-search-tag-filter)
     (keymap-set map "o" #'prot-elfeed-search-open-other-window)
-    (keymap-set map "q" #'dp-elfeed-save-db-and-bury)
+    (keymap-set map "q" #'my/elfeed-save-db-and-bury)
     (keymap-set map "v" #'prot-elfeed-mpv-dwim)
     (keymap-set map "+" #'prot-elfeed-toggle-tag))
   (let ((map elfeed-show-mode-map))
@@ -1539,7 +1539,7 @@ sure this is a good approach."
 
 ;;;;; Zotero Reference Manager
 
-(defun dp-insert-zotero-reference ()
+(defun my/insert-zotero-reference ()
   "Invoke the Zotero reference chooser and insert the chosen reference.
 Note: Zotero must be running and the `Better BibTeX' extension
 must be installed."
@@ -1548,7 +1548,7 @@ must be installed."
    "curl -s http://127.0.0.1:23119/better-bibtex/cayw?format=formatted-bibliography"
    t))
 
-(defun dp-insert-zotero-citation ()
+(defun my/insert-zotero-citation ()
   "Invoke the Zotero reference chooser and insert the chosen citation.
 Note: Zotero must be running and the `Better BibTeX' extension
 must be installed."
@@ -1558,8 +1558,8 @@ must be installed."
    t))
 
 (let ((map global-map))
-  (keymap-set map "C-c z c" #'dp-insert-zotero-citation)
-  (keymap-set map "C-c z r" #'dp-insert-zotero-reference))
+  (keymap-set map "C-c z c" #'my/insert-zotero-citation)
+  (keymap-set map "C-c z r" #'my/insert-zotero-reference))
 
 ;;;;; Anki Card Creation
 
@@ -1644,22 +1644,22 @@ must be installed."
 
 ;; The following functions and hooks are adapted from the manual modus-themes.
 
-(defun dp-pdf-tools-backdrop ()
+(defun my/pdf-tools-backdrop ()
   "Set backdrop distinct from the background of the PDF page."
   (face-remap-add-relative
    'default
    `(:background ,(modus-themes-color 'bg-alt))))
 
-(defun dp-pdf-tools-midnight-mode-toggle ()
+(defun my/pdf-tools-midnight-mode-toggle ()
   "Make pdf-tools adapt to `modus-themes-toggle'."
   (when (derived-mode-p 'pdf-view-mode)
     (if (eq (car custom-enabled-themes) 'modus-vivendi)
         (pdf-view-midnight-minor-mode 1)
       (pdf-view-midnight-minor-mode -1))
-    (dp-pdf-tools-backdrop)))
+    (my/pdf-tools-backdrop)))
 
-(add-hook 'pdf-tools-enabled-hook #'dp-pdf-tools-midnight-mode-toggle)
-(add-hook 'modus-themes-after-load-theme-hook #'dp-pdf-tools-midnight-mode-toggle)
+(add-hook 'pdf-tools-enabled-hook #'my/pdf-tools-midnight-mode-toggle)
+(add-hook 'modus-themes-after-load-theme-hook #'my/pdf-tools-midnight-mode-toggle)
 
 ;;;;;; Open PDFs From Org Mode
 
@@ -1814,7 +1814,7 @@ must be installed."
         (newline-mark 10 [8617 10])
         (lines-tail 10 [8617 10])))
 
-(defun dp-whitespace-style-allow-long-lines ()
+(defun my/whitespace-style-allow-long-lines ()
   "Set `whitespace-style’ to allow long lines."
   (setq-local whitespace-style
               (remove 'lines-tail whitespace-style)))
@@ -1822,7 +1822,7 @@ must be installed."
 ;; Long lines are allowed in certain modes.
 (dolist (hook '(markdown-mode-hook
                 org-mode-hook))
-  (add-hook hook #'dp-whitespace-style-allow-long-lines))
+  (add-hook hook #'my/whitespace-style-allow-long-lines))
 
 (let ((map global-map))
   (keymap-set map "<f6>" #'prot-sideline-negative-space-toggle)
@@ -1890,12 +1890,12 @@ must be installed."
 
 ;;;;;; Emacs Lisp
 
-(defun dp-setup-emacs-lisp-mode ()
+(defun my/setup-emacs-lisp-mode ()
   "Set up Emacs Lisp mode according to my preferences."
   (setq outline-regexp ";;;+ [^ ]")
   (outline-minor-mode 1))
 
-(add-hook 'emacs-lisp-mode-hook #'dp-setup-emacs-lisp-mode)
+(add-hook 'emacs-lisp-mode-hook #'my/setup-emacs-lisp-mode)
 
 ;;;;;; Markdown
 
@@ -1948,7 +1948,7 @@ must be installed."
 (setq-default indent-tabs-mode nil)
 (setq backward-delete-char-untabify-method nil)
 
-(defun dp-turn-on-indent-tabs-mode ()
+(defun my/turn-on-indent-tabs-mode ()
   "Enable `indent-tabs-mode’."
   (setq indent-tabs-mode t))
 
@@ -1957,13 +1957,13 @@ must be installed."
                 python-mode-hook
                 c-mode-common-hook
                 nxml-mode-hook))
-  (add-hook hook #'dp-turn-on-indent-tabs-mode))
+  (add-hook hook #'my/turn-on-indent-tabs-mode))
 
-(defun dp-set-tab-width-nxml-mode ()
+(defun my/set-tab-width-nxml-mode ()
   "Set my preferred ‘tab-width’ for `nxml-mode’."
   (setq tab-width 2))
 
-(add-hook 'nxml-mode-hook #'dp-set-tab-width-nxml-mode)
+(add-hook 'nxml-mode-hook #'my/set-tab-width-nxml-mode)
 
 (setq-default tab-always-indent 'complete)
 (setq-default tab-first-completion 'word-or-paren-or-punct)
@@ -1978,7 +1978,7 @@ must be installed."
 
 (smart-tabs-insinuate 'c 'c++ 'java 'javascript 'cperl 'python 'ruby 'sh 'nxml)
 
-(defun dp-whitespace-style-ignore-indentation ()
+(defun my/whitespace-style-ignore-indentation ()
   "Set `whitespace-style’ to ignore ignore indentation."
   (setq-local whitespace-style
               (remove 'indentation whitespace-style)))
@@ -1988,7 +1988,7 @@ must be installed."
 (dolist (hook '(sh-mode-hook
                 python-mode-hook
                 nxml-mode-hook))
-  (add-hook hook #'dp-whitespace-style-ignore-indentation))
+  (add-hook hook #'my/whitespace-style-ignore-indentation))
 
 ;;;;; Spell Checking
 
