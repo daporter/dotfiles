@@ -886,9 +886,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (setq magit-define-global-key-bindings nil)
 (keymap-set global-map "C-c g" #'magit-status)
 
-(with-eval-after-load "magit"
-  (require 'git-commit))
-
 (setq git-commit-summary-max-length 50)
 (setq git-commit-known-pseudo-headers
       '("Signed-off-by"
@@ -1329,10 +1326,10 @@ sure this is a good approach."
 (unless (package-installed-p 'ebdb)
   (package-install 'ebdb))
 
-(with-eval-after-load "ebdb"
-  (progn (require 'ebdb-message)
-         (require 'ebdb-notmuch)
-         (setq ebdb-mua-default-formatter ebdb-default-multiline-formatter)))
+(require 'ebdb-message)
+(require 'ebdb-notmuch)
+
+(setq ebdb-mua-default-formatter #'ebdb-default-multiline-formatter)
 
 (setq ebdb-sources "~/Sync/emacs/ebdb.gpg")
 (setq ebdb-permanent-ignores-file "~/Sync/emacs/ebdb-permanent-ignores")
@@ -1360,7 +1357,7 @@ sure this is a good approach."
 
 (setq ebdb-use-diary nil)
 
-(with-eval-after-load "ebdb"
+(with-eval-after-load "ebdb-com"
   (let ((map ebdb-mode-map))
     (keymap-set map "D" #'ebdb-delete-field-or-record)
     (keymap-set map "M" #'ebdb-mail) ; disables `ebdb-mail-each'
@@ -1393,6 +1390,8 @@ sure this is a good approach."
 (add-hook 'elfeed-show-mode-hook
           (lambda ()
             (setq-local shr-width (current-fill-column))))
+
+(autoload #'elfeed-db-load "elfeed")
 
 (defun my/elfeed-load-db-and-start ()
   "Load the Elfeed db from disk and start Elfeed."
@@ -2008,6 +2007,8 @@ must be installed."
 ;;;;; Code and Text Linters
 
 ;;;;;; Flymake
+
+(autoload #'flymake-mode "flymake")
 
 (setq flymake-fringe-indicator-position 'left-fringe)
 (setq flymake-suppress-zero-counters t)
