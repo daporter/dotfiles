@@ -906,7 +906,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (setq magit-diff-refine-hunk t)
 
 (setq magit-repository-directories
-      '(("~/src" . 1)))
+      '(("~/src" . 1)
+        ("~/dotfiles" . 0)))
 
 ;;;;;; Smerge and Ediff
 
