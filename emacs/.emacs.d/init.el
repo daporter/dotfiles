@@ -805,15 +805,15 @@ Useful for prompts such as `eval-expression' and `shell-command'."
       (keymap-set prot-vc-git-branch-map "l" #'vc-print-branch-log))
     (let ((prot-vc-git-stash-map (make-sparse-keymap)))
       (keymap-set map "S" prot-vc-git-stash-map)
-      (keymap-set prot-vc-git-stash-map "c" 'vc-git-stash) ; "create" named stash
-      (keymap-set prot-vc-git-stash-map "s" 'vc-git-stash-snapshot))))
+      (keymap-set prot-vc-git-stash-map "c" #'vc-git-stash) ; "create" named stash
+      (keymap-set prot-vc-git-stash-map "s" #'vc-git-stash-snapshot))))
 (with-eval-after-load "vc-git"
   (let ((map vc-git-stash-shared-map))
-    (keymap-set map "a" 'vc-git-stash-apply-at-point)
-    (keymap-set map "c" 'vc-git-stash) ; "create" named stash
-    (keymap-set map "D" 'vc-git-stash-delete-at-point)
-    (keymap-set map "p" 'vc-git-stash-pop-at-point)
-    (keymap-set map "s" 'vc-git-stash-snapshot)))
+    (keymap-set map "a" #'vc-git-stash-apply-at-point)
+    (keymap-set map "c" #'vc-git-stash) ; "create" named stash
+    (keymap-set map "D" #'vc-git-stash-delete-at-point)
+    (keymap-set map "p" #'vc-git-stash-pop-at-point)
+    (keymap-set map "s" #'vc-git-stash-snapshot)))
 (with-eval-after-load "vc-annotate"
   (let ((map vc-annotate-mode-map))
     (keymap-set map "M-q" #'vc-annotate-toggle-annotation-visibility)
@@ -916,8 +916,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (setq ediff-make-buffers-readonly-at-startup nil)
 (setq ediff-merge-revisions-with-ancestor t)
 (setq ediff-show-clashes-only t)
-(setq ediff-split-window-function 'split-window-horizontally)
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(setq ediff-split-window-function #'split-window-horizontally)
+(setq ediff-window-setup-function #'ediff-setup-windows-plain)
 
 ;; Tweak those for safer identification and removal
 (setq ediff-combination-pattern
@@ -961,7 +961,7 @@ sure this is a good approach."
   (package-install 'sudo-edit))
 
 (with-eval-after-load "embark"
-  (define-key embark-file-map (kbd "S") 'sudo-edit-find-file))
+  (keymap-set embark-file-map "S" #'sudo-edit-find-file))
 
 ;;;;; Org Mode
 
@@ -1105,7 +1105,7 @@ sure this is a good approach."
 (org-edna-mode 1)
 
 ;; I don’t use tags.
-(remove-hook 'org-gtd-process-item-hooks 'org-set-tags-command)
+(remove-hook 'org-gtd-process-item-hooks #'org-set-tags-command)
 
 (defun my/goto-first-agenda-item ()
   "Move point to the beginning of the first agenda item."
@@ -1191,12 +1191,12 @@ sure this is a good approach."
 (setq diary-abbreviated-year-flag nil)
 
 (add-hook 'calendar-today-visible-hook #'calendar-mark-today)
-(add-hook 'diary-list-entries-hook 'diary-sort-entries t)
+(add-hook 'diary-list-entries-hook #'diary-sort-entries t)
 (add-hook 'diary-mode-hook #'goto-address-mode) ; buttonise plain text links
 
 ;; These presuppose (setq diary-display-function #'diary-fancy-display)
-(add-hook 'diary-list-entries-hook 'diary-include-other-diary-files)
-(add-hook 'diary-mark-entries-hook 'diary-mark-included-diary-files)
+(add-hook 'diary-list-entries-hook #'diary-include-other-diary-files)
+(add-hook 'diary-mark-entries-hook #'diary-mark-included-diary-files)
 
 (setq appt-warning-time-regexp "appt \\([0-9]+\\)")
 (setq appt-message-warning-time 15)
@@ -1303,7 +1303,7 @@ sure this is a good approach."
 (setq notmuch-draft-folder "Drafts")
 
 ;; Email Composition
-(setq notmuch-mua-cite-function 'message-cite-original-without-signature)
+(setq notmuch-mua-cite-function #'message-cite-original-without-signature)
 (setq notmuch-mua-user-agent-function #'notmuch-mua-user-agent-full)
 
 ;; Reading Messages
@@ -1321,7 +1321,7 @@ sure this is a good approach."
 
 ;;;;;; Sending Email
 
-(setq send-mail-function 'sendmail-send-it)
+(setq send-mail-function #'sendmail-send-it)
 
 ;;;;;; EBDB
 
@@ -1405,7 +1405,7 @@ sure this is a good approach."
   (elfeed-db-unload)
   (quit-window))
 
-(keymap-set global-map "C-c e" 'my/elfeed-load-db-and-start)
+(keymap-set global-map "C-c e" #'my/elfeed-load-db-and-start)
 
 (with-eval-after-load 'elfeed
   (progn
@@ -1447,8 +1447,8 @@ sure this is a good approach."
 
 ;;;;; Simple HTML Renderer (shr) and EWW
 
-(setq browse-url-browser-function 'eww-browse-url)
-(setq browse-url-secondary-browser-function 'browse-url-default-browser)
+(setq browse-url-browser-function #'eww-browse-url)
+(setq browse-url-secondary-browser-function #'browse-url-default-browser)
 
 (setq shr-use-colors nil)             ; t is bad for accessibility
 (setq shr-use-fonts nil)              ; t is not for me
@@ -1535,7 +1535,7 @@ sure this is a good approach."
               "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
               "\\)"))
 
-(keymap-set global-map "C-c z d" 'deft)
+(keymap-set global-map "C-c z d" #'deft)
 
 ;;;;; Zotero Reference Manager
 
@@ -1566,9 +1566,9 @@ must be installed."
 (unless (package-installed-p 'anki-editor)
   (package-install 'anki-editor))
 
-(keymap-set org-mode-map "C-c a n" 'anki-editor-insert-note)
-(keymap-set org-mode-map "C-c a c" 'anki-editor-cloze-region)
-(keymap-set org-mode-map "C-c a p" 'anki-editor-push-notes)
+(keymap-set org-mode-map "C-c a n" #'anki-editor-insert-note)
+(keymap-set org-mode-map "C-c a c" #'anki-editor-cloze-region)
+(keymap-set org-mode-map "C-c a p" #'anki-editor-push-notes)
 
 (define-skeleton anki-vocab-basic
   "Skeleton of an Anki Basic note for vocab."
@@ -1666,7 +1666,7 @@ must be installed."
 (unless (package-installed-p 'org-pdftools)
   (package-install 'org-pdftools))
 
-(add-hook 'org-mode-hook 'org-pdftools-setup-link)
+(add-hook 'org-mode-hook #'org-pdftools-setup-link)
 
 ;;;;; Viewing EPUBs
 
@@ -1928,7 +1928,10 @@ must be installed."
 
 (setq titlecase-style 'mla)
 
-(keymap-set global-map "C-c t" 'titlecase-dwim)
+(with-eval-after-load "embark"
+  (progn
+    (keymap-set embark-heading-map "t" #'titlecase-line)
+    (keymap-set embark-region-map "t" #'titlecase-region)))
 
 ;;;;; Electric Behaviour
 
@@ -2040,7 +2043,7 @@ must be installed."
   (package-install 'flymake-diagnostic-at-point))
 
 (setq flymake-diagnostic-at-point-display-diagnostic-function
-      'flymake-diagnostic-at-point-display-minibuffer)
+      #'flymake-diagnostic-at-point-display-minibuffer)
 
 (add-hook 'prog-mode-hook #'flymake-mode)
 
