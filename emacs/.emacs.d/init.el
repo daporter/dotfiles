@@ -46,7 +46,6 @@
 
 (unless (package-installed-p 'pulsar)
   (package-install 'pulsar))
-(require 'pulsar)
 
 (pulsar-global-mode 1)
 (keymap-set global-map "C-x l" #'pulsar-pulse-line) ; override `count-lines-page'
@@ -61,7 +60,6 @@
 
 (unless (package-installed-p 'exec-path-from-shell)
   (package-install 'exec-path-from-shell))
-(require 'exec-path-from-shell)
 
 (setq exec-path-from-shell-variables
       '("PATH" "MANPATH" "SSH_AUTH_SOCK"))
@@ -94,7 +92,6 @@
 
 (unless (package-installed-p 'lin)
   (package-install 'lin))
-(require 'lin)
 
 (lin-global-mode 1)
 
@@ -102,7 +99,6 @@
 
 (unless (package-installed-p 'fontaine)
   (package-install 'fontaine))
-(require 'fontaine)
 
 (setq-default text-scale-remap-header-line t)
 
@@ -139,7 +135,6 @@
 
 (unless (package-installed-p 'which-key)
   (package-install 'which-key))
-(require 'which-key)
 
 (setq which-key-idle-delay 0.8)
 (setq which-key-idle-secondary-delay 0.05)
@@ -155,7 +150,6 @@
 
 (unless (package-installed-p 'orderless)
   (package-install 'orderless))
-(require 'orderless)
 
 (setq orderless-matching-styles
       '(orderless-prefixes
@@ -172,13 +166,13 @@
   (keymap-set map "SPC" nil)
   (keymap-set map "?" nil))
 
-(require 'prot-orderless)
+(with-eval-after-load "orderless"
+  (require 'prot-orderless))
 
 ;;;;;; Completion Annotations (Marginalia)
 
 (unless (package-installed-p 'marginalia)
   (package-install 'marginalia))
-(require 'marginalia)
 
 (marginalia-mode 1)
 
@@ -236,7 +230,6 @@
 
 (unless (package-installed-p 'vertico)
   (package-install 'vertico))
-(require 'vertico)
 
 (setq vertico-resize nil)
 (setq vertico-cycle t)
@@ -253,7 +246,6 @@
 
 (unless (package-installed-p 'consult)
   (package-install 'consult))
-(require 'consult)
 
 (setq consult-line-numbers-widen t)
 ;; (setq completion-in-region-function #'consult-completion-in-region)
@@ -282,7 +274,8 @@
 
 (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
 
-(require 'consult-imenu) ; the `imenu' extension is in its own file
+(with-eval-after-load "consult"
+  (require 'consult-imenu))
 
 (let ((map global-map))
   (keymap-set map "<remap> <goto-line>" #'consult-goto-line)
@@ -304,7 +297,9 @@
   (keymap-set map "M-s M-m" #'consult-mark)
   (keymap-set map "M-s M-o" #'consult-outline)
   (keymap-set map "M-s M-y" #'consult-yank-pop))
-(keymap-set consult-narrow-map "?" #'consult-narrow-help)
+
+(with-eval-after-load "consult"
+  (keymap-set consult-narrow-map "?" #'consult-narrow-help))
 
 (setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
 (dolist (fn '(pulsar-recenter-top
@@ -315,7 +310,6 @@
 
 (unless (package-installed-p 'consult-dir)
   (package-install 'consult-dir))
-(require 'consult-dir)
 
 (setq consult-dir-sources '(consult-dir--source-bookmark
                             consult-dir--source-default
@@ -329,7 +323,6 @@
 
 (unless (package-installed-p 'embark)
   (package-install 'embark))
-(require 'embark)
 
 (setq prefix-help-command #'embark-prefix-help-command)
 (setq embark-cycle-key (kbd "M-."))     ; see the `embark-act' key
@@ -349,16 +342,20 @@
 (keymap-set global-map "C-." #'embark-dwim) ; like left-click
 (keymap-set global-map "M-." #'embark-act)  ; like right-click
 (keymap-set global-map "C-h B" #'embark-bindings)
-(keymap-set embark-collect-mode-map "M-." #'embark-act)
-(keymap-set embark-symbol-map "k" #'describe-keymap)
+
+(with-eval-after-load "embark"
+  (progn
+    (keymap-set embark-collect-mode-map "M-." #'embark-act)
+    (keymap-set embark-symbol-map "k" #'describe-keymap)))
 
 (unless (package-installed-p 'embark-consult)
   (package-install 'embark-consult))
-(require 'embark-consult)
 
-(require 'prot-embark)
-(prot-embark-keymaps 1)
-(prot-embark-setup-packages 1)
+(with-eval-after-load "embark"
+  (progn
+    (require 'prot-embark)
+    (prot-embark-keymaps 1)
+    (prot-embark-setup-packages 1)))
 
 ;;;;;; Projects
 
@@ -390,7 +387,6 @@
 
 (unless (package-installed-p 'corfu)
   (package-install 'corfu))
-(require 'corfu)
 
 (global-corfu-mode 1)
 
@@ -407,7 +403,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (unless (package-installed-p 'cape)
   (package-install 'cape))
-(require 'cape)
 
 (setq cape-dabbrev-min-length 3)
 (dolist (backend '(cape-symbol
@@ -420,7 +415,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (unless (package-installed-p 'pcmpl-args)
   (package-install 'pcmpl-args))
-(require 'pcmpl-args)
 
 ;;;; Directory, Buffer, Window Management
 
@@ -452,27 +446,28 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 ;;;;;; Ibuffer and Extras
 
-(require 'ibuffer)
-(setq ibuffer-show-empty-filter-groups nil)
-(setq ibuffer-formats
-      '((mark modified read-only locked " "
-              (name 40 40 :left :elide)
-              " "
-              (size 9 -1 :right)
-              " "
-              (mode 16 16 :left :elide)
-              " " filename-and-process)
-        (mark " "
-              (name 16 -1)
-              " " filename)))
-(add-hook 'ibuffer-mode-hook #'hl-line-mode)
+(with-eval-after-load "ibuffer"
+  (progn
+    (setq ibuffer-show-empty-filter-groups nil)
+    (setq ibuffer-formats
+          '((mark modified read-only locked " "
+                  (name 40 40 :left :elide)
+                  " "
+                  (size 9 -1 :right)
+                  " "
+                  (mode 16 16 :left :elide)
+                  " " filename-and-process)
+            (mark " "
+                  (name 16 -1)
+                  " " filename)))
+    (let ((map ibuffer-mode-map))
+      (keymap-set map "* f" #'ibuffer-mark-by-file-name-regexp)
+      (keymap-set map "* g" #'ibuffer-mark-by-content-regexp) ; "g" is for "grep"
+      (keymap-set map "* n" #'ibuffer-mark-by-name-regexp)
+      (keymap-set map "s n" #'ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
+      (keymap-set map "/ g" #'ibuffer-filter-by-content))))
+
 (keymap-set global-map "C-x C-b" #'ibuffer)
-(let ((map ibuffer-mode-map))
-  (keymap-set map "* f" #'ibuffer-mark-by-file-name-regexp)
-  (keymap-set map "* g" #'ibuffer-mark-by-content-regexp) ; "g" is for "grep"
-  (keymap-set map "* n" #'ibuffer-mark-by-name-regexp)
-  (keymap-set map "s n" #'ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
-  (keymap-set map "/ g" #'ibuffer-filter-by-content))
 
 ;;;;; Window Configuration
 
@@ -587,7 +582,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (tab-bar-mode -1)                     ; see `prot-tab-status-line'
 (tab-bar-history-mode 1)
 
-(require 'prot-tab)
+(with-eval-after-load "tab-bar"
+  (require 'prot-tab))
 
 (setq tab-bar-format
       '(prot-tab-format-space-single
@@ -625,7 +621,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (unless (package-installed-p 'ace-window)
   (package-install 'ace-window))
-(require 'ace-window)
 
 (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n))
 (setq aw-dispatch-alist
@@ -656,9 +651,11 @@ Useful for prompts such as `eval-expression' and `shell-command'."
            (aw-switch-to-window (aw-select nil))
            (call-interactively (symbol-function ',fn)))))))
 
-(keymap-set embark-file-map     "o" (my/embark-ace-action find-file))
-(keymap-set embark-buffer-map   "o" (my/embark-ace-action switch-to-buffer))
-(keymap-set embark-bookmark-map "o" (my/embark-ace-action bookmark-jump))
+(with-eval-after-load "embark"
+  (progn
+    (keymap-set embark-file-map     "o" (my/embark-ace-action find-file))
+    (keymap-set embark-buffer-map   "o" (my/embark-ace-action switch-to-buffer))
+    (keymap-set embark-bookmark-map "o" (my/embark-ace-action bookmark-jump))))
 
 ;;;; Applications and Utilities
 
@@ -671,22 +668,20 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (add-hook 'bookmark-bmenu-mode-hook #'hl-line-mode)
 
-(require 'prot-bookmark)
-(prot-bookmark-extra-keywords 1)
+(with-eval-after-load "bookmark"
+  (progn
+    (require 'prot-bookmark)
+    (prot-bookmark-extra-keywords 1)))
 
 ;;;;; Focus Mode (logos.el)
 
 (unless (package-installed-p 'olivetti)
   (package-install 'olivetti))
-(require 'olivetti)
 
 (setq olivetti-body-width 80)
 
-(require 'outline)
-
 (unless (package-installed-p 'logos)
   (package-install 'logos))
-(require 'logos)
 
 (setq logos-outlines-are-pages t)
 
@@ -728,32 +723,24 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 ;; `prot-diff-modus-themes-diffs'
 (setq diff-font-lock-syntax 'hunk-also)
 
-(require 'prot-diff)
-(prot-diff-modus-themes-diffs)
-(add-hook 'modus-themes-after-load-theme-hook #'prot-diff-modus-themes-diffs)
-
-(prot-diff-extra-keywords 1)
+(with-eval-after-load "diff-mode"
+  (progn
+    (require 'prot-diff)
+    (prot-diff-extra-keywords 1)
+    (prot-diff-modus-themes-diffs)
+    (add-hook 'modus-themes-after-load-theme-hook #'prot-diff-modus-themes-diffs)))
 
 ;; `prot-diff-buffer-dwim' replaces the default for `vc-diff' (which I
 ;; bind to another key---see VC section).
 (keymap-set global-map "C-x v =" #'prot-diff-buffer-dwim)
-(let ((map diff-mode-map))
-  (keymap-set map "C-c C-b" #'prot-diff-refine-cycle) ; replace `diff-refine-hunk'
-  (keymap-set map "C-c C-n" #'prot-diff-narrow-dwim))
+(with-eval-after-load "diff-mode"
+  (let ((map diff-mode-map))
+    (keymap-set map "C-c C-b" #'prot-diff-refine-cycle) ; replace `diff-refine-hunk'
+    (keymap-set map "C-c C-n" #'prot-diff-narrow-dwim)))
 
 ;;;;;; Version Control Framework (vc.el and prot-vc.el)
 
-;; Those offer various types of functionality, such as blaming,
-;; viewing logs, showing a dedicated buffer with changes to affected
-;; files.
-(require 'vc-annotate)
-(require 'vc-dir)
-(require 'vc-git)
-(require 'add-log)
-(require 'log-view)
-
 ;; This one is for editing commit messages.
-(require 'log-edit)
 (setq log-edit-confirm 'changed)
 (setq log-edit-keep-buffer nil)
 (setq log-edit-require-final-newline t)
@@ -799,56 +786,64 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (keymap-set map "C-x v o" #'vc-log-outgoing)
   (keymap-set map "C-x v F" #'vc-update)        ; "F" because "P" is push
   (keymap-set map "C-x v d" #'vc-diff))
-(let ((map vc-dir-mode-map))
-  (keymap-set map "b" #'vc-retrieve-tag)
-  (keymap-set map "t" #'vc-create-tag)
-  (keymap-set map "O" #'vc-log-outgoing)
-  (keymap-set map "o" #'vc-dir-find-file-other-window)
-  (keymap-set map "f" #'vc-log-incoming) ; replaces `vc-dir-find-file' (use RET)
-  (keymap-set map "F" #'vc-update)       ; symmetric with P: `vc-push'
-  (keymap-set map "d" #'vc-diff)         ; parallel to D: `vc-root-diff'
-  (keymap-set map "k" #'vc-dir-clean-files)
-  (keymap-set map "G" #'vc-revert)
-  (let ((prot-vc-git-branch-map (make-sparse-keymap)))
-    (keymap-set map "B" prot-vc-git-branch-map)
-    (keymap-set prot-vc-git-branch-map "n" #'vc-create-tag) ; new branch/tag
-    (keymap-set prot-vc-git-branch-map "s" #'vc-retrieve-tag) ; switch branch/tag
-    (keymap-set prot-vc-git-branch-map "c" #'prot-vc-git-checkout-remote) ; "checkout" remote
-    (keymap-set prot-vc-git-branch-map "l" #'vc-print-branch-log))
-  (let ((prot-vc-git-stash-map (make-sparse-keymap)))
-    (keymap-set map "S" prot-vc-git-stash-map)
-    (keymap-set prot-vc-git-stash-map "c" 'vc-git-stash) ; "create" named stash
-    (keymap-set prot-vc-git-stash-map "s" 'vc-git-stash-snapshot)))
-(let ((map vc-git-stash-shared-map))
-  (keymap-set map "a" 'vc-git-stash-apply-at-point)
-  (keymap-set map "c" 'vc-git-stash) ; "create" named stash
-  (keymap-set map "D" 'vc-git-stash-delete-at-point)
-  (keymap-set map "p" 'vc-git-stash-pop-at-point)
-  (keymap-set map "s" 'vc-git-stash-snapshot))
-(let ((map vc-annotate-mode-map))
-  (keymap-set map "M-q" #'vc-annotate-toggle-annotation-visibility)
-  (keymap-set map "C-c C-c" #'vc-annotate-goto-line)
-  (keymap-set map "<return>" #'vc-annotate-find-revision-at-line))
-(let ((map log-view-mode-map))
-  (keymap-set map "<tab>" #'log-view-toggle-entry-display)
-  (keymap-set map "<return>" #'log-view-find-revision)
-  (keymap-set map "s" #'vc-log-search)
-  (keymap-set map "o" #'vc-log-outgoing)
-  (keymap-set map "f" #'vc-log-incoming)
-  (keymap-set map "F" #'vc-update)
-  (keymap-set map "P" #'vc-push))
+(with-eval-after-load "vc-dir"
+  (let ((map vc-dir-mode-map))
+    (keymap-set map "b" #'vc-retrieve-tag)
+    (keymap-set map "t" #'vc-create-tag)
+    (keymap-set map "O" #'vc-log-outgoing)
+    (keymap-set map "o" #'vc-dir-find-file-other-window)
+    (keymap-set map "f" #'vc-log-incoming) ; replaces `vc-dir-find-file' (use RET)
+    (keymap-set map "F" #'vc-update)       ; symmetric with P: `vc-push'
+    (keymap-set map "d" #'vc-diff)         ; parallel to D: `vc-root-diff'
+    (keymap-set map "k" #'vc-dir-clean-files)
+    (keymap-set map "G" #'vc-revert)
+    (let ((prot-vc-git-branch-map (make-sparse-keymap)))
+      (keymap-set map "B" prot-vc-git-branch-map)
+      (keymap-set prot-vc-git-branch-map "n" #'vc-create-tag) ; new branch/tag
+      (keymap-set prot-vc-git-branch-map "s" #'vc-retrieve-tag) ; switch branch/tag
+      (keymap-set prot-vc-git-branch-map "c" #'prot-vc-git-checkout-remote) ; "checkout" remote
+      (keymap-set prot-vc-git-branch-map "l" #'vc-print-branch-log))
+    (let ((prot-vc-git-stash-map (make-sparse-keymap)))
+      (keymap-set map "S" prot-vc-git-stash-map)
+      (keymap-set prot-vc-git-stash-map "c" 'vc-git-stash) ; "create" named stash
+      (keymap-set prot-vc-git-stash-map "s" 'vc-git-stash-snapshot))))
+(with-eval-after-load "vc-git"
+  (let ((map vc-git-stash-shared-map))
+    (keymap-set map "a" 'vc-git-stash-apply-at-point)
+    (keymap-set map "c" 'vc-git-stash) ; "create" named stash
+    (keymap-set map "D" 'vc-git-stash-delete-at-point)
+    (keymap-set map "p" 'vc-git-stash-pop-at-point)
+    (keymap-set map "s" 'vc-git-stash-snapshot)))
+(with-eval-after-load "vc-annotate"
+  (let ((map vc-annotate-mode-map))
+    (keymap-set map "M-q" #'vc-annotate-toggle-annotation-visibility)
+    (keymap-set map "C-c C-c" #'vc-annotate-goto-line)
+    (keymap-set map "<return>" #'vc-annotate-find-revision-at-line)))
+(with-eval-after-load "log-view"
+  (let ((map log-view-mode-map))
+    (keymap-set map "<tab>" #'log-view-toggle-entry-display)
+    (keymap-set map "<return>" #'log-view-find-revision)
+    (keymap-set map "s" #'vc-log-search)
+    (keymap-set map "o" #'vc-log-outgoing)
+    (keymap-set map "f" #'vc-log-incoming)
+    (keymap-set map "F" #'vc-update)
+    (keymap-set map "P" #'vc-push)))
 
-(require 'prot-vc)
+(with-eval-after-load "vc"
+  (progn
+    (require 'prot-vc)
+    ;; This refashions log view and log edit buffers
+    (prot-vc-git-setup-mode 1)))
+
 (setq prot-vc-log-limit 100)
 (setq prot-vc-log-bulk-action-limit 50)
 (setq prot-vc-git-log-edit-show-commits t)
 (setq prot-vc-git-log-edit-show-commit-count 10)
 (setq prot-vc-shell-output "*prot-vc-output*")
 (setq prot-vc-patch-output-dirs (list "~/" "~/Desktop/"))
-(add-to-list' log-edit-headers-alist '("Amend"))
 
-;; This refashions log view and log edit buffers
-(prot-vc-git-setup-mode 1)
+(with-eval-after-load "log-edit"
+  (add-to-list' log-edit-headers-alist '("Amend")))
 
 ;; NOTE: I override lots of the defaults
 (let ((map global-map))
@@ -863,34 +858,37 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (keymap-set map "C-x v r" #'prot-vc-git-find-revision)
   (keymap-set map "C-x v B" #'prot-vc-git-blame-region-or-file)
   (keymap-set map "C-x v R" #'prot-vc-git-reset))
-(let ((map vc-git-log-edit-mode-map))
-  (keymap-set map "C-C C-n" #'prot-vc-git-log-edit-extract-file-name)
-  (keymap-set map "C-C C-i" #'prot-vc-git-log-insert-commits)
-  ;; Also done by `prot-vc-git-setup-mode', but I am putting it here
-  ;; as well for visibility.
-  (keymap-set map "C-c C-c" #'prot-vc-git-log-edit-done)
-  (keymap-set map "C-c C-a" #'prot-vc-git-log-edit-toggle-amend)
-  (keymap-set map "M-p" #'prot-vc-git-log-edit-previous-comment)
-  (keymap-set map "M-n" #'prot-vc-git-log-edit-next-comment)
-  (keymap-set map "M-s" #'prot-vc-git-log-edit-complete-comment)
-  (keymap-set map "M-r" #'prot-vc-git-log-edit-complete-comment))
-(let ((map log-view-mode-map))
-  (keymap-set map "C-TAB" #'prot-vc-log-view-toggle-entry-all)
-  (keymap-set map "a" #'prot-vc-git-patch-apply)
-  (keymap-set map "c" #'prot-vc-git-patch-create-dwim)
-  (keymap-set map "R" #'prot-vc-git-log-reset)
-  (keymap-set map "w" #'prot-vc-log-kill-hash))
+(with-eval-after-load "vc-git"
+  (let ((map vc-git-log-edit-mode-map))
+    (keymap-set map "C-C C-n" #'prot-vc-git-log-edit-extract-file-name)
+    (keymap-set map "C-C C-i" #'prot-vc-git-log-insert-commits)
+    ;; Also done by `prot-vc-git-setup-mode', but I am putting it here
+    ;; as well for visibility.
+    (keymap-set map "C-c C-c" #'prot-vc-git-log-edit-done)
+    (keymap-set map "C-c C-a" #'prot-vc-git-log-edit-toggle-amend)
+    (keymap-set map "M-p" #'prot-vc-git-log-edit-previous-comment)
+    (keymap-set map "M-n" #'prot-vc-git-log-edit-next-comment)
+    (keymap-set map "M-s" #'prot-vc-git-log-edit-complete-comment)
+    (keymap-set map "M-r" #'prot-vc-git-log-edit-complete-comment)))
+(with-eval-after-load "log-view"
+  (let ((map log-view-mode-map))
+    (keymap-set map "C-TAB" #'prot-vc-log-view-toggle-entry-all)
+    (keymap-set map "a" #'prot-vc-git-patch-apply)
+    (keymap-set map "c" #'prot-vc-git-patch-create-dwim)
+    (keymap-set map "R" #'prot-vc-git-log-reset)
+    (keymap-set map "w" #'prot-vc-log-kill-hash)))
 
 ;;;;;; Magit
 
 (unless (package-installed-p 'magit)
   (package-install 'magit))
-(require 'magit)
 
 (setq magit-define-global-key-bindings nil)
 (keymap-set global-map "C-c g" #'magit-status)
 
-(require 'git-commit)
+(with-eval-after-load "magit"
+  (require 'git-commit))
+
 (setq git-commit-summary-max-length 50)
 (setq git-commit-known-pseudo-headers
       '("Signed-off-by"
@@ -905,10 +903,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
       '(non-empty-second-line
         overlong-summary-line))
 
-(require 'magit-diff)
 (setq magit-diff-refine-hunk t)
 
-(require 'magit-repos)
 (setq magit-repository-directories
       '(("~/src" . 1)))
 
@@ -916,7 +912,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (require 'smerge-mode)
 
-(require 'ediff)
 (setq ediff-keep-variants nil)
 (setq ediff-make-buffers-readonly-at-startup nil)
 (setq ediff-merge-revisions-with-ancestor t)
@@ -950,12 +945,10 @@ sure this is a good approach."
 (setenv "PAGER" "cat") ; solves issues, such as with 'git log' and the default 'less'
 
 (setq password-cache-expiry 600)
+(setq eshell-hist-ignoredups t)
 
 (with-eval-after-load "esh-mode"
   (keymap-set eshell-mode-map "C-x DEL" #'eshell-kill-input))
-
-(with-eval-after-load "em-hist"
-  (setq eshell-hist-ignoredups t))
 
 (with-eval-after-load "esh-module"
   (dolist (module '(eshell-tramp
@@ -967,11 +960,10 @@ sure this is a good approach."
 (unless (package-installed-p 'sudo-edit)
   (package-install 'sudo-edit))
 
-(define-key embark-file-map (kbd "S") 'sudo-edit-find-file)
+(with-eval-after-load "embark"
+  (define-key embark-file-map (kbd "S") 'sudo-edit-find-file))
 
 ;;;;; Org Mode
-
-(require 'org)
 
 (setq org-directory "~/Sync/org")
 
@@ -1088,13 +1080,14 @@ sure this is a good approach."
 (add-hook 'org-mode-hook #'dp-org-enable-avy-binding)
 
 (keymap-set global-map "C-c l" #'org-store-link)
-(keymap-set org-mode-map "C-c L" #'org-toggle-link-display)
+
+(with-eval-after-load "org"
+  (keymap-set org-mode-map "C-c L" #'org-toggle-link-display))
 
 ;;;;;; Prettier Org Constructs (org-modern.el)
 
 (unless (package-installed-p 'org-modern)
   (package-install 'org-modern))
-(require 'org-modern)
 
 (setq org-modern-hide-stars t)
 
@@ -1105,7 +1098,6 @@ sure this is a good approach."
 
 (unless (package-installed-p 'org-gtd)
   (package-install 'org-gtd))
-(require 'org-gtd)
 
 (setq org-gtd-directory "~/Sync/gtd/")
 
@@ -1130,14 +1122,16 @@ sure this is a good approach."
   (keymap-set map "C-c d n" #'org-gtd-show-all-next)
   (keymap-set map "C-c d p" #'org-gtd-process-inbox)
   (keymap-set map "C-c d s" #'org-gtd-show-stuck-projects))
-(keymap-set org-agenda-mode-map "g" #'org-gtd-engage)
+
+(with-eval-after-load "org-agenda"
+  (keymap-set org-agenda-mode-map "g" #'org-gtd-engage))
+
 (keymap-set org-gtd-process-map "C-c c" #'org-gtd-choose)
 
 ;;;;;; Org Journal
 
 (unless (package-installed-p 'org-journal)
   (package-install 'org-journal))
-(require 'org-journal)
 
 (setq org-journal-dir "~/Sync/journal")
 (setq org-journal-file-format "%Y-%m-%d.org")
@@ -1151,7 +1145,6 @@ sure this is a good approach."
 
 (unless (package-installed-p 'org-roam)
   (package-install 'org-roam))
-(require 'org-roam)
 
 (setq org-roam-directory "~/Sync/zettelkasten")
 
@@ -1236,15 +1229,12 @@ sure this is a good approach."
 
 ;;;;;; Client-Agnostic Email Settings
 
-(require 'auth-source-pass)
-
 (setq auth-source-pass-filename "~/Sync/password-store")
 (auth-source-pass-enable)
 
 (setq user-full-name "David Porter")
 (setq user-mail-address "david@daporter.net")
 
-(require 'message)
 (setq mail-user-agent 'message-user-agent)
 (setq message-mail-user-agent t)      ; use `mail-user-agent'
 (setq mail-signature "David Porter\n")
@@ -1255,11 +1245,13 @@ sure this is a good approach."
 (setq message-confirm-send nil)
 (setq message-kill-buffer-on-exit t)
 (setq message-wide-reply-confirm-recipients t)
-(add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
+(with-eval-after-load "mm-bodies"
+  (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64)))
 
 (add-hook 'message-setup-hook #'message-sort-headers)
 
-(require 'gnus-dired)
+(with-eval-after-load "dired"
+  (require 'gnus-dired))
 (add-hook 'dired-mode-hook #'gnus-dired-mode) ; doesn’t require `gnus’
 
 ;;;;;; Notmuch
@@ -1323,14 +1315,6 @@ sure this is a good approach."
 (add-hook 'notmuch-show-hook (lambda ()
                                (setq-local header-line-format nil)))
 
-;; Use alternating backgrounds, if `stripes' is available.
-(with-eval-after-load 'stripes
-  (add-hook 'notmuch-search-hook #'stripes-mode)
-  ;; ;; To disable `hl-line-mode':
-  ;; (setq notmuch-search-hook nil)
-  ;; (add-hook 'notmuch-search-hook #'prot-common-disable-hl-line)
-  )
-
 (let ((map global-map))
   (keymap-set map "C-c m" #'notmuch)
   (keymap-set map "C-x m" #'notmuch-mua-new-mail)) ; override `compose-mail'
@@ -1343,15 +1327,17 @@ sure this is a good approach."
 
 (unless (package-installed-p 'ebdb)
   (package-install 'ebdb))
-(require 'ebdb)
-(require 'ebdb-message)
-(require 'ebdb-notmuch)
+
+(with-eval-after-load "ebdb"
+  (progn (require 'ebdb-message)
+         (require 'ebdb-notmuch)
+         (setq ebdb-mua-default-formatter ebdb-default-multiline-formatter)))
+
 (setq ebdb-sources "~/Sync/emacs/ebdb.gpg")
 (setq ebdb-permanent-ignores-file "~/Sync/emacs/ebdb-permanent-ignores")
 
 (setq ebdb-mua-pop-up nil)
 (setq ebdb-default-window-size 0.25)
-(setq ebdb-mua-default-formatter ebdb-default-multiline-formatter)
 
 (setq ebdb-mua-sender-update-p 'create)
 (setq ebdb-message-auto-update-p 'create)
@@ -1373,19 +1359,19 @@ sure this is a good approach."
 
 (setq ebdb-use-diary nil)
 
-(let ((map ebdb-mode-map))
-  (keymap-set map "D" #'ebdb-delete-field-or-record)
-  (keymap-set map "M" #'ebdb-mail) ; disables `ebdb-mail-each'
-  (keymap-set map "m" #'ebdb-toggle-record-mark)
-  (keymap-set map "t" #'ebdb-toggle-all-record-marks)
-  (keymap-set map "T" #'ebdb-toggle-records-format) ; disables `ebdb-toggle-all-records-format'
-  (keymap-set map "U" #'ebdb-unmark-all-records))
+(with-eval-after-load "ebdb"
+  (let ((map ebdb-mode-map))
+    (keymap-set map "D" #'ebdb-delete-field-or-record)
+    (keymap-set map "M" #'ebdb-mail) ; disables `ebdb-mail-each'
+    (keymap-set map "m" #'ebdb-toggle-record-mark)
+    (keymap-set map "t" #'ebdb-toggle-all-record-marks)
+    (keymap-set map "T" #'ebdb-toggle-records-format) ; disables `ebdb-toggle-all-records-format'
+    (keymap-set map "U" #'ebdb-unmark-all-records)))
 
 ;;;;; Bongo Music Manager
 
 (unless (package-installed-p 'bongo)
   (package-install 'bongo))
-(require 'bongo)
 
 (setq bongo-enabled-backends '(mpv vlc))
 
@@ -1393,7 +1379,6 @@ sure this is a good approach."
 
 (unless (package-installed-p 'elfeed)
   (package-install 'elfeed))
-(require 'elfeed)
 
 (setq elfeed-db-directory "~/Sync/emacs/elfeed/")
 (setq elfeed-enclosure-default-dir "~/Downloads/")
@@ -1423,11 +1408,12 @@ sure this is a good approach."
 (keymap-set global-map "C-c e" 'dp-elfeed-load-db-and-start)
 
 (with-eval-after-load 'elfeed
-  (require 'prot-elfeed)
-  (setq prot-elfeed-feeds-file "~/Sync/emacs/feeds.el")
-  (setq prot-elfeed-tag-faces t)
-  (prot-elfeed-fontify-tags)
-  (add-hook 'elfeed-search-mode-hook #'prot-elfeed-load-feeds)
+  (progn
+    (require 'prot-elfeed)
+    (setq prot-elfeed-feeds-file "~/Sync/emacs/feeds.el")
+    (setq prot-elfeed-tag-faces t)
+    (prot-elfeed-fontify-tags)
+    (add-hook 'elfeed-search-mode-hook #'prot-elfeed-load-feeds))
 
   ;; Use alternating backgrounds, if `stripes' is available.
   (with-eval-after-load 'stripes
@@ -1454,8 +1440,10 @@ sure this is a good approach."
 (with-eval-after-load 'stripes
   (add-hook 'proced-mode-hook #'stripes-mode))
 
-(require 'prot-proced)
-(prot-proced-extra-keywords 1)
+(with-eval-after-load "proced"
+  (progn
+    (require 'prot-proced)
+    (prot-proced-extra-keywords 1)))
 
 ;;;;; Simple HTML Renderer (shr) and EWW
 
@@ -1471,7 +1459,6 @@ sure this is a good approach."
 
 (setq url-cookie-untrusted-urls '(".*"))
 
-(require 'eww)
 (setq eww-restore-desktop t)
 (setq eww-header-line-format nil)
 (setq eww-search-prefix "https://duckduckgo.com/html/?q=")
@@ -1482,44 +1469,48 @@ sure this is a good approach."
 (setq eww-history-limit 150)
 (setq eww-browse-url-new-window-is-tab nil)
 
-(keymap-set eww-link-keymap "v" nil) ; stop overriding `eww-view-source'
-(keymap-set eww-mode-map "L" #'eww-list-bookmarks)
-(keymap-set dired-mode-map "E" #'eww-open-file) ; to render local HTML files
-(keymap-set eww-buffers-mode-map "d" #'eww-bookmark-kill)   ; it actually deletes
-(keymap-set eww-bookmark-mode-map "d" #'eww-bookmark-kill) ; same
+(with-eval-after-load "eww"
+  (progn
+    (keymap-set eww-link-keymap "v" nil) ; stop overriding `eww-view-source'
+    (keymap-set eww-mode-map "L" #'eww-list-bookmarks)
+    (keymap-set eww-buffers-mode-map "d" #'eww-bookmark-kill)   ; it actually deletes
+    (keymap-set eww-bookmark-mode-map "d" #'eww-bookmark-kill))) ; same
 
-(require 'prot-eww)
+(with-eval-after-load "dired"
+  (keymap-set dired-mode-map "E" #'eww-open-file)) ; to render local HTML files
+
+(with-eval-after-load "eww"
+  (progn
+    (require 'prot-eww)
+    (define-prefix-command 'prot-eww-map)
+    (keymap-set global-map "C-c w" 'prot-eww-map)
+    (let ((map prot-eww-map))
+      (keymap-set map "b" #'prot-eww-visit-bookmark)
+      (keymap-set map "e" #'prot-eww-browse-dwim)
+      (keymap-set map "s" #'prot-eww-search-engine))
+    (let ((map eww-mode-map))
+      (keymap-set map "B" #'prot-eww-bookmark-page)
+      (keymap-set map "D" #'prot-eww-download-html)
+      (keymap-set map "F" #'prot-eww-find-feed)
+      (keymap-set map "H" #'prot-eww-list-history)
+      (keymap-set map "b" #'prot-eww-visit-bookmark)
+      (keymap-set map "e" #'prot-eww-browse-dwim)
+      (keymap-set map "o" #'prot-eww-open-in-other-window)
+      (keymap-set map "E" #'prot-eww-visit-url-on-page)
+      (keymap-set map "J" #'prot-eww-jump-to-url-on-page)
+      (keymap-set map "R" #'prot-eww-readable)
+      (keymap-set map "Q" #'prot-eww-quit))
+    (add-hook 'prot-eww-history-mode-hook #'hl-line-mode)))
+
 (setq prot-eww-save-history-file
       (locate-user-emacs-file "prot-eww-visited-history"))
 (setq prot-eww-save-visited-history t)
 (setq prot-eww-bookmark-link nil)
 
-(add-hook 'prot-eww-history-mode-hook #'hl-line-mode)
-
-(define-prefix-command 'prot-eww-map)
-(keymap-set global-map "C-c w" 'prot-eww-map)
-(let ((map prot-eww-map))
-  (keymap-set map "b" #'prot-eww-visit-bookmark)
-  (keymap-set map "e" #'prot-eww-browse-dwim)
-  (keymap-set map "s" #'prot-eww-search-engine))
-(let ((map eww-mode-map))
-  (keymap-set map "B" #'prot-eww-bookmark-page)
-  (keymap-set map "D" #'prot-eww-download-html)
-  (keymap-set map "F" #'prot-eww-find-feed)
-  (keymap-set map "H" #'prot-eww-list-history)
-  (keymap-set map "b" #'prot-eww-visit-bookmark)
-  (keymap-set map "e" #'prot-eww-browse-dwim)
-  (keymap-set map "o" #'prot-eww-open-in-other-window)
-  (keymap-set map "E" #'prot-eww-visit-url-on-page)
-  (keymap-set map "J" #'prot-eww-jump-to-url-on-page)
-  (keymap-set map "R" #'prot-eww-readable)
-  (keymap-set map "Q" #'prot-eww-quit))
-
 ;;;;; Deft
 
 (unless (package-installed-p 'deft)
   (package-install 'deft))
-(require 'deft)
 
 (setq deft-directory "~/Sync/zettelkasten")
 (setq deft-default-extension "org")
@@ -1574,7 +1565,6 @@ must be installed."
 
 (unless (package-installed-p 'anki-editor)
   (package-install 'anki-editor))
-(require 'anki-editor)
 
 (keymap-set org-mode-map "C-c a n" 'anki-editor-insert-note)
 (keymap-set org-mode-map "C-c a c" 'anki-editor-cloze-region)
@@ -1638,7 +1628,6 @@ must be installed."
 
 (unless (package-installed-p 'pdf-tools)
   (package-install 'pdf-tools))
-(require 'pdf-tools)
 
 (setq pdf-tools-enabled-modes           ; simplified from the defaults
       '(pdf-history-minor-mode
@@ -1676,7 +1665,6 @@ must be installed."
 
 (unless (package-installed-p 'org-pdftools)
   (package-install 'org-pdftools))
-(require 'org-pdftools)
 
 (add-hook 'org-mode-hook 'org-pdftools-setup-link)
 
@@ -1684,7 +1672,6 @@ must be installed."
 
 (unless (package-installed-p 'nov)
   (package-install 'nov))
-(require 'nov)
 
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
@@ -1699,7 +1686,6 @@ must be installed."
 
 (unless (package-installed-p 'avy)
   (package-install 'avy))
-(require 'avy)
 
 (setq avy-all-windows nil)              ; only the current window
 (setq avy-all-windows-alt t)            ;  all windows with C-u
@@ -1742,19 +1728,20 @@ must be installed."
 
 (unless (package-installed-p 'moody)
   (package-install 'moody))
-(require 'moody)
-(require 'prot-moody)
-(setq prot-moody-font-height-multiplier 1.35)
 
-;; Also check the Modus themes' `modus-themes-mode-line' which can set
-;; the styles specifically for Moody.
-(prot-moody-set-height -1)
+(with-eval-after-load "moody"
+  (progn
+    (require 'prot-moody)
+    (setq prot-moody-font-height-multiplier 1.35)
+    ;; Also check the Modus themes' `modus-themes-mode-line' which can set
+    ;; the styles specifically for Moody.
+    (prot-moody-set-height -1)))
 
 ;;;;;; Mode Line Recursion Indicators
 
 (unless (package-installed-p 'recursion-indicator)
   (package-install 'recursion-indicator))
-(require 'recursion-indicator)
+
 (recursion-indicator-mode 1)
 
 ;;;;;; Battery Status
@@ -1790,7 +1777,6 @@ must be installed."
 ;;;;; Line Numbers and Relevant Indicators
 
 (require 'prot-sideline)
-(require 'display-line-numbers)
 ;; Set absolute line numbers.  A value of "relative" is also useful.
 (setq display-line-numbers-type t)
 ;; Those two variables were introduced in Emacs 27.1
@@ -1801,15 +1787,13 @@ must be installed."
 
 (unless (package-installed-p 'diff-hl)
   (package-install 'diff-hl))
-(require 'diff-hl)
+
 (setq diff-hl-draw-borders nil)
 (setq diff-hl-side 'left)
 
-(require 'hl-line)
 (setq hl-line-sticky-flag nil)
 (setq hl-line-overlay-priority -50) ; emacs28
 
-(require 'whitespace)
 (setq whitespace-style '(face
                          trailing
                          tabs
@@ -1846,7 +1830,6 @@ must be installed."
 
 ;;;;; Outline Mode
 
-(require 'outline)
 (setq-default outline-minor-mode-highlight 'override)
 (setq-default outline-minor-mode-cycle t)
 (let ((map outline-minor-mode-map))
@@ -1876,7 +1859,6 @@ must be installed."
 
 (unless (package-installed-p 'stripes)
   (package-install 'stripes))
-(require 'stripes)
 
 (setq stripes-unit 1)
 
@@ -1919,13 +1901,11 @@ must be installed."
 
 (unless (package-installed-p 'markdown-mode)
   (package-install 'markdown-mode))
-(require 'markdown-mode)
 
 ;;;;;; YAML
 
 (unless (package-installed-p 'yaml-mode)
   (package-install 'yaml-mode))
-(require 'yaml-mode)
 
 (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
 
@@ -1936,7 +1916,7 @@ must be installed."
 
 (unless (package-installed-p 'adaptive-wrap)
   (package-install 'adaptive-wrap))
-(require 'adaptive-wrap)
+
 (add-hook 'text-mode-hook #'adaptive-wrap-prefix-mode)
 
 (column-number-mode 1)
@@ -1945,7 +1925,6 @@ must be installed."
 
 (unless (package-installed-p 'titlecase)
   (package-install 'titlecase))
-(require 'titlecase)
 
 (setq titlecase-style 'mla)
 
@@ -1993,7 +1972,6 @@ must be installed."
 
 (unless (package-installed-p 'smart-tabs-mode)
   (package-install 'smart-tabs-mode))
-(require 'smart-tabs-mode)
 
 (smart-tabs-add-language-support sh sh-mode-hook
   ((smie-indent-line . sh-basic-offset)))
@@ -2014,28 +1992,30 @@ must be installed."
 
 ;;;;; Spell Checking
 
-(require 'flyspell)
 (setq flyspell-issue-message-flag nil)
 (setq flyspell-issue-welcome-flag nil)
 (setq ispell-dictionary "australian-w_accents")
 
-(require 'prot-spell)
-(setq prot-spell-dictionaries
-      '(("EN English" . "australian-w_accents")
-        ("FR Français" . "francais-lrg")
-        ("NL Nederlands" . "dutch")
-        ("ES Espanõl" . "español")))
 (let ((map global-map))
-  (keymap-set map "M-$" #'prot-spell-spell-dwim)
-  (keymap-set map "C-M-$" #'prot-spell-change-dictionary)
   (keymap-set map "C-M-;" #'flyspell-goto-next-error)
   (keymap-set map "C-;" #'flyspell-auto-correct-word))
+
+(with-eval-after-load "flyspell"
+  (progn
+    (require 'prot-spell)
+    (setq prot-spell-dictionaries
+          '(("EN English" . "australian-w_accents")
+            ("FR Français" . "francais-lrg")
+            ("NL Nederlands" . "dutch")
+            ("ES Espanõl" . "español")))
+    (let ((map global-map))
+      (keymap-set map "M-$" #'prot-spell-spell-dwim)
+      (keymap-set map "C-M-$" #'prot-spell-change-dictionary))))
 
 ;;;;; Code and Text Linters
 
 ;;;;;; Flymake
 
-(require 'flymake)
 (setq flymake-fringe-indicator-position 'left-fringe)
 (setq flymake-suppress-zero-counters t)
 (setq flymake-no-changes-timeout nil)
@@ -2049,15 +2029,16 @@ must be installed."
         flymake-mode-line-warning-counter
         flymake-mode-line-note-counter ""))
 
-(let ((map flymake-mode-map))
-  (keymap-set map "C-c ! s" #'flymake-start)
-  (keymap-set map "C-c ! d" #'flymake-show-buffer-diagnostics)
-  (keymap-set map "C-c ! n" #'flymake-goto-next-error)
-  (keymap-set map "C-c ! p" #'flymake-goto-prev-error))
+(with-eval-after-load "flymake"
+  (let ((map flymake-mode-map))
+    (keymap-set map "C-c ! s" #'flymake-start)
+    (keymap-set map "C-c ! d" #'flymake-show-buffer-diagnostics)
+    (keymap-set map "C-c ! n" #'flymake-goto-next-error)
+    (keymap-set map "C-c ! p" #'flymake-goto-prev-error)))
 
 (unless (package-installed-p 'flymake-diagnostic-at-point)
   (package-install 'flymake-diagnostic-at-point))
-(require 'flymake-diagnostic-at-point)
+
 (setq flymake-diagnostic-at-point-display-diagnostic-function
       'flymake-diagnostic-at-point-display-minibuffer)
 
@@ -2067,7 +2048,6 @@ must be installed."
 
 (unless (package-installed-p 'flymake-shellcheck)
   (package-install 'flymake-shellcheck))
-(require 'flymake-shellcheck)
 
 (add-hook 'sh-mode-hook #'flymake-shellcheck-load)
 
@@ -2075,7 +2055,6 @@ must be installed."
 
 (unless (package-installed-p 'flymake-proselint)
   (package-install 'flymake-proselint))
-(require 'flymake-proselint)
 
 (dolist (hook '(markdown-mode-hook
                 org-mode-hook
@@ -2087,7 +2066,6 @@ must be installed."
 
 (unless (package-installed-p 'flymake-markdownlint)
   (package-install 'flymake-markdownlint))
-(require 'flymake-markdownlint)
 
 (add-hook 'markdown-mode-hook #'flymake-markdownlint-setup)
 
@@ -2095,7 +2073,6 @@ must be installed."
 
 (unless (package-installed-p 'flymake-css)
   (package-install 'flymake-css))
-(require 'flymake-css)
 
 (add-hook 'css-mode-hook 'flymake-css-load)
 
@@ -2109,20 +2086,19 @@ must be installed."
 
 (server-start)
 
-(require 'desktop)
 (setq desktop-dirname user-emacs-directory)
 (setq desktop-base-file-name "desktop")
 (setq desktop-globals-to-clear nil)
 (setq desktop-restore-eager 0)
 (setq desktop-restore-frames nil)
-(dolist (symbol '(kill-ring
-                  log-edit-comment-ring))
-  (add-to-list 'desktop-globals-to-save symbol))
+(with-eval-after-load "desktop"
+  (dolist (symbol '(kill-ring
+                    log-edit-comment-ring))
+    (add-to-list 'desktop-globals-to-save symbol)))
 (desktop-save-mode 1)
 
 ;;;;; Record Various Types of History
 
-(require 'saveplace)
 (setq save-place-file (locate-user-emacs-file "saveplace"))
 (save-place-mode 1)
 
