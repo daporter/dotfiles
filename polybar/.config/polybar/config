@@ -87,8 +87,8 @@ adapter = ADP1
 poll-interval = 5
 full-at = 98
 
-format-charging = <ramp-capacity> <label-charging>
-format-discharging = <ramp-capacity> <label-discharging>
+format-charging = <ramp-capacity>  <label-charging>
+format-discharging = <ramp-capacity>  <label-discharging>
 format-full-prefix = "  "
 
 label-discharging = %time%
