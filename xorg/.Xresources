@@ -50,7 +50,7 @@ xterm*highlightSelection: true
 
 ! Font settings
 xterm*faceName: Monospace
-xterm*faceSize: 10
+xterm*faceSize: 9.5
 xterm*renderFont: true
 xterm*boldColors: false
 xterm*faceSize1: 10.5
