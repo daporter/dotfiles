@@ -102,20 +102,16 @@
 
 (setq-default text-scale-remap-header-line t)
 
-(setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
+(setq fontaine-latest-state-file
+      (locate-user-emacs-file "fontaine-latest-state.eld"))
 
 (setq fontaine-presets
       '((regular
          :default-height 100
          :variable-pitch-family "Sans Serif")))
 
-(fontaine-restore-latest-preset)
-
-;; Set `fontaine-recovered-preset' or fall back to desired style from
-;; `fontaine-presets'.
-(if fontaine-recovered-preset
-    (fontaine-set-preset fontaine-recovered-preset)
-  (fontaine-set-preset 'regular))
+;; Set last preset or fall back to desired style from `fontaine-presets'.
+(fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
 
 ;; The other side of `fontaine-restore-latest-preset'.
 (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
