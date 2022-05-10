@@ -1,6 +1,9 @@
 (defcfg
   input  (device-file "/dev/input/by-id/usb-04d9_USB-HID_Keyboard-event-kbd")
-  output (uinput-sink "KMonad: KD87")
+  output (uinput-sink
+          "KMonad: KD87"
+          "sleep 1; setxkbmap -option compose:sclk")
+  cmp-seq slck
 )
 
 (defsrc
@@ -30,5 +33,5 @@
  tab  '    ,    .    p    y    f    g    c    r    l    /    =   \    del  end  pgdn
  caps @amt @oal @esf @uct i    d    @hct @tsf @nal @smt -    ret
  lsft ;    q    j    k    x    b    m    w    v    z    rsft               up
- lctl lmet lalt           spc            ralt rmet      rctl          left down rght
+ lctl lmet lalt           spc            ralt slck      rctl          left down rght
 )

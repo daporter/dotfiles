@@ -1,6 +1,9 @@
 (defcfg
   input  (device-file "/dev/input/by-id/usb-Apple_Inc._Apple_Internal_Keyboard___Trackpad-event-kbd")
-  output (uinput-sink "KMonad: Macbook")
+  output (uinput-sink
+          "KMonad: Macbook"
+          "sleep 1; setxkbmap -option compose:sclk")
+  cmp-seq slck
 )
 
 (defsrc
@@ -30,5 +33,5 @@
   tab   '    ,    .    p    y    f    g    c    r    l    /    =    \
   caps  @ame @oal @esf @uct i    d    @hct @tsf @nal @sme -    ret
   lsft  ;    q    j    k    x    b    m    w    v    z    rsft
-        lctl lalt lmet      spc            rmet ralt left up down rght
+        lctl lalt lmet      spc            rmet slck left up down rght
 )

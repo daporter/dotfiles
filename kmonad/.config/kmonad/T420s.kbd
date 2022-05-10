@@ -1,6 +1,9 @@
 (defcfg
   input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
-  output (uinput-sink "KMonad: T420s")
+  output (uinput-sink
+          "KMonad: T420s"
+           "sleep 1; setxkbmap -option compose:sclk")
+  cmp-seq slck
 )
 
 (defsrc
@@ -10,7 +13,7 @@
   tab  q    w    e    r    t    y    u    i    o    p    [     ]    \
   caps a    s    d    f    g    h    j    k    l    ;    '     ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  wkup lctl lmet lalt           spc            ralt cmps rctl  back up   fwd
+  wkup lctl lmet lalt           spc            ralt rmet rctl  back up   fwd
                                                                left down right
 )
 
@@ -33,6 +36,6 @@
   tab   '    ,    .    p    y    f    g    c    r    l    /     =    \
   caps  @amt @oal @esf @uct i    d    @hct @tsf @nal @smt -     ret
   lsft  ;    q    j    k    x    b    m    w    v    z    rsft
-  wkup  lctl lmet lalt           spc            ralt rmet rctl  back up   fwd
+  wkup  lctl lmet lalt           spc            ralt slck rctl  back up   fwd
                                                                 left down right
 )
