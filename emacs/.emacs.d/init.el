@@ -989,11 +989,10 @@ sure this is a good approach."
       `(("n" "Note" entry
          (file "")
          ,(concat "* %U\n"
-                  "\n"
                   "%i\n"
                   "%?\n"
-                  "%l")
-         :empty-lines-after 1)))
+                  "%l\n")
+         :empty-lines 1)))
 
 ;;;;;; Agenda
 
