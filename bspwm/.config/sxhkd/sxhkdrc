@@ -46,7 +46,7 @@ super + z ; {g, w, m, o, l, r}
                      }
 
 super + shift + z ; {g, w, m, o, l, r}
-     ~/bin/websearch -c { \
+     ~/bin/websearch -p { \
                         --google, \
                         --wikipedia, \
                         --googlemaps, \

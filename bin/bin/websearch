@@ -3,19 +3,19 @@
 # Perform a web search using the specified search engine.  
 
 usage () {
-	echo "Usage: $0 [-c] --google|--wikipedia|--oxford|--onelook|--wordreference"
+	echo "Usage: $0 [-p] --google|--wikipedia|--oxford|--onelook|--wordreference"
 	exit 1
 }
 
-if [ "$1" = '-c' ]; then
-	TERM=$(xclip -o)
-	shift
-else
+if [ "$1" = '-p' ]; then
 	TERM=$(zenity --entry --text 'Search term:')
 	if [ $? != 0 ]; then
 		# “Cancel” pressed.
 		exit
 	fi
+	shift
+else
+	TERM=$(xclip -o)
 fi
 
 case $1 in
