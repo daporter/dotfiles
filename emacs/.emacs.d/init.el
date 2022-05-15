@@ -108,7 +108,7 @@
 (setq fontaine-presets
       '((regular
          :default-height 100
-         :variable-pitch-family "Serif"
+         :variable-pitch-family "EB Garamond"
          :variable-pitch-height 1.2)))
 
 ;; Set last preset or fall back to desired style from `fontaine-presets'.
