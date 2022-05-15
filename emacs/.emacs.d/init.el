@@ -689,6 +689,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (setq-default logos-buffer-read-only t)
 (setq-default logos-olivetti t)
 
+(autoload #'logos-focus-mode "logos")
+
 (let ((map global-map))
   (keymap-set map "<remap> <narrow-to-region>" #'logos-narrow-dwim)
   (keymap-set map "<remap> <forward-page>" #'logos-forward-page-dwim)
