@@ -126,7 +126,7 @@ super + {o, i}
 	bspc wm --record-history on
 
 # Focus or send to the given desktop.
-super + {_, shift + } {1-9,0}
+super + alt + {_, shift + } {1-9,0}
 	bspc {desktop --focus, node --to-desktop} '^{1-9,10}'
 
 #
