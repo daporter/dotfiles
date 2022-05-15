@@ -1662,10 +1662,13 @@ must be installed."
 
 (add-hook 'org-mode-hook #'org-pdftools-setup-link)
 
-;;;;; Viewing EPUBs
+;;;;; Viewing EPUBs (nov.el)
 
 (unless (package-installed-p 'nov)
   (package-install 'nov))
+
+(setq nov-text-width t)                 ; disable filling
+(add-hook 'nov-mode-hook #'logos-focus-mode)
 
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
