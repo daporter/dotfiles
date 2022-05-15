@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+# Perform a web search using the specified search engine.  
+
+usage () {
+	echo "Usage: $0 [-c] --google|--wikipedia|--oxford|--onelook|--wordreference"
+	exit 1
+}
+
+if [ "$1" = '-c' ]; then
+	TERM=$(xclip -o)
+	shift
+else
+	TERM=$(zenity --entry --text 'Search term:')
+	if [ $? != 0 ]; then
+		# “Cancel” pressed.
+		exit
+	fi
+fi
+
+case $1 in
+	--google)
+		URI="https://www.google.com/search?q=$TERM"
+		;;
+	--wikipedia)
+		URI="https://en.wikipedia.org/wiki/$TERM"
+		;;
+	--googlemaps)
+		URI="https://www.google.com/maps/place/$TERM"
+		;;
+	--oxford)
+		URI="https://www.lexico.com/definition/$TERM"
+		;;
+	--onelook)
+		URI="https://onelook.com/?w=$TERM"
+		;;
+	--wordreference)
+		URI="https://www.wordreference.com/fren/$TERM"
+		;;
+	*)
+		usage
+esac
+
+xdg-open "$URI"

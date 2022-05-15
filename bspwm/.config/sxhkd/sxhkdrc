@@ -1,52 +1,67 @@
-#### Environment
+# WM INDEPENDENT KEYBINDINGS
 
-# I am using the prefix `mod4 + e' as a mnemonic for "environment".
+# Environment
 #
-# The following commands are:
-#
-# f == bspwm focus mode (my script)
-# m == configure monitors
-# p == reload polybar (NOTE: check the panel names in its config)
-# s == reload sxhkd
-# x == reload the Xresources file
-mod4 + e ; {f,m,p,s,x}
+# The prefix `super + e' is a mnemonic for "environment".
+super + e ; {m, p, s, x}
     { \
-    bspwm_focus_mode, \
-    configure_monitors, \
-    pkill -x polybar && polybar bspwm &, \
+    ~/bin/configure_monitors, \
+    ~/bin/polybar_start, \
     pkill -USR1 -x sxhkd && notify-send -i key_bindings "Reloaded key bindings", \
     xrdb -I "$HOME" -merge "$HOME"/.Xresources \
     }
 
-mod4 + F5
-     delight
-
-mod4 + e ; d ; {q,Q,c,h}
+super + e ; d ; {q, Q, c, h}
      dunstctl {close,close-all,context,history-pop}
 
-# 'dunst_toggle_notify' is a shell script of mine.  Check my dotfiles.
-mod4 + e ; d ; p
-     dunst_toggle_notify
+super + e ; d ; p
+     ~/bin/dunst_toggle_notify
 
-#
-# wm independent hotkeys
-#
-
-# terminal emulator
 super + Return
     xterm
 
-# program launcher
 super + @space
 	rofi -show drun
 
+# Application switching
+
+super + {1, 2, 3, 4}
+      ~/bin/raise_or_run { \
+                         emacs.Emacs emacs, \
+                         Navigator.Firefox firefox, \
+                         xterm.XTerm xterm, \
+                         anki.Anki anki \
+                         }
+
+# Web searches
+
+super + z ; {g, w, m, o, l, r}
+     ~/bin/websearch { \
+                     --google, \
+                     --wikipedia, \
+                     --googlemaps, \
+                     --oxford, \
+                     --onelook, \
+                     --wordreference \
+                     }
+
+super + shift + z ; {g, w, m, o, l, r}
+     ~/bin/websearch -c { \
+                        --google, \
+                        --wikipedia, \
+                        --googlemaps, \
+                        --oxford, \
+                        --onelook, \
+                        --wordreference \
+                        }
+
 #
-# bspwm hotkeys
+# BSPWM KEYBINDINGS
 #
 
 # quit/restart bspwm
-super + alt + {q,r}
-	bspc {quit,wm -r}
+super + shift + {Escape}
+	bspc {quit}
 
 # close and kill
 super + {_,shift + }w
@@ -65,7 +80,7 @@ super + g
 	bspc node -s biggest.window
 
 #
-# state/flags
+# STATE/FLAGS
 #
 
 # set the window state
@@ -77,75 +92,75 @@ super + ctrl + {m,x,y,z}
 	bspc node -g {marked,locked,sticky,private}
 
 #
-# focus/swap
+# FOCUS/SWAP
 #
-
-# Swap the current node with the node in the given direction.
-super + shift + {h, j, k, l}
-    bspc node --swap {west, south, north, east}
 
 # Focus the node in the given direction.
 super + {h, j, k, l}
 	bspc node --focus {west, south, north, east}
 
-# focus the node for the given path jump
-super + {p,b,comma,period}
-	bspc node -f @{parent,brother,first,second}
+# Swap the current node with the node in the given direction.
+super + shift + {h, j, k, l}
+    bspc node --swap {west, south, north, east}
 
-# focus the next/previous window in the current desktop
-super + {_,shift + }c
-	bspc node -f {next,prev}.local.!hidden.window
+# Focus the node for the given path jump.
+super + {p, b, comma, period}
+	bspc node --focus @{parent, brother, first, second}
 
-# focus the next/previous desktop in the current monitor
-super + bracket{left,right}
-	bspc desktop -f {prev,next}.local
+# Focus the next/previous window in the current desktop.
+super + {_, shift +} n
+	bspc node --focus {next, prev}.local.!hidden.window
 
-# focus the last node/desktop
-super + {grave,Tab}
-	bspc {node,desktop} -f last
+# Focus the next/previous desktop in the current monitor.
+super + {less, greater}
+	bspc desktop --focus {prev, next}.local
 
-# focus the older or newer node in the focus history
-super + {o,i}
-	bspc wm -h off; \
-	bspc node {older,newer} -f; \
-	bspc wm -h on
+# Focus the last node/desktop.
+super + {Tab, grave}
+	bspc {node, desktop} --focus last
 
-# focus or send to the given desktop
-super + {_,shift + }{1-9,0}
-	bspc {desktop -f,node -d} '^{1-9,10}'
+# Focus the older or newer node in the focus history.
+super + {o, i}
+	bspc wm --record-history off; \
+	bspc node {older,newer} --focus; \
+	bspc wm --record-history on
+
+# Focus or send to the given desktop.
+super + {_, shift + } {1-9,0}
+	bspc {desktop --focus, node --to-desktop} '^{1-9,10}'
 
 #
-# preselect
+# PRESELECT
 #
 
-# preselect the direction
+# Preselect the direction.
 super + ctrl + {h,j,k,l}
-	bspc node -p {west,south,north,east}
+	bspc node --presel-dir {west, south, north, east}
 
-# preselect the ratio
+# Preselect the ratio.
 super + ctrl + {1-9}
-	bspc node -o 0.{1-9}
+	bspc node --presel-ratio 0.{1-9}
 
-# cancel the preselection for the focused node
+# Cancel the preselection for the focused node.
 super + ctrl + space
-	bspc node -p cancel
+	bspc node --presel-dir cancel
 
-# cancel the preselection for the focused desktop
+# Cancel the preselection for the focused desktop.
 super + ctrl + shift + space
 	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
 
 #
-# move/resize
+# MOVE/RESIZE
 #
 
-# expand a window by moving one of its side outward
-super + alt + {h,j,k,l}
-	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+# Expand a window by moving one of its side outward.
+super + alt + {h, j, k, l}
+	bspc node --resize {left -20 0, bottom 0 20, top 0 -20, right 20 0}
 
-# contract a window by moving one of its side inward
-super + alt + shift + {h,j,k,l}
-	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+# Contract a window by moving one of its side inward.
+super + alt + shift + {h, j, k, l}
+	bspc node --resize {right -20 0, top 0 20, bottom 0 -20, left 20 0}
 
-# move a floating window
-super + {Left,Down,Up,Right}
-	bspc node -v {-20 0,0 20,0 -20,20 0}
+# Move a floating window.
+super + {Left, Down, Up, Right}
+	bspc node --move {-20 0, 0 20, 0 -20, 20 0}
