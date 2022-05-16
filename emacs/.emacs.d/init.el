@@ -1883,6 +1883,10 @@ must be installed."
 
 (add-hook 'emacs-lisp-mode-hook #'my/setup-emacs-lisp-mode)
 
+;;;;;; CSS
+
+(setq css-indent-offset 2)
+
 ;;;;;; Markdown
 
 (unless (package-installed-p 'markdown-mode)
