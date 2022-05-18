@@ -100,16 +100,16 @@
 (unless (package-installed-p 'fontaine)
   (package-install 'fontaine))
 
+(setq x-underline-at-descent-line t)
 (setq-default text-scale-remap-header-line t)
 
 (setq fontaine-latest-state-file
       (locate-user-emacs-file "fontaine-latest-state.eld"))
 
 (setq fontaine-presets
-      '((regular
-         :default-height 100
-         :variable-pitch-family "EB Garamond"
-         :variable-pitch-height 1.2)))
+      '((t
+		 :default-family "Iosevka Comfy"
+		 :variable-pitch-family "Iosevka Comfy Duo")))
 
 ;; Set last preset or fall back to desired style from `fontaine-presets'.
 (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
