@@ -1816,6 +1816,11 @@ must be installed."
   (setq-local whitespace-style
               (remove 'lines-tail whitespace-style)))
 
+(defun my/whitespace-style-ignore-indentation ()
+  "Set `whitespace-style’ to ignore ignore indentation."
+  (setq-local whitespace-style
+              (remove 'indentation whitespace-style)))
+
 ;; Long lines are allowed in certain modes.
 (dolist (hook '(markdown-mode-hook
                 org-mode-hook))
@@ -1876,16 +1881,75 @@ must be installed."
 
 ;;;;;; Emacs Lisp
 
-(defun my/setup-emacs-lisp-mode ()
-  "Set up Emacs Lisp mode according to my preferences."
+(defun my/configure-emacs-lisp-mode ()
+  "Configure Emacs Lisp mode according to my preferences."
   (setq outline-regexp ";;;+ [^ ]")
   (outline-minor-mode 1))
 
-(add-hook 'emacs-lisp-mode-hook #'my/setup-emacs-lisp-mode)
+(add-hook 'emacs-lisp-mode-hook #'my/configure-emacs-lisp-mode)
+
+;;;;;; Shell scripts
+
+(smart-tabs-add-language-support sh sh-mode-hook
+  ((smie-indent-line . sh-basic-offset)))
+(smart-tabs-insinuate 'sh)
+
+(defun my/configure-sh-mode ()
+  "Configure Shell-Script mode according to my preferences."
+  (progn
+    (setq indent-tabs-mode t)
+    (setq tab-width sh-basic-offset)
+	(add-hook 'sh-mode-hook #'my/whitespace-style-ignore-indentation)))
+
+(add-hook 'sh-mode-hook #'my/configure-sh-mode)
+
+;;;;;; Python
+
+(smart-tabs-insinuate 'python)
+
+(defun my/configure-python-mode ()
+  "Configure Python mode according to my preferences."
+  (progn
+    (setq indent-tabs-mode t)
+    (setq tab-width python-indent-offset)
+	(add-hook 'python-mode-hook #'my/whitespace-style-ignore-indentation)))
+
+(add-hook 'python-mode-hook #'my/configure-python-mode)
+
+;;;;;; HTML
+
+(smart-tabs-add-language-support mhtml mhtml-mode-hook
+  ((mhtml-indent-line . sgml-basic-offset)))
+(smart-tabs-insinuate 'mhtml)
+
+(defun my/configure-html-mode ()
+  "Configure HTML mode according to my preferences."
+  (progn
+    (setq indent-tabs-mode t)
+    (setq tab-width sgml-basic-offset)
+	(add-hook 'mhtml-mode-hook #'my/whitespace-style-ignore-indentation)))
+
+(add-hook 'mhtml-mode-hook #'my/configure-html-mode)
 
 ;;;;;; CSS
 
-(setq css-indent-offset 2)
+(smart-tabs-add-language-support css css-mode-hook
+  ((smie-indent-line . css-indent-offset)))
+(smart-tabs-insinuate 'css)
+
+(defun my/configure-css-mode ()
+  "Configure CSS mode according to my preferences."
+  (progn
+	(setq css-indent-offset 2)
+	(setq indent-tabs-mode t)
+	(setq tab-width css-indent-offset)
+	(add-hook 'css-mode-hook #'my/whitespace-style-ignore-indentation)))
+
+(add-hook 'css-mode-hook #'my/configure-css-mode)
+
+;;;;;; JavaScript
+
+(smart-tabs-insinuate 'javascript)
 
 ;;;;;; Markdown
 
@@ -1945,19 +2009,6 @@ must be installed."
   "Enable `indent-tabs-mode’."
   (setq indent-tabs-mode t))
 
-;; Use tab characters for indentation in certain modes.
-(dolist (hook '(sh-mode-hook
-                python-mode-hook
-                c-mode-common-hook
-                nxml-mode-hook))
-  (add-hook hook #'my/turn-on-indent-tabs-mode))
-
-(defun my/set-tab-width-nxml-mode ()
-  "Set my preferred ‘tab-width’ for `nxml-mode’."
-  (setq tab-width 2))
-
-(add-hook 'nxml-mode-hook #'my/set-tab-width-nxml-mode)
-
 (setq-default tab-always-indent 'complete)
 (setq-default tab-first-completion 'word-or-paren-or-punct)
 
@@ -1965,23 +2016,6 @@ must be installed."
 
 (unless (package-installed-p 'smart-tabs-mode)
   (package-install 'smart-tabs-mode))
-
-(smart-tabs-add-language-support sh sh-mode-hook
-  ((smie-indent-line . sh-basic-offset)))
-
-(smart-tabs-insinuate 'c 'c++ 'java 'javascript 'cperl 'python 'ruby 'sh 'nxml)
-
-(defun my/whitespace-style-ignore-indentation ()
-  "Set `whitespace-style’ to ignore ignore indentation."
-  (setq-local whitespace-style
-              (remove 'indentation whitespace-style)))
-
-;; `whitespace-cleanup’ shouldn’t touch indentation in modes that use
-;; Smart Tabs mode.
-(dolist (hook '(sh-mode-hook
-                python-mode-hook
-                nxml-mode-hook))
-  (add-hook hook #'my/whitespace-style-ignore-indentation))
 
 ;;;;; Spell Checking
 
