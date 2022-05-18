@@ -1951,6 +1951,19 @@ must be installed."
 
 (smart-tabs-insinuate 'javascript)
 
+;;;;;; XML
+
+(smart-tabs-insinuate 'nxml)
+
+(defun my/configure-nxml-mode ()
+  "Configure nXML mode according to my preferences."
+  (progn
+    (setq indent-tabs-mode t)
+    (setq tab-width nxml-child-indent)
+	(add-hook 'nxml-mode-hook #'my/whitespace-style-ignore-indentation)))
+
+(add-hook 'nxml-mode-hook #'my/configure-nxml-mode)
+
 ;;;;;; Markdown
 
 (unless (package-installed-p 'markdown-mode)
