@@ -82,7 +82,7 @@
 (setq modus-themes-variable-pitch-headings t)
 
 (setq modus-themes-headings
-      '((1 . (overline monochrome 1.25))
+      '((1 . (monochrome 1.25))
         (2 . (monochrome 1.15))
         (t . (monochrome))))
 
