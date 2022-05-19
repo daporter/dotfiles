@@ -73,7 +73,7 @@
 (setq modus-themes-slanted-constructs t)
 (setq modus-themes-syntax '(green-strings))
 (setq modus-themes-mixed-fonts t)
-(setq modus-themes-links '(no-color))
+(setq modus-themes-links '(neutral-underline no-color))
 (setq modus-themes-mail-citations 'faint)
 (setq modus-themes-lang-checkers '(background))
 (setq modus-themes-region '(bg-only))
