@@ -23,5 +23,5 @@ COUNT=$(notmuch count tag:unread and tag:inbox)
 if [ "$COUNT" -eq 0 ]; then
 	echo
 else
-	echo " $COUNT"
+	echo " $COUNT"
 fi
