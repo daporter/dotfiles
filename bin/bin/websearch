@@ -7,6 +7,10 @@ usage () {
 	exit 1
 }
 
+_check() {
+	command -v "$1" > /dev/null
+}
+
 if [ "$1" = '-p' ]; then
 	TERM=$(zenity --entry --text 'Search term:')
 	if [ $? != 0 ]; then
@@ -17,6 +21,13 @@ if [ "$1" = '-p' ]; then
 else
 	TERM=$(xclip -o)
 fi
+
+for program in zenity xclip xdg-open; do
+	if ! _check $program; then
+		printf 'Error: %s not found' "$program"
+		exit 1
+	fi
+done
 
 case $1 in
 	--google)

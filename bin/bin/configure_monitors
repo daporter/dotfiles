@@ -5,6 +5,10 @@
 # NOTE: Assumes the external monitor is connected via DisplayPort and
 # named DP-1.
 
+_check() {
+	command -v "$1" > /dev/null
+}
+
 _external_is_connected () {
 	xrandr --query | grep -q 'DP-1 connected'
 }
@@ -24,6 +28,11 @@ _laptop () {
 _reconfigure_wallpaper () {
 	"$HOME"/.fehbg
 }
+
+if ! _check xrandr; then
+	echo "Error: xrandr not found"
+	exit 1
+fi
 
 if _external_is_connected; then
 	_external --primary

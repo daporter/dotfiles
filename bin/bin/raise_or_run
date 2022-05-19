@@ -1,5 +1,9 @@
 #!/bin/sh
 
+_check() {
+	command -v "$1" > /dev/null
+}
+
 if [ $# -ne 2 ]; then
 	PROGNAME=$(basename "$0")
 	printf 'Usage %s <window_name> <command>\n' "$PROGNAME"
@@ -8,5 +12,10 @@ fi
 
 WINDOW_NAME=$1
 COMMAND=$2
+
+if ! _check wmctrl; then
+	echo "Error: wmctrl not found"
+	exit 1
+fi
 
 wmctrl -Fx -a "$WINDOW_NAME" || $COMMAND &
