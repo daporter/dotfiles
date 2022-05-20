@@ -1070,7 +1070,7 @@ sure this is a good approach."
 (defun my/org-enable-avy-binding ()
   "Remove local binding \"C-,\" from Org Mode.
 \"C-,\" is my binding for activating Avy."
-  (keymap-unset org-mode-map "C-,"))
+  (define-key org-mode-map (kbd "C-,") nil))
 
 (add-hook 'org-mode-hook #'my/org-enable-avy-binding)
 
