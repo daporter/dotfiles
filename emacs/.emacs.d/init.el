@@ -37,8 +37,8 @@
       (restart-emacs)
     (save-buffers-kill-terminal t)))
 
-(keymap-set global-map "C-x C-c" #'my/quit-or-restart)
-(keymap-set global-map "C-c p" #'package-list-packages)
+(define-key global-map (kbd "C-x C-c") #'my/quit-or-restart)
+(define-key global-map (kbd "C-c p") #'package-list-packages)
 
 ;;;; Base Settings
 
@@ -48,7 +48,7 @@
   (package-install 'pulsar))
 
 (pulsar-global-mode 1)
-(keymap-set global-map "C-x l" #'pulsar-pulse-line) ; override `count-lines-page'
+(define-key global-map (kbd "C-x l") #'pulsar-pulse-line) ; override `count-lines-page'
 
 ;;;;; Make Custom UI code disposable
 
@@ -117,8 +117,8 @@
 ;; The other side of `fontaine-restore-latest-preset'.
 (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
 
-(keymap-set global-map "C-c f" #'fontaine-set-preset)
-(keymap-set global-map "C-c F" #'fontaine-set-face-font)
+(define-key global-map (kbd "C-c f") #'fontaine-set-preset)
+(define-key global-map (kbd "C-c F") #'fontaine-set-face-font)
 
 ;;;;; Repeatable Keychords
 
@@ -160,8 +160,8 @@
 
 ;; SPC should never complete: use it for `orderless' groups.
 (let ((map minibuffer-local-completion-map))
-  (keymap-set map "SPC" nil)
-  (keymap-set map "?" nil))
+  (define-key map (kbd "SPC") nil)
+  (define-key map (kbd "?") nil))
 
 (with-eval-after-load "orderless"
   (require 'prot-orderless))
@@ -275,28 +275,28 @@
   (require 'consult-imenu))
 
 (let ((map global-map))
-  (keymap-set map "<remap> <goto-line>" #'consult-goto-line)
-  (keymap-set map "C-x M-:" #'consult-complex-command)
-  (keymap-set map "C-x M-k" #'consult-kmacro)
-  (keymap-set map "C-x M-m" #'consult-minor-mode-menu)
-  (keymap-set map "C-x r b" #'consult-bookmark) ; override `bookmark-jump'
-  (keymap-set map "C-x r r" #'consult-register) ; Use the register's prefix
-  (keymap-set map "M-F" #'consult-focus-lines) ; same principle
-  (keymap-set map "M-K" #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
-  (keymap-set map "M-s M-!" #'consult-flymake)
-  (keymap-set map "M-s M-b" #'consult-buffer)
-  (keymap-set map "M-s M-c" #'consult-locate)
-  (keymap-set map "M-s M-f" #'consult-find)
-  (keymap-set map "M-s M-g" #'consult-grep)
-  (keymap-set map "M-s M-h" #'consult-history)
-  (keymap-set map "M-s M-i" #'consult-imenu)
-  (keymap-set map "M-s M-l" #'consult-line)
-  (keymap-set map "M-s M-m" #'consult-mark)
-  (keymap-set map "M-s M-o" #'consult-outline)
-  (keymap-set map "M-s M-y" #'consult-yank-pop))
+  (define-key map (kbd "<remap> <goto-line>") #'consult-goto-line)
+  (define-key map (kbd "C-x M-:") #'consult-complex-command)
+  (define-key map (kbd "C-x M-k") #'consult-kmacro)
+  (define-key map (kbd "C-x M-m") #'consult-minor-mode-menu)
+  (define-key map (kbd "C-x r b") #'consult-bookmark) ; override `bookmark-jump'
+  (define-key map (kbd "C-x r r") #'consult-register) ; Use the register's prefix
+  (define-key map (kbd "M-F") #'consult-focus-lines) ; same principle
+  (define-key map (kbd "M-K") #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
+  (define-key map (kbd "M-s M-!") #'consult-flymake)
+  (define-key map (kbd "M-s M-b") #'consult-buffer)
+  (define-key map (kbd "M-s M-c") #'consult-locate)
+  (define-key map (kbd "M-s M-f") #'consult-find)
+  (define-key map (kbd "M-s M-g") #'consult-grep)
+  (define-key map (kbd "M-s M-h") #'consult-history)
+  (define-key map (kbd "M-s M-i") #'consult-imenu)
+  (define-key map (kbd "M-s M-l") #'consult-line)
+  (define-key map (kbd "M-s M-m") #'consult-mark)
+  (define-key map (kbd "M-s M-o") #'consult-outline)
+  (define-key map (kbd "M-s M-y") #'consult-yank-pop))
 
 (with-eval-after-load "consult"
-  (keymap-set consult-narrow-map "?" #'consult-narrow-help))
+  (define-key consult-narrow-map (kbd "?") #'consult-narrow-help))
 
 (setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
 (dolist (fn '(pulsar-recenter-top
@@ -313,8 +313,8 @@
                             consult-dir--source-project
                             consult-dir--source-recentf))
 
-(keymap-set global-map "C-x C-d" #'consult-dir)
-(keymap-set minibuffer-local-filename-completion-map "C-x C-d" #'consult-dir)
+(define-key global-map (kbd "C-x C-d") #'consult-dir)
+(define-key minibuffer-local-filename-completion-map (kbd "C-x C-d") #'consult-dir)
 
 ;;;;;; Extended Minibuffer Actions (embark.el)
 
@@ -336,14 +336,14 @@
 ;; ‘C-.’ can be seen as a left-click at point and and ‘M-.’ as a
 ;; right-click context menu.  The keybindings are mnemonic, since both
 ;; act at the point (‘.’).
-(keymap-set global-map "C-." #'embark-dwim) ; like left-click
-(keymap-set global-map "M-." #'embark-act)  ; like right-click
-(keymap-set global-map "C-h B" #'embark-bindings)
+(define-key global-map (kbd "C-.") #'embark-dwim) ; like left-click
+(define-key global-map (kbd "M-.") #'embark-act)  ; like right-click
+(define-key global-map (kbd "C-h B") #'embark-bindings)
 
 (with-eval-after-load "embark"
   (progn
-    (keymap-set embark-collect-mode-map "M-." #'embark-act)
-    (keymap-set embark-symbol-map "k" #'describe-keymap)))
+    (define-key embark-collect-mode-map (kbd "M-.") #'embark-act)
+    (define-key embark-symbol-map (kbd "k") #'describe-keymap)))
 
 (unless (package-installed-p 'embark-consult)
   (package-install 'embark-consult))
@@ -370,7 +370,7 @@
         (?l "Log VC" prot-project-commit-log)
         (?e "Eshell" project-eshell)))
 
-(keymap-set global-map "C-x p q" #'project-query-replace-regexp)
+(define-key global-map (kbd "C-x p q") #'project-query-replace-regexp)
 
 ;;;;;; Completion for Recent Files and Directories
 
@@ -433,9 +433,9 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 ;;;;;; Keymap for Buffers
 
 (let ((map ctl-x-x-map))
-  (keymap-set map "e" #'eval-buffer)
-  (keymap-set map "f" #'follow-mode)  ; override `font-lock-update'
-  (keymap-set map "r" #'rename-uniquely))
+  (define-key map (kbd "e") #'eval-buffer)
+  (define-key map (kbd "f") #'follow-mode)  ; override `font-lock-update'
+  (define-key map (kbd "r") #'rename-uniquely))
 
 ;;;;;; Unique Names for Buffers
 
@@ -458,13 +458,13 @@ Useful for prompts such as `eval-expression' and `shell-command'."
                   (name 16 -1)
                   " " filename)))
     (let ((map ibuffer-mode-map))
-      (keymap-set map "* f" #'ibuffer-mark-by-file-name-regexp)
-      (keymap-set map "* g" #'ibuffer-mark-by-content-regexp) ; "g" is for "grep"
-      (keymap-set map "* n" #'ibuffer-mark-by-name-regexp)
-      (keymap-set map "s n" #'ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
-      (keymap-set map "/ g" #'ibuffer-filter-by-content))))
+      (define-key map (kbd "* f") #'ibuffer-mark-by-file-name-regexp)
+      (define-key map (kbd "* g") #'ibuffer-mark-by-content-regexp) ; "g" is for "grep"
+      (define-key map (kbd "* n") #'ibuffer-mark-by-name-regexp)
+      (define-key map (kbd "s n") #'ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
+      (define-key map (kbd "/ g") #'ibuffer-filter-by-content))))
 
-(keymap-set global-map "C-x C-b" #'ibuffer)
+(define-key global-map (kbd "C-x C-b") #'ibuffer)
 
 ;;;;; Window Configuration
 
@@ -552,20 +552,20 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (add-hook 'custom-mode-hook #'visual-line-mode)
 
 (let ((map global-map))
-  (keymap-set map "C-x <down>" #'next-buffer)
-  (keymap-set map "C-x <up>" #'previous-buffer)
-  (keymap-set map "C-x C-n" #'next-buffer)     ; override `set-goal-column'
-  (keymap-set map "C-x C-p" #'previous-buffer) ; override `mark-page'
-  (keymap-set map "C-x !" #'delete-other-windows-vertically)
-  (keymap-set map "C-x _" #'balance-windows)      ; underscore
-  (keymap-set map "C-x -" #'fit-window-to-buffer) ; hyphen
-  (keymap-set map "C-x +" #'balance-windows-area)
-  (keymap-set map "C-x }" #'enlarge-window)
-  (keymap-set map "C-x {" #'shrink-window)
-  (keymap-set map "C-x >" #'enlarge-window-horizontally) ; override `scroll-right'
-  (keymap-set map "C-x <" #'shrink-window-horizontally)) ; override `scroll-left'
+  (define-key map (kbd "C-x <down>") #'next-buffer)
+  (define-key map (kbd "C-x <up>") #'previous-buffer)
+  (define-key map (kbd "C-x C-n") #'next-buffer)     ; override `set-goal-column'
+  (define-key map (kbd "C-x C-p") #'previous-buffer) ; override `mark-page'
+  (define-key map (kbd "C-x !") #'delete-other-windows-vertically)
+  (define-key map (kbd "C-x _") #'balance-windows)      ; underscore
+  (define-key map (kbd "C-x -") #'fit-window-to-buffer) ; hyphen
+  (define-key map (kbd "C-x +") #'balance-windows-area)
+  (define-key map (kbd "C-x }") #'enlarge-window)
+  (define-key map (kbd "C-x {") #'shrink-window)
+  (define-key map (kbd "C-x >") #'enlarge-window-horizontally) ; override `scroll-right'
+  (define-key map (kbd "C-x <") #'shrink-window-horizontally)) ; override `scroll-left'
 (let ((map resize-window-repeat-map))
-  (keymap-set map ">" #'enlarge-window-horizontally))
+  (define-key map (kbd ">") #'enlarge-window-horizontally))
 
 ;;;;;; Window History (winner-mode)
 
@@ -602,17 +602,17 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (add-hook 'after-init-hook #'prot-tab-status-line)
 
 (let ((map global-map))
-  (keymap-set map "C-x <right>" #'prot-tab-winner-redo)
-  (keymap-set map "C-x <left>" #'prot-tab-winner-undo)
-  (keymap-set map "C-<f8>" #'prot-tab-status-line) ; unopinionated alternative: `prot-tab-bar-toggle'
-  (keymap-set map "C-x t t" #'prot-tab-select-tab-dwim))
+  (define-key map (kbd "C-x <right>") #'prot-tab-winner-redo)
+  (define-key map (kbd "C-x <left>") #'prot-tab-winner-undo)
+  (define-key map (kbd "C-<f8>") #'prot-tab-status-line) ; unopinionated alternative: `prot-tab-bar-toggle'
+  (define-key map (kbd "C-x t t") #'prot-tab-select-tab-dwim))
 
 ;;;;;; Transposition and Rotation of Windows
 
 (unless (package-installed-p 'transpose-frame)
   (package-install 'transpose-frame))
 
-(keymap-set global-map "C-x M-r" #'rotate-frame-clockwise)
+(define-key global-map (kbd "C-x M-r") #'rotate-frame-clockwise)
 
 ;;;;;; Quickly Switch Windows (ace-window)
 
@@ -636,7 +636,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
         (?? aw-show-dispatch-help)))
 (setq aw-dispatch-always t)
 
-(keymap-set global-map "M-o" #'ace-window)
+(define-key global-map (kbd "M-o") #'ace-window)
 
 (eval-when-compile
   (defmacro my/embark-ace-action (fn)
@@ -650,9 +650,9 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (with-eval-after-load "embark"
   (progn
-    (keymap-set embark-file-map     "o" (my/embark-ace-action find-file))
-    (keymap-set embark-buffer-map   "o" (my/embark-ace-action switch-to-buffer))
-    (keymap-set embark-bookmark-map "o" (my/embark-ace-action bookmark-jump))))
+    (define-key embark-file-map (kbd     "o") (my/embark-ace-action find-file))
+    (define-key embark-buffer-map (kbd   "o") (my/embark-ace-action switch-to-buffer))
+    (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))))
 
 ;;;; Applications and Utilities
 
@@ -692,13 +692,13 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (autoload #'logos-focus-mode "logos")
 
 (let ((map global-map))
-  (keymap-set map "<remap> <narrow-to-region>" #'logos-narrow-dwim)
-  (keymap-set map "<remap> <forward-page>" #'logos-forward-page-dwim)
-  (keymap-set map "<remap> <backward-page>" #'logos-backward-page-dwim)
+  (define-key map (kbd "<remap> <narrow-to-region>") #'logos-narrow-dwim)
+  (define-key map (kbd "<remap> <forward-page>") #'logos-forward-page-dwim)
+  (define-key map (kbd "<remap> <backward-page>") #'logos-backward-page-dwim)
   ;; I don't think I ever saw a package bind M-] or M-[...
-  (keymap-set map "M-]" #'logos-forward-page-dwim)
-  (keymap-set map "M-[" #'logos-backward-page-dwim)
-  (keymap-set map "<f9>" #'logos-focus-mode))
+  (define-key map (kbd "M-]") #'logos-forward-page-dwim)
+  (define-key map (kbd "M-[") #'logos-backward-page-dwim)
+  (define-key map (kbd "<f9>") #'logos-focus-mode))
 
 ;;;;;; Extra Tweaks
 
@@ -731,11 +731,11 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 ;; `prot-diff-buffer-dwim' replaces the default for `vc-diff' (which I
 ;; bind to another key---see VC section).
-(keymap-set global-map "C-x v =" #'prot-diff-buffer-dwim)
+(define-key global-map (kbd "C-x v =") #'prot-diff-buffer-dwim)
 (with-eval-after-load "diff-mode"
   (let ((map diff-mode-map))
-    (keymap-set map "C-c C-b" #'prot-diff-refine-cycle) ; replace `diff-refine-hunk'
-    (keymap-set map "C-c C-n" #'prot-diff-narrow-dwim)))
+    (define-key map (kbd "C-c C-b") #'prot-diff-refine-cycle) ; replace `diff-refine-hunk'
+    (define-key map (kbd "C-c C-n") #'prot-diff-narrow-dwim)))
 
 ;;;;;; Version Control Framework (vc.el and prot-vc.el)
 
@@ -779,54 +779,54 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 ;; NOTE: I override lots of the defaults
 (let ((map global-map))
-  (keymap-set map "C-x v b" #'vc-retrieve-tag)  ; "branch" switch
-  (keymap-set map "C-x v t" #'vc-create-tag)
-  (keymap-set map "C-x v f" #'vc-log-incoming)  ; the actual git fetch
-  (keymap-set map "C-x v o" #'vc-log-outgoing)
-  (keymap-set map "C-x v F" #'vc-update)        ; "F" because "P" is push
-  (keymap-set map "C-x v d" #'vc-diff))
+  (define-key map (kbd "C-x v b") #'vc-retrieve-tag)  ; "branch" switch
+  (define-key map (kbd "C-x v t") #'vc-create-tag)
+  (define-key map (kbd "C-x v f") #'vc-log-incoming)  ; the actual git fetch
+  (define-key map (kbd "C-x v o") #'vc-log-outgoing)
+  (define-key map (kbd "C-x v F") #'vc-update)        ; "F" because "P" is push
+  (define-key map (kbd "C-x v d") #'vc-diff))
 (with-eval-after-load "vc-dir"
   (let ((map vc-dir-mode-map))
-    (keymap-set map "b" #'vc-retrieve-tag)
-    (keymap-set map "t" #'vc-create-tag)
-    (keymap-set map "O" #'vc-log-outgoing)
-    (keymap-set map "o" #'vc-dir-find-file-other-window)
-    (keymap-set map "f" #'vc-log-incoming) ; replaces `vc-dir-find-file' (use RET)
-    (keymap-set map "F" #'vc-update)       ; symmetric with P: `vc-push'
-    (keymap-set map "d" #'vc-diff)         ; parallel to D: `vc-root-diff'
-    (keymap-set map "k" #'vc-dir-clean-files)
-    (keymap-set map "G" #'vc-revert)
+    (define-key map (kbd "b") #'vc-retrieve-tag)
+    (define-key map (kbd "t") #'vc-create-tag)
+    (define-key map (kbd "O") #'vc-log-outgoing)
+    (define-key map (kbd "o") #'vc-dir-find-file-other-window)
+    (define-key map (kbd "f") #'vc-log-incoming) ; replaces `vc-dir-find-file' (use RET)
+    (define-key map (kbd "F") #'vc-update)       ; symmetric with P: `vc-push'
+    (define-key map (kbd "d") #'vc-diff)         ; parallel to D: `vc-root-diff'
+    (define-key map (kbd "k") #'vc-dir-clean-files)
+    (define-key map (kbd "G") #'vc-revert)
     (let ((prot-vc-git-branch-map (make-sparse-keymap)))
-      (keymap-set map "B" prot-vc-git-branch-map)
-      (keymap-set prot-vc-git-branch-map "n" #'vc-create-tag) ; new branch/tag
-      (keymap-set prot-vc-git-branch-map "s" #'vc-retrieve-tag) ; switch branch/tag
-      (keymap-set prot-vc-git-branch-map "c" #'prot-vc-git-checkout-remote) ; "checkout" remote
-      (keymap-set prot-vc-git-branch-map "l" #'vc-print-branch-log))
+      (define-key map (kbd "B") prot-vc-git-branch-map)
+      (define-key prot-vc-git-branch-map (kbd "n") #'vc-create-tag) ; new branch/tag
+      (define-key prot-vc-git-branch-map (kbd "s") #'vc-retrieve-tag) ; switch branch/tag
+      (define-key prot-vc-git-branch-map (kbd "c") #'prot-vc-git-checkout-remote) ; "checkout" remote
+      (define-key prot-vc-git-branch-map (kbd "l") #'vc-print-branch-log))
     (let ((prot-vc-git-stash-map (make-sparse-keymap)))
-      (keymap-set map "S" prot-vc-git-stash-map)
-      (keymap-set prot-vc-git-stash-map "c" #'vc-git-stash) ; "create" named stash
-      (keymap-set prot-vc-git-stash-map "s" #'vc-git-stash-snapshot))))
+      (define-key map (kbd "S") prot-vc-git-stash-map)
+      (define-key prot-vc-git-stash-map (kbd "c") #'vc-git-stash) ; "create" named stash
+      (define-key prot-vc-git-stash-map (kbd "s") #'vc-git-stash-snapshot))))
 (with-eval-after-load "vc-git"
   (let ((map vc-git-stash-shared-map))
-    (keymap-set map "a" #'vc-git-stash-apply-at-point)
-    (keymap-set map "c" #'vc-git-stash) ; "create" named stash
-    (keymap-set map "D" #'vc-git-stash-delete-at-point)
-    (keymap-set map "p" #'vc-git-stash-pop-at-point)
-    (keymap-set map "s" #'vc-git-stash-snapshot)))
+    (define-key map (kbd "a") #'vc-git-stash-apply-at-point)
+    (define-key map (kbd "c") #'vc-git-stash) ; "create" named stash
+    (define-key map (kbd "D") #'vc-git-stash-delete-at-point)
+    (define-key map (kbd "p") #'vc-git-stash-pop-at-point)
+    (define-key map (kbd "s") #'vc-git-stash-snapshot)))
 (with-eval-after-load "vc-annotate"
   (let ((map vc-annotate-mode-map))
-    (keymap-set map "M-q" #'vc-annotate-toggle-annotation-visibility)
-    (keymap-set map "C-c C-c" #'vc-annotate-goto-line)
-    (keymap-set map "<return>" #'vc-annotate-find-revision-at-line)))
+    (define-key map (kbd "M-q") #'vc-annotate-toggle-annotation-visibility)
+    (define-key map (kbd "C-c C-c") #'vc-annotate-goto-line)
+    (define-key map (kbd "<return>") #'vc-annotate-find-revision-at-line)))
 (with-eval-after-load "log-view"
   (let ((map log-view-mode-map))
-    (keymap-set map "<tab>" #'log-view-toggle-entry-display)
-    (keymap-set map "<return>" #'log-view-find-revision)
-    (keymap-set map "s" #'vc-log-search)
-    (keymap-set map "o" #'vc-log-outgoing)
-    (keymap-set map "f" #'vc-log-incoming)
-    (keymap-set map "F" #'vc-update)
-    (keymap-set map "P" #'vc-push)))
+    (define-key map (kbd "<tab>") #'log-view-toggle-entry-display)
+    (define-key map (kbd "<return>") #'log-view-find-revision)
+    (define-key map (kbd "s") #'vc-log-search)
+    (define-key map (kbd "o") #'vc-log-outgoing)
+    (define-key map (kbd "f") #'vc-log-incoming)
+    (define-key map (kbd "F") #'vc-update)
+    (define-key map (kbd "P") #'vc-push)))
 
 (with-eval-after-load "vc"
   (progn
@@ -846,36 +846,36 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 ;; NOTE: I override lots of the defaults
 (let ((map global-map))
-  (keymap-set map "C-x v i" #'prot-vc-git-log-insert-commits)
-  (keymap-set map "C-x v p" #'prot-vc-project-or-dir)
-  (keymap-set map "C-x v SPC" #'prot-vc-custom-log)
-  (keymap-set map "C-x v g" #'prot-vc-git-grep)
-  (keymap-set map "C-x v G" #'prot-vc-git-log-grep)
-  (keymap-set map "C-x v a" #'prot-vc-git-patch-apply)
-  (keymap-set map "C-x v c" #'prot-vc-git-patch-create-dwim)
-  (keymap-set map "C-x v s" #'prot-vc-git-show)
-  (keymap-set map "C-x v r" #'prot-vc-git-find-revision)
-  (keymap-set map "C-x v B" #'prot-vc-git-blame-region-or-file)
-  (keymap-set map "C-x v R" #'prot-vc-git-reset))
+  (define-key map (kbd "C-x v i") #'prot-vc-git-log-insert-commits)
+  (define-key map (kbd "C-x v p") #'prot-vc-project-or-dir)
+  (define-key map (kbd "C-x v SPC") #'prot-vc-custom-log)
+  (define-key map (kbd "C-x v g") #'prot-vc-git-grep)
+  (define-key map (kbd "C-x v G") #'prot-vc-git-log-grep)
+  (define-key map (kbd "C-x v a") #'prot-vc-git-patch-apply)
+  (define-key map (kbd "C-x v c") #'prot-vc-git-patch-create-dwim)
+  (define-key map (kbd "C-x v s") #'prot-vc-git-show)
+  (define-key map (kbd "C-x v r") #'prot-vc-git-find-revision)
+  (define-key map (kbd "C-x v B") #'prot-vc-git-blame-region-or-file)
+  (define-key map (kbd "C-x v R") #'prot-vc-git-reset))
 (with-eval-after-load "vc-git"
   (let ((map vc-git-log-edit-mode-map))
-    (keymap-set map "C-C C-n" #'prot-vc-git-log-edit-extract-file-name)
-    (keymap-set map "C-C C-i" #'prot-vc-git-log-insert-commits)
+    (define-key map (kbd "C-C C-n") #'prot-vc-git-log-edit-extract-file-name)
+    (define-key map (kbd "C-C C-i") #'prot-vc-git-log-insert-commits)
     ;; Also done by `prot-vc-git-setup-mode', but I am putting it here
     ;; as well for visibility.
-    (keymap-set map "C-c C-c" #'prot-vc-git-log-edit-done)
-    (keymap-set map "C-c C-a" #'prot-vc-git-log-edit-toggle-amend)
-    (keymap-set map "M-p" #'prot-vc-git-log-edit-previous-comment)
-    (keymap-set map "M-n" #'prot-vc-git-log-edit-next-comment)
-    (keymap-set map "M-s" #'prot-vc-git-log-edit-complete-comment)
-    (keymap-set map "M-r" #'prot-vc-git-log-edit-complete-comment)))
+    (define-key map (kbd "C-c C-c") #'prot-vc-git-log-edit-done)
+    (define-key map (kbd "C-c C-a") #'prot-vc-git-log-edit-toggle-amend)
+    (define-key map (kbd "M-p") #'prot-vc-git-log-edit-previous-comment)
+    (define-key map (kbd "M-n") #'prot-vc-git-log-edit-next-comment)
+    (define-key map (kbd "M-s") #'prot-vc-git-log-edit-complete-comment)
+    (define-key map (kbd "M-r") #'prot-vc-git-log-edit-complete-comment)))
 (with-eval-after-load "log-view"
   (let ((map log-view-mode-map))
-    (keymap-set map "C-TAB" #'prot-vc-log-view-toggle-entry-all)
-    (keymap-set map "a" #'prot-vc-git-patch-apply)
-    (keymap-set map "c" #'prot-vc-git-patch-create-dwim)
-    (keymap-set map "R" #'prot-vc-git-log-reset)
-    (keymap-set map "w" #'prot-vc-log-kill-hash)))
+    (define-key map (kbd "C-TAB") #'prot-vc-log-view-toggle-entry-all)
+    (define-key map (kbd "a") #'prot-vc-git-patch-apply)
+    (define-key map (kbd "c") #'prot-vc-git-patch-create-dwim)
+    (define-key map (kbd "R") #'prot-vc-git-log-reset)
+    (define-key map (kbd "w") #'prot-vc-log-kill-hash)))
 
 ;;;;;; Magit
 
@@ -883,7 +883,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (package-install 'magit))
 
 (setq magit-define-global-key-bindings nil)
-(keymap-set global-map "C-c g" #'magit-status)
+(define-key global-map (kbd "C-c g") #'magit-status)
 
 (setq git-commit-summary-max-length 50)
 (setq git-commit-known-pseudo-headers
@@ -945,7 +945,7 @@ sure this is a good approach."
 (setq eshell-hist-ignoredups t)
 
 (with-eval-after-load "esh-mode"
-  (keymap-set eshell-mode-map "C-x DEL" #'eshell-kill-input))
+  (define-key eshell-mode-map (kbd "C-x DEL") #'eshell-kill-input))
 
 (with-eval-after-load "esh-module"
   (dolist (module '(eshell-tramp
@@ -958,7 +958,7 @@ sure this is a good approach."
   (package-install 'sudo-edit))
 
 (with-eval-after-load "embark"
-  (keymap-set embark-file-map "S" #'sudo-edit-find-file))
+  (define-key embark-file-map (kbd "S") #'sudo-edit-find-file))
 
 ;;;;; Org Mode
 
@@ -1074,10 +1074,10 @@ sure this is a good approach."
 
 (add-hook 'org-mode-hook #'my/org-enable-avy-binding)
 
-(keymap-set global-map "C-c l" #'org-store-link)
+(define-key global-map (kbd "C-c l") #'org-store-link)
 
 (with-eval-after-load "org"
-  (keymap-set org-mode-map "C-c L" #'org-toggle-link-display))
+  (define-key org-mode-map (kbd "C-c L") #'org-toggle-link-display))
 
 ;;;;;; Prettier Org Constructs (org-modern.el)
 
@@ -1109,16 +1109,16 @@ sure this is a good approach."
 (advice-add 'org-gtd-engage :after #'my/goto-first-agenda-item)
 
 (let ((map global-map))
-  (keymap-set map "C-c c" #'org-gtd-capture)
-  (keymap-set map "C-c d e" #'org-gtd-engage)
-  (keymap-set map "C-c d n" #'org-gtd-show-all-next)
-  (keymap-set map "C-c d p" #'org-gtd-process-inbox)
-  (keymap-set map "C-c d s" #'org-gtd-show-stuck-projects))
+  (define-key map (kbd "C-c c") #'org-gtd-capture)
+  (define-key map (kbd "C-c d e") #'org-gtd-engage)
+  (define-key map (kbd "C-c d n") #'org-gtd-show-all-next)
+  (define-key map (kbd "C-c d p") #'org-gtd-process-inbox)
+  (define-key map (kbd "C-c d s") #'org-gtd-show-stuck-projects))
 
 (with-eval-after-load "org-agenda"
-  (keymap-set org-agenda-mode-map "g" #'org-gtd-engage))
+  (define-key org-agenda-mode-map (kbd "g") #'org-gtd-engage))
 
-(keymap-set org-gtd-process-map "C-c c" #'org-gtd-choose)
+(define-key org-gtd-process-map (kbd "C-c c") #'org-gtd-choose)
 
 ;;;;;; Org Journal
 
@@ -1129,7 +1129,7 @@ sure this is a good approach."
 (setq org-journal-file-format "%Y-%m-%d.org")
 (setq org-journal-date-format "%A, %d %B %Y")
 
-(keymap-set global-map "C-c j" #'org-journal-new-entry)
+(define-key global-map (kbd "C-c j") #'org-journal-new-entry)
 
 ;;;;;; Org Roam
 
@@ -1143,9 +1143,9 @@ sure this is a good approach."
 (org-roam-db-autosync-mode)
 
 (let ((map global-map))
-  (keymap-set map "C-c z f" #'org-roam-node-find)
-  (keymap-set map "C-c z i" #'org-roam-node-insert))
-(keymap-set org-mode-map "C-c z t" #'org-roam-buffer-toggle)
+  (define-key map (kbd "C-c z f") #'org-roam-node-find)
+  (define-key map (kbd "C-c z i") #'org-roam-node-insert))
+(define-key org-mode-map (kbd "C-c z t") #'org-roam-buffer-toggle)
 
 (setq org-roam-capture-templates
       '(("d" "default" plain
@@ -1308,8 +1308,8 @@ sure this is a good approach."
                                (setq-local header-line-format nil)))
 
 (let ((map global-map))
-  (keymap-set map "C-c m" #'notmuch)
-  (keymap-set map "C-x m" #'notmuch-mua-new-mail)) ; override `compose-mail'
+  (define-key map (kbd "C-c m") #'notmuch)
+  (define-key map (kbd "C-x m") #'notmuch-mua-new-mail)) ; override `compose-mail'
 
 ;;;;;; Sending Email
 
@@ -1353,12 +1353,12 @@ sure this is a good approach."
 
 (with-eval-after-load "ebdb-com"
   (let ((map ebdb-mode-map))
-    (keymap-set map "D" #'ebdb-delete-field-or-record)
-    (keymap-set map "M" #'ebdb-mail) ; disables `ebdb-mail-each'
-    (keymap-set map "m" #'ebdb-toggle-record-mark)
-    (keymap-set map "t" #'ebdb-toggle-all-record-marks)
-    (keymap-set map "T" #'ebdb-toggle-records-format) ; disables `ebdb-toggle-all-records-format'
-    (keymap-set map "U" #'ebdb-unmark-all-records)))
+    (define-key map (kbd "D") #'ebdb-delete-field-or-record)
+    (define-key map (kbd "M") #'ebdb-mail) ; disables `ebdb-mail-each'
+    (define-key map (kbd "m") #'ebdb-toggle-record-mark)
+    (define-key map (kbd "t") #'ebdb-toggle-all-record-marks)
+    (define-key map (kbd "T") #'ebdb-toggle-records-format) ; disables `ebdb-toggle-all-records-format'
+    (define-key map (kbd "U") #'ebdb-unmark-all-records)))
 
 ;;;;; Bongo Music Manager
 
@@ -1399,7 +1399,7 @@ sure this is a good approach."
   (elfeed-db-unload)
   (quit-window))
 
-(keymap-set global-map "C-c e" #'my/elfeed-load-db-and-start)
+(define-key global-map (kbd "C-c e") #'my/elfeed-load-db-and-start)
 
 (with-eval-after-load 'elfeed
   (progn
@@ -1417,16 +1417,16 @@ sure this is a good approach."
     )
 
   (let ((map elfeed-search-mode-map))
-    (keymap-set map "s" #'prot-elfeed-search-tag-filter)
-    (keymap-set map "o" #'prot-elfeed-search-open-other-window)
-    (keymap-set map "q" #'my/elfeed-save-db-and-bury)
-    (keymap-set map "v" #'prot-elfeed-mpv-dwim)
-    (keymap-set map "+" #'prot-elfeed-toggle-tag))
+    (define-key map (kbd "s") #'prot-elfeed-search-tag-filter)
+    (define-key map (kbd "o") #'prot-elfeed-search-open-other-window)
+    (define-key map (kbd "q") #'my/elfeed-save-db-and-bury)
+    (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
+    (define-key map (kbd "+") #'prot-elfeed-toggle-tag))
   (let ((map elfeed-show-mode-map))
-    (keymap-set map "a" #'prot-elfeed-show-archive-entry)
-    (keymap-set map "e" #'prot-elfeed-show-eww)
-    (keymap-set map "v" #'prot-elfeed-mpv-dwim)
-    (keymap-set map "+" #'prot-elfeed-toggle-tag)))
+    (define-key map (kbd "a") #'prot-elfeed-show-archive-entry)
+    (define-key map (kbd "e") #'prot-elfeed-show-eww)
+    (define-key map (kbd "v") #'prot-elfeed-mpv-dwim)
+    (define-key map (kbd "+") #'prot-elfeed-toggle-tag)))
 
 ;;;;; Proced
 
@@ -1465,35 +1465,35 @@ sure this is a good approach."
 
 (with-eval-after-load "eww"
   (progn
-    (keymap-set eww-link-keymap "v" nil) ; stop overriding `eww-view-source'
-    (keymap-set eww-mode-map "L" #'eww-list-bookmarks)
-    (keymap-set eww-buffers-mode-map "d" #'eww-bookmark-kill)   ; it actually deletes
-    (keymap-set eww-bookmark-mode-map "d" #'eww-bookmark-kill))) ; same
+    (define-key eww-link-keymap (kbd "v") nil) ; stop overriding `eww-view-source'
+    (define-key eww-mode-map (kbd "L") #'eww-list-bookmarks)
+    (define-key eww-buffers-mode-map (kbd "d") #'eww-bookmark-kill)   ; it actually deletes
+    (define-key eww-bookmark-mode-map (kbd "d") #'eww-bookmark-kill))) ; same
 
 (with-eval-after-load "dired"
-  (keymap-set dired-mode-map "E" #'eww-open-file)) ; to render local HTML files
+  (define-key dired-mode-map (kbd "E") #'eww-open-file)) ; to render local HTML files
 
 (with-eval-after-load "eww"
   (progn
     (require 'prot-eww)
     (define-prefix-command 'prot-eww-map)
-    (keymap-set global-map "C-c w" 'prot-eww-map)
+    (define-key global-map (kbd "C-c w") 'prot-eww-map)
     (let ((map prot-eww-map))
-      (keymap-set map "b" #'prot-eww-visit-bookmark)
-      (keymap-set map "e" #'prot-eww-browse-dwim)
-      (keymap-set map "s" #'prot-eww-search-engine))
+      (define-key map (kbd "b") #'prot-eww-visit-bookmark)
+      (define-key map (kbd "e") #'prot-eww-browse-dwim)
+      (define-key map (kbd "s") #'prot-eww-search-engine))
     (let ((map eww-mode-map))
-      (keymap-set map "B" #'prot-eww-bookmark-page)
-      (keymap-set map "D" #'prot-eww-download-html)
-      (keymap-set map "F" #'prot-eww-find-feed)
-      (keymap-set map "H" #'prot-eww-list-history)
-      (keymap-set map "b" #'prot-eww-visit-bookmark)
-      (keymap-set map "e" #'prot-eww-browse-dwim)
-      (keymap-set map "o" #'prot-eww-open-in-other-window)
-      (keymap-set map "E" #'prot-eww-visit-url-on-page)
-      (keymap-set map "J" #'prot-eww-jump-to-url-on-page)
-      (keymap-set map "R" #'prot-eww-readable)
-      (keymap-set map "Q" #'prot-eww-quit))
+      (define-key map (kbd "B") #'prot-eww-bookmark-page)
+      (define-key map (kbd "D") #'prot-eww-download-html)
+      (define-key map (kbd "F") #'prot-eww-find-feed)
+      (define-key map (kbd "H") #'prot-eww-list-history)
+      (define-key map (kbd "b") #'prot-eww-visit-bookmark)
+      (define-key map (kbd "e") #'prot-eww-browse-dwim)
+      (define-key map (kbd "o") #'prot-eww-open-in-other-window)
+      (define-key map (kbd "E") #'prot-eww-visit-url-on-page)
+      (define-key map (kbd "J") #'prot-eww-jump-to-url-on-page)
+      (define-key map (kbd "R") #'prot-eww-readable)
+      (define-key map (kbd "Q") #'prot-eww-quit))
     (add-hook 'prot-eww-history-mode-hook #'hl-line-mode)))
 
 (setq prot-eww-save-history-file
@@ -1529,7 +1529,7 @@ sure this is a good approach."
               "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
               "\\)"))
 
-(keymap-set global-map "C-c z d" #'deft)
+(define-key global-map (kbd "C-c z d") #'deft)
 
 ;;;;; Zotero Reference Manager
 
@@ -1552,17 +1552,17 @@ must be installed."
    t))
 
 (let ((map global-map))
-  (keymap-set map "C-c z c" #'my/insert-zotero-citation)
-  (keymap-set map "C-c z r" #'my/insert-zotero-reference))
+  (define-key map (kbd "C-c z c") #'my/insert-zotero-citation)
+  (define-key map (kbd "C-c z r") #'my/insert-zotero-reference))
 
 ;;;;; Anki Card Creation
 
 (unless (package-installed-p 'anki-editor)
   (package-install 'anki-editor))
 
-(keymap-set org-mode-map "C-c a n" #'anki-editor-insert-note)
-(keymap-set org-mode-map "C-c a c" #'anki-editor-cloze-region)
-(keymap-set org-mode-map "C-c a p" #'anki-editor-push-notes)
+(define-key org-mode-map (kbd "C-c a n") #'anki-editor-insert-note)
+(define-key org-mode-map (kbd "C-c a c") #'anki-editor-cloze-region)
+(define-key org-mode-map (kbd "C-c a p") #'anki-editor-push-notes)
 
 (define-skeleton anki-vocab-basic
   "Skeleton of an Anki Basic note for vocab."
@@ -1688,7 +1688,7 @@ must be installed."
 (setq avy-all-windows-alt t)            ;  all windows with C-u
 (setq avy-keys '(?u ?h ?e ?t ?a ?s ?o ?n))
 
-(keymap-set global-map "C-," #'avy-goto-char-timer)
+(define-key global-map (kbd "C-,") #'avy-goto-char-timer)
 
 ;;;;; Mode Line
 
@@ -1829,8 +1829,8 @@ must be installed."
   (add-hook hook #'my/whitespace-style-allow-long-lines))
 
 (let ((map global-map))
-  (keymap-set map "<f6>" #'prot-sideline-negative-space-toggle)
-  (keymap-set map "<f7>" #'prot-sideline-mode))
+  (define-key map (kbd "<f6>") #'prot-sideline-negative-space-toggle)
+  (define-key map (kbd "<f7>") #'prot-sideline-mode))
 
 ;;;;; Outline Mode
 
@@ -1999,8 +1999,8 @@ must be installed."
 
 (with-eval-after-load "embark"
   (progn
-    (keymap-set embark-heading-map "t" #'titlecase-line)
-    (keymap-set embark-region-map "t" #'titlecase-region)))
+    (define-key embark-heading-map (kbd "t") #'titlecase-line)
+    (define-key embark-region-map (kbd "t") #'titlecase-region)))
 
 ;;;;; Electric Behaviour
 
@@ -2039,8 +2039,8 @@ must be installed."
 (setq ispell-dictionary "australian-w_accents")
 
 (let ((map global-map))
-  (keymap-set map "C-M-;" #'flyspell-goto-next-error)
-  (keymap-set map "C-;" #'flyspell-auto-correct-word))
+  (define-key map (kbd "C-M-;") #'flyspell-goto-next-error)
+  (define-key map (kbd "C-;") #'flyspell-auto-correct-word))
 
 (with-eval-after-load "flyspell"
   (progn
@@ -2051,8 +2051,8 @@ must be installed."
             ("NL Nederlands" . "dutch")
             ("ES Espanõl" . "español")))
     (let ((map global-map))
-      (keymap-set map "M-$" #'prot-spell-spell-dwim)
-      (keymap-set map "C-M-$" #'prot-spell-change-dictionary))))
+      (define-key map (kbd "M-$") #'prot-spell-spell-dwim)
+      (define-key map (kbd "C-M-$") #'prot-spell-change-dictionary))))
 
 ;;;;; Code and Text Linters
 
@@ -2073,10 +2073,10 @@ must be installed."
 
 (with-eval-after-load "flymake"
   (let ((map flymake-mode-map))
-    (keymap-set map "C-c ! s" #'flymake-start)
-    (keymap-set map "C-c ! d" #'flymake-show-buffer-diagnostics)
-    (keymap-set map "C-c ! n" #'flymake-goto-next-error)
-    (keymap-set map "C-c ! p" #'flymake-goto-prev-error)))
+    (define-key map (kbd "C-c ! s") #'flymake-start)
+    (define-key map (kbd "C-c ! d") #'flymake-show-buffer-diagnostics)
+    (define-key map (kbd "C-c ! n") #'flymake-goto-next-error)
+    (define-key map (kbd "C-c ! p") #'flymake-goto-prev-error)))
 
 (unless (package-installed-p 'flymake-diagnostic-at-point)
   (package-install 'flymake-diagnostic-at-point))
