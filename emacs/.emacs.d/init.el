@@ -69,6 +69,9 @@
 
 ;;;;; Modus Themes
 
+(unless (package-installed-p 'modus-themes)
+  (package-install 'modus-themes))
+
 ;; Note: All customisation options must be evaluated before loading a
 ;; theme.
 (setq modus-themes-bold-constructs t)
@@ -83,9 +86,14 @@
 (setq modus-themes-org-blocks 'gray-background)
 (setq modus-themes-variable-pitch-headings t)
 
+;; The following values come from the Typographic Scale Calculator,
+;; <https://www.layoutgridcalculator.com/typographic-scale/>. It uses
+;; the golden ratio and pentatonic scale.
 (setq modus-themes-headings
-      '((1 . (monochrome 1.25))
-        (2 . (monochrome 1.15))
+      '((1 . (monochrome 1.2917))
+        (2 . (monochrome 1.2083))
+        (3 . (monochrome 1.1458))
+        (4 . (monochrome 1.0625))
         (t . (monochrome))))
 
 (load-theme 'modus-operandi)
