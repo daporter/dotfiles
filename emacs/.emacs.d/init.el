@@ -7,8 +7,10 @@
 ;;;; Initial Settings
 
 (require 'package)
-(add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
 
 (setq vc-follow-symlinks t) ; because my dotfiles are managed this way
 
@@ -34,7 +36,7 @@
   "Quit Emacs or restart it with RESTART."
   (interactive "P")
   (if restart
-      (restart-emacs)
+      (restart-emacs)                   ; requires Emacs 29
     (save-buffers-kill-terminal t)))
 
 (define-key global-map (kbd "C-x C-c") #'my/quit-or-restart)
@@ -48,7 +50,7 @@
   (package-install 'pulsar))
 
 (pulsar-global-mode 1)
-(define-key global-map (kbd "C-x l") #'pulsar-pulse-line) ; override `count-lines-page'
+(define-key global-map (kbd "C-x l") #'pulsar-pulse-line)
 
 ;;;;; Make Custom UI code disposable
 
@@ -111,7 +113,8 @@
 		 :default-family "Iosevka Comfy"
 		 :variable-pitch-family "Iosevka Comfy Duo")))
 
-;; Set last preset or fall back to desired style from `fontaine-presets'.
+;; Set last preset or fall back to desired style from
+;; `fontaine-presets'.
 (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
 
 ;; The other side of `fontaine-restore-latest-preset'.
@@ -175,11 +178,14 @@
 
 ;;;;;; Minibuffer and Vertico Configurations
 
-(setq completion-styles '(basic orderless)) ; also see `completion-category-overrides'
+(setq completion-styles '(basic orderless))
 (setq completion-category-defaults nil)
 (setq completion-category-overrides
       '((file (styles . (basic partial-completion orderless)))
-        (project-file (styles . (basic substring partial-completion orderless)))
+        (project-file (styles . (basic
+                                 substring
+                                 partial-completion
+                                 orderless)))
         (imenu (styles . (basic substring orderless)))
         (kill-ring (styles . (basic substring orderless)))
         (consult-location (styles . (basic substring orderless)))))
@@ -208,7 +214,8 @@
 (defun crm-indicator (args)
   "Add prompt indicator to `completing-read-multiple' filter ARGS."
   ;; The `error' face just makes the text red.
-  (cons (concat (propertize "[CRM] " 'face 'error) (car args)) (cdr args)))
+  (cons (concat (propertize "[CRM] " 'face 'error) (car args))
+        (cdr args)))
 
 (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
 
@@ -248,12 +255,13 @@
 ;; (setq completion-in-region-function #'consult-completion-in-region)
 (setq consult-narrow-key ">")
 (setq consult-imenu-config
-      '((emacs-lisp-mode :toplevel "Functions"
-                         :types ((?f "Functions" font-lock-function-name-face)
-                                 (?m "Macros"    font-lock-keyword-face)
-                                 (?p "Packages"  font-lock-constant-face)
-                                 (?t "Types"     font-lock-type-face)
-                                 (?v "Variables" font-lock-variable-name-face)))))
+      '((emacs-lisp-mode
+         :toplevel "Functions"
+         :types ((?f "Functions" font-lock-function-name-face)
+                 (?m "Macros"    font-lock-keyword-face)
+                 (?p "Packages"  font-lock-constant-face)
+                 (?t "Types"     font-lock-type-face)
+                 (?v "Variables" font-lock-variable-name-face)))))
 (setq consult-bookmark-narrow
       `((?d "Docview" ,#'doc-view-bookmark-jump)
         (?e "Eshell" ,#'eshell-bookmark-jump)
@@ -279,10 +287,10 @@
   (define-key map (kbd "C-x M-:") #'consult-complex-command)
   (define-key map (kbd "C-x M-k") #'consult-kmacro)
   (define-key map (kbd "C-x M-m") #'consult-minor-mode-menu)
-  (define-key map (kbd "C-x r b") #'consult-bookmark) ; override `bookmark-jump'
-  (define-key map (kbd "C-x r r") #'consult-register) ; Use the register's prefix
-  (define-key map (kbd "M-F") #'consult-focus-lines) ; same principle
-  (define-key map (kbd "M-K") #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
+  (define-key map (kbd "C-x r b") #'consult-bookmark)
+  (define-key map (kbd "C-x r r") #'consult-register)
+  (define-key map (kbd "M-F") #'consult-focus-lines)
+  (define-key map (kbd "M-K") #'consult-keep-lines)
   (define-key map (kbd "M-s M-!") #'consult-flymake)
   (define-key map (kbd "M-s M-b") #'consult-buffer)
   (define-key map (kbd "M-s M-c") #'consult-locate)
@@ -298,7 +306,7 @@
 (with-eval-after-load "consult"
   (define-key consult-narrow-map (kbd "?") #'consult-narrow-help))
 
-(setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
+(setq consult-after-jump-hook nil)
 (dolist (fn '(pulsar-recenter-top
               pulsar-reveal-entry))
   (add-hook 'consult-after-jump-hook fn))
@@ -314,7 +322,9 @@
                             consult-dir--source-recentf))
 
 (define-key global-map (kbd "C-x C-d") #'consult-dir)
-(define-key minibuffer-local-filename-completion-map (kbd "C-x C-d") #'consult-dir)
+(define-key
+  minibuffer-local-filename-completion-map
+  (kbd "C-x C-d") #'consult-dir)
 
 ;;;;;; Extended Minibuffer Actions (embark.el)
 
@@ -394,7 +404,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (unless (bound-and-true-p vertico--input)
     (corfu-mode 1)))
 
-(add-hook 'minibuffer-setup-hook #'contrib/corfu-enable-always-in-minibuffer 1)
+(add-hook 'minibuffer-setup-hook
+          #'contrib/corfu-enable-always-in-minibuffer 1)
 
 ;;;;;;; CAPE (Extra completion-at-point Backends)
 
@@ -422,7 +433,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (setq delete-by-moving-to-trash t)
 (setq dired-listing-switches "-AFGhlv")
 (setq dired-dwim-target t)
-(setq dired-auto-revert-buffer #'dired-directory-changed-p) ; also see `dired-do-revert-buffer'
+(setq dired-auto-revert-buffer #'dired-directory-changed-p)
 (setq dired-make-directory-clickable t)
 
 (add-hook 'dired-mode-hook #'dired-hide-details-mode)
@@ -434,7 +445,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (let ((map ctl-x-x-map))
   (define-key map (kbd "e") #'eval-buffer)
-  (define-key map (kbd "f") #'follow-mode)  ; override `font-lock-update'
+  (define-key map (kbd "f") #'follow-mode)
   (define-key map (kbd "r") #'rename-uniquely))
 
 ;;;;;; Unique Names for Buffers
@@ -459,9 +470,9 @@ Useful for prompts such as `eval-expression' and `shell-command'."
                   " " filename)))
     (let ((map ibuffer-mode-map))
       (define-key map (kbd "* f") #'ibuffer-mark-by-file-name-regexp)
-      (define-key map (kbd "* g") #'ibuffer-mark-by-content-regexp) ; "g" is for "grep"
+      (define-key map (kbd "* g") #'ibuffer-mark-by-content-regexp)
       (define-key map (kbd "* n") #'ibuffer-mark-by-name-regexp)
-      (define-key map (kbd "s n") #'ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
+      (define-key map (kbd "s n") #'ibuffer-do-sort-by-alphabetic)
       (define-key map (kbd "/ g") #'ibuffer-filter-by-content))))
 
 (define-key global-map (kbd "C-x C-b") #'ibuffer)
@@ -535,14 +546,17 @@ Useful for prompts such as `eval-expression' and `shell-command'."
          (display-buffer-reuse-mode-window display-buffer-at-bottom))
         ;; below current window
         ("\\*.*\\(e?shell\\|v?term\\).*"
-         (display-buffer-reuse-mode-window display-buffer-below-selected))
+         (display-buffer-reuse-mode-window
+          display-buffer-below-selected))
         ("\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
-         (display-buffer-reuse-mode-window display-buffer-below-selected)
+         (display-buffer-reuse-mode-window
+          display-buffer-below-selected)
          ;; NOTE 2021-10-06: we cannot `fit-window-to-buffer' because
          ;; the size is not known in advance.
          (window-height . 0.2))
         ("\\*\\(Calendar\\|Bookmark Annotation\\).*"
-         (display-buffer-reuse-mode-window display-buffer-below-selected)
+         (display-buffer-reuse-mode-window
+          display-buffer-below-selected)
          (window-height . fit-window-to-buffer))))
 (setq window-combination-resize t)
 (setq even-window-sizes 'height-only)
@@ -554,16 +568,16 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (let ((map global-map))
   (define-key map (kbd "C-x <down>") #'next-buffer)
   (define-key map (kbd "C-x <up>") #'previous-buffer)
-  (define-key map (kbd "C-x C-n") #'next-buffer)     ; override `set-goal-column'
-  (define-key map (kbd "C-x C-p") #'previous-buffer) ; override `mark-page'
+  (define-key map (kbd "C-x C-n") #'next-buffer)
+  (define-key map (kbd "C-x C-p") #'previous-buffer)
   (define-key map (kbd "C-x !") #'delete-other-windows-vertically)
   (define-key map (kbd "C-x _") #'balance-windows)      ; underscore
   (define-key map (kbd "C-x -") #'fit-window-to-buffer) ; hyphen
   (define-key map (kbd "C-x +") #'balance-windows-area)
   (define-key map (kbd "C-x }") #'enlarge-window)
   (define-key map (kbd "C-x {") #'shrink-window)
-  (define-key map (kbd "C-x >") #'enlarge-window-horizontally) ; override `scroll-right'
-  (define-key map (kbd "C-x <") #'shrink-window-horizontally)) ; override `scroll-left'
+  (define-key map (kbd "C-x >") #'enlarge-window-horizontally)
+  (define-key map (kbd "C-x <") #'shrink-window-horizontally))
 (let ((map resize-window-repeat-map))
   (define-key map (kbd ">") #'enlarge-window-horizontally))
 
@@ -604,7 +618,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (let ((map global-map))
   (define-key map (kbd "C-x <right>") #'prot-tab-winner-redo)
   (define-key map (kbd "C-x <left>") #'prot-tab-winner-undo)
-  (define-key map (kbd "C-<f8>") #'prot-tab-status-line) ; unopinionated alternative: `prot-tab-bar-toggle'
+  (define-key map (kbd "C-<f8>") #'prot-tab-status-line)
   (define-key map (kbd "C-x t t") #'prot-tab-select-tab-dwim))
 
 ;;;;;; Transposition and Rotation of Windows
@@ -650,9 +664,12 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (with-eval-after-load "embark"
   (progn
-    (define-key embark-file-map (kbd     "o") (my/embark-ace-action find-file))
-    (define-key embark-buffer-map (kbd   "o") (my/embark-ace-action switch-to-buffer))
-    (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))))
+    (define-key embark-file-map
+      (kbd "o") (my/embark-ace-action find-file))
+    (define-key embark-buffer-map
+      (kbd "o") (my/embark-ace-action switch-to-buffer))
+    (define-key embark-bookmark-map
+      (kbd "o") (my/embark-ace-action bookmark-jump))))
 
 ;;;; Applications and Utilities
 
@@ -692,9 +709,12 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (autoload #'logos-focus-mode "logos")
 
 (let ((map global-map))
-  (define-key map (kbd "<remap> <narrow-to-region>") #'logos-narrow-dwim)
-  (define-key map (kbd "<remap> <forward-page>") #'logos-forward-page-dwim)
-  (define-key map (kbd "<remap> <backward-page>") #'logos-backward-page-dwim)
+  (define-key map
+    (kbd "<remap> <narrow-to-region>") #'logos-narrow-dwim)
+  (define-key map
+    (kbd "<remap> <forward-page>") #'logos-forward-page-dwim)
+  (define-key map
+    (kbd "<remap> <backward-page>") #'logos-backward-page-dwim)
   ;; I don't think I ever saw a package bind M-] or M-[...
   (define-key map (kbd "M-]") #'logos-forward-page-dwim)
   (define-key map (kbd "M-[") #'logos-backward-page-dwim)
@@ -727,14 +747,15 @@ Useful for prompts such as `eval-expression' and `shell-command'."
     (require 'prot-diff)
     (prot-diff-extra-keywords 1)
     (prot-diff-modus-themes-diffs)
-    (add-hook 'modus-themes-after-load-theme-hook #'prot-diff-modus-themes-diffs)))
+    (add-hook 'modus-themes-after-load-theme-hook
+              #'prot-diff-modus-themes-diffs)))
 
 ;; `prot-diff-buffer-dwim' replaces the default for `vc-diff' (which I
 ;; bind to another key---see VC section).
 (define-key global-map (kbd "C-x v =") #'prot-diff-buffer-dwim)
 (with-eval-after-load "diff-mode"
   (let ((map diff-mode-map))
-    (define-key map (kbd "C-c C-b") #'prot-diff-refine-cycle) ; replace `diff-refine-hunk'
+    (define-key map (kbd "C-c C-b") #'prot-diff-refine-cycle)
     (define-key map (kbd "C-c C-n") #'prot-diff-narrow-dwim)))
 
 ;;;;;; Version Control Framework (vc.el and prot-vc.el)
@@ -764,8 +785,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (setq vc-git-root-log-format
       '("%d %h %ad %an: %s"
         ;; The first shy group matches the characters drawn by --graph.
-        ;; We use numbered groups because `log-view-message-re' wants the
-        ;; revision number to be group 1.
+        ;; We use numbered groups because `log-view-message-re' wants
+        ;; the revision number to be group 1.
         "^\\(?:[*/\\|]+\\)\\(?:[*/\\| ]+\\)?\
 \\(?2: ([^)]+) \\)?\\(?1:[0-9a-z]+\\) \
 \\(?4:[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}\\) \
@@ -781,9 +802,9 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (let ((map global-map))
   (define-key map (kbd "C-x v b") #'vc-retrieve-tag)  ; "branch" switch
   (define-key map (kbd "C-x v t") #'vc-create-tag)
-  (define-key map (kbd "C-x v f") #'vc-log-incoming)  ; the actual git fetch
+  (define-key map (kbd "C-x v f") #'vc-log-incoming)
   (define-key map (kbd "C-x v o") #'vc-log-outgoing)
-  (define-key map (kbd "C-x v F") #'vc-update)        ; "F" because "P" is push
+  (define-key map (kbd "C-x v F") #'vc-update) ; "F" because "P" is push
   (define-key map (kbd "C-x v d") #'vc-diff))
 (with-eval-after-load "vc-dir"
   (let ((map vc-dir-mode-map))
@@ -791,21 +812,24 @@ Useful for prompts such as `eval-expression' and `shell-command'."
     (define-key map (kbd "t") #'vc-create-tag)
     (define-key map (kbd "O") #'vc-log-outgoing)
     (define-key map (kbd "o") #'vc-dir-find-file-other-window)
-    (define-key map (kbd "f") #'vc-log-incoming) ; replaces `vc-dir-find-file' (use RET)
-    (define-key map (kbd "F") #'vc-update)       ; symmetric with P: `vc-push'
-    (define-key map (kbd "d") #'vc-diff)         ; parallel to D: `vc-root-diff'
+    (define-key map (kbd "f") #'vc-log-incoming)
+    (define-key map (kbd "F") #'vc-update) ; symmetric with P: `vc-push'
+    (define-key map (kbd "d") #'vc-diff) ; parallel to D: `vc-root-diff'
     (define-key map (kbd "k") #'vc-dir-clean-files)
     (define-key map (kbd "G") #'vc-revert)
     (let ((prot-vc-git-branch-map (make-sparse-keymap)))
       (define-key map (kbd "B") prot-vc-git-branch-map)
-      (define-key prot-vc-git-branch-map (kbd "n") #'vc-create-tag) ; new branch/tag
-      (define-key prot-vc-git-branch-map (kbd "s") #'vc-retrieve-tag) ; switch branch/tag
-      (define-key prot-vc-git-branch-map (kbd "c") #'prot-vc-git-checkout-remote) ; "checkout" remote
-      (define-key prot-vc-git-branch-map (kbd "l") #'vc-print-branch-log))
+      (define-key prot-vc-git-branch-map (kbd "n") #'vc-create-tag)
+      (define-key prot-vc-git-branch-map (kbd "s") #'vc-retrieve-tag)
+      (define-key prot-vc-git-branch-map
+        (kbd "c") #'prot-vc-git-checkout-remote) ; "checkout" remote
+      (define-key prot-vc-git-branch-map
+        (kbd "l") #'vc-print-branch-log))
     (let ((prot-vc-git-stash-map (make-sparse-keymap)))
       (define-key map (kbd "S") prot-vc-git-stash-map)
-      (define-key prot-vc-git-stash-map (kbd "c") #'vc-git-stash) ; "create" named stash
-      (define-key prot-vc-git-stash-map (kbd "s") #'vc-git-stash-snapshot))))
+      (define-key prot-vc-git-stash-map (kbd "c") #'vc-git-stash)
+      (define-key prot-vc-git-stash-map
+        (kbd "s") #'vc-git-stash-snapshot))))
 (with-eval-after-load "vc-git"
   (let ((map vc-git-stash-shared-map))
     (define-key map (kbd "a") #'vc-git-stash-apply-at-point)
@@ -815,9 +839,11 @@ Useful for prompts such as `eval-expression' and `shell-command'."
     (define-key map (kbd "s") #'vc-git-stash-snapshot)))
 (with-eval-after-load "vc-annotate"
   (let ((map vc-annotate-mode-map))
-    (define-key map (kbd "M-q") #'vc-annotate-toggle-annotation-visibility)
+    (define-key map
+      (kbd "M-q") #'vc-annotate-toggle-annotation-visibility)
     (define-key map (kbd "C-c C-c") #'vc-annotate-goto-line)
-    (define-key map (kbd "<return>") #'vc-annotate-find-revision-at-line)))
+    (define-key map
+      (kbd "<return>") #'vc-annotate-find-revision-at-line)))
 (with-eval-after-load "log-view"
   (let ((map log-view-mode-map))
     (define-key map (kbd "<tab>") #'log-view-toggle-entry-display)
@@ -859,7 +885,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (define-key map (kbd "C-x v R") #'prot-vc-git-reset))
 (with-eval-after-load "vc-git"
   (let ((map vc-git-log-edit-mode-map))
-    (define-key map (kbd "C-C C-n") #'prot-vc-git-log-edit-extract-file-name)
+    (define-key map
+      (kbd "C-C C-n") #'prot-vc-git-log-edit-extract-file-name)
     (define-key map (kbd "C-C C-i") #'prot-vc-git-log-insert-commits)
     ;; Also done by `prot-vc-git-setup-mode', but I am putting it here
     ;; as well for visibility.
@@ -868,7 +895,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
     (define-key map (kbd "M-p") #'prot-vc-git-log-edit-previous-comment)
     (define-key map (kbd "M-n") #'prot-vc-git-log-edit-next-comment)
     (define-key map (kbd "M-s") #'prot-vc-git-log-edit-complete-comment)
-    (define-key map (kbd "M-r") #'prot-vc-git-log-edit-complete-comment)))
+    (define-key map
+      (kbd "M-r") #'prot-vc-git-log-edit-complete-comment)))
 (with-eval-after-load "log-view"
   (let ((map log-view-mode-map))
     (define-key map (kbd "C-TAB") #'prot-vc-log-view-toggle-entry-all)
@@ -939,7 +967,7 @@ sure this is a good approach."
 
 ;;;;;; Eshell
 
-(setenv "PAGER" "cat") ; solves issues, such as with 'git log' and the default 'less'
+(setenv "PAGER" "cat")
 
 (setq password-cache-expiry 600)
 (setq eshell-hist-ignoredups t)
@@ -1184,7 +1212,7 @@ sure this is a good approach."
 
 (add-hook 'calendar-today-visible-hook #'calendar-mark-today)
 (add-hook 'diary-list-entries-hook #'diary-sort-entries t)
-(add-hook 'diary-mode-hook #'goto-address-mode) ; buttonise plain text links
+(add-hook 'diary-mode-hook #'goto-address-mode)
 
 ;; These presuppose (setq diary-display-function #'diary-fancy-display)
 (add-hook 'diary-list-entries-hook #'diary-include-other-diary-files)
@@ -1233,7 +1261,7 @@ sure this is a good approach."
 (setq message-signature "David Porter\n")
 (setq message-citation-line-format "On %Y-%m-%d, %R %z, %f wrote:\n")
 (setq message-citation-line-function nil)
-(setq message-ignored-cited-headers nil) ; default is "." for all headers
+(setq message-ignored-cited-headers nil)
 (setq message-confirm-send nil)
 (setq message-kill-buffer-on-exit t)
 (setq message-wide-reply-confirm-recipients t)
@@ -1273,29 +1301,36 @@ sure this is a good approach."
         ("tags" . "(%s)")))
 (setq notmuch-show-empty-saved-searches t)
 (setq notmuch-saved-searches
-      '((:name "unread (inbox)" :query "tag:unread and tag:inbox" :key "u")
-        (:name "unread all" :query "tag:unread not tag:archived" :key "U")
+      '((:name "unread (inbox)"
+               :query "tag:unread and tag:inbox" :key "u")
+        (:name "unread all"
+               :query "tag:unread not tag:archived" :key "U")
         (:name "inbox" :query "tag:inbox" :key "i")
         (:name "flagged" :query "tag:flagged" :key "f")
-        (:name "reference" :query "tag:reference not tag:archived" :key "r")
-        (:name "emacs-humanities" :query "tag:list/emacs-humanities" :key "e")
+        (:name "reference"
+               :query "tag:reference not tag:archived" :key "r")
+        (:name "emacs-humanities"
+               :query "tag:list/emacs-humanities" :key "e")
         (:name "emacs-paris" :query "tag:list/emacs-paris" :key "p")
         (:name "notmuch" :query "tag:list/notmuch" :key "n")
-        (:name "great-conversation" :query "tag:list/great-conversation" :key "g")
+        (:name "great-conversation"
+               :query "tag:list/great-conversation" :key "g")
         (:name "mailing lists" :query "tag:lists" :key "m")))
 
-(setq notmuch-tagging-keys '(("r" notmuch-show-mark-read-tags "Mark read")
-                             ("a" notmuch-archive-tags "Archive")
-                             ("f" ("+flagged") "Flag")
-                             ("s" ("+spam" "-inbox") "Mark as spam")
-                             ("d" ("+deleted" "-inbox") "Delete")))
+(setq notmuch-tagging-keys
+      '(("r" notmuch-show-mark-read-tags "Mark read")
+        ("a" notmuch-archive-tags "Archive")
+        ("f" ("+flagged") "Flag")
+        ("s" ("+spam" "-inbox") "Mark as spam")
+        ("d" ("+deleted" "-inbox") "Delete")))
 
 ;; Tags
 (setq notmuch-archive-tags '("-inbox" "-unread" "+archived"))
 (setq notmuch-draft-folder "Drafts")
 
 ;; Email Composition
-(setq notmuch-mua-cite-function #'message-cite-original-without-signature)
+(setq notmuch-mua-cite-function
+      #'message-cite-original-without-signature)
 (setq notmuch-mua-user-agent-function #'notmuch-mua-user-agent-full)
 
 ;; Reading Messages
@@ -1309,7 +1344,7 @@ sure this is a good approach."
 
 (let ((map global-map))
   (define-key map (kbd "C-c m") #'notmuch)
-  (define-key map (kbd "C-x m") #'notmuch-mua-new-mail)) ; override `compose-mail'
+  (define-key map (kbd "C-x m") #'notmuch-mua-new-mail))
 
 ;;;;;; Sending Email
 
@@ -1337,7 +1372,8 @@ sure this is a good approach."
 (setq ebdb-message-try-all-headers t)
 (setq ebdb-message-headers
       '((sender "From" "Resent-From" "Reply-To" "Sender")
-        (recipients "Resent-To" "Resent-Cc" "Resent-CC" "To" "Cc" "CC" "Bcc" "BCC")))
+        (recipients "Resent-To" "Resent-Cc" "Resent-CC"
+                    "To" "Cc" "CC" "Bcc" "BCC")))
 (setq ebdb-message-all-addresses t)
 
 (setq ebdb-complete-mail 'capf)
@@ -1357,7 +1393,7 @@ sure this is a good approach."
     (define-key map (kbd "M") #'ebdb-mail) ; disables `ebdb-mail-each'
     (define-key map (kbd "m") #'ebdb-toggle-record-mark)
     (define-key map (kbd "t") #'ebdb-toggle-all-record-marks)
-    (define-key map (kbd "T") #'ebdb-toggle-records-format) ; disables `ebdb-toggle-all-records-format'
+    (define-key map (kbd "T") #'ebdb-toggle-records-format)
     (define-key map (kbd "U") #'ebdb-unmark-all-records)))
 
 ;;;;; Bongo Music Manager
@@ -1411,10 +1447,7 @@ sure this is a good approach."
 
   ;; Use alternating backgrounds, if `stripes' is available.
   (with-eval-after-load 'stripes
-    (add-hook 'elfeed-search-mode-hook #'stripes-mode)
-    ;; ;; To disable `hl-line-mode':
-    ;; (advice-add #'elfeed-search-mode :after #'prot-common-disable-hl-line)
-    )
+    (add-hook 'elfeed-search-mode-hook #'stripes-mode))
 
   (let ((map elfeed-search-mode-map))
     (define-key map (kbd "s") #'prot-elfeed-search-tag-filter)
@@ -1442,7 +1475,8 @@ sure this is a good approach."
 ;;;;; Simple HTML Renderer (shr) and EWW
 
 (setq browse-url-browser-function #'eww-browse-url)
-(setq browse-url-secondary-browser-function #'browse-url-default-browser)
+(setq browse-url-secondary-browser-function
+      #'browse-url-default-browser)
 
 (setq shr-use-colors nil)             ; t is bad for accessibility
 (setq shr-use-fonts nil)              ; t is not for me
@@ -1465,13 +1499,13 @@ sure this is a good approach."
 
 (with-eval-after-load "eww"
   (progn
-    (define-key eww-link-keymap (kbd "v") nil) ; stop overriding `eww-view-source'
+    (define-key eww-link-keymap (kbd "v") nil)
     (define-key eww-mode-map (kbd "L") #'eww-list-bookmarks)
-    (define-key eww-buffers-mode-map (kbd "d") #'eww-bookmark-kill)   ; it actually deletes
-    (define-key eww-bookmark-mode-map (kbd "d") #'eww-bookmark-kill))) ; same
+    (define-key eww-buffers-mode-map (kbd "d") #'eww-bookmark-kill)
+    (define-key eww-bookmark-mode-map (kbd "d") #'eww-bookmark-kill)))
 
 (with-eval-after-load "dired"
-  (define-key dired-mode-map (kbd "E") #'eww-open-file)) ; to render local HTML files
+  (define-key dired-mode-map (kbd "E") #'eww-open-file))
 
 (with-eval-after-load "eww"
   (progn
@@ -1636,7 +1670,8 @@ must be installed."
 
 (pdf-loader-install)
 
-;; The following functions and hooks are adapted from the manual modus-themes.
+;; The following functions and hooks are adapted from the manual
+;; modus-themes.
 
 (defun my/pdf-tools-backdrop ()
   "Set backdrop distinct from the background of the PDF page."
@@ -1653,7 +1688,8 @@ must be installed."
     (my/pdf-tools-backdrop)))
 
 (add-hook 'pdf-tools-enabled-hook #'my/pdf-tools-midnight-mode-toggle)
-(add-hook 'modus-themes-after-load-theme-hook #'my/pdf-tools-midnight-mode-toggle)
+(add-hook 'modus-themes-after-load-theme-hook
+          #'my/pdf-tools-midnight-mode-toggle)
 
 ;;;;;; Open PDFs From Org Mode
 
@@ -1730,8 +1766,8 @@ must be installed."
   (progn
     (require 'prot-moody)
     (setq prot-moody-font-height-multiplier 1.35)
-    ;; Also check the Modus themes' `modus-themes-mode-line' which can set
-    ;; the styles specifically for Moody.
+    ;; Also check the Modus themes' `modus-themes-mode-line' which can
+    ;; set the styles specifically for Moody.
     (prot-moody-set-height -1)))
 
 ;;;;;; Mode Line Recursion Indicators
@@ -1763,7 +1799,7 @@ must be installed."
         ("Australia/Canberra" "Canberra")))
 
 (setq world-clock-time-format "%R %z  %A %d %B")
-(setq world-clock-buffer-name "*world-clock*") ; Placement handled by `display-buffer-alist'
+(setq world-clock-buffer-name "*world-clock*")
 
 ;;;;; Window Divider Mode
 
@@ -1901,7 +1937,7 @@ must be installed."
   (progn
     (setq indent-tabs-mode t)
     (setq tab-width sh-basic-offset)
-	(add-hook 'sh-mode-hook #'my/whitespace-style-ignore-indentation)))
+    (add-hook 'sh-mode-hook #'my/whitespace-style-ignore-indentation)))
 
 (add-hook 'sh-mode-hook #'my/configure-sh-mode)
 
@@ -1914,7 +1950,8 @@ must be installed."
   (progn
     (setq indent-tabs-mode t)
     (setq tab-width python-indent-offset)
-	(add-hook 'python-mode-hook #'my/whitespace-style-ignore-indentation)))
+    (add-hook 'python-mode-hook
+              #'my/whitespace-style-ignore-indentation)))
 
 (add-hook 'python-mode-hook #'my/configure-python-mode)
 
@@ -1929,7 +1966,8 @@ must be installed."
   (progn
     (setq indent-tabs-mode t)
     (setq tab-width sgml-basic-offset)
-	(add-hook 'mhtml-mode-hook #'my/whitespace-style-ignore-indentation)))
+    (add-hook 'mhtml-mode-hook
+              #'my/whitespace-style-ignore-indentation)))
 
 (add-hook 'mhtml-mode-hook #'my/configure-html-mode)
 
@@ -1942,10 +1980,10 @@ must be installed."
 (defun my/configure-css-mode ()
   "Configure CSS mode according to my preferences."
   (progn
-	(setq css-indent-offset 2)
-	(setq indent-tabs-mode t)
-	(setq tab-width css-indent-offset)
-	(add-hook 'css-mode-hook #'my/whitespace-style-ignore-indentation)))
+    (setq css-indent-offset 2)
+    (setq indent-tabs-mode t)
+    (setq tab-width css-indent-offset)
+    (add-hook 'css-mode-hook #'my/whitespace-style-ignore-indentation)))
 
 (add-hook 'css-mode-hook #'my/configure-css-mode)
 
@@ -1962,7 +2000,8 @@ must be installed."
   (progn
     (setq indent-tabs-mode t)
     (setq tab-width nxml-child-indent)
-	(add-hook 'nxml-mode-hook #'my/whitespace-style-ignore-indentation)))
+    (add-hook 'nxml-mode-hook
+              #'my/whitespace-style-ignore-indentation)))
 
 (add-hook 'nxml-mode-hook #'my/configure-nxml-mode)
 
