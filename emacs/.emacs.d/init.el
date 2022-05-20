@@ -1791,6 +1791,8 @@ must be installed."
 (setq hl-line-sticky-flag nil)
 (setq hl-line-overlay-priority -50) ; emacs28
 
+;;;;; Whitespace
+
 (setq whitespace-style '(face
                          trailing
                          tabs
@@ -2084,14 +2086,14 @@ must be installed."
 
 (add-hook 'prog-mode-hook #'flymake-mode)
 
-;;;;;; Flymake + Shellcheck
+;;;;;;; Flymake + Shellcheck
 
 (unless (package-installed-p 'flymake-shellcheck)
   (package-install 'flymake-shellcheck))
 
 (add-hook 'sh-mode-hook #'flymake-shellcheck-load)
 
-;;;;;; Flymake + Proselint
+;;;;;;; Flymake + Proselint
 
 (unless (package-installed-p 'flymake-proselint)
   (package-install 'flymake-proselint))
@@ -2102,14 +2104,14 @@ must be installed."
   (add-hook hook #'flymake-proselint-setup)
   (add-hook hook #'flymake-mode))
 
-;;;;;; Flymake + Markdown
+;;;;;;; Flymake + Markdown
 
 (unless (package-installed-p 'flymake-markdownlint)
   (package-install 'flymake-markdownlint))
 
 (add-hook 'markdown-mode-hook #'flymake-markdownlint-setup)
 
-;;;;;; Flymake + CSS
+;;;;;;; Flymake + CSS
 
 (unless (package-installed-p 'flymake-css)
   (package-install 'flymake-css))
