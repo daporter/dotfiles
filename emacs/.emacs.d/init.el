@@ -40,7 +40,7 @@
     (save-buffers-kill-terminal t)))
 
 (define-key global-map (kbd "C-x C-c") #'my/quit-or-restart)
-(define-key global-map (kbd "C-c p") #'package-list-packages)
+(define-key global-map (kbd "C-c P") #'package-list-packages)
 
 ;;;; Base Settings
 
@@ -401,36 +401,108 @@
 
 ;;;;;; In-Buffer Completions
 
-;;;;;;; Corfu (In-Buffer Completion Popup)
+;;;;;;;; Corfu (In-Buffer Completion Popup)
 
 (unless (package-installed-p 'corfu)
   (package-install 'corfu))
 
 (global-corfu-mode 1)
 
-;; Adapted from Corfu's manual.
-(defun contrib/corfu-enable-always-in-minibuffer ()
-  "Enable Corfu in the minibuffer if Vertico is not active.
-Useful for prompts such as `eval-expression' and `shell-command'."
-  (unless (bound-and-true-p vertico--input)
-    (corfu-mode 1)))
-
-(add-hook 'minibuffer-setup-hook
-          #'contrib/corfu-enable-always-in-minibuffer 1)
-
-;;;;;;; CAPE (Extra completion-at-point Backends)
+;;;;;;;; Completion At Point extensions (cape)
 
 (unless (package-installed-p 'cape)
   (package-install 'cape))
 
-(setq cape-dabbrev-min-length 3)
-(dolist (backend '(cape-symbol
-                   cape-keyword
-                   cape-file
-                   cape-dabbrev))
-  (add-to-list 'completion-at-point-functions backend))
+(with-eval-after-load "cape"
+  (progn
+    (require 'ispell)
+    (setq cape-dict-file ispell-alternate-dictionary)))
 
-;;;;;;; Enhance Command-Line Completion (pcmpl-args)
+;;;;;;;;; Elisp
+
+(defun my/configure-capfs-elisp ()
+  "Configure my preferred CAPFs for Elisp mode."
+  (setq-local completion-at-point-functions
+              '(cape-file
+                cape-symbol
+                elisp-completion-at-point
+                cape-dabbrev
+                cape-ispell)))
+
+(add-hook 'emacs-lisp-mode-hook #'my/configure-capfs-elisp)
+
+;;;;;;;;; Org Mode
+
+(defun my/configure-capfs-org ()
+  "Configure my preferred CAPFs for Org mode."
+  (require 'org-roam)
+  (if (org-roam-file-p)
+      (org-roam--register-completion-functions-h)
+    (setq-local completion-at-point-functions
+                (list (cape-super-capf
+                       #'cape-dabbrev
+                       #'cape-ispell)))))
+
+(add-hook 'org-mode-hook #'my/configure-capfs-org)
+
+;;;;;;;;; Shell Script
+
+(defun my/configure-capfs-shell-script ()
+  "Configure my preferred CAPFs for Shell Script mode."
+  (setq-local completion-at-point-functions
+              '(cape-dabbrev
+                cape-ispell
+                cape-file)))
+
+(add-hook 'sh-mode-hook #'my/configure-capfs-shell-script)
+
+;;;;;;;;; Eshell
+
+(defun my/configure-capfs-eshell ()
+  "Configure my preferred CAPFs for Eshell mode."
+  (setq-local completion-at-point-functions
+              '(cape-file
+                pcomplete-completions-at-point))
+  ;; The following forms are recommended by the Corfu README.
+  (advice-add 'pcomplete-completions-at-point
+              :around #'cape-wrap-silent)
+  (advice-add 'pcomplete-completions-at-point
+              :around #'cape-wrap-purify))
+
+(add-hook 'eshell-mode-hook #'my/configure-capfs-eshell)
+
+;;;;;;;;; Git Commit
+
+(defun my/configure-capfs-git-commit ()
+  "Configure my preferred CAPFs for Git Commit mode."
+  (setq-local completion-at-point-functions
+              '(cape-symbol
+                cape-tag
+                cape-dabbrev)))
+
+(add-hook 'git-commit-mode-hook #'my/configure-capfs-git-commit)
+
+;;;;;;;;; Keybindings for specific completion functions
+
+(let ((map global-map))
+  (define-key map (kbd "C-c p a")  #'cape-abbrev)
+  (define-key map (kbd "C-c p d")  #'cape-dabbrev)
+  (define-key map (kbd "C-c p w")  #'cape-dict)
+  (define-key map (kbd "C-c p f")  #'cape-file)
+  (define-key map (kbd "C-c p h")  #'cape-history)
+  (define-key map (kbd "C-c p i")  #'cape-ispell)
+  (define-key map (kbd "C-c p k")  #'cape-keyword)
+  (define-key map (kbd "C-c p l")  #'cape-line)
+  (define-key map (kbd "C-c p r")  #'cape-rfc1345)
+  (define-key map (kbd "C-c p &")  #'cape-sgml)
+  (define-key map (kbd "C-c p s")  #'cape-symbol)
+  (define-key map (kbd "C-c p \\") #'cape-tex)
+  (define-key map (kbd "C-c p ^")  #'cape-tex)
+  (define-key map (kbd "C-c p _")  #'cape-tex)
+  (define-key map (kbd "C-c p t")  #'complete-tag)
+  (define-key map (kbd "C-c p p")  #'completion-at-point))
+
+;;;;;;;; Enhance Command-Line Completion (pcmpl-args)
 
 (unless (package-installed-p 'pcmpl-args)
   (package-install 'pcmpl-args))
