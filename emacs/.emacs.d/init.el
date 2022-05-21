@@ -1059,8 +1059,9 @@ sure this is a good approach."
   (define-key eshell-mode-map (kbd "C-x DEL") #'eshell-kill-input))
 
 (with-eval-after-load "esh-module"
-  (dolist (module '(eshell-tramp
-                    eshell-elecslash))
+  (dolist (module '(eshell-rebind
+                    eshell-smart
+                    eshell-tramp))
     (add-to-list 'eshell-modules-list module)))
 
 ;;;;; Sudo
