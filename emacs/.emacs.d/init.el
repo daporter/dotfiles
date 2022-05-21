@@ -437,7 +437,10 @@
   "Configure my preferred CAPFs for Org mode."
   (require 'org-roam)
   (if (org-roam-file-p)
-      (org-roam--register-completion-functions-h)
+      (progn
+        (org-roam--register-completion-functions-h)
+        (add-to-list 'completion-at-point-functions
+                     'cape-ispell t))
     (setq-local completion-at-point-functions
                 (list (cape-super-capf
                        #'cape-dabbrev
