@@ -118,8 +118,11 @@
 
 (setq fontaine-presets
       '((t
-		 :default-family "Iosevka Comfy"
-		 :variable-pitch-family "Iosevka Comfy Duo")))
+         :default-height 90
+         :bold-weight semibold
+         :italic-family "IBM Plex Mono Light"
+         :variable-pitch-family "Libertinus Serif"
+         :variable-pitch-height 1.25)))
 
 ;; Set last preset or fall back to desired style from
 ;; `fontaine-presets'.
