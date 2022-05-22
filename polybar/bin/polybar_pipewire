@@ -14,9 +14,9 @@ VOLUME=$(pamixer --get-volume)
 IS_MUTED=$(pamixer --get-mute)
 
 if [ "${IS_MUTED}" = "true" ]; then
-	echo "${MUTED_COLOR} "
+	echo "${MUTED_COLOR} "
 elif [ "${VOLUME}" -le '40' ]; then
-	echo " ${VOLUME}%"
+	echo " ${VOLUME}%"
 else
-	echo " ${VOLUME}%"
+	echo " ${VOLUME}%"
 fi
