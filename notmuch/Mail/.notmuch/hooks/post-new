@@ -22,3 +22,7 @@ notmuch tag -inbox +lists +list/notmuch \
 notmuch tag -inbox +lists +list/emacs-paris \
         -- 'from:"~bzg/emacsfr@lists.sr.ht"' \
         or 'to:"~bzg/emacsfr@lists.sr.ht"'
+
+notmuch tag -inbox +lists +list/prot-dotfiles \
+        -- 'from:"~protesilaos/dotfiles@lists.sr.ht"' \
+        or 'to:"~protesilaos/dotfiles@lists.sr.ht"'

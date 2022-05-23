@@ -1407,11 +1407,13 @@ sure this is a good approach."
         (:name "reference"
                :query "tag:reference not tag:archived" :key "r")
         (:name "emacs-humanities"
-               :query "tag:list/emacs-humanities" :key "e")
-        (:name "emacs-paris" :query "tag:list/emacs-paris" :key "p")
+               :query "tag:list/emacs-humanities" :key "eh")
+        (:name "emacs-paris" :query "tag:list/emacs-paris" :key "ep")
         (:name "notmuch" :query "tag:list/notmuch" :key "n")
         (:name "great-conversation"
                :query "tag:list/great-conversation" :key "g")
+        (:name "prot-dotfiles"
+               :query "tag:list/prot-dotfiles" :key "pd")
         (:name "mailing lists" :query "tag:lists" :key "m")))
 
 (setq notmuch-tagging-keys
