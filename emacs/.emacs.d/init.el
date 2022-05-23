@@ -433,15 +433,20 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (defun my/configure-capfs-elisp ()
   "Configure my preferred CAPFs for Elisp mode."
   (setq-local completion-at-point-functions
-              '(cape-file
-                cape-symbol
-                elisp-completion-at-point
-                cape-dabbrev
-                cape-ispell)))
+              (list (cape-super-capf #'elisp-completion-at-point
+                                     #'cape-dabbrev)
+                    #'cape-file
+                    #'cape-ispell)))
 
 (add-hook 'emacs-lisp-mode-hook #'my/configure-capfs-elisp)
 
 ;;;;;;;;; Org Mode
+
+(defun my/configure-org ()
+  "Configure Org mode according to my preferences."
+  (variable-pitch-mode t))
+
+(add-hook 'org-mode-hook #'my/configure-org)
 
 (defun my/configure-capfs-org ()
   "Configure my preferred CAPFs for Org mode."
@@ -452,9 +457,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
         (add-to-list 'completion-at-point-functions
                      'cape-ispell t))
     (setq-local completion-at-point-functions
-                (list (cape-super-capf
-                       #'cape-dabbrev
-                       #'cape-ispell)))))
+                (list (cape-super-capf #'cape-dabbrev
+                                       #'cape-ispell)))))
 
 (add-hook 'org-mode-hook #'my/configure-capfs-org)
 
@@ -464,8 +468,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   "Configure my preferred CAPFs for Shell Script mode."
   (setq-local completion-at-point-functions
               '(cape-dabbrev
-                cape-ispell
-                cape-file)))
+                cape-file
+                cape-ispell)))
 
 (add-hook 'sh-mode-hook #'my/configure-capfs-shell-script)
 
@@ -491,7 +495,8 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (setq-local completion-at-point-functions
               '(cape-symbol
                 cape-tag
-                cape-dabbrev)))
+                cape-dabbrev
+                cape-ispell)))
 
 (add-hook 'git-commit-mode-hook #'my/configure-capfs-git-commit)
 
