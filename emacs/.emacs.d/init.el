@@ -408,6 +408,16 @@
 
 (global-corfu-mode 1)
 
+;; Adapted from Corfu's manual.
+(defun contrib/corfu-enable-always-in-minibuffer ()
+  "Enable Corfu in the minibuffer if Vertico is not active.
+Useful for prompts such as `eval-expression' and `shell-command'."
+  (unless (bound-and-true-p vertico--input)
+    (corfu-mode 1)))
+
+(add-hook 'minibuffer-setup-hook
+          #'contrib/corfu-enable-always-in-minibuffer 1) 
+
 ;;;;;;;; Completion At Point extensions (cape)
 
 (unless (package-installed-p 'cape)
