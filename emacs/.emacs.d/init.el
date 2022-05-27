@@ -119,8 +119,6 @@
 (setq fontaine-presets
       '((t
          :default-height 90
-         :bold-weight semibold
-         :italic-family "IBM Plex Mono Light"
          :variable-pitch-family "Libertinus Serif"
          :variable-pitch-height 1.25)))
 
