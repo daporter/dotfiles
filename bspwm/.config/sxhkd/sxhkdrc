@@ -112,7 +112,7 @@ super + {_, shift +} n
 	bspc node --focus {next, prev}.local.!hidden.window
 
 # Focus the next/previous desktop in the current monitor.
-super + {less, greater}
+super + bracket{left,right}
 	bspc desktop --focus {prev, next}.local
 
 # Focus the last node/desktop.
