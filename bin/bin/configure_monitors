@@ -13,18 +13,6 @@ _external_is_connected () {
 	xrandr --query | grep -q 'DP-1 connected'
 }
 
-_external () {
-	xrandr --output DP-1 \
-	       --mode 1920x1080 \
-	       "$@"
-}
-
-_laptop () {
-	xrandr --output LVDS-1 \
-	       --mode 1600x900 \
-	       "$@"
-}
-
 _reconfigure_wallpaper () {
 	"$HOME"/.fehbg
 }
@@ -35,11 +23,11 @@ if ! _check xrandr; then
 fi
 
 if _external_is_connected; then
-	_external --primary
-	_laptop
+	xrandr --output DP-1 --mode 1920x1080 --primary
+	xrandr --output LVDS-1 --off
 else
-	_laptop --primary
-	_external --off
+	xrandr --output LVDS-1 --mode 1600x900 --primary
+	xrandr --output DP-1 --off
 fi
 
 _reconfigure_wallpaper
