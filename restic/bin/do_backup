@@ -2,6 +2,14 @@
 #
 # Run a backup of my home directory.
 
+_wifi () {
+	echo '* Connecting to network Phunculist'
+	if ! nmcli connection up Phunculist; then
+		echo 'Unable to connect to network Phunculist. Exiting.'
+		exit 1
+	fi
+}
+
 _prepare () {
 	. "$HOME"/.profile.d/restic.sh
 }
@@ -47,5 +55,5 @@ _remove_old_snapshots () {
 }
 
 echo ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻ Backup started: "$(date '+%a %H:%M')" ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
-_prepare && _do_backup && _verify && _remove_old_snapshots
+_wifi && _prepare && _do_backup && _verify && _remove_old_snapshots
 echo ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻ Backup finished: "$(date '+%a %H:%M')" ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
