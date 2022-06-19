@@ -33,18 +33,12 @@ if [ -f "$HOME"/.fehbg ]; then
 	"$HOME"/.fehbg &
 fi
 
-# TODO: Make this an runit service to ensure there is not more than one
-# process.
-picom &
+configure_monitors
 
-# TODO: Make this an runit service to ensure there is not more than one
-# process.
 redshift &
-
 pipewire &
 pipewire-pulse &
-
 dunst &
-sxhkd &
+dwmbar &
 
-exec bspwm
+exec dwm
