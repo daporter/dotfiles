@@ -11,36 +11,37 @@ trap "rm -f $PIPE" EXIT INT TERM
 
 mail() {
 	data=$(notmuch count 'tag:unread NOT tags')
-	printf "mail:%s\n" " $data"	
+	printf "mail:%s\n" " $data"
 }
 
 cpu() {
 	data=$(grep --only-matching "^[^ ]*" /proc/loadavg)
-	printf "cpu:%s\n" " $data"
+	printf "cpu:%s\n" " $data"
 }
 
 mem() {
 	data=$(free | awk '/^Mem:/ {printf "%d%%\n", int($3) / int($2) * 100}')
-	printf "mem:%s\n" " $data"
+	printf "mem:%s\n" " $data"
 }
 
 volume() {
 	data=$(pamixer --get-volume-human)
-	printf "volume:%s\n" " $data"
+	printf "volume:%s\n" " $data"
 }
 
 date_time() {
 	data=$(date '+%a %e %b %R')
-	printf "date_time:%s\n" "$data"
+	printf "date_time:%s\n" " $data"
 }
 
 wifi() {
-	ssid=$(nmcli --terse --fields active,ssid dev wifi | grep '^yes' | cut -d: -f2)
-	quality=$(awk '/^wlp/ { print int($3 * 100 / 70)}' /proc/net/wireless)
-	printf "wifi:%s\n" " $ssid $quality%"
+	data=$(nmcli dev wifi | awk '/^\*/ {printf "%s %s%%\n", $3, $8}')
+	printf "wifi:%s\n" " $data"
 }
 
-while :; do mail;      sleep 300s; done > "$PIPE" &
+if [ "$(hostname)" = 'zwolle' ]; then
+	while :; do mail;      sleep 300s; done > "$PIPE" &
+fi
 while :; do cpu;       sleep  30s; done > "$PIPE" &
 while :; do mem;       sleep  20s; done > "$PIPE" &
 while :; do volume;    sleep   5s; done > "$PIPE" &
@@ -71,5 +72,10 @@ while read -r line; do
 			;;
 	esac
 
-	xsetroot -name " $mail_s  $cpu_s  $mem_s  $volume_s  $wifi_s  $date_time_s"
+	status="$cpu_s  $mem_s  $volume_s  $wifi_s  $date_time_s"
+	if [ "$(hostname)" = 'zwolle' ]; then
+		status="$mail_s  $status"
+	fi
+	xsetroot -name " $status"
+
 done < $PIPE
