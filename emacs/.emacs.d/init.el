@@ -1976,6 +1976,37 @@ must be installed."
 
 ;;;;; Cursor and Mouse Settings
 
+;;;;;; Cursor appearance e9cursory.el
+
+(unless (package-installed-p 'cursory)
+  (package-install 'cursory))
+
+(setq cursory-presets
+      '((bar
+         :cursor-type (bar . 2)
+         :cursor-in-non-selected-windows hollow
+         :blink-cursor-blinks 10
+         :blink-cursor-interval 0.5
+         :blink-cursor-delay 0.2)
+        (box
+         :cursor-type box
+         :cursor-in-non-selected-windows hollow
+         :blink-cursor-blinks 10
+         :blink-cursor-interval 0.5
+         :blink-cursor-delay 0.2)
+        (underscore
+         :cursor-type (hbar . 3)
+         :cursor-in-non-selected-windows hollow
+         :blink-cursor-blinks 50
+         :blink-cursor-interval 0.2
+         :blink-cursor-delay 0.2)))
+
+(setq cursory-latest-state-file (locate-user-emacs-file "cursory-latest-state.eld"))
+
+(add-hook 'kill-emacs-hook #'cursory-store-latest-preset)
+
+(define-key global-map (kbd "C-c C") #'cursory-set-preset)
+
 ;;;;;; Scrolling Behaviour
 
 (setq-default scroll-preserve-screen-position t)
