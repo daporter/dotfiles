@@ -1,0 +1,10 @@
+#!/bin/sh
+
+case $1 in
+	period-changed)
+		exec notify-send "Redshift" "Period changed from $2 to $3"
+		;;
+	*)
+		exec notify-send "Redshift" "Unhandled event: $*"
+		;;
+esac
