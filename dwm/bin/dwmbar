@@ -10,13 +10,18 @@ fi
 trap "rm -f $PIPE" EXIT INT TERM
 
 mail() {
-	data=$(notmuch count 'tag:unread NOT tags')
-	printf "mail:%s\n" " $data"
+	count=$(notmuch count 'tag:unread NOT tag:archived')
+	if [ "$count" = '0' ]; then
+		icon=''
+	else
+		icon=''
+	fi
+	printf "mail:%s\n" "$icon $count"
 }
 
 cpu() {
 	data=$(grep --only-matching "^[^ ]*" /proc/loadavg)
-	printf "cpu:%s\n" " $data"
+	printf "cpu:%s\n" " $data"
 }
 
 mem() {
