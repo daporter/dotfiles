@@ -1696,9 +1696,12 @@ must be installed."
 (unless (package-installed-p 'anki-editor)
   (package-install 'anki-editor))
 
-(define-key org-mode-map (kbd "C-c a n") #'anki-editor-insert-note)
-(define-key org-mode-map (kbd "C-c a c") #'anki-editor-cloze-region)
-(define-key org-mode-map (kbd "C-c a p") #'anki-editor-push-notes)
+;; Add some keybindings to anki-editor-mode.
+(let ((map (make-sparse-keymap)))
+  (define-key map (kbd "C-c a n") #'anki-editor-insert-note)
+  (define-key map (kbd "C-c a c") #'anki-editor-cloze-region)
+  (define-key map (kbd "C-c a p") #'anki-editor-push-notes)
+  (add-to-list 'minor-mode-map-alist (cons 'anki-editor-mode map)))
 
 (define-skeleton anki-vocab-basic
   "Skeleton of an Anki Basic note for vocab."
