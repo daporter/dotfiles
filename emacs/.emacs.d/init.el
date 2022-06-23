@@ -32,14 +32,6 @@
 
 (setq initial-buffer-choice t)          ; always start with *scratch*
 
-(defun my/quit-or-restart (&optional restart)
-  "Quit Emacs or restart it with RESTART."
-  (interactive "P")
-  (if restart
-      (restart-emacs)                   ; requires Emacs 29
-    (save-buffers-kill-terminal t)))
-
-(define-key global-map (kbd "C-x C-c") #'my/quit-or-restart)
 (define-key global-map (kbd "C-c P") #'package-list-packages)
 
 ;;;; Base Settings
