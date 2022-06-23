@@ -24,18 +24,6 @@ _do_backup () {
 	echo
 }
 
-_verify () {
-	echo '* Verifying the repository'
-	# Verify the structure and consistency of the repository.  The
-	# option `--read-data-subset=n%’ also checks n%, randomly chosen,
-	# of the actual pack files.
-	if ! restic check --read-data-subset=1%; then
-		echo 'Cannot verify repository.'
-		exit 1
-	fi
-	echo
-}
-
 _remove_old_snapshots () {
 	echo '* Removing old snapshots'
 	# Keep the most recent 7 daily snapshots, then 4 (remember, 7
@@ -55,5 +43,5 @@ _remove_old_snapshots () {
 }
 
 echo ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻ Backup started: "$(date '+%a %H:%M')" ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
-_wifi && _prepare && _do_backup && _verify && _remove_old_snapshots
+_wifi && _prepare && _do_backup && _remove_old_snapshots
 echo ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻ Backup finished: "$(date '+%a %H:%M')" ⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻⸻
