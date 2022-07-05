@@ -10,7 +10,7 @@ afew --tag --new
 
 notmuch tag -inbox +lists +list/great-conversation \
         -- to:great-conversation@googlegroups.com \
-        or to:GreatConversation@yahoogroups.com
+           or to:GreatConversation@yahoogroups.com
 
 notmuch tag -inbox +lists +list/emacs-humanities \
         -- from:emacs-humanities@gnu.org or to:emacs-humanities@gnu.org
@@ -21,8 +21,20 @@ notmuch tag -inbox +lists +list/notmuch \
 # Quoting is needed to ensure “~” is interpreted literally.
 notmuch tag -inbox +lists +list/emacs-paris \
         -- 'from:"~bzg/emacsfr@lists.sr.ht"' \
-        or 'to:"~bzg/emacsfr@lists.sr.ht"'
+           or 'to:"~bzg/emacsfr@lists.sr.ht"'
 
 notmuch tag -inbox +lists +list/prot-dotfiles \
         -- 'from:"~protesilaos/dotfiles@lists.sr.ht"' \
-        or 'to:"~protesilaos/dotfiles@lists.sr.ht"'
+           or 'to:"~protesilaos/dotfiles@lists.sr.ht"'
+
+notmuch tag -inbox +lists +list/denote \
+        -- 'from:"~protesilaos/denote@lists.sr.ht"' \
+           or 'to:"~protesilaos/denote@lists.sr.ht"'
+
+notmuch tag -inbox +lists +list/prot-general \
+        -- 'from:"~protesilaos/general-issues@lists.sr.ht"' \
+           or 'to:"~protesilaos/general-issues@lists.sr.ht"'
+
+notmuch tag -inbox +lists +list/cursory \
+        -- 'from:"~protesilaos/cursory@lists.sr.ht"' \
+           or 'to:"~protesilaos/cursory@lists.sr.ht"'
