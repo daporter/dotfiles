@@ -440,15 +440,9 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (defun my/configure-capfs-org ()
   "Configure my preferred CAPFs for Org mode."
-  (require 'org-roam)
-  (if (org-roam-file-p)
-      (progn
-        (org-roam--register-completion-functions-h)
-        (add-to-list 'completion-at-point-functions
-                     'cape-ispell t))
-    (setq-local completion-at-point-functions
-                (list (cape-super-capf #'cape-dabbrev
-                                       #'cape-ispell)))))
+  (setq-local completion-at-point-functions
+              (list (cape-super-capf #'cape-dabbrev
+                                     #'cape-ispell))))
 
 (add-hook 'org-mode-hook #'my/configure-capfs-org)
 
@@ -777,6 +771,45 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (progn
     (require 'prot-bookmark (locate-user-emacs-file "prot-lisp/prot-bookmark"))
     (prot-bookmark-extra-keywords 1)))
+
+;;;;; Denote
+
+(unless (package-installed-p 'denote)
+  (package-install 'denote))
+
+(setq denote-directory "~/Sync/notes")
+(setq denote-known-keywords '("emacs" "philosophy"))
+(setq denote-allow-multi-word-keywords nil)
+(setq denote-link-use-org-id t)
+
+;; For non-Org files. (Org does this automatically.)
+(add-hook 'find-file-hook #'denote-link-buttonize-buffer)
+
+(require 'denote-dired)
+
+(setq denote-dired-directories
+      (list denote-directory
+            "~/Sync/inbox"
+            "~/Sync/journal"))
+
+(add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
+
+(defun my/denote-journal ()
+  "Create an entry tagged 'journal' with the date as its title."
+  (interactive)
+  (let ((denote-directory "~/Sync/journal/"))
+    (denote (denote--title-prompt) "journal")))
+
+(let ((map global-map))
+  (define-key map (kbd "C-c n j") #'my/denote-journal)
+  (define-key map (kbd "C-c n n") #'denote)
+  (define-key map (kbd "C-c n N") #'denote-type)
+  (define-key map (kbd "C-c n d") #'denote-date)
+  (define-key map (kbd "C-c n i") #'denote-link) ; "insert" mnemonic
+  (define-key map (kbd "C-c n I") #'denote-link-add-links)
+  (define-key map (kbd "C-c n l") #'denote-link-find-file) ; "list" links
+  (define-key map (kbd "C-c n b") #'denote-link-backlinks)
+  (define-key map (kbd "C-c n r") #'denote-dired-rename-file))
 
 ;;;;; Focus Mode (logos.el)
 
@@ -1241,41 +1274,6 @@ sure this is a good approach."
 
 (define-key org-gtd-process-map (kbd "C-c c") #'org-gtd-choose)
 
-;;;;;; Org Journal
-
-(unless (package-installed-p 'org-journal)
-  (package-install 'org-journal))
-
-(setq org-journal-dir "~/Sync/journal")
-(setq org-journal-file-format "%Y-%m-%d.org")
-(setq org-journal-date-format "%A, %d %B %Y")
-
-(define-key global-map (kbd "C-c j") #'org-journal-new-entry)
-
-;;;;;; Org Roam
-
-(setq org-roam-v2-ack t)
-
-(unless (package-installed-p 'org-roam)
-  (package-install 'org-roam))
-
-(setq org-roam-directory "~/Sync/zettelkasten")
-
-(org-roam-db-autosync-mode)
-
-(let ((map global-map))
-  (define-key map (kbd "C-c z f") #'org-roam-node-find)
-  (define-key map (kbd "C-c z i") #'org-roam-node-insert))
-(define-key org-mode-map (kbd "C-c z t") #'org-roam-buffer-toggle)
-
-(setq org-roam-capture-templates
-      '(("d" "default" plain
-         (file "~/Sync/org/zettel_template.org")
-         :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                            "#+title: ${title}\n")
-         :empty-lines-before 1
-         :unnarrowed t)))
-
 ;;;;; Calendar and Diary
 
 (setq calendar-mark-diary-entries-flag t)
@@ -1629,36 +1627,6 @@ sure this is a good approach."
       (locate-user-emacs-file "prot-eww-visited-history"))
 (setq prot-eww-save-visited-history t)
 (setq prot-eww-bookmark-link nil)
-
-;;;;; Deft
-
-(unless (package-installed-p 'deft)
-  (package-install 'deft))
-
-(setq deft-directory "~/Sync/zettelkasten")
-(setq deft-default-extension "org")
-(setq deft-use-filter-string-for-filename t)
-
-(advice-add 'deft-parse-title :override
-            (lambda (file contents)
-              (if deft-use-filename-as-title
-                  (deft-base-filename file)
-                (let* ((case-fold-search 't)
-                       (begin (string-match "title: " contents))
-                       (end-of-begin (match-end 0))
-                       (end (string-match "\n" contents begin)))
-                  (if begin
-                      (substring contents end-of-begin end)
-                    (format "%s" file))))))
-
-(setq deft-strip-summary-regexp
-      (concat "\\("
-              "[\n\t]"
-              "\\|^#\\+[[:alpha:]_]+:.*$" ; org-mode metadata
-              "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n"
-              "\\)"))
-
-(define-key global-map (kbd "C-c z d") #'deft)
 
 ;;;;; Zotero Reference Manager
 
