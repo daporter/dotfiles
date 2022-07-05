@@ -15,7 +15,7 @@
 (setq vc-follow-symlinks t) ; because my dotfiles are managed this way
 
 (add-to-list 'load-path (locate-user-emacs-file "lisp"))
-(add-to-list 'load-path (locate-user-emacs-file "prot-lisp"))
+(require 'prot-common (locate-user-emacs-file "prot-lisp/prot-common"))
 
 ;;;;; Some Basic Settings
 
@@ -168,7 +168,7 @@
   (define-key map (kbd "?") nil))
 
 (with-eval-after-load "orderless"
-  (require 'prot-orderless))
+  (require 'prot-orderless (locate-user-emacs-file "prot-lisp/prot-orderless")))
 
 ;;;;;; Completion Annotations (Marginalia)
 
@@ -361,7 +361,7 @@
 
 (with-eval-after-load "embark"
   (progn
-    (require 'prot-embark)
+    (require 'prot-embark (locate-user-emacs-file "prot-lisp/prot-embark"))
     (prot-embark-keymaps 1)
     (prot-embark-setup-packages 1)))
 
@@ -406,7 +406,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
     (corfu-mode 1)))
 
 (add-hook 'minibuffer-setup-hook
-          #'contrib/corfu-enable-always-in-minibuffer 1) 
+          #'contrib/corfu-enable-always-in-minibuffer 1)
 
 ;;;;;;;; Completion At Point extensions (cape)
 
@@ -685,7 +685,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (tab-bar-history-mode 1)
 
 (with-eval-after-load "tab-bar"
-  (require 'prot-tab))
+  (require 'prot-tab (locate-user-emacs-file "prot-lisp/prot-tab")))
 
 (setq tab-bar-format
       '(prot-tab-format-space-single
@@ -775,7 +775,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (with-eval-after-load "bookmark"
   (progn
-    (require 'prot-bookmark)
+    (require 'prot-bookmark (locate-user-emacs-file "prot-lisp/prot-bookmark"))
     (prot-bookmark-extra-keywords 1)))
 
 ;;;;; Focus Mode (logos.el)
@@ -835,7 +835,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (with-eval-after-load "diff-mode"
   (progn
-    (require 'prot-diff)
+    (require 'prot-diff (locate-user-emacs-file "prot-lisp/prot-diff"))
     (prot-diff-extra-keywords 1)
     (prot-diff-modus-themes-diffs)
     (add-hook 'modus-themes-after-load-theme-hook
@@ -898,6 +898,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (define-key map (kbd "C-x v F") #'vc-update) ; "F" because "P" is push
   (define-key map (kbd "C-x v d") #'vc-diff))
 (with-eval-after-load "vc-dir"
+  (require 'prot-vc (locate-user-emacs-file "prot-lisp/prot-vc"))
   (let ((map vc-dir-mode-map))
     (define-key map (kbd "b") #'vc-retrieve-tag)
     (define-key map (kbd "t") #'vc-create-tag)
@@ -1533,7 +1534,7 @@ sure this is a good approach."
 
 (with-eval-after-load 'elfeed
   (progn
-    (require 'prot-elfeed)
+    (require 'prot-elfeed (locate-user-emacs-file "prot-lisp/prot-elfeed"))
     (setq prot-elfeed-feeds-file "~/Sync/emacs/feeds.el")
     (setq prot-elfeed-tag-faces t)
     (prot-elfeed-fontify-tags)
@@ -1906,7 +1907,7 @@ must be installed."
 
 ;;;;; Line Numbers and Relevant Indicators
 
-(require 'prot-sideline)
+(require 'prot-sideline (locate-user-emacs-file "prot-lisp/prot-sideline"))
 ;; Set absolute line numbers.  A value of "relative" is also useful.
 (setq display-line-numbers-type t)
 ;; Those two variables were introduced in Emacs 27.1
