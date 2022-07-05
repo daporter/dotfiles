@@ -983,7 +983,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (with-eval-after-load "vc"
   (progn
-    (require 'prot-vc)
+    (require 'prot-vc (locate-user-emacs-file "prot-lisp/prot-vc"))
     ;; This refashions log view and log edit buffers
     (prot-vc-git-setup-mode 1)))
 
@@ -1604,7 +1604,7 @@ sure this is a good approach."
 
 (with-eval-after-load "eww"
   (progn
-    (require 'prot-eww)
+    (require 'prot-eww (locate-user-emacs-file "prot-lisp/prot-www"))
     (define-prefix-command 'prot-eww-map)
     (define-key global-map (kbd "C-c w") 'prot-eww-map)
     (let ((map prot-eww-map))
