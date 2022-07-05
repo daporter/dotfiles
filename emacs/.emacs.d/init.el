@@ -780,7 +780,9 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (setq denote-directory "~/Sync/notes")
 (setq denote-known-keywords '("emacs" "philosophy"))
 (setq denote-allow-multi-word-keywords nil)
-(setq denote-link-use-org-id t)
+
+(require 'denote-retrieve)
+(require 'denote-link)
 
 ;; For non-Org files. (Org does this automatically.)
 (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
@@ -795,7 +797,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
 
 (defun my/denote-journal ()
-  "Create an entry tagged 'journal' with the date as its title."
+  "Create an entry tagged 'journal', prompting for the title."
   (interactive)
   (let ((denote-directory "~/Sync/journal/"))
     (denote (denote--title-prompt) "journal")))
