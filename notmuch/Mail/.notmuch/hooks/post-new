@@ -38,3 +38,7 @@ notmuch tag -inbox +lists +list/prot-general \
 notmuch tag -inbox +lists +list/cursory \
         -- 'from:"~protesilaos/cursory@lists.sr.ht"' \
            or 'to:"~protesilaos/cursory@lists.sr.ht"'
+
+notmuch tag -inbox +lists +list/modus-themes \
+        -- 'from:"~protesilaos/modus-themes@lists.sr.ht"' \
+           or 'to:"~protesilaos/modus-themes@lists.sr.ht"'
