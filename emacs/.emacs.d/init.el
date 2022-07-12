@@ -674,37 +674,21 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 
 (setq tab-bar-close-button-show nil)
 (setq tab-bar-show nil)
+(setq tab-bar-format '(tab-bar-format-tabs-groups
+                       tab-bar-format-align-right
+                       tab-bar-format-global))
+
+(with-eval-after-load "tab-bar"
+  (require 'prot-tab (locate-user-emacs-file "prot-lisp/prot-tab"))
+  (prot-tab-status-line)
+  (let ((map global-map))
+    (define-key map (kbd "C-x <right>") #'prot-tab-winner-redo)
+    (define-key map (kbd "C-x <left>") #'prot-tab-winner-undo)
+    (define-key map (kbd "C-<f8>") #'prot-tab-status-line)
+    (define-key map (kbd "C-x t t") #'prot-tab-select-tab-dwim)))
 
 (tab-bar-mode -1)                     ; see `prot-tab-status-line'
 (tab-bar-history-mode 1)
-
-(with-eval-after-load "tab-bar"
-  (require 'prot-tab (locate-user-emacs-file "prot-lisp/prot-tab")))
-
-(setq tab-bar-format
-      '(prot-tab-format-space-single
-        prot-tab-format-mule-info
-        prot-tab-format-modified
-        tab-bar-format-tabs-groups
-        prot-tab-format-space-double
-        prot-tab-format-position
-        prot-tab-format-space-double
-        prot-tab-format-vc
-        prot-tab-format-space-double
-        prot-tab-format-modes
-        tab-bar-format-align-right
-        prot-tab-format-misc-info
-        prot-tab-format-space-double
-        tab-bar-format-global
-        prot-tab-format-space-single))
-
-(add-hook 'after-init-hook #'prot-tab-status-line)
-
-(let ((map global-map))
-  (define-key map (kbd "C-x <right>") #'prot-tab-winner-redo)
-  (define-key map (kbd "C-x <left>") #'prot-tab-winner-undo)
-  (define-key map (kbd "C-<f8>") #'prot-tab-status-line)
-  (define-key map (kbd "C-x t t") #'prot-tab-select-tab-dwim))
 
 ;;;;;; Transposition and Rotation of Windows
 
@@ -780,9 +764,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (setq denote-directory "~/Sync/notes")
 (setq denote-known-keywords '("emacs" "philosophy"))
 (setq denote-allow-multi-word-keywords nil)
-
-(require 'denote-retrieve)
-(require 'denote-link)
 
 ;; For non-Org files. (Org does this automatically.)
 (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
@@ -995,7 +976,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 (setq prot-vc-patch-output-dirs (list "~/" "~/Desktop/"))
 
 (with-eval-after-load "log-edit"
-  (add-to-list' log-edit-headers-alist '("Amend")))
+  (add-to-list 'log-edit-headers-alist '("Amend")))
 
 ;; NOTE: I override lots of the defaults
 (let ((map global-map))
@@ -1564,7 +1545,7 @@ sure this is a good approach."
 
 (with-eval-after-load "proced"
   (progn
-    (require 'prot-proced)
+    (require 'prot-proced (locate-user-emacs-file "prot-lisp/prot-proced"))
     (prot-proced-extra-keywords 1)))
 
 ;;;;; Simple HTML Renderer (shr) and EWW

@@ -21,8 +21,10 @@
 (setq use-dialog-box t)                 ; only for mouse events
 (setq use-file-dialog nil)
 
-(setq inhibit-startup-echo-area-message "dap") ; read the docstring
+(setq inhibit-startup-echo-area-message user-login-name) ; read the docstring
 (setq inhibit-startup-screen t)
 (setq inhibit-startup-buffer-menu t)
+
+(setq native-comp-async-report-warnings-errors 'silent) ; emacs28 with native compilation
 
 ;;; early-init.el ends here
