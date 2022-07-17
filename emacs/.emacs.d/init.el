@@ -73,6 +73,7 @@
 (setq modus-themes-links '(neutral-underline no-color))
 (setq modus-themes-mail-citations 'faint)
 (setq modus-themes-lang-checkers '(background))
+(setq modus-themes-hl-line '(accented))
 (setq modus-themes-region '(bg-only))
 (setq modus-themes-diffs 'desaturated)
 (setq modus-themes-org-blocks 'gray-background)
