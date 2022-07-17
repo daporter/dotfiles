@@ -42,3 +42,11 @@ notmuch tag -inbox +lists +list/cursory \
 notmuch tag -inbox +lists +list/modus-themes \
         -- 'from:"~protesilaos/modus-themes@lists.sr.ht"' \
            or 'to:"~protesilaos/modus-themes@lists.sr.ht"'
+
+notmuch tag -inbox +lists +list/lin \
+        -- 'from:"~protesilaos/lin@lists.sr.ht"' \
+           or 'to:"~protesilaos/lin@lists.sr.ht"'
+
+notmuch tag -inbox +lists +list/fontaine \
+        -- 'from:"~protesilaos/fontaine@lists.sr.ht"' \
+           or 'to:"~protesilaos/fontaine@lists.sr.ht"'
