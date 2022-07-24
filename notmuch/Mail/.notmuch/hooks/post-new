@@ -50,3 +50,11 @@ notmuch tag -inbox +lists +list/lin \
 notmuch tag -inbox +lists +list/fontaine \
         -- 'from:"~protesilaos/fontaine@lists.sr.ht"' \
            or 'to:"~protesilaos/fontaine@lists.sr.ht"'
+
+notmuch tag -inbox +lists +list/pulsar \
+        -- 'from:"~protesilaos/pulsar@lists.sr.ht"' \
+           or 'to:"~protesilaos/pulsar@lists.sr.ht"'
+
+notmuch tag -inbox +lists +list/logos \
+        -- 'from:"~protesilaos/logos@lists.sr.ht"' \
+           or 'to:"~protesilaos/logos@lists.sr.ht"'
