@@ -12,9 +12,9 @@ trap "rm -f $PIPE" EXIT INT TERM
 mail() {
 	count=$(notmuch count 'tag:unread NOT tag:archived')
 	if [ "$count" = '0' ]; then
-		icon=''
+		icon=
 	else
-		icon=''
+		icon=
 	fi
 	printf "mail:%s\n" "$icon $count"
 }
@@ -41,11 +41,16 @@ date_time() {
 
 wifi() {
 	data=$(nmcli dev wifi | awk '/^\*/ {printf "%s %s%%\n", $3, $8}')
-	printf "wifi:%s\n" " $data"
+	if [ -n "$data" ]; then
+		printf "wifi:%s\n" " $data"
+	else
+		printf "wifi:%s\n" "睊"
+
+	fi
 }
 
 if [ "$(hostname)" = 'zwolle' ]; then
-	while :; do mail;      sleep 300s; done > "$PIPE" &
+	while :; do mail;  sleep 300s; done > "$PIPE" &
 fi
 while :; do cpu;       sleep  30s; done > "$PIPE" &
 while :; do mem;       sleep  20s; done > "$PIPE" &
