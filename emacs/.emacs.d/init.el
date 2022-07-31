@@ -91,6 +91,13 @@
 
 (load-theme 'modus-operandi)
 
+;;;;; Unicode Fonts
+
+(unless (package-installed-p 'unicode-fonts)
+  (package-install 'unicode-fonts))
+
+(unicode-fonts-setup)
+
 ;;;;; Enhancements to hl-line-mode (lin.el)
 
 (unless (package-installed-p 'lin)

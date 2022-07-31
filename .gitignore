@@ -42,6 +42,7 @@
 /emacs/.emacs.d/tramp
 /emacs/.emacs.d/transient
 /emacs/.emacs.d/url
+/emacs/.emacs.d/var/
 /newsboat/.config/newsboat/urls
 /tmux/.tmux_colours.conf
 /vim/.vim/.netrwhist
