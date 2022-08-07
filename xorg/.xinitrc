@@ -40,5 +40,6 @@ pipewire &
 pipewire-pulse &
 dunst &
 dwmbar &
+sxhkd &
 
 exec dwm

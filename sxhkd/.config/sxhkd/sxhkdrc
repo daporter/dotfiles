@@ -1,0 +1,35 @@
+# WM INDEPENDENT KEYBINDINGS
+
+super + Escape
+    pkill -USR1 -x sxhkd && notify-send -i key_bindings "Reloaded key bindings"
+
+super + {Down, Up}
+    pamixer {--decrease, --increase} 10
+
+super + {Left, Right}
+    xbacklight {-dec, -inc} 10
+
+super + Left
+    xbacklight -dec 10
+
+# Web searches
+
+super + s ; {g, w, m, o, l, r}
+     ~/bin/websearch { \
+                     --google, \
+                     --wikipedia, \
+                     --googlemaps, \
+                     --oxford, \
+                     --onelook, \
+                     --wordreference \
+                     }
+
+super + shift + s ; {g, w, m, o, l, r}
+     ~/bin/websearch -p { \
+                        --google, \
+                        --wikipedia, \
+                        --googlemaps, \
+                        --oxford, \
+                        --onelook, \
+                        --wordreference \
+                        }
