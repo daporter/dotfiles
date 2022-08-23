@@ -2000,10 +2000,10 @@ must be installed."
 (defun my/configure-sh-mode ()
   "Configure Shell-Script mode according to my preferences."
   (setq indent-tabs-mode t)
-  (setq tab-width sh-basic-offset)
-  (add-hook 'sh-mode-hook #'my/whitespace-style-ignore-indentation))
+  (setq tab-width sh-basic-offset))
 
 (add-hook 'sh-mode-hook #'my/configure-sh-mode)
+(add-hook 'sh-mode-hook #'my/whitespace-style-ignore-indentation)
 
 ;;;;;; Python
 
@@ -2012,12 +2012,10 @@ must be installed."
 (defun my/configure-python-mode ()
   "Configure Python mode according to my preferences."
   (setq indent-tabs-mode t)
-  (setq tab-width python-indent-offset)
-  (add-hook 'python-mode-hook
-            #'my/whitespace-style-ignore-indentation))
+  (setq tab-width python-indent-offset))
 
 (add-hook 'python-mode-hook #'my/configure-python-mode)
-
+(add-hook 'python-mode-hook #'my/whitespace-style-ignore-indentation)
 ;;;;;; HTML
 
 (smart-tabs-add-language-support mhtml mhtml-mode-hook
@@ -2027,11 +2025,10 @@ must be installed."
 (defun my/configure-html-mode ()
   "Configure HTML mode according to my preferences."
   (setq indent-tabs-mode t)
-  (setq tab-width sgml-basic-offset)
-  (add-hook 'mhtml-mode-hook
-            #'my/whitespace-style-ignore-indentation))
+  (setq tab-width sgml-basic-offset))
 
 (add-hook 'mhtml-mode-hook #'my/configure-html-mode)
+(add-hook 'mhtml-mode-hook #'my/whitespace-style-ignore-indentation)
 
 ;;;;;; CSS
 
@@ -2043,10 +2040,10 @@ must be installed."
   "Configure CSS mode according to my preferences."
   (setq css-indent-offset 2)
   (setq indent-tabs-mode t)
-  (setq tab-width css-indent-offset)
-  (add-hook 'css-mode-hook #'my/whitespace-style-ignore-indentation))
+  (setq tab-width css-indent-offset))
 
 (add-hook 'css-mode-hook #'my/configure-css-mode)
+(add-hook 'css-mode-hook #'my/whitespace-style-ignore-indentation)
 
 ;;;;;; JavaScript
 
@@ -2059,11 +2056,10 @@ must be installed."
 (defun my/configure-nxml-mode ()
   "Configure nXML mode according to my preferences."
   (setq indent-tabs-mode t)
-  (setq tab-width nxml-child-indent)
-  (add-hook 'nxml-mode-hook
-            #'my/whitespace-style-ignore-indentation))
+  (setq tab-width nxml-child-indent))
 
 (add-hook 'nxml-mode-hook #'my/configure-nxml-mode)
+(add-hook 'nxml-mode-hook #'my/whitespace-style-ignore-indentation)
 
 ;;;;;; Markdown
 
