@@ -776,8 +776,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
 ;; For non-Org files. (Org does this automatically.)
 (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
 
-(require 'denote-dired)
-
 (setq denote-dired-directories
       (list denote-directory
             "~/Sync/inbox"
@@ -800,7 +798,14 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (define-key map (kbd "C-c n I") #'denote-link-add-links)
   (define-key map (kbd "C-c n l") #'denote-link-find-file) ; "list" links
   (define-key map (kbd "C-c n b") #'denote-link-backlinks)
-  (define-key map (kbd "C-c n r") #'denote-dired-rename-file))
+  (define-key map (kbd "C-c n r") #'denote-dired-rename-file)
+  (define-key map (kbd "C-c n R") #'denote-rename-file-using-front-matter))
+
+(require 'dired)
+(let ((map dired-mode-map))
+  (define-key map (kbd "C-c C-d C-i") #'denote-link-dired-marked-notes)
+  (define-key map (kbd "C-c C-d C-r") #'denote-dired-rename-marked-files)
+  (define-key map (kbd "C-c C-d C-R") #'denote-dired-rename-marked-files-using-front-matter))
 
 ;;;;; Focus Mode (logos.el)
 
@@ -1590,34 +1595,6 @@ sure this is a good approach."
 
 (with-eval-after-load "dired"
   (define-key dired-mode-map (kbd "E") #'eww-open-file))
-
-(with-eval-after-load "eww"
-  (progn
-    (require 'prot-eww (locate-user-emacs-file "prot-lisp/prot-www"))
-    (define-prefix-command 'prot-eww-map)
-    (define-key global-map (kbd "C-c w") 'prot-eww-map)
-    (let ((map prot-eww-map))
-      (define-key map (kbd "b") #'prot-eww-visit-bookmark)
-      (define-key map (kbd "e") #'prot-eww-browse-dwim)
-      (define-key map (kbd "s") #'prot-eww-search-engine))
-    (let ((map eww-mode-map))
-      (define-key map (kbd "B") #'prot-eww-bookmark-page)
-      (define-key map (kbd "D") #'prot-eww-download-html)
-      (define-key map (kbd "F") #'prot-eww-find-feed)
-      (define-key map (kbd "H") #'prot-eww-list-history)
-      (define-key map (kbd "b") #'prot-eww-visit-bookmark)
-      (define-key map (kbd "e") #'prot-eww-browse-dwim)
-      (define-key map (kbd "o") #'prot-eww-open-in-other-window)
-      (define-key map (kbd "E") #'prot-eww-visit-url-on-page)
-      (define-key map (kbd "J") #'prot-eww-jump-to-url-on-page)
-      (define-key map (kbd "R") #'prot-eww-readable)
-      (define-key map (kbd "Q") #'prot-eww-quit))
-    (add-hook 'prot-eww-history-mode-hook #'hl-line-mode)))
-
-(setq prot-eww-save-history-file
-      (locate-user-emacs-file "prot-eww-visited-history"))
-(setq prot-eww-save-visited-history t)
-(setq prot-eww-bookmark-link nil)
 
 ;;;;; Zotero Reference Manager
 
