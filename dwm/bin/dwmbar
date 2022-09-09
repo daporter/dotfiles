@@ -35,7 +35,7 @@ volume() {
 }
 
 date_time() {
-	data=$(date '+%a %e %b %R')
+	data=$(date '+%a %d %b %R')
 	printf "date_time:%s\n" " $data"
 }
 
