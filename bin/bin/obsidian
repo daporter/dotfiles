@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# Run Obsidian under flatpak.
+
+exec dbus-run-session flatpak run md.obsidian.Obsidian
