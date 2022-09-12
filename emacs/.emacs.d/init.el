@@ -1765,7 +1765,7 @@ sure this is a good approach."
     "Create an entry tagged 'journal', prompting for the title."
     (interactive)
     (let ((denote-directory "~/Sync/journal/"))
-      (denote (denote--title-prompt) "journal")))
+      (denote (denote--title-prompt) '("journal"))))
 
   ;; Denote DOES NOT define any key bindings.  This is for the user to
   ;; decide.  For example:
