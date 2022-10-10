@@ -1336,19 +1336,6 @@ use in `display-buffer-alist'."
   ;; `prot-diff-modus-themes-diffs'
   (setq diff-font-lock-syntax 'hunk-also))
 
-(prot-emacs-builtin-package 'prot-diff
-  (prot-diff-modus-themes-diffs)
-  (add-hook 'modus-themes-after-load-theme-hook #'prot-diff-modus-themes-diffs)
-
-  (prot-diff-extra-keywords 1)
-
-  ;; `prot-diff-buffer-dwim' replaces the default for `vc-diff' (which I
-  ;; bind to another key---see VC section).
-  (define-key global-map (kbd "C-x v =") #'prot-diff-buffer-dwim)
-  (let ((map diff-mode-map))
-    (define-key map (kbd "C-c C-b") #'prot-diff-refine-cycle) ; replace `diff-refine-hunk'
-    (define-key map (kbd "C-c C-n") #'prot-diff-narrow-dwim)))
-
 ;;;;; Version Control Framework (vc.el and prot-vc.el)
 
 (prot-emacs-builtin-package 'vc
@@ -1448,49 +1435,6 @@ use in `display-buffer-alist'."
     (define-key map (kbd "f") #'vc-log-incoming)
     (define-key map (kbd "F") #'vc-update)
     (define-key map (kbd "P") #'vc-push)))
-
-(prot-emacs-builtin-package 'prot-vc
-  (setq prot-vc-log-limit 100)
-  (setq prot-vc-log-bulk-action-limit 50)
-  (setq prot-vc-git-log-edit-show-commits t)
-  (setq prot-vc-git-log-edit-show-commit-count 10)
-  (setq prot-vc-shell-output "*prot-vc-output*")
-  (setq prot-vc-patch-output-dirs (list "~/" "~/Desktop/"))
-  (add-to-list 'log-edit-headers-alist '("Amend"))
-
-  ;; This refashions log view and log edit buffers
-  (prot-vc-git-setup-mode 1)
-
-  ;; NOTE: I override lots of the defaults
-  (let ((map global-map))
-    (define-key map (kbd "C-x v i") #'prot-vc-git-log-insert-commits)
-    (define-key map (kbd "C-x v p") #'prot-vc-project-or-dir)
-    (define-key map (kbd "C-x v SPC") #'prot-vc-custom-log)
-    (define-key map (kbd "C-x v g") #'prot-vc-git-grep)
-    (define-key map (kbd "C-x v G") #'prot-vc-git-log-grep)
-    (define-key map (kbd "C-x v a") #'prot-vc-git-patch-apply)
-    (define-key map (kbd "C-x v c") #'prot-vc-git-patch-create-dwim)
-    (define-key map (kbd "C-x v s") #'prot-vc-git-show)
-    (define-key map (kbd "C-x v r") #'prot-vc-git-find-revision)
-    (define-key map (kbd "C-x v B") #'prot-vc-git-blame-region-or-file)
-    (define-key map (kbd "C-x v R") #'prot-vc-git-reset))
-  (let ((map vc-git-log-edit-mode-map))
-    (define-key map (kbd "C-C C-n") #'prot-vc-git-log-edit-extract-file-name)
-    (define-key map (kbd "C-C C-i") #'prot-vc-git-log-insert-commits)
-    ;; Also done by `prot-vc-git-setup-mode', but I am putting it here
-    ;; as well for visibility.
-    (define-key map (kbd "C-c C-c") #'prot-vc-git-log-edit-done)
-    (define-key map (kbd "C-c C-a") #'prot-vc-git-log-edit-toggle-amend)
-    (define-key map (kbd "M-p") #'prot-vc-git-log-edit-previous-comment)
-    (define-key map (kbd "M-n") #'prot-vc-git-log-edit-next-comment)
-    (define-key map (kbd "M-s") #'prot-vc-git-log-edit-complete-comment)
-    (define-key map (kbd "M-r") #'prot-vc-git-log-edit-complete-comment))
-  (let ((map log-view-mode-map))
-    (define-key map (kbd "<C-tab>") #'prot-vc-log-view-toggle-entry-all)
-    (define-key map (kbd "a") #'prot-vc-git-patch-apply)
-    (define-key map (kbd "c") #'prot-vc-git-patch-create-dwim)
-    (define-key map (kbd "R") #'prot-vc-git-log-reset)
-    (define-key map (kbd "w") #'prot-vc-log-kill-hash)))
 
 ;;;;; Magit
 
@@ -1636,9 +1580,6 @@ sure this is a good approach."
   (setq proced-auto-update-interval 5)
   (setq proced-descend t)
   (setq proced-filter 'user))
-
-(prot-emacs-builtin-package 'prot-proced
-  (prot-proced-extra-keywords 1))
 
 ;;;;; Pass Interface (password-store)
 
@@ -2530,21 +2471,6 @@ must be installed."
 
 ;;;;; Paragraphs
 
-(prot-emacs-builtin-package 'prot-fill
-  (setq prot-fill-default-column 72)
-  (setq prot-fill-prog-mode-column 72)  ; Set this to another value if you want
-  ;; Those variables come from various sources, though they feel part of the
-  ;; same conceptual framework.
-  (setq sentence-end-double-space t)
-  (setq sentence-end-without-period nil)
-  (setq colon-double-space nil)
-  (setq use-hard-newlines nil)
-  (setq adaptive-fill-mode t)
-  (prot-fill-fill-mode 1)
-  (column-number-mode 1)
-  (add-hook 'after-init-hook #'column-number-mode)
-  (add-hook 'text-mode-hook #'turn-on-visual-line-mode))
-
 (prot-emacs-elpa-package 'adaptive-wrap
   (add-hook 'text-mode-hook #'adaptive-wrap-prefix-mode))
 
@@ -2719,16 +2645,6 @@ must be installed."
 
 (prot-emacs-builtin-package 'gnus-dired ; does not require `gnus'
   (add-hook 'dired-mode-hook #'gnus-dired-mode))
-
-(prot-emacs-builtin-package 'prot-mail
-  ;; NOTE 2021-05-14: This is a generic indicator for new mail in the
-  ;; maildir.  As I now use notmuch (see relevant section in this
-  ;; document) I have an alternative approach in prot-notmuch.el.
-  (setq prot-mail-maildir-path-regexp "~/Mail/Inbox/new/") ; shell regexp
-  (setq prot-mail-mode-line-indicator-commands
-        '(notmuch-refresh-this-buffer))
-  ;; mode line indicator with the number of new mails
-  (prot-mail-mail-indicator -1))
 
 ;;;;; Notmuch
 
