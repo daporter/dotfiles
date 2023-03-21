@@ -1,0 +1,12 @@
+1password
+1password-cli
+anki
+ansifilter
+dropbox
+kmonad-bin
+markdownlint-cli
+otf-bitstream-charter
+otf-spectral
+otf-spectralsc
+paru
+vale
