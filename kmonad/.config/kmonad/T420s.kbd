@@ -36,6 +36,6 @@
   tab   '    ,    .    p    y    f    g    c    r    l    /     =    \
   caps  @amt @oal @esf @uct i    d    @hct @tsf @nal @smt -     ret
   lsft  ;    q    j    k    x    b    m    w    v    z    rsft
-  wkup  lctl lmet lalt           spc            ralt slck rctl  back up   fwd
+  wkup  lmet lalt lctl           spc            rctl ralt rmet  back up   fwd
                                                                 left down right
 )

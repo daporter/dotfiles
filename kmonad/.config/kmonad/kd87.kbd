@@ -33,5 +33,5 @@
  tab  '    ,    .    p    y    f    g    c    r    l    /    =   \    del  end  pgdn
  caps @amt @oal @esf @uct i    d    @hct @tsf @nal @smt -    ret
  lsft ;    q    j    k    x    b    m    w    v    z    rsft               up
- lctl lmet lalt           spc            ralt slck      rctl          left down rght
+ lmet lalt lctl           spc            rctl ralt      rmet          left down rght
 )
