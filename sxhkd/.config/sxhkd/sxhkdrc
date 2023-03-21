@@ -9,9 +9,6 @@ super + {Down, Up}
 super + {Left, Right}
     xbacklight {-dec, -inc} 10
 
-super + Left
-    xbacklight -dec 10
-
 # Web searches
 
 super + s ; {g, w, m, o, l, r}
