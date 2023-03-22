@@ -1,0 +1,21 @@
+/*
+ * This must be placed in my Firefox profile directory, in the
+ * subdirectory 'chrome'.  For example, this is currently:
+ *   ~/.mozilla/firefox/jzn2vd7r.default-release/chrome
+ */
+
+:root {
+  --tab-min-height: 28px !important;
+  --arrowpanel-header-back-icon-padding: 4px !important;
+  --urlbar-icon-padding: 3px !important;
+}
+
+#urlbar-container {
+  --urlbar-container-height: 34px !important;
+}
+
+#urlbar {
+  margin-top: 0;
+  --urlbar-min-height: 26px !important;
+  --urlbar-height: 26px !important;
+}
