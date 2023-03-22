@@ -27,6 +27,7 @@ fi
 
 #configure_monitors
 
+lxpolkit &
 redshift &
 pipewire &
 pipewire-pulse &
