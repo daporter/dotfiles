@@ -19,27 +19,21 @@ fi
 xset b off           # no bell
 xset r rate 200 45   # repeat after 200 ms, 45 char/s
 
-# Enable ThinkPad TrackPoint scrolling by dragging with the middle
-# button.
-xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation" 1
-xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Button" 2
-xinput set-prop "/dev/wsmouse" "WS Pointer Wheel Emulation Axes" 6 7 4 5
-
-configure_monitors
-
 xsetroot -cursor_name left_ptr
 
 if [ -f "$HOME"/.fehbg ]; then
 	"$HOME"/.fehbg &
 fi
 
-configure_monitors
+#configure_monitors
 
 redshift &
 pipewire &
 pipewire-pulse &
+wireplumber &
 dunst &
 dwmbar &
 sxhkd &
+dropbox &
 
 exec dwm
