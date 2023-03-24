@@ -5,7 +5,7 @@ CopyArrivalDate yes
 IMAPAccount migadu
 Host imap.migadu.com
 User david@daporter.net
-PassCmd "pass migadu.com/david@daporter.net"
+PassCmd "op read op://Personal/Migadu/password"
 SSLType IMAPS
 
 IMAPStore migadu
