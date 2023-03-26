@@ -2,30 +2,31 @@
 #
 # Run a backup of my home directory.
 
+_prepare () {
+	. "$HOME"/.rc.d/wifi.sh
+	. "$HOME"/.profile.d/restic.sh
+}
+
 _wifi () {
-	echo '→ Connecting to network Phunculist'
-	if ! iwctl station wlan0 connect Phunculist; then
-		echo 'Unable to connect to network Phunculist. Exiting.'
+	echo '⮕ Connecting to network Phunculist'
+	if ! wifi Phunculist; then
+		echo '❌ Unable to connect to network Phunculist. Exiting.'
 		exit 1
 	fi
 }
 
-_prepare () {
-	. "$HOME"/.profile.d/restic.sh
-}
-
 _do_backup () {
-	echo '→ Performing backup'
+	echo '⮕ Performing backup'
 	exclude=$HOME/.config/restic/restic-exclude.txt
 	if ! restic --exclude-file="$exclude" backup "$HOME"; then
-		echo 'Unable to perform backup. Exiting.'
+		echo '❌ Unable to perform backup. Exiting.'
 		exit 1
 	fi
 	echo
 }
 
 _remove_old_snapshots () {
-	echo '→ Removing old snapshots'
+	echo '⮕ Removing old snapshots'
 	# Keep the most recent 7 daily snapshots, then 4 (remember, 7
 	# dailies already include a week!) last-day-of-the-weeks and 11 or
 	# 12 last-day-of-the-months (11 or 12 depends if the 5 weeklies
@@ -37,11 +38,11 @@ _remove_old_snapshots () {
 	     --keep-monthly 12 \
 	     --keep-yearly 100 \
 	     --prune; then
-		echo 'Unable to remove old snapshots.'
+		echo '❌ Unable to remove old snapshots.'
 		exit 1
 	fi
 }
 
 printf '────── Backup started: %s ───────\n' "$(date '+%a %H:%M')"
-_wifi && _prepare && _do_backup && _remove_old_snapshots
+_prepare && _wifi && _do_backup && _remove_old_snapshots
 printf '────── Backup finished: %s ──────\n' "$(date '+%a %H:%M')"
