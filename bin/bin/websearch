@@ -12,7 +12,7 @@ _check() {
 }
 
 if [ "$1" = '-p' ]; then
-	TERM=$(zenity --entry --text 'Search term:')
+	TERM=$(dmenu -p 'Search:')
 	if [ $? != 0 ]; then
 		# “Cancel” pressed.
 		exit
@@ -22,7 +22,7 @@ else
 	TERM=$(xclip -o)
 fi
 
-for program in zenity xclip xdg-open; do
+for program in dmenu xclip xdg-open; do
 	if ! _check $program; then
 		printf 'Error: %s not found' "$program"
 		exit 1
