@@ -25,7 +25,7 @@ if [ -f "$HOME"/.fehbg ]; then
 	"$HOME"/.fehbg &
 fi
 
-#configure_monitors
+configure_monitors
 
 lxpolkit &
 redshift &

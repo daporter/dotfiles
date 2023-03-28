@@ -3,14 +3,14 @@
 # Connect to or disconnect from an external monitor.
 #
 # NOTE: Assumes the external monitor is connected via DisplayPort and
-# named DP-1.
+# named DP1.
 
 _check() {
 	command -v "$1" > /dev/null
 }
 
 _external_is_connected () {
-	xrandr --query | grep -q 'DP-1 connected'
+	xrandr --query | grep -q 'DP1 connected'
 }
 
 _reconfigure_wallpaper () {
@@ -23,11 +23,11 @@ if ! _check xrandr; then
 fi
 
 if _external_is_connected; then
-	xrandr --output DP-1 --mode 1920x1080 --primary
-	xrandr --output LVDS-1 --off
+	xrandr --output DP1 --auto --primary
+	xrandr --output LVDS1 --below DP1
 else
-	xrandr --output LVDS-1 --mode 1600x900 --primary
-	xrandr --output DP-1 --off
+	xrandr --output LVDS1 --auto --primary
+	xrandr --output DP1 --off
 fi
 
-_reconfigure_wallpaper
+#_reconfigure_wallpaper
