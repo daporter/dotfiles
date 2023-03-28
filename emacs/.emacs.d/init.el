@@ -82,6 +82,7 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   (add-hook 'package-menu-mode-hook #'hl-line-mode)
   (server-start)
+  (repeat-mode 1)
   (column-number-mode 1)
   (delete-selection-mode 1)
   (savehist-mode 1)
