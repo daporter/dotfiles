@@ -86,6 +86,7 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   (delete-selection-mode 1)
   (savehist-mode 1)
   (electric-pair-mode 1)
+  (electric-quote-mode 1)
   (auto-insert-mode t)
 
   (global-set-key (kbd "s-o") 'other-window)
