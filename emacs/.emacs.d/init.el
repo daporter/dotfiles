@@ -454,3 +454,8 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   :defer t
   :init
   (which-key-mode))
+
+(use-package dictionary
+  :bind ("M-#" . dictionary-lookup-definition)
+  :custom
+  (dictionary-server "localhost"))

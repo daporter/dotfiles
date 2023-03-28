@@ -2,6 +2,11 @@
 1password-cli
 anki
 ansifilter
+dict-foldoc
+dict-gcide
+dict-moby-thesaurus
+dict-wikt-en-all
+dict-wn
 dropbox
 kmonad-bin
 markdownlint-cli
