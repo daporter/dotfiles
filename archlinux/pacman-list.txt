@@ -14,6 +14,7 @@ dunst
 emacs-nativecomp
 firefox
 flatpak
+glab
 grub
 haveged
 htop
