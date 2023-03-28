@@ -9,9 +9,20 @@ super + {Down, Up}
 super + {Left, Right}
     xbacklight {-dec, -inc} 10
 
+# Dynamic menus
+
+super + ctrl + d ; k
+    ~/bin/dmenu_pkill
+
+super + ctrl + d ; w
+    ~/bin/dmenu_wifi
+
+super + ctrl + d ; s
+    ~/bin/dmenu_shutdown
+
 # Web searches
 
-super + s ; {g, w, m, o, l, r}
+super + ctrl + s ; {g, w, m, o, l, r}
      ~/bin/websearch { \
                      --google, \
                      --wikipedia, \
@@ -21,7 +32,7 @@ super + s ; {g, w, m, o, l, r}
                      --wordreference \
                      }
 
-super + shift + s ; {g, w, m, o, l, r}
+super + ctrl + shift + s ; {g, w, m, o, l, r}
      ~/bin/websearch -p { \
                         --google, \
                         --wikipedia, \

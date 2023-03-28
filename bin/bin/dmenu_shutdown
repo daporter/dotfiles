@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# Select and execute a system shutdown operation.
+
+# Information about sleep states is available at:
+# https://www.freedesktop.org/software/systemd/man/systemd-sleep.conf.html#Description
+
+menu='Suspend\nHibernate\nShutdown\nReboot'
+
+selection=$(printf "%b" "$menu" | dmenu -p 'Select operation:' -l 5 -i) 
+case $selection in
+	'Suspend')
+		systemctl suspend
+		;;
+	'Hibernate')
+		systemctl hibernate
+		;;
+	'Shutdown')
+		systemctl poweroff
+		;;
+	'Reboot')
+		systemctl reboot
+		;;
+esac

@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# Select a process and kill it.
+
+ps_lines=$(ps -x \
+              -o pid,stat,%cpu,%mem,etime,cmd \
+              --sort=-%cpu,etime \
+              --no-headers)
+
+sel_line=$(echo "$ps_lines" \
+	           | dmenu -p 'Process to kill:' -l 20)
+
+# Check whether dmenu was cancelled.?
+if [ $? -ne 0 ]; then
+	notify-send Cancelled
+	exit 1
+fi
+
+sel_short=$(echo "$sel_line" \
+	            | awk '{ printf "%s", $1; for (i=6; i<=NF; i++) printf " %s", $i }')
+
+confirm=$(printf 'No\nYes' | dmenu -p "Kill \`$sel_short'?")
+
+if [ $? -ne 0 ] || [ "$confirm" = 'No' ]; then
+	notify-send Cancelled
+	exit 1
+fi
+
+pid=$(echo "$sel_short" | cut -d ' ' -f 1)
+kill "$pid"
+notify-send  "Killed $pid"
