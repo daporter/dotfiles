@@ -90,7 +90,7 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   (electric-quote-mode 1)
   (auto-insert-mode t)
 
-  (global-set-key (kbd "s-o") 'other-window)
+  (global-set-key (kbd "M-o") 'other-window)
   (global-set-key (kbd "s-b") 'switch-to-buffer)
   (global-set-key (kbd "C-M-?") 'hippie-expand))
 
