@@ -19,10 +19,10 @@ grep() {
 	set -- --directories=skip "$@"
 
 	# Add --exclude to ignore .gitignore and .gitmodules files
-	# set -- \
-		#    --exclude=.gitignore  \
-		#    --exclude=.gitmodules \
-		#    "$@"
+	set -- \
+	    --exclude=.gitignore  \
+	    --exclude=.gitmodules \
+	    "$@"
 
 	# Add --exclude-dir to ignore version control dot-directories
 	set -- \
