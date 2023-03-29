@@ -228,6 +228,7 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
 
 (use-package flymake
   :defer t
+  :hook ((prog-mode text-mode) . flymake-mode-on)
   :bind (:map flymake-mode-map
               ("M-g p" . flymake-goto-prev-error)
               ("M-g M-p" . flymake-goto-prev-error)
@@ -237,13 +238,11 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   (flymake-fringe-indicator-position nil))
 
 (use-package prog-mode
-  :defer t
-  :config
-  (add-hook 'prog-mode-hook #'flymake-mode-on))
+  :defer t)
 
 (use-package flymake-vale
   :load-path "lisp/flymake-vale"
-  :commands flymake-vale-load)
+  :hook (text-mode . flymake-vale-load))
 
 (use-package text-mode
   :defer t
@@ -257,9 +256,14 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
     (setq-local completion-at-point-functions
                 '(cape-file cape-dabbrev cape-ispell)))
   (add-hook 'text-mode-hook #'my/disable-indent-tabs-mode)
-  (add-hook 'text-mode-hook #'my/configure-capfs-text-mode)
-  (add-hook 'text-mode-hook #'flymake-mode-on)
-  (add-hook 'text-mode-hook #'flymake-vale-load))
+  (add-hook 'text-mode-hook #'my/configure-capfs-text-mode))
+
+(use-package visual-line-mode
+  :hook (text-mode . visual-line-mode))
+
+(use-package adaptive-wrap
+  :ensure t
+  :hook (visual-line-mode . adaptive-wrap-prefix-mode))
 
 (use-package lorem-ipsum
   :ensure t
@@ -385,12 +389,6 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
 (use-package yaml-mode
   :ensure t
   :mode "\\.ya?ml\\'")
-
-(use-package adaptive-wrap
-  :ensure t
-  :commands adaptive-wrap-prefix-mode
-  :config
-  (add-hook text-mode-hook #'adaptive-wrap-prefix-mode))
 
 (use-package magit
   :ensure t
