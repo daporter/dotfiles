@@ -65,6 +65,7 @@
 
   (global-set-key (kbd "M-o") 'other-window)
   (global-set-key (kbd "s-b") 'switch-to-buffer)
+  (global-set-key (kbd "C-M-<backspace>") 'backward-kill-sexp)
   (global-set-key (kbd "C-M-?") 'hippie-expand)
 
   (defun my/insert-date-time (prefix)
