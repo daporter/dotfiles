@@ -1,47 +1,7 @@
 (add-to-list 'default-frame-alist '(internal-border-width . 6))
 
-(setq backup-directory-alist
-      `(("." . ,(concat user-emacs-directory "backup/"))))
-(setq backup-by-copying t)
-(setq version-control t)
-(setq delete-old-versions t)
-(setq kept-new-versions 6)
-(setq create-lockfiles nil)
-
-(setq frame-title-format '("%b"))
-(setq use-short-answers t)
-
-(setq custom-file (concat user-emacs-directory "emacs-custom.el"))
-(load custom-file)
-
-(defun my/insert-date-time (prefix)
-  "Insert the current date and time.
-With PREFIX, use `ID' format, e.g. 20230323113431."
-  (interactive "P")
-  (let ((format (if (equal prefix '(4))
-                    "%Y%m%d%H%M%S"
-                  "%Y-%m-%d %H:%M:%S")))
-    (insert (format-time-string format))))
-
-(define-key global-map (kbd "C-c d") #'my/insert-date-time)
-
 (require 'use-package)
 ;;(setq use-package-compute-statistics t)
-
-(use-package package
-  :defer t
-  :init
-  (add-hook 'package-menu-mode-hook #'hl-line-mode)
-  :custom
-  (package-archives
-   '(("elpa" . "https://elpa.gnu.org/packages/")
-     ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-     ("melpa" . "https://melpa.org/packages/")))
-
-  ;; Highest number gets priority (what is not mentioned has priority 0)
-  (package-archive-priorities
-   '(("elpa" . 2)
-     ("nongnu" . 1))))
 
 (use-package emacs
   :init
@@ -58,6 +18,15 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
 
   :custom
   (initial-buffer-choice t)             ; always start with *scratch*
+  (frame-title-format '("%b"))
+  (use-short-answers t)
+
+  (backup-directory-alist `(("." . ,(concat user-emacs-directory "backup/"))))
+  (backup-by-copying t)
+  (version-control t)
+  (delete-old-versions t)
+  (kept-new-versions 6)
+  (create-lockfiles nil)
 
   ;; Do not allow the cursor in the minibuffer prompt
   (minibuffer-prompt-properties
@@ -72,6 +41,8 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   (completion-ignore-case t)
   (enable-recursive-minibuffers t)
   (send-mail-function 'smtpmail-send-it)
+
+  (custom-file (concat user-emacs-directory "emacs-custom.el"))
 
   :config
   (dolist (cmd '(upcase-region
@@ -90,9 +61,36 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   (electric-quote-mode 1)
   (auto-insert-mode t)
 
+  (load custom-file)
+
   (global-set-key (kbd "M-o") 'other-window)
   (global-set-key (kbd "s-b") 'switch-to-buffer)
-  (global-set-key (kbd "C-M-?") 'hippie-expand))
+  (global-set-key (kbd "C-M-?") 'hippie-expand)
+
+  (defun my/insert-date-time (prefix)
+    "Insert the current date and time.
+With PREFIX, use `ID' format, e.g. 20230323113431."
+    (interactive "P")
+    (let ((format (if (equal prefix '(4))
+                      "%Y%m%d%H%M%S"
+                    "%Y-%m-%d %H:%M:%S")))
+      (insert (format-time-string format))))
+  (global-set-key (kbd "C-c d") #'my/insert-date-time))
+
+(use-package package
+  :defer t
+  :init
+  (add-hook 'package-menu-mode-hook #'hl-line-mode)
+  :custom
+  (package-archives
+   '(("elpa" . "https://elpa.gnu.org/packages/")
+     ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+     ("melpa" . "https://melpa.org/packages/")))
+
+  ;; Highest number gets priority (what is not mentioned has priority 0)
+  (package-archive-priorities
+   '(("elpa" . 2)
+     ("nongnu" . 1))))
 
 (use-package ef-themes
   :ensure t
@@ -271,15 +269,6 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
                       #'cape-ispell)))
   (add-hook 'emacs-lisp-mode-hook #'my/disable-indent-tabs-mode)
   (add-hook 'emacs-lisp-mode-hook #'my/configure-capfs-emacs-lisp-mode))
-
-(use-package puni
-  :ensure t
-  :defer t
-  :init
-  ;; The autoloads of Puni are set up so you can enable `puni-mode` or
-  ;; `puni-global-mode` before `puni` is actually loaded. Only after
-  ;; you press any key that calls Puni commands, it's loaded.
-  (puni-global-mode 1))
 
 (use-package markdown-mode
   :ensure t
