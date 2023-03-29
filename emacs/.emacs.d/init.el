@@ -228,6 +228,11 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
 
 (use-package flymake
   :defer t
+  :bind (:map flymake-mode-map
+              ("M-g p" . flymake-goto-prev-error)
+              ("M-g M-p" . flymake-goto-prev-error)
+              ("M-g n" . flymake-goto-next-error)
+              ("M-g M-n" . flymake-goto-next-error))
   :custom
   (flymake-fringe-indicator-position nil))
 
