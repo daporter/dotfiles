@@ -47,7 +47,8 @@
   :config
   (dolist (cmd '(upcase-region
                  downcase-region
-                 narrow-to-region))
+                 narrow-to-region
+                 set-goal-column))
     (put cmd 'disabled nil))
 
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
