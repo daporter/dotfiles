@@ -1,8 +1,4 @@
-;;; early-init --- Initialise installed packages
-
-;;; Commentary:
-
-;;; Code:
+(add-to-list 'default-frame-alist '(internal-border-width . 16))
 
 (setq frame-resize-pixelwise t)
 
@@ -23,5 +19,3 @@
 (setq inhibit-startup-buffer-menu t)
 
 (setq native-comp-async-report-warnings-errors 'silent) ; emacs28 with native compilation
-
-;;; early-init.el ends here

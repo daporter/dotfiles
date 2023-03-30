@@ -1,12 +1,10 @@
-(add-to-list 'default-frame-alist '(internal-border-width . 6))
-
 (require 'use-package)
 ;;(setq use-package-compute-statistics t)
 
 (use-package emacs
   :init
-  ;; Add prompt indicator to `completing-read-multiple'.
-  ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
+  ;; Add prompt indicator to `completing-read-multiple'.  We display
+  ;; [CRM<separator>], e.g., [CRM,] if the separator is a comma.
   (defun crm-indicator (args)
     (cons (format "[CRM%s] %s"
                   (replace-regexp-in-string
@@ -14,27 +12,34 @@
                    crm-separator)
                   (car args))
           (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+  (advice-add #'completing-read-multiple
+              :filter-args #'crm-indicator)
 
   :custom
   (initial-buffer-choice t)             ; always start with *scratch*
   (frame-title-format '("%b"))
   (use-short-answers t)
 
-  (backup-directory-alist `(("." . ,(concat user-emacs-directory "backup/"))))
+  (backup-directory-alist
+   `(("." . ,(concat user-emacs-directory "backup/"))))
   (backup-by-copying t)
   (version-control t)
   (delete-old-versions t)
   (kept-new-versions 6)
   (create-lockfiles nil)
 
+  (window-divider-default-right-width 2)
+  (window-divider-default-bottom-width 2)
+  (window-divider-default-places t)
+
   ;; Do not allow the cursor in the minibuffer prompt
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
 
-  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-  ;; Vertico commands are hidden in normal buffers.
-  (read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Emacs 28: Hide commands in M-x which do not work in the current
+  ;; mode.  Vertico commands are hidden in normal buffers.
+  (read-extended-command-predicate
+   #'command-completion-default-include-p)
 
   (read-file-name-completion-ignore-case t)
   (read-buffer-completion-ignore-case t)
@@ -51,6 +56,10 @@
                  set-goal-column))
     (put cmd 'disabled nil))
 
+  ;; Display windows with 2 columns of margin.
+  (setq-default left-margin-width 2)
+  (setq-default right-margin-width 2)
+
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   (add-hook 'package-menu-mode-hook #'hl-line-mode)
   (server-start)
@@ -60,6 +69,8 @@
   (savehist-mode 1)
   (electric-pair-mode 1)
   (electric-quote-mode 1)
+  (fringe-mode 0)
+  (window-divider-mode 1)
   (auto-insert-mode t)
 
   (load custom-file)
@@ -71,7 +82,7 @@
 
   (defun my/insert-date-time (prefix)
     "Insert the current date and time.
-With PREFIX, use `ID' format, e.g. 20230323113431."
+  With PREFIX, use `ID' format, e.g. 20230323113431."
     (interactive "P")
     (let ((format (if (equal prefix '(4))
                       "%Y%m%d%H%M%S"
@@ -89,43 +100,59 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
      ("nongnu" . "https://elpa.nongnu.org/nongnu/")
      ("melpa" . "https://melpa.org/packages/")))
 
-  ;; Highest number gets priority (what is not mentioned has priority 0)
+  ;; Highest number gets priority (what is not mentioned has
+  ;; priority 0)
   (package-archive-priorities
    '(("elpa" . 2)
      ("nongnu" . 1))))
 
-(use-package ef-themes
+(use-package modus-themes
   :ensure t
-  :defer t
   :init
-  (setq ef-themes-mixed-fonts t)
-  (setq ef-themes-variable-pitch-ui t)
-  (setq ef-themes-region '(neutral))
-  (setq ef-themes-to-toggle '(ef-duo-light ef-autumn))
-  (setq ef-duo-light-palette-overrides '((cursor red-warmer)))
+  (require 'modus-themes)
+  (setq modus-themes-bold-constructs   t)
+  (setq modus-themes-italic-constructs t)
+  (setq modus-themes-mixed-fonts       t)
+  (setq modus-themes-variable-pitch-ui t)
+  (setq modus-themes-headings          '((1 . (light variable-pitch 1.5))))
 
-  (defun my/ef-themes-configure-underlines ()
-    "Configure the style of underlines."
-    (ef-themes-with-colors
+  (setq modus-themes-common-palette-overrides
+        `((bg-region                 bg-blue-subtle)
+          (bg-completion             bg-inactive)
+          (fg-mode-line-active       fg-main)
+          (bg-mode-line-active       bg-dim)
+          (border-mode-line-active   bg-dim)
+          (fg-mode-line-inactive     border)
+          (bg-mode-line-inactive     bg-dim)
+          (border-mode-line-inactive bg-inactive)
+          ,@modus-themes-preset-overrides-faint))
+
+  (defun my/modus-themes-pad-mode-line ()
+    "Pad mode-line via a box that has the background color"
+    (modus-themes-with-colors
       (custom-set-faces
-       `(ef-themes-underline-error
-         ((,c :underline (:style line :color ,underline-err))))
-       `(ef-themes-underline-info
-         ((,c :underline (:style line :color ,underline-info))))
-       `(ef-themes-underline-warning
-         ((,c :underline (:style line :color ,underline-warning)))))))
-  (defun my/ef-themes-boxed-mode-line ()
-    "Tweak the style of the mode lines."
-    (ef-themes-with-colors
-      (custom-set-faces
+       `(hl-line
+         ((,c :background ,bg-cyan-nuanced)))
        `(mode-line
-         ((,c :background ,bg-mode-line :foreground ,fg-mode-line
-              :box (:line-width 1 :color ,fg-dim))))
+         ((,c :box (:line-width 5 :color ,bg-mode-line-active))))
        `(mode-line-inactive
-         ((,c :box (:line-width 1 :color ,bg-active)))))))
-  ;;(add-hook 'ef-themes-post-load-hook #'my/ef-themes-boxed-mode-line)
-  (add-hook 'ef-themes-post-load-hook #'my/ef-themes-configure-underlines)
-  (ef-themes-select 'ef-duo-light))
+         ((,c :box (:line-width 5 :color ,bg-mode-line-inactive))))
+       `(window-divider ((,c :foreground ,border)))
+       `(window-divider-first-pixel ((,c :foreground ,border)))
+       `(window-divider-last-pixel ((,c :foreground ,border)))
+       `(fill-column-indicator ((,c :background ,bg-inactive)))
+       `(auto-dim-other-buffers-face ((,c :background ,bg-dim))))))
+  (add-hook 'modus-themes-after-load-theme-hook
+            #'my/modus-themes-pad-mode-line)
+
+  (setq modus-themes-to-toggle '(modus-operandi modus-vivendi))
+
+  ;; Defer loading the theme until Emacs in initialised
+  (defun my/modus-themes-init ()
+    (load-theme (car modus-themes-to-toggle))
+    (my/modus-themes-pad-mode-line))
+
+  :hook (after-init . my/modus-themes-init))
 
 (use-package fontaine
   :ensure t
@@ -134,17 +161,23 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   (setq fontaine-latest-state-file
         (locate-user-emacs-file "fontaine-latest-state.eld"))
   (setq fontaine-presets '((regular
-                            :default-family "Jetbrains Mono"
+                            :default-family "SF Mono"
                             :default-height 90
                             :fixed-pitch-family "Jetbrains Mono"
                             :fixed-pitch-serif-family "IBM Plex Mono"
                             :variable-pitch-family "Source Sans 3"
                             :variable-pitch-height 1.2
-                            :bold-weight semibold)))
-  (use-package ef-themes)
-  (add-hook 'ef-themes-post-load-hook #'fontaine-apply-current-preset)
+                            :bold-weight semibold
+                            :line-spacing 0.3)))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
-  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))
+  (fontaine-set-preset
+   (or (fontaine-restore-latest-preset) 'regular)))
+
+(use-package auto-dim-other-buffers
+  :ensure t
+  :after modus-themes
+  :init
+  (auto-dim-other-buffers-mode 1))
 
 (use-package ispell
   :defer t
@@ -168,7 +201,8 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   :defer t
   :custom
   (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
+  (completion-category-overrides
+   '((file (styles basic partial-completion)))))
 
 (use-package vertico
   :ensure t
@@ -238,7 +272,14 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   (flymake-fringe-indicator-position nil))
 
 (use-package prog-mode
-  :defer t)
+  :defer t
+  :init
+  (defun my/set-fill-column ()
+    (setq-local fill-column 80))
+  (defun my/turn-on-display-fill-column-indicator-mode ()
+    (display-fill-column-indicator-mode 1))
+  (add-hook 'prog-mode-hook #'my/set-fill-column)
+  (add-hook 'prog-mode-hook #'my/turn-on-display-fill-column-indicator-mode))
 
 (use-package flymake-vale
   :load-path "lisp/flymake-vale"
@@ -390,6 +431,10 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   :ensure t
   :mode "\\.ya?ml\\'")
 
+(use-package olivetti
+  :ensure t
+  :commands olivetti)
+
 (use-package magit
   :ensure t
   :commands magit-status)
@@ -410,6 +455,7 @@ With PREFIX, use `ID' format, e.g. 20230323113431."
   :commands notmuch
   :bind ("C-c m" . #'notmuch)
   :custom
+  (notmuch-show-logo nil)
   (mail-user-agent #'notmuch-mua-new-mail)
   (notmuch-identities '("David Porter <david@daporter.net>"))
   (notmuch-fcc-dirs "Sent")
