@@ -117,7 +117,8 @@
   (setq modus-themes-headings          '((1 . (light variable-pitch 1.5))))
 
   (setq modus-themes-common-palette-overrides
-        `((bg-region                 bg-blue-subtle)
+        `((comment                   yellow-faint)
+          (bg-region                 bg-blue-subtle)
           (bg-completion             bg-inactive)
           (fg-mode-line-active       fg-main)
           (bg-mode-line-active       bg-dim)
