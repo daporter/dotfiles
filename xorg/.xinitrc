@@ -17,7 +17,7 @@ if [ -r "$HOME"/.Xresources ]; then
 fi
 
 xset b off           # no bell
-xset r rate 200 45   # repeat after 200 ms, 45 char/s
+xset r rate 150 55   # repeat after 150 ms, 55 char/s
 
 xsetroot -cursor_name left_ptr
 
