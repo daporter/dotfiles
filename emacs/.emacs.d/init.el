@@ -113,6 +113,7 @@
   (setq modus-themes-bold-constructs   t)
   (setq modus-themes-italic-constructs t)
   (setq modus-themes-mixed-fonts       t)
+  (setq modus-themes-prompts           '(semibold))
   (setq modus-themes-variable-pitch-ui t)
   (setq modus-themes-headings          '((1 . (light variable-pitch 1.5))))
 
@@ -162,14 +163,14 @@
   (setq fontaine-latest-state-file
         (locate-user-emacs-file "fontaine-latest-state.eld"))
   (setq fontaine-presets '((regular
-                            :default-family "SF Mono"
-                            :default-height 90
-                            :fixed-pitch-family "Jetbrains Mono"
+                            :default-family "IBM Plex Mono"
+                            :default-height 80
+                            :fixed-pitch-family "IBM Plex Mono"
                             :fixed-pitch-serif-family "IBM Plex Mono"
                             :variable-pitch-family "Source Sans 3"
-                            :variable-pitch-height 1.2
+                            :variable-pitch-height 1.25
                             :bold-weight semibold
-                            :line-spacing 0.3)))
+                            :line-spacing 0.15)))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))
