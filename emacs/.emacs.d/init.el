@@ -269,10 +269,8 @@
   :defer t
   :hook ((prog-mode text-mode) . flymake-mode-on)
   :bind (:map flymake-mode-map
-              ("M-g p" . flymake-goto-prev-error)
-              ("M-g M-p" . flymake-goto-prev-error)
-              ("M-g n" . flymake-goto-next-error)
-              ("M-g M-n" . flymake-goto-next-error))
+              ("M-p" . flymake-goto-prev-error)
+              ("M-n" . flymake-goto-next-error))
   :custom
   (flymake-fringe-indicator-position nil))
 
