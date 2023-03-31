@@ -20,6 +20,9 @@
   (frame-title-format '("%b"))
   (use-short-answers t)
 
+  ; Improve the spacing of underlines.
+  (x-use-underline-position-properties nil)
+  
   (backup-directory-alist
    `(("." . ,(concat user-emacs-directory "backup/"))))
   (backup-by-copying t)
