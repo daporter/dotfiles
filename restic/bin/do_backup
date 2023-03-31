@@ -2,47 +2,39 @@
 #
 # Run a backup of my home directory.
 
-_prepare () {
-	. "$HOME"/.rc.d/wifi.sh
-	. "$HOME"/.profile.d/restic.sh
-}
-
-_wifi () {
-	echo '⮕ Connecting to network Phunculist'
-	if ! wifi Phunculist; then
-		echo '❌ Unable to connect to network Phunculist. Exiting.'
-		exit 1
-	fi
-}
-
-_do_backup () {
-	echo '⮕ Performing backup'
-	exclude=$HOME/.config/restic/restic-exclude.txt
-	if ! restic --exclude-file="$exclude" backup "$HOME"; then
-		echo '❌ Unable to perform backup. Exiting.'
-		exit 1
-	fi
-	echo
-}
-
-_remove_old_snapshots () {
-	echo '⮕ Removing old snapshots'
-	# Keep the most recent 7 daily snapshots, then 4 (remember, 7
-	# dailies already include a week!) last-day-of-the-weeks and 11 or
-	# 12 last-day-of-the-months (11 or 12 depends if the 5 weeklies
-	# cross a month). And finally 100 last-day-of-the-year
-	# snapshots. All other snapshots are removed.
-	if ! restic forget \
-	     --keep-daily 7 \
-	     --keep-weekly 5 \
-	     --keep-monthly 12 \
-	     --keep-yearly 100 \
-	     --prune; then
-		echo '❌ Unable to remove old snapshots.'
-		exit 1
-	fi
-}
-
 printf '────── Backup started: %s ───────\n' "$(date '+%a %H:%M')"
-_prepare && _wifi && _do_backup && _remove_old_snapshots
+
+echo '⮕ Connecting to network Phunculist'
+. "$HOME"/.rc.d/wifi.sh
+if ! wifi Phunculist; then
+	echo '❌ Unable to connect to network Phunculist. Exiting.'
+	exit 1
+fi
+
+. "$HOME"/.profile.d/restic.sh
+
+echo '⮕ Performing backup'
+exclude=$HOME/.config/restic/restic-exclude.txt
+if ! restic --exclude-file="$exclude" backup "$HOME"; then
+	echo '❌ Unable to perform backup. Exiting.'
+	exit 1
+fi
+echo
+
+echo '⮕ Removing old snapshots'
+# Keep the most recent 7 daily snapshots, then 4 (remember, 7
+# dailies already include a week!) last-day-of-the-weeks and 11 or
+# 12 last-day-of-the-months (11 or 12 depends if the 5 weeklies
+# cross a month). And finally 100 last-day-of-the-year
+# snapshots. All other snapshots are removed.
+if ! restic forget \
+     --keep-daily 7 \
+     --keep-weekly 5 \
+     --keep-monthly 12 \
+     --keep-yearly 100 \
+     --prune; then
+	echo '❌ Unable to remove old snapshots.'
+	exit 1
+fi
+
 printf '────── Backup finished: %s ──────\n' "$(date '+%a %H:%M')"
