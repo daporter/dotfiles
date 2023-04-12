@@ -24,7 +24,7 @@ fi
 
 if _external_is_connected; then
 	xrandr --output DP1 --auto --primary
-	xrandr --output LVDS1 --below DP1
+	xrandr --output LVDS1 --right-of DP1
 else
 	xrandr --output LVDS1 --auto --primary
 	xrandr --output DP1 --off
