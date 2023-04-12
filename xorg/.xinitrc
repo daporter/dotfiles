@@ -21,6 +21,9 @@ xset r rate 150 55   # repeat after 150 ms, 55 char/s
 
 xsetroot -cursor_name left_ptr
 
+# Make the Scroll Lock key act as the Compose key.
+setxkbmap -option compose:sclk
+
 if [ -f "$HOME"/.fehbg ]; then
 	"$HOME"/.fehbg &
 fi
@@ -36,5 +39,9 @@ dunst &
 dwmbar &
 sxhkd &
 dropbox &
+
+if ! pgrep kmonad > /dev/null; then
+	kmonad "$HOME"/.config/kmonad/kd87.kbd &
+fi
 
 exec dwm

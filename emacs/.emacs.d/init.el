@@ -78,6 +78,8 @@
 
   (load custom-file)
 
+  (global-set-key (kbd "C-z") 'undo)
+  (global-set-key (kbd "C-S-z") 'undo-redo)
   (global-set-key (kbd "M-o") 'other-window)
   (global-set-key (kbd "s-b") 'switch-to-buffer)
   (global-set-key (kbd "C-M-<backspace>") 'backward-kill-sexp)
@@ -503,6 +505,14 @@
   :bind ("M-#" . dictionary-lookup-definition)
   :custom
   (dictionary-server "localhost"))
+
+(use-package kbd-mode
+  :load-path "lisp"
+  :mode "\\.kbd\\'"
+  :custom
+  (kbd-mode-kill-kmonad "pkill -9 kmonad")
+  (kbd-mode-start-kmonad "kmonad ~/.config/kmonad/kd87.kbd"))
+
 (use-package pdf-tools
   :ensure t
   :defer t

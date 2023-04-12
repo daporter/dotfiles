@@ -1,22 +1,33 @@
 (defcfg
   input  (device-file "/dev/input/by-id/usb-04d9_USB-HID_Keyboard-event-kbd")
-  output (uinput-sink
-          "KMonad: KD87"
-          "sleep 1; setxkbmap -option compose:sclk")
+  output (uinput-sink "KMonad: KD87")
   cmp-seq slck
 )
 
 (defsrc
-  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10 f11  f12      prnt slck pause
-  grv  1    2    3    4    5    6    7    8    9    0   -    =   bspc ins  home pgup
-  tab  q    w    e    r    t    y    u    i    o    p   [    ]   \    del  end  pgdn
-  caps a    s    d    f    g    h    j    k    l    ;   '    ret
-  lsft z    x    c    v    b    n    m    ,    .    /   rsft               up
-  lctl lmet lalt           spc            ralt rmet     rctl          left down rght
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12        ssrq slck pause
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc  ins  home pgup
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \     del  end  pgdn
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft                 up
+  lctl lmet lalt           spc            ralt      rmet rctl            left down right
 )
 
+#|
+Template:
+
+(deflayer name
+  _    _    _    _    _    _    _    _    _    _    _    _    _          _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _     _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _     _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _                    _
+  _    _    _              _              _         _    _               _    _    _
+)
+|#
+
 (defalias
-  amt (tap-hold-next-release 200 a lmet)
+  ;mt (tap-hold-next-release 200 ; lmet)
   oal (tap-hold-next-release 200 o lalt)
   esf (tap-hold-next-release 200 e lsft)
   uct (tap-hold-next-release 200 u lctl)
@@ -24,14 +35,45 @@
   hct (tap-hold-next-release 200 h rctl)
   tsf (tap-hold-next-release 200 t rsft)
   nal (tap-hold-next-release 200 n ralt)
-  smt (tap-hold-next-release 200 s rmet)
+  zmt (tap-hold-next-release 200 z rmet)
+
+  asy (tap-hold-next-release 200 a (layer-toggle symbols))
+  ssy (tap-hold-next-release 200 s (layer-toggle symbols))
+  nav (layer-toggle navigation)
 )
 
 (deflayer dvorak
- esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12      prnt slck pause
- grv  1    2    3    4    5    6    7    8    9    0    [    ]   bspc ins  home pgup
- tab  '    ,    .    p    y    f    g    c    r    l    /    =   \    del  end  pgdn
- caps @amt @oal @esf @uct i    d    @hct @tsf @nal @smt -    ret
- lsft ;    q    j    k    x    b    m    w    v    z    rsft               up
- lmet lalt lctl           spc            rctl ralt      rmet          left down rght
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12        ssrq slck pause
+  grv  1    2    3    4    5    6    7    8    9    0    [    ]    bspc  ins  home pgup
+  tab  '    ,    .    p    y    f    g    c    r    l    /    =    \\    del  end  pgdn
+  bspc @asy @oal @esf @uct i    d    @hct @tsf @nal @ssy -    ret
+  caps @;mt q    j    k    x    b    m    w    v    @zmt rsft                 up
+  lmet lalt @nav           spc            lctl      slck rmet            left down right
+)
+
+(deflayer symbols
+  _    _    _    _    _    _    _    _    _    _    _    _    _          _    _    _
+  XX   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  _    _     _    _    _
+  XX   XX   !    ?    XX   XX   XX   &    [    ]    %    f12  _    _     _    _    _
+  XX   !    -    +    =    #    |    :    \(   \)   ?    XX   _
+  XX   ^    \\   *    /    ~    XX   $    {    }    @    XX                   _
+  _    _    _              _              _         _    _               _    _    _
+)
+
+(deflayer navigation
+  _    _    _    _    _    _    _    _    _    _     _     _    _          _    _    _
+  _    _    _    _    _    _    _    _    _    _     _     _    _    _     _    _    _
+  _    _    _    _    _    _    _    home up   end   pgup  _    _    _     _    _    _
+  _    _    lalt lsft lctl _    _    left down right pgdn  _    _
+  _    lmet _    _    _    _    _    _    _    _     _     _                    _
+  _    _    _              _              _          _     _               _    _    _
+  )
+
+(deflayer numbers
+  _    _    _    _    _    _    _    _    _    _    _    _    _          _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _     _    _    _
+  _    _    _    _    _    _    _    7    8    9    _    _    _    _     _    _    _
+  _    _    _    _    _    _    _    1    2    3    0    _    _
+  _    _    _    _    _    _    _    4    5    6    _    _                    _
+  _    _    _              _              _         _    _               _    _    _
 )
