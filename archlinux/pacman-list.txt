@@ -11,14 +11,12 @@ cmake
 dmenu
 duf
 dunst
-emacs-nativecomp
 firefox
 flatpak
 glab
 grub
 haveged
 htop
-i810-dri
 intel-ucode
 isync
 iwd
@@ -33,6 +31,7 @@ obsidian
 otf-fira-mono
 pamixer
 pandoc-cli
+poppler-glib
 python-gpgme
 redshift
 restic
@@ -51,7 +50,6 @@ ttf-roboto-mono
 ttf-sourcecodepro-nerd
 vi
 wget
-xclip
 xf86-video-intel
 xf86-video-vesa
 xorg-bdftopcf

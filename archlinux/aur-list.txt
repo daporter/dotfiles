@@ -8,6 +8,7 @@ dict-moby-thesaurus
 dict-wikt-en-all
 dict-wn
 dropbox
+i810-dri
 kmonad-bin
 markdownlint-cli
 otf-bitstream-charter
