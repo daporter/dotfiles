@@ -48,6 +48,7 @@ ttf-noto-nerd
 ttf-roboto
 ttf-roboto-mono
 ttf-sourcecodepro-nerd
+unzip
 vi
 wget
 xf86-video-intel
