@@ -27,7 +27,7 @@ Template:
 |#
 
 (defalias
-  ;mt (tap-hold-next-release 200 ; lmet)
+  amt (tap-hold-next-release 200 a lmet)
   oal (tap-hold-next-release 200 o lalt)
   esf (tap-hold-next-release 200 e lsft)
   uct (tap-hold-next-release 200 u lctl)
@@ -35,10 +35,9 @@ Template:
   hct (tap-hold-next-release 200 h rctl)
   tsf (tap-hold-next-release 200 t rsft)
   nal (tap-hold-next-release 200 n ralt)
-  zmt (tap-hold-next-release 200 z rmet)
+  smt (tap-hold-next-release 200 s rmet)
 
-  asy (tap-hold-next-release 200 a (layer-toggle symbols))
-  ssy (tap-hold-next-release 200 s (layer-toggle symbols))
+  spsym (tap-hold-next-release 200 spc (layer-toggle symbols))
   nav (layer-toggle navigation)
 )
 
@@ -46,17 +45,17 @@ Template:
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12        ssrq slck pause
   grv  1    2    3    4    5    6    7    8    9    0    [    ]    bspc  ins  home pgup
   tab  '    ,    .    p    y    f    g    c    r    l    /    =    \\    del  end  pgdn
-  bspc @asy @oal @esf @uct i    d    @hct @tsf @nal @ssy -    ret
-  caps @;mt q    j    k    x    b    m    w    v    @zmt rsft                 up
-  lmet lalt @nav           spc            lctl      slck rmet            left down right
+  bspc @amt @oal @esf @uct i    d    @hct @tsf @nal @smt -    ret
+  caps ;    q    j    k    x    b    m    w    v    z    rsft                 up
+  lmet lalt @nav           @spsym         lctl      slck rmet            left down right
 )
 
 (deflayer symbols
   _    _    _    _    _    _    _    _    _    _    _    _    _          _    _    _
   XX   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  _    _     _    _    _
-  XX   XX   !    ?    XX   XX   XX   &    [    ]    %    f12  _    _     _    _    _
+  XX   XX   !    ?    ^    XX   XX   &    [    ]    %    f12  _    _     _    _    _
   XX   !    -    +    =    #    |    :    \(   \)   ?    XX   _
-  XX   ^    \\   *    /    ~    XX   $    {    }    @    XX                   _
+  XX   XX   \\   *    /    ~    XX   $    {    }    @    XX                   _
   _    _    _              _              _         _    _               _    _    _
 )
 
