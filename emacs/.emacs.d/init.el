@@ -95,6 +95,10 @@
       (insert (format-time-string format))))
   (global-set-key (kbd "C-c d") #'my/insert-date-time))
 
+(use-package dired
+  :custom
+  (dired-recursive-copies 'always))
+
 (use-package package
   :defer t
   :init
