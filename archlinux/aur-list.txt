@@ -8,6 +8,7 @@ dict-moby-thesaurus
 dict-wikt-en-all
 dict-wn
 dropbox
+dwm
 i810-dri
 kmonad-bin
 markdownlint-cli

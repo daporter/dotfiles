@@ -8,7 +8,6 @@ base
 base-devel
 calibre
 cmake
-dmenu
 duf
 dunst
 firefox
