@@ -481,7 +481,7 @@
      (:name "Flagged"            :query "tag:flagged"                    :key "f")
      (:name "Reference"          :query "tag:reference not tag:archived" :key "r")
      (:name "Sent"               :query "tag:sent"                       :key "s"   :sort-order newest-first)
-     (:name "Archived"           :query "tag:archived"                   :key "a")
+     (:name "Archived"           :query "tag:archived"                   :key "a"   :sort-order newest-first)
      (:name "All Mail"           :query "*"                              :key "A")))
   (notmuch-archive-tags '("-inbox" "-unread" "+archived"))
   (notmuch-draft-folder "Drafts")
@@ -519,5 +519,4 @@
 
 (use-package pdf-tools
   :ensure t
-  :defer t
   :config (pdf-loader-install))
