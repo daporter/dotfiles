@@ -499,12 +499,6 @@
   :defer t
   :autoload smtpmail-send-it)
 
-(use-package which-key
-  :ensure t
-  :defer t
-  :init
-  (which-key-mode))
-
 (use-package dictionary
   :bind ("M-#" . dictionary-lookup-definition)
   :custom

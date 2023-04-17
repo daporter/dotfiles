@@ -1,5 +1,0 @@
-#!/bin/sh
-#
-# Run Zotero under flatpak.
-
-exec flatpak run org.zotero.Zotero

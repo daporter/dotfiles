@@ -17,3 +17,4 @@ otf-spectral
 otf-spectralsc
 paru
 vale
+zotero
