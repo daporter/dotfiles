@@ -16,6 +16,7 @@ glab
 grub
 haveged
 htop
+indent
 intel-ucode
 isync
 iwd
