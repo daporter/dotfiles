@@ -31,6 +31,7 @@ obsidian
 otf-fira-mono
 pamixer
 pandoc-cli
+perl-image-exiftool
 poppler-glib
 python-gpgme
 redshift
