@@ -520,4 +520,7 @@
   :ensure t
   :custom
   (pdf-view-display-size 'fit-page)
-  :config (pdf-loader-install))
+  :config
+  (pdf-loader-install)
+  (add-to-list 'pdf-tools-enabled-modes 'pdf-view-themed-minor-mode)
+  (add-to-list 'pdf-tools-enabled-modes 'pdf-view-auto-slice-minor-mode))
