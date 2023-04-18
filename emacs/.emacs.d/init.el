@@ -518,4 +518,6 @@
 
 (use-package pdf-tools
   :ensure t
+  :custom
+  (pdf-view-display-size 'fit-page)
   :config (pdf-loader-install))
