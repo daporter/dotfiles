@@ -190,6 +190,11 @@
   :init
   (auto-dim-other-buffers-mode 1))
 
+(use-package apropos
+  :defer t
+  :custom
+  (apropos-sort-by-scores t))
+
 (use-package ispell
   :defer t
   :custom (ispell-dictionary "australian-w_accents"))
