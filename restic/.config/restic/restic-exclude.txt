@@ -8,6 +8,7 @@ $HOME/.emacs.d/elpa
 $HOME/.emacs.d/package-quickstart.el*
 $HOME/.local/share/Trash
 $HOME/.mozilla
+$HOME/.npm
 $HOME/Downloads
 $HOME/src
 $HOME/tmp
