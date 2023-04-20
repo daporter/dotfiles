@@ -20,9 +20,9 @@
   (frame-title-format '("%b"))
   (use-short-answers t)
 
-  ; Improve the spacing of underlines.
+  ;; Improve the spacing of underlines.
   (x-use-underline-position-properties nil)
-  
+
   (backup-directory-alist
    `(("." . ,(concat user-emacs-directory "backup/"))))
   (backup-by-copying t)
@@ -74,6 +74,7 @@
   (electric-quote-mode 1)
   (fringe-mode 0)
   (window-divider-mode 1)
+  (winner-mode 1)
   (auto-insert-mode t)
 
   (load custom-file)
