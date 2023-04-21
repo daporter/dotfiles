@@ -296,10 +296,6 @@
   (add-hook 'prog-mode-hook #'my/set-fill-column)
   (add-hook 'prog-mode-hook #'my/turn-on-display-fill-column-indicator-mode))
 
-(use-package flymake-vale
-  :load-path "lisp/flymake-vale"
-  :hook (text-mode . flymake-vale-load))
-
 (use-package text-mode
   :defer t
   :config
@@ -313,6 +309,10 @@
                 '(cape-file cape-dabbrev cape-ispell)))
   (add-hook 'text-mode-hook #'my/disable-indent-tabs-mode)
   (add-hook 'text-mode-hook #'my/configure-capfs-text-mode))
+
+(use-package flymake-vale
+  :load-path "lisp/flymake-vale"
+  :commands flymake-vale-load)
 
 (use-package visual-line-mode
   :hook (text-mode . visual-line-mode))
@@ -354,9 +354,7 @@
 
 (use-package flymake-markdownlint
   :ensure t
-  :commands flymake-markdownlint-setup
-  :config
-  (add-hook 'markdown-mode-hook #'flymake-markdownlint-setup))
+  :hook (markdown-mode . flymake-markdownlint-setup))
 
 (use-package sh-script
   :defer t
