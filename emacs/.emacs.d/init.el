@@ -521,5 +521,10 @@
   (pdf-view-display-size 'fit-page)
   :config
   (pdf-loader-install)
-  (add-to-list 'pdf-tools-enabled-modes 'pdf-view-themed-minor-mode)
-  (add-to-list 'pdf-tools-enabled-modes 'pdf-view-auto-slice-minor-mode))
+  (add-to-list 'pdf-tools-enabled-modes 'pdf-view-themed-minor-mode))
+
+(use-package keyfreq
+  :ensure t
+  :init
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
