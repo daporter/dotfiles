@@ -242,6 +242,11 @@
   :defer t
   :bind ("C-c p i" . cape-ispell))
 
+(use-package lin
+  :ensure t
+  :init
+  (lin-global-mode 1))
+
 (use-package vterm
   :ensure t
   :commands vterm)
