@@ -200,6 +200,12 @@
   :defer t
   :custom (ispell-dictionary "australian-w_accents"))
 
+(use-package bookmark
+  :defer t
+  :custom
+  ;; Save bookmarks on each modification.
+  (bookmark-save-flag 1))
+
 (use-package saveplace
   :defer t
   :init (save-place-mode 1))
