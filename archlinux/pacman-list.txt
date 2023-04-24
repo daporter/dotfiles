@@ -12,6 +12,7 @@ duf
 dunst
 firefox
 flatpak
+gdb
 glab
 grub
 haveged
