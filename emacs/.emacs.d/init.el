@@ -528,11 +528,11 @@
 
 (use-package pdf-tools
   :ensure t
+  :defer t
   :custom
   (pdf-view-display-size 'fit-page)
   :config
-  (pdf-loader-install)
-  (add-to-list 'pdf-tools-enabled-modes 'pdf-view-themed-minor-mode))
+  (pdf-loader-install))
 
 (use-package keyfreq
   :ensure t
