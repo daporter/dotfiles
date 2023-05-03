@@ -313,6 +313,7 @@
   :config
   ;; For some reason, the following doesn't work with :bind
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
+  (define-key text-mode-map (kbd "C-c P") #'repunctuate-sentences)
   (defun my/disable-indent-tabs-mode ()
     (setq-local indent-tabs-mode nil))
   (defun my/configure-capfs-text-mode ()
@@ -332,6 +333,11 @@
 (use-package adaptive-wrap
   :ensure t
   :hook (visual-line-mode . adaptive-wrap-prefix-mode))
+
+(use-package unfill
+  :ensure t
+  :commands (unfill-region unfill-paragraph)
+  :bind ("C-c q" . unfill-paragraph))
 
 (use-package lorem-ipsum
   :ensure t
@@ -534,6 +540,13 @@
   (pdf-view-display-size 'fit-page)
   :config
   (pdf-loader-install))
+
+(use-package org-noter
+  :ensure t
+  :commands org-noter
+  :custom
+  (org-noter-notes-search-path '("~/Dropbox/bibliography"))
+  (org-noter-auto-save-last-location t))
 
 (use-package keyfreq
   :ensure t
