@@ -98,7 +98,8 @@
 
 (use-package dired
   :custom
-  (dired-recursive-copies 'always))
+  (dired-recursive-copies 'always)
+  (dired-dwim-target t))                ; try to guess target directory for copy
 
 (use-package package
   :defer t
