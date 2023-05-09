@@ -355,6 +355,11 @@
   (add-hook 'emacs-lisp-mode-hook #'my/disable-indent-tabs-mode)
   (add-hook 'emacs-lisp-mode-hook #'my/configure-capfs-emacs-lisp-mode))
 
+(use-package cc-mode
+  :defer t
+  :custom
+  (c-default-style "linux"))
+
 (use-package markdown-mode
   :ensure t
   :mode (("README\\.md\\'" . gfm-mode)
