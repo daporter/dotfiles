@@ -461,7 +461,7 @@
 
 (use-package conf-mode
   :defer t
-  :bind ("C-M-i" . #'completion-at-point))
+  :bind ("C-M-i" . completion-at-point))
 
 (use-package yaml-mode
   :ensure t
@@ -489,7 +489,7 @@
 (use-package notmuch
   :load-path "/usr/share/emacs/site-lisp"
   :commands notmuch
-  :bind ("C-c m" . #'notmuch)
+  :bind ("C-c m" . notmuch)
   :custom
   (notmuch-show-logo nil)
   (mail-user-agent #'notmuch-mua-new-mail)
