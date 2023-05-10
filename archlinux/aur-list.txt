@@ -9,6 +9,7 @@ dict-wikt-en-all
 dict-wn
 dropbox
 dwm
+gnu-c-manual
 i810-dri
 kmonad-bin
 markdownlint-cli
