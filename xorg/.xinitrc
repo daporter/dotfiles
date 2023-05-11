@@ -28,8 +28,6 @@ if [ -f "$HOME"/.fehbg ]; then
 	"$HOME"/.fehbg &
 fi
 
-configure_monitors
-
 lxpolkit &
 redshift &
 pipewire &
@@ -39,9 +37,12 @@ dunst &
 dwmbar &
 sxhkd &
 dropbox &
+1password --silent &
 
 if ! pgrep kmonad > /dev/null; then
 	kmonad "$HOME"/.config/kmonad/kd87.kbd &
 fi
+
+configure_monitors
 
 exec dwm

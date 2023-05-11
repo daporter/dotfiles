@@ -21,7 +21,6 @@ indent
 intel-ucode
 isync
 iwd
-keychain
 libertinus-font
 libvterm
 lxsession-gtk3
