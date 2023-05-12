@@ -1,5 +1,6 @@
 $HOME/.cache
 $HOME/.cargo
+$HOME/.config/obsidian/Cache
 $HOME/.dropbox
 $HOME/.dropbox-dist
 $HOME/.dropbox.cache
@@ -10,6 +11,8 @@ $HOME/.local/share/Trash
 $HOME/.mozilla
 $HOME/.npm
 $HOME/Downloads
+$HOME/Dropbox/.dropbox.cache
+$HOME/Mail/.notmuch/xapian
 $HOME/src
 $HOME/tmp
 *.core
