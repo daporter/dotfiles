@@ -25,6 +25,7 @@ iwd
 libertinus-font
 libvterm
 lxsession-gtk3
+maim
 man-pages
 mupdf
 neofetch
