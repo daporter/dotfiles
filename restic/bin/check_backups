@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# Verify the structure and consistency of the backup repository.
+
+echo '* Checking the repository'
+# The option `--read-data-subset=n%’ also checks n%, randomly chosen, of the
+# actual pack files.
+if ! restic check --read-data-subset=1% --verbose=2; then
+		echo 'Cannot check the repository.'
+		exit 1
+fi
