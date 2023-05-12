@@ -13,6 +13,7 @@ gnu-c-manual
 i810-dri
 kmonad-bin
 markdownlint-cli
+ocrmypdf
 otf-bitstream-charter
 otf-spectral
 otf-spectralsc

@@ -6,6 +6,7 @@ aspell-en
 aspell-fr
 base
 base-devel
+bc
 calibre
 cmake
 duf
