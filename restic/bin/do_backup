@@ -1,6 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # Run a backup of my home directory.
+
+set -o errexit                  # abort on nonzero exitstatus
+set -o nounset                  # abort on unbound variable
+set -o pipefail                 # don't hide errors within pipes
 
 printf '────── Backup started: %s ───────\n' "$(date '+%a %H:%M')"
 
@@ -14,10 +18,10 @@ fi
 . "$HOME"/.profile.d/restic.sh
 
 echo '⮕ Performing backup'
-exclude=$HOME/.config/restic/restic-exclude.txt
-if ! restic backup "$HOME"      \
-     --exclude-file="$exclude"  \
-     --verbose=2; then
+if ! restic backup "$HOME"                                    \
+     --exclude-file="$HOME/.config/restic/restic-exclude.txt" \
+     --verbose=2                                              \
+		| tee /tmp/do_backup_log.txt; then
 	echo '❌ Unable to perform backup. Exiting.'
 	exit 1
 fi
@@ -34,7 +38,8 @@ if ! restic forget      \
      --keep-monthly 12  \
      --keep-yearly 100  \
      --prune            \
-     --verbose=2 ; then
+     --verbose=2        \
+		| tee --append /tmp/do_backup_log.txt ; then
 	echo '❌ Unable to remove old snapshots.'
 	exit 1
 fi
