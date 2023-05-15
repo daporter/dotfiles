@@ -559,6 +559,11 @@
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
 
+(use-package org-agenda
+  :defer t
+  :custom
+  (org-agenda-todo-ignore-scheduled 'future))
+
 (use-package gnus
   :commands gnus
   :custom
