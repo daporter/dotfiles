@@ -289,6 +289,19 @@
     ((smie-indent-line . css-indent-offset)))
   (smart-tabs-insinuate 'sh 'mhtml 'nxml 'css))
 
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
+(use-package titlecase
+  :ensure t
+  :commands (titlecase-region
+             titlecase-line
+             titlecase-sentence
+             titlecase-dwim)
+  :custom (titlecase-style 'chicago))
+
 (use-package flymake
   :defer t
   :hook ((prog-mode text-mode) . flymake-mode-on)
