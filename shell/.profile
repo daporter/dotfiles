@@ -8,7 +8,7 @@ if [ -r "$HOME"/.kshrc ]; then
 	export ENV
 fi
 
-PATH=$HOME/bin:$PATH
+PATH=$HOME/bin:$HOME/.local/bin:$PATH
 export PATH
 
 XDG_RUNTIME_DIR=/run/user/$(id -u)
