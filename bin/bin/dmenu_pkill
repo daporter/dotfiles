@@ -10,7 +10,6 @@ ps_lines=$(ps -x \
 sel_line=$(echo "$ps_lines" \
 	           | dmenu -p 'Process to kill:' -l 20)
 
-# Check whether dmenu was cancelled.?
 if [ $? -ne 0 ]; then
 	notify-send Cancelled
 	exit 1

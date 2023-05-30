@@ -10,6 +10,11 @@ selection=$(iwctl station wlan0 get-networks rssi-dbms | \
 	            head -n -1 | \
 				dmenu -p 'Select network: ' -l 10)
 
+if [ $? -ne 0 ]; then
+	notify-send Cancelled
+	exit 0
+fi
+
 network=$(echo "$selection" | \
 	           # remove leading spaces and any '>'
 	          sed 's/^[^[:alnum:]]*//' | \
