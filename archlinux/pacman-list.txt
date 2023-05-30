@@ -1,7 +1,6 @@
 adobe-source-sans-fonts
 adobe-source-serif-fonts
 afew
-alacritty
 aspell-en
 aspell-fr
 base
@@ -27,6 +26,7 @@ indent
 intel-ucode
 isync
 iwd
+kitty
 libertinus-font
 libvterm
 lsd
