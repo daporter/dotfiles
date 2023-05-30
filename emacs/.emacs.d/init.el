@@ -174,10 +174,8 @@
   (setq fontaine-latest-state-file
         (locate-user-emacs-file "fontaine-latest-state.eld"))
   (setq fontaine-presets '((regular
-                            :default-family "IBM Plex Mono"
-                            :default-height 80
-                            :fixed-pitch-family "IBM Plex Mono"
-                            :fixed-pitch-serif-family "IBM Plex Mono"
+                            :default-family "Iosevka"
+                            :default-height 90
                             :variable-pitch-family "Source Sans 3"
                             :variable-pitch-height 1.25
                             :bold-weight semibold
