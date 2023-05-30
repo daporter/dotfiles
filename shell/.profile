@@ -52,6 +52,11 @@ export TIME_STYLE
 PARINIT='78 rTbgqR B=.,?_A_a Q=_s>|'
 export PARINIT
 
+
+# Prevent blank windows in Java applications.
+_JAVA_AWT_WM_NONREPARENTING=1
+export _JAVA_AWT_WM_NONREPARENTING
+
 if [ -d "$HOME"/.profile.d ]; then
 	for sh in "$HOME"/.profile.d/*.sh; do
 		if [ -r "$sh" ]; then
