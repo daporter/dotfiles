@@ -56,6 +56,7 @@ tree
 ttc-iosevka-ss09
 ttf-hack
 ttf-inconsolata
+ttf-iosevka-nerd
 ttf-jetbrains-mono
 ttf-noto-nerd
 ttf-roboto

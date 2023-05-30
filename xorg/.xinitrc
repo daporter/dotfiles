@@ -45,4 +45,4 @@ fi
 
 configure_monitors
 
-exec dwm
+exec startdwm
