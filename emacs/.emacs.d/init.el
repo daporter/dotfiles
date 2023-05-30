@@ -480,6 +480,9 @@
   :ensure t
   :mode "\\.ya?ml\\'")
 
+(use-package sxhkdrc-mode
+  :ensure t)
+
 (use-package olivetti
   :ensure t
   :commands olivetti)

@@ -1,28 +1,28 @@
-# WM INDEPENDENT KEYBINDINGS
-
-super + Escape
+control + super + alt + shift + Escape
     pkill -USR1 -x sxhkd && notify-send -i key_bindings "Reloaded key bindings"
 
-super + {Down, Up}
-    pamixer {--decrease, --increase} 10
+XF86AudioRaiseVolume
+    pamixer --increase 10
+XF86AudioLowerVolume
+    pamixer --decrease 10
 
-super + {Left, Right}
+control + super + alt + shift + {Left, Right}
     xbacklight {-dec, -inc} 10
 
 # Dynamic menus
 
-super + ctrl + d ; k
+control + super + alt + shift + d ; k
     ~/bin/dmenu_pkill
 
-super + ctrl + d ; w
+control + super + alt + shift + d ; w
     ~/bin/dmenu_wifi
 
-super + ctrl + d ; s
+control + super + alt + shift + d ; s
     ~/bin/dmenu_shutdown
 
 # Web searches
 
-super + ctrl + s ; {g, w, m, o, l, r}
+control + super + alt + shift + s ; {g, w, m, o, l, r}
      ~/bin/websearch { \
                      --google, \
                      --wikipedia, \
@@ -32,7 +32,7 @@ super + ctrl + s ; {g, w, m, o, l, r}
                      --wordreference \
                      }
 
-super + ctrl + shift + s ; {g, w, m, o, l, r}
+control + super + alt + shift + p ; {g, w, m, o, l, r}
      ~/bin/websearch -p { \
                         --google, \
                         --wikipedia, \
@@ -40,4 +40,4 @@ super + ctrl + shift + s ; {g, w, m, o, l, r}
                         --oxford, \
                         --onelook, \
                         --wordreference \
-                        }
+                        } 

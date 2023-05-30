@@ -18,5 +18,6 @@ otf-bitstream-charter
 otf-spectral
 otf-spectralsc
 paru
+qmk-git
 vale
 zotero
