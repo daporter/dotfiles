@@ -6,8 +6,10 @@ XF86AudioRaiseVolume
 XF86AudioLowerVolume
     pamixer --decrease 10
 
-control + super + alt + shift + {Left, Right}
-    xbacklight {-dec, -inc} 10
+XF86MonBrightnessUp
+    xbacklight -inc 10
+XF86MonBrightnessDown
+    xbacklight -dec 10
 
 # Dynamic menus
 
@@ -24,20 +26,20 @@ control + super + alt + shift + d ; s
 
 control + super + alt + shift + s ; {g, w, m, o, l, r}
      ~/bin/websearch { \
-                     --google, \
-                     --wikipedia, \
-                     --googlemaps, \
-                     --oxford, \
-                     --onelook, \
-                     --wordreference \
-                     }
+		     --google, \
+		     --wikipedia, \
+		     --googlemaps, \
+		     --oxford, \
+		     --onelook, \
+		     --wordreference \
+		     }
 
 control + super + alt + shift + p ; {g, w, m, o, l, r}
      ~/bin/websearch -p { \
-                        --google, \
-                        --wikipedia, \
-                        --googlemaps, \
-                        --oxford, \
-                        --onelook, \
-                        --wordreference \
-                        } 
+			--google, \
+			--wikipedia, \
+			--googlemaps, \
+			--oxford, \
+			--onelook, \
+			--wordreference \
+			}
