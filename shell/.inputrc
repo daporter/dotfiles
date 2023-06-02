@@ -16,3 +16,5 @@ set mark-symlinked-directories on
 set show-all-if-ambiguous on  # list completions immediately instead of ringing bell
 set show-all-if-unmodified on
 set visible-stats on
+
+"\C-\b": backward-kill-word     # C-Backspace
