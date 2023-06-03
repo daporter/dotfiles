@@ -10,7 +10,7 @@ host           smtp.migadu.com
 port           465
 from           david@daporter.net
 user           david@daporter.net
-passwordeval   "pass migadu.com/david@daporter.net"
+passwordeval   "op read op://Personal/Migadu/password"
 
 account default : migadu
 aliases        /etc/aliases

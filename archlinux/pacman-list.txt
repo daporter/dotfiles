@@ -33,6 +33,7 @@ lsd
 lxsession-gtk3
 maim
 man-pages
+msmtp
 mtr
 mupdf
 neofetch

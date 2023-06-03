@@ -613,6 +613,15 @@
   (gnus-sum-thread-tree-single-leaf     "└─➤ ")
   (gnus-sum-thread-tree-indent          "  "))
 
+(use-package sendmail
+  :defer t
+  :custom
+  (send-mail-function 'sendmail-send-it)
+  (sendmail-program "msmtp")
+  (mail-specify-envelope-from t)
+  (message-sendmail-envelope-from 'header)
+  (mail-envelope-from 'header))
+
 (use-package yasnippet
   :ensure t)
 
