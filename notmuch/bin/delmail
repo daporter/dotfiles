@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# Delete email messages that are more than 1 week old and tagged "deleted".
+
+set -e
+
+COUNT=$(notmuch count date:..1w tag:deleted)
+
+notmuch search --output=files --format=text0 \
+		date:..1w tag:deleted | \
+	xargs -r0 rm
+
+notmuch new --no-hooks --quiet
+
+printf "Deleted %s emails.\n", "$COUNT"
