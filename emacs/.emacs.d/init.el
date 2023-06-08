@@ -535,6 +535,7 @@
      ("d" ("+deleted" "-inbox") "Delete")))
   (notmuch-mua-user-agent-function #'notmuch-mua-user-agent-full)
   :config
+  (add-hook 'notmuch-message-mode-hook #'turn-off-auto-fill)
   (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check))
 
 (use-package sendmail
