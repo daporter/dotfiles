@@ -18,7 +18,7 @@ PDF=$(mktemp /tmp/XXXXXX-original.pdf)
 TMP=$(mktemp /tmp/XXXXXX-small.pdf)
 
 cp "$1" "$PDF"
-ocrmypdf --skip-text --optimize 3 --jbig2-lossy "$PDF" "$TMP"
+ocrmypdf --skip-text --optimize 3 --jbig2-lossy --output-type pdf "$PDF" "$TMP"
 
 ORIGINAL=$(wc -c < "$PDF")
 SMALL=$(wc -c < "$TMP")
@@ -45,7 +45,7 @@ else
         echo "----"
         pdftotext "$TMP" - | head -5
         echo "----"
-        ocrmypdf --force-ocr --optimize 3 --jbig2-lossy "$PDF" "$TMP" &> /dev/null || true
+        ocrmypdf --force-ocr --optimize 3 --jbig2-lossy --output-type pdf "$PDF" "$TMP" &> /dev/null || true
         exiftool -TagsFromFile "$PDF" "$TMP" || true
         mv "$TMP" "$1"
     fi
