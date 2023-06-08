@@ -15,7 +15,6 @@ kmonad-bin
 markdownlint-cli
 nand2tetris
 ocrmypdf
-otf-bitstream-charter
 otf-spectral
 otf-spectralsc
 paru
