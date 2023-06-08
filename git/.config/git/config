@@ -25,3 +25,5 @@
 	conflictstyle = diff3
 [mergetool]
 	prompt = false
+[pull]
+	ff = only
