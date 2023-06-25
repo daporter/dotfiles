@@ -379,6 +379,10 @@ This command can then be followed by the standard
   :custom
   (flymake-fringe-indicator-position nil))
 
+(use-package eglot
+  :ensure t
+  :commands eglot)
+
 (use-package prog-mode
   :defer t
   :init
