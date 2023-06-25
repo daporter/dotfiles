@@ -94,7 +94,77 @@
                       "%Y%m%d%H%M%S"
                     "%Y-%m-%d %H:%M:%S")))
       (insert (format-time-string format))))
-  (global-set-key (kbd "C-c d") #'my/insert-date-time))
+  (global-set-key (kbd "C-c d") #'my/insert-date-time)
+
+  ;; The following functions were copied from
+  ;; https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/prot-lisp/prot-simple.el
+
+  (defun my/simple-new-line-above (&optional arg)
+    "Create an empty line above the current one.
+Move the point to the absolute beginning.  Adapt indentation by
+passing optional prefix ARG (\\[universal-argument])."
+    (interactive "P")
+    (let ((indent (or arg nil)))
+      (if (or (bobp)
+              (line-number-at-pos (point-min)))
+          (progn
+            (beginning-of-line)
+            (newline)
+            (forward-line -1))
+        (forward-line -1)
+        (my/simple-new-line-below indent))))
+  (global-set-key (kbd "<C-S-return>") #'my/simple-new-line-above)
+
+  (defun my/simple-new-line-below (&optional arg)
+    "Create an empty line below the current one.
+Move the point to the absolute beginning.  Adapt indentation by
+passing optional prefix ARG (\\[universal-argument]).  Also see
+`my/simple-new-line-above'."
+    (interactive "P")
+    (end-of-line)
+    (if arg
+        (newline-and-indent)
+      (newline)))
+  (global-set-key (kbd "<C-return>") #'my/simple-new-line-below)
+
+  (defun my/simple--duplicate-buffer-substring (beg end &optional indent)
+    "Duplicate buffer substring between BEG and END positions.
+With optional INDENT, run `indent-for-tab-command' after
+inserting the substring."
+    (save-excursion
+      (goto-char end)
+      (newline)
+      (insert (buffer-substring-no-properties beg end))
+      (when indent
+        (indent-for-tab-command))))
+
+  (defun my/simple-copy-line-or-region (&optional duplicate)
+    "Copy the current line to the `kill-ring'.
+With optional DUPLICATE as a prefix argument, duplicate the
+current line without adding it to the `kill-ring'.
+
+When the region is active, duplicate it regardless of DUPLICATE."
+    (interactive "P")
+    (let* ((region (region-active-p))
+           (beg (if region (region-beginning) (line-beginning-position)))
+           (end (if region (region-end) (line-end-position)))
+           (message (if region "region" "line")))
+      (if (or duplicate region)
+          (my/simple--duplicate-buffer-substring beg end region)
+        (copy-region-as-kill beg end)
+        (message "Copied current %s" message))))
+  (global-set-key (kbd "C-S-w") #'my/simple-copy-line-or-region)
+
+  (defun my/simple-yank-replace-line-or-region ()
+    "Replace line or region with latest kill.
+This command can then be followed by the standard
+`yank-pop' (default is bound to \\[yank-pop])."
+    (interactive)
+    (if (use-region-p)
+        (delete-region (region-beginning) (region-end))
+      (delete-region (line-beginning-position) (line-end-position)))
+    (yank))
+  (global-set-key (kbd "C-S-y") #'my/simple-yank-replace-line-or-region))
 
 (use-package dired
   :custom
