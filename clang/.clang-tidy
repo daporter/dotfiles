@@ -1,0 +1,15 @@
+---
+FormatStyle: file       # uses .clang-format in the closest parent dir
+Checks: >-
+  -*,
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  concurrency-*,
+  google-*,
+  linuxkernel-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*
