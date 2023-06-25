@@ -39,10 +39,6 @@ sxhkd &
 dropbox &
 1password --silent &
 
-if ! pgrep kmonad > /dev/null; then
-	kmonad "$HOME"/.config/kmonad/kd87.kbd &
-fi
-
 configure_monitors
 
 exec startdwm
