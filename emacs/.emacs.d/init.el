@@ -443,7 +443,8 @@ This command can then be followed by the standard
 (use-package cc-mode
   :defer t
   :custom
-  (c-default-style "linux"))
+  (c-default-style "linux")
+  (comment-style 'extra-line))
 
 (use-package markdown-mode
   :ensure t
