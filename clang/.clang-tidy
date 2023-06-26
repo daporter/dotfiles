@@ -1,15 +1,19 @@
 ---
 FormatStyle: file       # uses .clang-format in the closest parent dir
+ExtraArgs:
+  - -std=c2x
 Checks: >-
   -*,
   bugprone-*,
   cert-*,
   clang-analyzer-*,
-  concurrency-*,
   google-*,
+  -google-readability-braces-around-statements,
   linuxkernel-*,
   misc-*,
   modernize-*,
   performance-*,
   portability-*,
-  readability-*
+  readability-*,
+  -readability-braces-around-statements
+...
