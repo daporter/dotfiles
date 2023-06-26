@@ -42,6 +42,7 @@ otf-fira-mono
 pamixer
 pandoc-cli
 pavucontrol
+pdftk
 perl-image-exiftool
 poppler-glib
 python-gpgme
