@@ -17,6 +17,7 @@ exa
 fd
 firefox
 flatpak
+github-cli
 glab
 grub
 haveged
