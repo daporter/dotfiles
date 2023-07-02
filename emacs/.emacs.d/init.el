@@ -44,6 +44,9 @@
   (read-extended-command-predicate
    #'command-completion-default-include-p)
 
+  (isearch-lazy-count t)
+  (lazy-count-prefix-format "(%s/%s) ")
+
   (read-file-name-completion-ignore-case t)
   (read-buffer-completion-ignore-case t)
   (completion-ignore-case t)
