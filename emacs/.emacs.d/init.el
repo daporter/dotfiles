@@ -381,7 +381,7 @@ This command can then be followed by the standard
 
 (use-package eglot
   :ensure t
-  :commands eglot)
+  :commands (eglot eglot-ensure))
 
 (use-package prog-mode
   :defer t
@@ -441,7 +441,11 @@ This command can then be followed by the standard
   (add-hook 'emacs-lisp-mode-hook #'my/configure-capfs-emacs-lisp-mode))
 
 (use-package cc-mode
+  :after eglot
   :defer t
+  :init
+  (add-hook 'c-mode-hook 'eglot-ensure)
+  (add-hook 'c++-mode-hook 'eglot-ensure)
   :custom
   (c-default-style "linux")
   (comment-style 'extra-line))
