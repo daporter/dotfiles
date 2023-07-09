@@ -644,6 +644,10 @@ This command can then be followed by the standard
   :config
   (pdf-loader-install))
 
+(use-package nov
+  :ensure t
+  :mode ("\\.epub\\'" . nov-mode))
+
 (use-package org-noter
   :ensure t
   :commands org-noter
