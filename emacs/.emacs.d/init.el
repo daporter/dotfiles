@@ -712,11 +712,3 @@ This command can then be followed by the standard
 
 (use-package yasnippet
   :ensure t)
-
-(use-package nand2tetris
-  :ensure t
-  :requires yasnippet
-  :mode ("\\.hdl\\'" . nand2tetris-mode)
-  :custom
-  (nand2tetris-core-base-dir
-   "~/Dropbox/65 Computing Reading/65.01 Coursera Nand2Tetris/nand2tetris/"))
