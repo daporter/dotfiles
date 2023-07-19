@@ -638,9 +638,8 @@ This command can then be followed by the standard
 
 (use-package pdf-tools
   :ensure t
-  :defer t
-  :custom
-  (pdf-view-display-size 'fit-page)
+  :magic ("%PDF" . pdf-view-mode)
+  :hook (pdf-view-mode . pdf-view-auto-slice-minor-mode)
   :config
   (pdf-loader-install))
 
