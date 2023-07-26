@@ -1,0 +1,10 @@
+[Unit]
+Description=Notmuch timer
+
+[Timer]
+OnBootSec=1m
+OnUnitActiveSec=10m
+Unit=notmuch.service
+
+[Install]
+WantedBy=timers.target

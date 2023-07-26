@@ -1,0 +1,6 @@
+[Unit]
+Description=Notmuch service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/notmuch new
