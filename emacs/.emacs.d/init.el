@@ -46,6 +46,7 @@
 
   (isearch-lazy-count t)
   (lazy-count-prefix-format "(%s/%s) ")
+  (lazy-count-suffix-format nil)
 
   (read-file-name-completion-ignore-case t)
   (read-buffer-completion-ignore-case t)
@@ -304,7 +305,10 @@ This command can then be followed by the standard
 (use-package vertico
   :ensure t
   :defer t
-  :init (vertico-mode 1))
+  :init
+  (vertico-mode 1)
+  :custom
+  (add-hook 'rfn-eshdadow-update-overlay-hook #'vertico-directory-tidy))
 
 (use-package corfu
   :ensure t
