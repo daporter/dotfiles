@@ -43,6 +43,7 @@ otf-fira-mono
 pamixer
 pandoc-cli
 pavucontrol
+pcmanfm-gtk3
 pdftk
 perl-image-exiftool
 poppler-glib
