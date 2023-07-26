@@ -246,13 +246,15 @@ This command can then be followed by the standard
   :init
   (setq fontaine-latest-state-file
         (locate-user-emacs-file "fontaine-latest-state.eld"))
-  (setq fontaine-presets '((regular
-                            :default-family "Iosevka"
-                            :default-height 90
-                            :variable-pitch-family "Source Sans 3"
-                            :variable-pitch-height 1.25
-                            :bold-weight semibold
-                            :line-spacing 0.15)))
+  (setq fontaine-presets
+        '((regular
+           :default-family "Iosevka Term"
+           :fixed-pitch-family "Iosevka Slab Extended"
+           :fixed-pitch-height 0.9
+           :fixed-pitch-serif-family "Iosevka Slab Extended"
+           :fixed-pitch-serif-height 0.9
+           :variable-pitch-family "Elstob"
+           :variable-pitch-height 1.15)))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))

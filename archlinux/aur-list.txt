@@ -17,6 +17,8 @@ markdownlint-cli
 nand2tetris
 ocrmypdf
 october
+otf-elstob
+otf-im-fell-types
 otf-spectral
 otf-spectralsc
 paru

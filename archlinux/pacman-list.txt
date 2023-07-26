@@ -56,6 +56,10 @@ stow
 sxhkd
 tealdeer
 tree
+ttc-iosevka
+ttc-iosevka-aile
+ttc-iosevka-etoile
+ttc-iosevka-slab
 ttf-hack
 ttf-inconsolata
 ttf-iosevka-nerd
