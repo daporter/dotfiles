@@ -641,7 +641,10 @@ This command can then be followed by the standard
 (use-package pdf-tools
   :ensure t
   :magic ("%PDF" . pdf-view-mode)
-  :hook (pdf-view-mode . pdf-view-auto-slice-minor-mode)
+  :hook
+  ((pdf-view-mode . pdf-history-minor-mode)
+   (pdf-view-mode . pdf-view-fit-page-to-window)
+   (pdf-view-mode . pdf-view-auto-slice-minor-mode))
   :config
   (pdf-loader-install))
 
