@@ -2,6 +2,7 @@
 1password-cli
 anki
 ansifilter
+debtap
 dict-foldoc
 dict-gcide
 dict-moby-thesaurus
@@ -15,6 +16,7 @@ kmonad-bin
 markdownlint-cli
 nand2tetris
 ocrmypdf
+october
 otf-spectral
 otf-spectralsc
 paru
