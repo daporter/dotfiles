@@ -131,44 +131,10 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
       (newline)))
   (global-set-key (kbd "<C-return>") #'my/simple-new-line-below)
 
-  (defun my/simple--duplicate-buffer-substring (beg end &optional indent)
-    "Duplicate buffer substring between BEG and END positions.
-With optional INDENT, run `indent-for-tab-command' after
-inserting the substring."
-    (save-excursion
-      (goto-char end)
-      (newline)
-      (insert (buffer-substring-no-properties beg end))
-      (when indent
-        (indent-for-tab-command))))
+  (global-set-key (kbd "<C-return>") #'my/simple-new-line-below))
 
-  (defun my/simple-copy-line-or-region (&optional duplicate)
-    "Copy the current line to the `kill-ring'.
-With optional DUPLICATE as a prefix argument, duplicate the
-current line without adding it to the `kill-ring'.
-
-When the region is active, duplicate it regardless of DUPLICATE."
-    (interactive "P")
-    (let* ((region (region-active-p))
-           (beg (if region (region-beginning) (line-beginning-position)))
-           (end (if region (region-end) (line-end-position)))
-           (message (if region "region" "line")))
-      (if (or duplicate region)
-          (my/simple--duplicate-buffer-substring beg end region)
-        (copy-region-as-kill beg end)
-        (message "Copied current %s" message))))
-  (global-set-key (kbd "C-S-w") #'my/simple-copy-line-or-region)
-
-  (defun my/simple-yank-replace-line-or-region ()
-    "Replace line or region with latest kill.
-This command can then be followed by the standard
-`yank-pop' (default is bound to \\[yank-pop])."
-    (interactive)
-    (if (use-region-p)
-        (delete-region (region-beginning) (region-end))
-      (delete-region (line-beginning-position) (line-end-position)))
-    (yank))
-  (global-set-key (kbd "C-S-y") #'my/simple-yank-replace-line-or-region))
+(use-package whole-line-or-region
+  :ensure t)
 
 (use-package dired
   :custom
