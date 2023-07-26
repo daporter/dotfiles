@@ -5,7 +5,7 @@ CopyArrivalDate yes
 IMAPAccount migadu
 Host imap.migadu.com
 User david@daporter.net
-PassCmd "op read op://Personal/Migadu/password"
+PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/Mail/migadu.gpg"
 SSLType IMAPS
 
 IMAPStore migadu

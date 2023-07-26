@@ -1,16 +1,16 @@
 defaults
-auth           on
-tls            on
+auth on
+tls on
 tls_trust_file /etc/ssl/certs/ca-certificates.crt
-tls_starttls   off
-syslog         on
+tls_starttls off
+syslog on
 
-account        migadu
-host           smtp.migadu.com
-port           465
-from           david@daporter.net
-user           david@daporter.net
-passwordeval   "op read op://Personal/Migadu/password"
+account migadu
+host smtp.migadu.com
+port 465
+from david@daporter.net
+user david@daporter.net
+passwordeval gpg -q --for-your-eyes-only --no-tty -d ~/Mail/migadu.gpg
 
 account default : migadu
-aliases        /etc/aliases
+aliases /etc/aliases
