@@ -390,6 +390,10 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
 (use-package visual-line-mode
   :hook (text-mode . visual-line-mode))
 
+(use-package visual-fill-column
+  :ensure t
+  :hook visual-line-mode)
+
 (use-package adaptive-wrap
   :ensure t
   :hook (visual-line-mode . adaptive-wrap-prefix-mode))
