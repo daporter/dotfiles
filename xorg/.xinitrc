@@ -28,6 +28,8 @@ if [ -f "$HOME"/.fehbg ]; then
 	"$HOME"/.fehbg &
 fi
 
+dbus-update-activation-environment --all --systemd
+
 lxpolkit &
 redshift &
 pipewire &
