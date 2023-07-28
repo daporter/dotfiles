@@ -5,6 +5,7 @@ aspell-en
 aspell-fr
 base
 base-devel
+bash-language-server
 bc
 bottom
 calibre

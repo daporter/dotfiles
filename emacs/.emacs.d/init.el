@@ -470,10 +470,6 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
                       #'cape-ispell)))
   (add-hook 'sh-mode-hook #'my/configure-capfs-sh-mode))
 
-(use-package flymake-shellcheck
-  :ensure t
-  :hook (sh-mode . flymake-shellcheck-load))
-
 (use-package python-mode
   :ensure t
   :defer t
