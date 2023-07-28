@@ -1,5 +1,6 @@
 [Unit]
-Description=Notmuch service
+Description=Notmuch new mail incorporation
+Documentation=man:notmuch-new(1)
 
 [Service]
 Type=oneshot

@@ -12,4 +12,4 @@
 # around.  We therefore use `--notmuch-args=--no-hooks’ to avoid loops.
 afew --move-mails --notmuch-args=--no-hooks
 
-mbsync --all
+mbsync --all --quiet

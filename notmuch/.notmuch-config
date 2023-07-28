@@ -52,7 +52,7 @@ other_email=david.a.porter@gmail.com;
 
 [new]
 tags=new;
-ignore=
+ignore=.mbsyncstate;.uidvalidity;
 
 # Search configuration
 #
