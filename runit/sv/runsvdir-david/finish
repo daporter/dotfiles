@@ -1,4 +1,0 @@
-#!/bin/sh
-
-sv -w600 force-stop /home/david/service/*
-sv exit /home/david/service/*
