@@ -596,6 +596,10 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   (add-hook 'notmuch-message-mode-hook #'turn-off-auto-fill)
   (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check))
 
+(use-package sendmail
+  :custom
+  (send-mail-function 'sendmail-send-it))
+
 (use-package dictionary
   :bind ("M-#" . dictionary-lookup-definition)
   :custom
