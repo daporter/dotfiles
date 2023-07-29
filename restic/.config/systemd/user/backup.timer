@@ -3,6 +3,7 @@ Description=Timer for backup run
 Documentation=man:restic-backup(1)
 
 [Timer]
+OnBootSec=15m
 OnUnitActiveSec=1d
 Unit=backup.service
 
