@@ -31,16 +31,10 @@ fi
 dbus-update-activation-environment --all --systemd
 
 lxpolkit &
-redshift &
-pipewire &
-pipewire-pulse &
-wireplumber &
-dunst &
-dwmbar &
-sxhkd &
-dropbox &
 1password --silent &
 
-configure_monitors
+~/bin/dwmbar &
+~/bin/configure_monitors
 
-exec startdwm
+
+exec ~/bin/startdwm
