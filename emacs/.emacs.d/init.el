@@ -39,6 +39,18 @@
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
 
+  ;; Prefer tree-sitter-enabled modes.
+  (major-mode-remap-alist
+   '((bash-mode . bash-ts-mode)
+     (c-mode . c-ts-mode)
+     (c++-mode . c++-ts-mode)
+     (css-mode . css-ts-mode)
+     (js2-mode . js-ts-mode)
+     (json-mode . json-ts-mode)
+     (python-mode . python-ts-mode)
+     (typescript-mode . typescript-ts-mode)
+     (yaml-mode . yaml-ts-mode)))
+
   ;; Emacs 28: Hide commands in M-x which do not work in the current
   ;; mode.  Vertico commands are hidden in normal buffers.
   (read-extended-command-predicate
@@ -422,14 +434,13 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   (add-hook 'emacs-lisp-mode-hook #'my/disable-indent-tabs-mode)
   (add-hook 'emacs-lisp-mode-hook #'my/configure-capfs-emacs-lisp-mode))
 
-(use-package cc-mode
+(use-package c-ts-mode
   :after eglot
   :defer t
   :init
-  (add-hook 'c-mode-hook 'eglot-ensure)
-  (add-hook 'c++-mode-hook 'eglot-ensure)
+  (add-hook 'c-ts-mode-hook 'eglot-ensure)
   :custom
-  (c-default-style "linux")
+  (c-ts-mode-indent-style "linux")
   (comment-style 'extra-line))
 
 (use-package markdown-mode
@@ -473,19 +484,19 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
                       #'cape-ispell)))
   (add-hook 'sh-mode-hook #'my/configure-capfs-sh-mode))
 
-(use-package python-mode
+(use-package python-ts-mode
   :ensure t
   :defer t
   :config
-  (defun my/configure-tab-width-python-mode ()
+  (defun my/configure-tab-width-python-ts-mode ()
     (setq tab-width python-indent-offset))
-  (add-hook 'python-mode-hook #'my/configure-tab-width-python-mode)
+  (add-hook 'python-ts-mode-hook #'my/configure-tab-width-python-ts-mode)
 
   (use-package whitespace)
-  (defun my/configure-whitespace-python-mode ()
+  (defun my/configure-whitespace-python-ts-mode ()
     (setq-local whitespace-style
                 (remove 'indentation whitespace-style)))
-  (add-hook 'python-mode-hook #'my/configure-whitespace-python-mode))
+  (add-hook 'python-ts-mode-hook #'my/configure-whitespace-python-ts-mode))
 
 (use-package mhtml-mode
   :mode "\\.html\\'"
@@ -513,25 +524,25 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
                 (remove 'indentation whitespace-style)))
   (add-hook 'nxml-mode-hook #'my/configure-whitespace-nxml-mode))
 
-(use-package css-mode
+(use-package css-ts-mode
   :defer t
   :config
-  (defun my/configure-tab-width-css-mode ()
+  (defun my/configure-tab-width-css-ts-mode ()
     (setq css-indent-offset 2)
     (setq tab-width css-indent-offset))
-  (add-hook 'css-mode-hook #'my/configure-tab-width-css-mode)
+  (add-hook 'css-ts-mode-hook #'my/configure-tab-width-css-ts-mode)
 
   (use-package whitespace)
-  (defun my/configure-whitespace-css-mode ()
+  (defun my/configure-whitespace-css-ts-mode ()
     (setq-local whitespace-style
                 (remove 'indentation whitespace-style)))
-  (add-hook 'css-mode-hook #'my/configure-whitespace-css-mode))
+  (add-hook 'css-ts-mode-hook #'my/configure-whitespace-css-ts-mode))
 
 (use-package conf-mode
   :defer t
   :bind ("C-M-i" . completion-at-point))
 
-(use-package yaml-mode
+(use-package yaml-ts-mode
   :ensure t
   :mode "\\.ya?ml\\'")
 
