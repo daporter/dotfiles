@@ -536,7 +536,8 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   :mode "\\.ya?ml\\'")
 
 (use-package sxhkdrc-mode
-  :ensure t)
+  :ensure t
+  :mode "sxhkdrc\\'")
 
 (use-package olivetti
   :ensure t
