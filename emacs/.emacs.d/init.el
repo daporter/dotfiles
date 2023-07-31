@@ -54,6 +54,9 @@
   (enable-recursive-minibuffers t)
   (send-mail-function 'smtpmail-send-it)
 
+  (user-full-name "David Porter")
+  (mail-host-address "daporter.net")
+
   (custom-file (concat user-emacs-directory "emacs-custom.el"))
 
   :config
