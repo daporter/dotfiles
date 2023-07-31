@@ -1,4 +1,3 @@
-(require 'use-package)
 ;;(setq use-package-compute-statistics t)
 
 (use-package emacs
@@ -95,6 +94,8 @@
   (window-divider-mode 1)
   (winner-mode 1)
   (auto-insert-mode t)
+  (pixel-scroll-precision-mode 1)
+  (find-function-setup-keys)
 
   (load custom-file)
 
@@ -104,6 +105,7 @@
   (global-set-key (kbd "s-b") 'switch-to-buffer)
   (global-set-key (kbd "C-M-<backspace>") 'backward-kill-sexp)
   (global-set-key (kbd "C-M-?") 'hippie-expand)
+  (global-set-key (kbd "C-x j") #'duplicate-dwim)
 
   (defun my/insert-date-time (prefix)
     "Insert the current date and time.
@@ -144,12 +146,15 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
     (if arg
         (newline-and-indent)
       (newline)))
-  (global-set-key (kbd "<C-return>") #'my/simple-new-line-below)
-
   (global-set-key (kbd "<C-return>") #'my/simple-new-line-below))
 
-(use-package whole-line-or-region
-  :ensure t)
+(use-package paren
+  :custom
+  (show-paren-context-when-offscreen 'overlay))
+
+(use-package compile
+  :custom
+  (compilation-auto-jump-to-first-error 'if-location-known))
 
 (use-package dired
   :custom
@@ -162,14 +167,14 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   (add-hook 'package-menu-mode-hook #'hl-line-mode)
   :custom
   (package-archives
-   '(("elpa" . "https://elpa.gnu.org/packages/")
+   '(("gnu" . "https://elpa.gnu.org/packages/")
      ("nongnu" . "https://elpa.nongnu.org/nongnu/")
      ("melpa" . "https://melpa.org/packages/")))
 
   ;; Highest number gets priority (what is not mentioned has
   ;; priority 0)
   (package-archive-priorities
-   '(("elpa" . 2)
+   '(("gnu" . 2)
      ("nongnu" . 1))))
 
 (use-package modus-themes
@@ -261,6 +266,10 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   :custom
   ;; Save bookmarks on each modification.
   (bookmark-save-flag 1))
+
+(use-package proced
+  :custom
+  (proced-enable-color-flag t))
 
 (use-package saveplace
   :defer t
@@ -369,10 +378,6 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   :custom
   (flymake-fringe-indicator-position nil))
 
-(use-package eglot
-  :ensure t
-  :commands (eglot eglot-ensure))
-
 (use-package prog-mode
   :defer t
   :init
@@ -394,7 +399,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   (defun my/configure-capfs-text-mode ()
     (require 'cape)
     (setq-local completion-at-point-functions
-                '(cape-file cape-dabbrev cape-ispell)))
+                '(cape-file dabbrev-capf cape-ispell)))
   (add-hook 'text-mode-hook #'my/disable-indent-tabs-mode)
   (add-hook 'text-mode-hook #'my/configure-capfs-text-mode))
 
@@ -429,7 +434,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
     (require 'cape)
     (setq-local completion-at-point-functions
                 (list (cape-super-capf #'elisp-completion-at-point
-                                       #'cape-dabbrev)
+                                       #'dabbrev-capf)
                       #'cape-ispell)))
   (add-hook 'emacs-lisp-mode-hook #'my/disable-indent-tabs-mode)
   (add-hook 'emacs-lisp-mode-hook #'my/configure-capfs-emacs-lisp-mode))
@@ -480,7 +485,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
     (setq-local completion-at-point-functions
                 (list #'cape-file
                       (cape-super-capf #'sh-completion-at-point-function
-                                       #'cape-dabbrev)
+                                       #'dabbrev-capf)
                       #'cape-ispell)))
   (add-hook 'sh-mode-hook #'my/configure-capfs-sh-mode))
 
@@ -698,6 +703,3 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   (mail-specify-envelope-from t)
   (message-sendmail-envelope-from 'header)
   (mail-envelope-from 'header))
-
-(use-package yasnippet
-  :ensure t)
