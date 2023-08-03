@@ -17,6 +17,7 @@ markdownlint-cli
 nand2tetris
 ocrmypdf
 october
+otf-bitstream-charter
 otf-elstob
 otf-im-fell-types
 otf-spectral
