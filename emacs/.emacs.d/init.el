@@ -388,6 +388,11 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   (add-hook 'prog-mode-hook #'my/set-fill-column)
   (add-hook 'prog-mode-hook #'my/turn-on-display-fill-column-indicator-mode))
 
+(use-package eglot
+  :bind
+  (:map eglot-mode-map
+        ("C-c f" . eglot-format)))
+
 (use-package text-mode
   :defer t
   :config
