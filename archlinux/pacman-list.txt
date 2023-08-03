@@ -18,6 +18,7 @@ exa
 fd
 firefox
 flatpak
+gdb
 github-cli
 glab
 grub
