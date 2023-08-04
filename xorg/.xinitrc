@@ -21,8 +21,7 @@ xset r rate 200 55   # repeat after 200 ms, 55 char/s
 
 xsetroot -cursor_name left_ptr
 
-# Make the Scroll Lock key act as the Compose key.
-setxkbmap -option compose:sclk
+setxkbmap -option compose:menu
 
 if [ -f "$HOME"/.fehbg ]; then
 	"$HOME"/.fehbg &
