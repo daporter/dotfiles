@@ -234,14 +234,10 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   (setq fontaine-latest-state-file
         (locate-user-emacs-file "fontaine-latest-state.eld"))
   (setq fontaine-presets
-        '((regular
-           :default-family "Iosevka Term"
-           :fixed-pitch-family "Iosevka Slab Extended"
-           :fixed-pitch-height 0.9
-           :fixed-pitch-serif-family "Iosevka Slab Extended"
-           :fixed-pitch-serif-height 0.9
-           :variable-pitch-family "Elstob"
-           :variable-pitch-height 1.15)))
+        '((regular)
+          (t
+           :default-family "Iosevka Comfy"
+           :variable-pitch-family "Iosevka Comfy Motion Duo")))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))
