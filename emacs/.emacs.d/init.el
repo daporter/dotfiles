@@ -1,4 +1,18 @@
-;;(setq use-package-compute-statistics t)
+(use-package package
+  :hook (package-menu-mode . hl-line-mode)
+  :custom
+  (package-archives
+   '(("gnu" . "https://elpa.gnu.org/packages/")
+     ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+     ("melpa" . "https://melpa.org/packages/")))
+
+  ;; Highest number gets priority (what is not mentioned has
+  ;; priority 0)
+  (package-archive-priorities
+   '(("gnu" . 2)
+     ("nongnu" . 1)))
+
+  (use-package-compute-statistics 1))
 
 (use-package emacs
   :init
@@ -68,8 +82,6 @@
   (user-full-name "David Porter")
   (mail-host-address "daporter.net")
 
-  (custom-file (concat user-emacs-directory "emacs-custom.el"))
-
   :config
   (dolist (cmd '(upcase-region
                  downcase-region
@@ -82,7 +94,6 @@
   (setq-default right-margin-width 2)
 
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-  (add-hook 'package-menu-mode-hook #'hl-line-mode)
   (server-start)
   (repeat-mode 1)
   (column-number-mode 1)
@@ -96,8 +107,6 @@
   (auto-insert-mode t)
   (pixel-scroll-precision-mode 1)
   (find-function-setup-keys)
-
-  (load custom-file)
 
   (global-set-key (kbd "C-z") 'undo)
   (global-set-key (kbd "C-S-z") 'undo-redo)
@@ -160,22 +169,6 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   :custom
   (dired-recursive-copies 'always)
   (dired-dwim-target t))                ; try to guess target directory for copy
-
-(use-package package
-  :defer t
-  :init
-  (add-hook 'package-menu-mode-hook #'hl-line-mode)
-  :custom
-  (package-archives
-   '(("gnu" . "https://elpa.gnu.org/packages/")
-     ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-     ("melpa" . "https://melpa.org/packages/")))
-
-  ;; Highest number gets priority (what is not mentioned has
-  ;; priority 0)
-  (package-archive-priorities
-   '(("gnu" . 2)
-     ("nongnu" . 1))))
 
 (use-package modus-themes
   :ensure t
