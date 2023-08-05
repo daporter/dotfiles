@@ -354,10 +354,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   :init
   (defun my/set-fill-column ()
     (setq-local fill-column 80))
-  (defun my/turn-on-display-fill-column-indicator-mode ()
-    (display-fill-column-indicator-mode 1))
-  (add-hook 'prog-mode-hook #'my/set-fill-column)
-  (add-hook 'prog-mode-hook #'my/turn-on-display-fill-column-indicator-mode))
+  (add-hook 'prog-mode-hook #'my/set-fill-column))
 
 (use-package eglot
   :bind
