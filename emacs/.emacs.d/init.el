@@ -60,7 +60,6 @@
      (css-mode . css-ts-mode)
      (js2-mode . js-ts-mode)
      (json-mode . json-ts-mode)
-     (python-mode . python-ts-mode)
      (typescript-mode . typescript-ts-mode)
      (yaml-mode . yaml-ts-mode)))
 
@@ -466,19 +465,19 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
                       #'cape-ispell)))
   (add-hook 'sh-mode-hook #'my/configure-capfs-sh-mode))
 
-(use-package python-ts-mode
+(use-package python-mode
   :ensure t
   :defer t
   :config
-  (defun my/configure-tab-width-python-ts-mode ()
+  (defun my/configure-tab-width-python-mode ()
     (setq tab-width python-indent-offset))
-  (add-hook 'python-ts-mode-hook #'my/configure-tab-width-python-ts-mode)
+  (add-hook 'python-mode-hook #'my/configure-tab-width-python-mode)
 
   (use-package whitespace)
-  (defun my/configure-whitespace-python-ts-mode ()
+  (defun my/configure-whitespace-python-mode ()
     (setq-local whitespace-style
                 (remove 'indentation whitespace-style)))
-  (add-hook 'python-ts-mode-hook #'my/configure-whitespace-python-ts-mode))
+  (add-hook 'python-mode-hook #'my/configure-whitespace-python-mode))
 
 (use-package mhtml-mode
   :mode "\\.html\\'"
