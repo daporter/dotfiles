@@ -31,7 +31,7 @@
   (create-lockfiles nil)
 
   (window-divider-default-right-width 2)
-  (window-divider-default-bottom-width 2)
+  (window-divider-default-bottom-width 1)
   (window-divider-default-places t)
 
   ;; Do not allow the cursor in the minibuffer prompt
@@ -181,51 +181,40 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   :ensure t
   :init
   (require 'modus-themes)
-  (setq modus-themes-bold-constructs   t)
+  (setq modus-themes-bold-constructs t)
   (setq modus-themes-italic-constructs t)
-  (setq modus-themes-mixed-fonts       t)
-  (setq modus-themes-prompts           '(semibold))
+  (setq modus-themes-mixed-fonts t)
+  (setq modus-themes-prompts '(semibold))
   (setq modus-themes-variable-pitch-ui t)
-  (setq modus-themes-headings          '((1 . (light variable-pitch 1.5))))
-
-  (setq modus-themes-common-palette-overrides
-        `((comment                   yellow-faint)
-          (bg-region                 bg-blue-subtle)
-          (bg-completion             bg-inactive)
-          (fg-mode-line-active       fg-main)
-          (bg-mode-line-active       bg-dim)
-          (border-mode-line-active   bg-dim)
-          (fg-mode-line-inactive     border)
-          (bg-mode-line-inactive     bg-dim)
-          (border-mode-line-inactive bg-inactive)
-          ,@modus-themes-preset-overrides-faint))
-
-  (defun my/modus-themes-pad-mode-line ()
-    "Pad mode-line via a box that has the background color"
-    (modus-themes-with-colors
-      (custom-set-faces
-       `(hl-line
-         ((,c :background ,bg-cyan-nuanced)))
-       `(mode-line
-         ((,c :box (:line-width 5 :color ,bg-mode-line-active))))
-       `(mode-line-inactive
-         ((,c :box (:line-width 5 :color ,bg-mode-line-inactive))))
-       `(window-divider ((,c :foreground ,border)))
-       `(window-divider-first-pixel ((,c :foreground ,border)))
-       `(window-divider-last-pixel ((,c :foreground ,border)))
-       `(fill-column-indicator ((,c :background ,bg-inactive)))
-       `(auto-dim-other-buffers-face ((,c :background ,bg-dim))))))
-  (add-hook 'modus-themes-after-load-theme-hook
-            #'my/modus-themes-pad-mode-line)
-
+  (setq modus-themes-headings '((1 . (light variable-pitch 1.5))))
   (setq modus-themes-to-toggle '(modus-operandi modus-vivendi))
 
-  ;; Defer loading the theme until Emacs in initialised
-  (defun my/modus-themes-init ()
-    (load-theme (car modus-themes-to-toggle))
-    (my/modus-themes-pad-mode-line))
+  :config
+  (load-theme (car modus-themes-to-toggle) t))
 
-  :hook (after-init . my/modus-themes-init))
+(use-package prot-modeline
+  :load-path "lisp"
+  :config
+  (setq-default mode-line-format
+                '("%e"
+                  prot-modeline-kbd-macro
+                  prot-modeline-narrow
+                  prot-modeline-input-method
+                  prot-modeline-buffer-status
+                  " "
+                  prot-modeline-buffer-identification
+                  "  "
+                  prot-modeline-major-mode
+                  prot-modeline-process
+                  "  "
+                  prot-modeline-vc-branch
+                  "  "
+                  prot-modeline-flymake
+                  "  "
+                  prot-modeline-align-right
+                  prot-modeline-misc-info))
+
+  (prot-modeline-subtle-mode 1))
 
 (use-package fontaine
   :ensure t
@@ -241,12 +230,6 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))
-
-(use-package auto-dim-other-buffers
-  :ensure t
-  :after modus-themes
-  :init
-  (auto-dim-other-buffers-mode 1))
 
 (use-package apropos
   :defer t
