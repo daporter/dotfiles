@@ -1,7 +1,7 @@
-# .bash_profile
+if [ -r "$HOME"/.profile ]; then
+	. "$HOME"/.profile
+fi
 
-# Get the aliases and functions
-[ -f $HOME/.bashrc ] && . $HOME/.bashrc
-
-# Load environment variables
-export $(envsubst < ~/.config/environment.d/10-basic.conf)
+if [ -r "$HOME"/.bashrc ]; then
+	. "$HOME"/.bashrc
+fi

@@ -56,10 +56,16 @@ HISTCONTROL="erasedups:ignoreboth"
 # Don't record uninteresting commands
 export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
 
-# Load Bash-specific startup files
+for sh in "$HOME"/.rc.d/*.sh ; do
+    # shellcheck source=/dev/null
+    . "$sh"
+done
+unset -v sh
+
+# Load Bash-specific config files
 for sh in "$HOME"/.bashrc.d/*.bash ; do
     # shellcheck source=/dev/null
-    [[ -e $sh ]] && . "$sh"
+    . "$sh"
 done
 unset -v sh
 
@@ -70,5 +76,3 @@ export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
 # shellcheck source=/dev/null
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] \
     && . "/usr/local/etc/profile.d/bash_completion.sh"
-
-[[ -r "$HOME/.profile" ]] && . "$HOME/.profile"
