@@ -11,6 +11,7 @@ bottom
 calibre
 choose
 cmake
+dmenu
 duf
 dunst
 dust
@@ -41,6 +42,7 @@ mtr
 mupdf
 neofetch
 obsidian
+openssh
 otf-fira-mono
 pamixer
 pandoc-cli
