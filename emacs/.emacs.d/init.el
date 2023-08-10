@@ -635,12 +635,6 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   (org-noter-notes-search-path '("~/Dropbox/bibliography"))
   (org-noter-auto-save-last-location t))
 
-(use-package keyfreq
-  :ensure t
-  :init
-  (keyfreq-mode 1)
-  (keyfreq-autosave-mode 1))
-
 (use-package org-agenda
   :defer t
   :custom
