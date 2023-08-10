@@ -529,6 +529,14 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   :ensure t
   :mode "\\.ya?ml\\'")
 
+(use-package eshell
+  :config
+  (add-to-list 'eshell-modules-list 'eshell-smart))
+
+(use-package eshell-toggle
+  :ensure t
+  :bind ("C-c e" . eshell-toggle))
+
 (use-package sxhkdrc-mode
   :ensure t
   :mode "sxhkdrc\\'")
