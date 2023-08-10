@@ -189,6 +189,8 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
 
 (use-package prot-modeline
   :load-path "lisp"
+  :custom
+  (prot-modeline-string-truncate-length 30)
   :config
   (setq-default mode-line-format
                 '("%e"
