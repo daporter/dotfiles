@@ -549,6 +549,10 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   :ensure t
   :commands magit-status)
 
+(use-package denote
+  :ensure t
+  :commands (denote denote-rename-file))
+
 ;; From the Notmuch documentation:
 ;;
 ;;   Due to the dependency on the command line interface, the Notmuch
