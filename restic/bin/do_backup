@@ -6,11 +6,6 @@ set -o errexit                  # abort on nonzero exitstatus
 set -o nounset                  # abort on unbound variable
 set -o pipefail                 # don't hide errors within pipes
 
-if ! iwctl station wlan0 connect Phunculist; then
-	echo 'Unable to connect to network Phunculist. Exiting.'
-	exit 1
-fi
-
 if ! restic backup "$HOME"                                    \
      --exclude-file="$HOME/.config/restic/restic-exclude.txt" \
      --no-scan                                                \
