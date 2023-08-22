@@ -38,5 +38,5 @@ tree-sitter-markdown-git
 tree-sitter-python-git
 tree-sitter-regex-git
 tree-sitter-yaml-git
-vale
+vale-git
 zotero
