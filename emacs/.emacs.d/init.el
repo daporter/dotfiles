@@ -551,7 +551,9 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
 
 (use-package denote
   :ensure t
-  :commands (denote denote-rename-file))
+  :commands (denote denote-rename-file)
+  :custom
+  (denote-directory "~/Dropbox/journal"))
 
 ;; From the Notmuch documentation:
 ;;
