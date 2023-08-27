@@ -41,6 +41,7 @@ msmtp
 mtr
 mupdf
 neofetch
+net-tools
 obsidian
 openssh
 otf-fira-mono
