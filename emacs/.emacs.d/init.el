@@ -642,7 +642,12 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
 (use-package org-agenda
   :defer t
   :custom
-  (org-agenda-todo-ignore-scheduled 'future))
+  (org-agenda-todo-ignore-scheduled 'future)
+  (org-agenda-sorting-strategy
+   '((agenda habit-down time-up priority-down category-keep)
+     (todo scheduled-up)
+     (tags priority-down category-keep)
+     (search category-keep))))
 
 (use-package gnus
   :commands gnus
