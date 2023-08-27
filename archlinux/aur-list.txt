@@ -11,6 +11,7 @@ dict-wn
 dropbox
 dwm
 gnu-c-manual
+google-chrome
 i810-dri
 kmonad-bin
 markdownlint-cli
