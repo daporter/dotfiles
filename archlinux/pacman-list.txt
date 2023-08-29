@@ -37,6 +37,7 @@ lsd
 lxsession-gtk3
 maim
 man-pages
+marksman
 msmtp
 mtr
 mupdf
