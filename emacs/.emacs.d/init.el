@@ -376,8 +376,9 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
     (setq-local indent-tabs-mode nil))
   (defun my/configure-capfs-text-mode ()
     (require 'cape)
-    (setq-local completion-at-point-functions
-                '(cape-file dabbrev-capf cape-ispell)))
+    (add-hook 'completion-at-point-functions #'cape-file 90 t)
+    (add-hook 'completion-at-point-functions #'cape-dabbrev 91 t)
+    (add-hook 'completion-at-point-functions #'cape-dict 92 t))
   (add-hook 'text-mode-hook #'my/disable-indent-tabs-mode)
   (add-hook 'text-mode-hook #'my/configure-capfs-text-mode))
 
