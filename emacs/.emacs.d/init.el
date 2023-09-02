@@ -290,7 +290,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
 (use-package cape
   :ensure t
   :defer t
-  :bind ("C-c p i" . cape-ispell))
+  :bind ("C-c p d" . cape-dict))
 
 (use-package lin
   :ensure t
@@ -413,7 +413,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
     (setq-local completion-at-point-functions
                 (list (cape-super-capf #'elisp-completion-at-point
                                        #'dabbrev-capf)
-                      #'cape-ispell)))
+                      #'cape-dict)))
   (add-hook 'emacs-lisp-mode-hook #'my/disable-indent-tabs-mode)
   (add-hook 'emacs-lisp-mode-hook #'my/configure-capfs-emacs-lisp-mode))
 
@@ -464,7 +464,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
                 (list #'cape-file
                       (cape-super-capf #'sh-completion-at-point-function
                                        #'dabbrev-capf)
-                      #'cape-ispell)))
+                      #'cape-dict)))
   (add-hook 'sh-mode-hook #'my/configure-capfs-sh-mode))
 
 (use-package python-mode
