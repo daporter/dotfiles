@@ -75,6 +75,7 @@ ttf-noto-nerd
 ttf-roboto
 ttf-roboto-mono
 ttf-sourcecodepro-nerd
+udiskie
 usbutils
 uthash
 vi
