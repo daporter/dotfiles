@@ -429,6 +429,8 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
 
 (use-package markdown-mode
   :ensure t
+  :init
+  (add-hook 'markdown-mode-hook 'eglot-ensure)
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode))
   :custom
