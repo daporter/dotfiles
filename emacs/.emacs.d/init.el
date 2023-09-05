@@ -435,6 +435,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
          ("\\.md\\'" . markdown-mode))
   :custom
   (markdown-command "pandoc")
+  (markdown-asymmetric-header t)
   :config
   (define-auto-insert
     "/.*/Dropbox/Reference/.*\\.md\\'"
