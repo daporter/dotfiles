@@ -237,6 +237,20 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   :defer t
   :custom (ispell-dictionary "australian-w_accents"))
 
+(use-package hippie-exp
+  :bind
+  ("M-/" . hippie-expand)
+  :custom
+  (hippie-expand-try-functions-list '(try-expand-dabbrev
+                                      try-expand-line
+                                      try-expand-list
+                                      try-complete-lisp-symbol-partially
+                                      try-complete-file-name-partially
+                                      try-complete-file-name
+                                      try-expand-all-abbrevs
+                                      try-expand-dabbrev-from-kill
+                                      try-expand-dabbrev-all-buffers)))
+
 (use-package bookmark
   :defer t
   :custom
