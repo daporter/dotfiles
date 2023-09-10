@@ -95,6 +95,13 @@
   (setq-default left-margin-width 2)
   (setq-default right-margin-width 2)
 
+  ;; Specify the fonts to use for displaying emoji.
+  (set-fontset-font t 'emoji
+                    (cond
+                     ((member "Noto Color Emoji" (font-family-list)) "Noto Color Emoji")
+                     ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
+                     ((member "Symbola" (font-family-list)) "Symbola")))
+
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   (server-start)
   (repeat-mode 1)

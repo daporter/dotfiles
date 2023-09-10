@@ -22,6 +22,7 @@ otf-elstob
 otf-im-fell-types
 otf-spectral
 otf-spectralsc
+otf-symbola
 paru
 qmk-git
 st

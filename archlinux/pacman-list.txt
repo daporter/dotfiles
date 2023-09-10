@@ -43,6 +43,7 @@ mtr
 mupdf
 neofetch
 net-tools
+noto-fonts-emoji
 obsidian
 openssh
 otf-fira-mono
