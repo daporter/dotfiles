@@ -15,7 +15,7 @@ dmenu
 duf
 dunst
 dust
-exa
+eza
 fd
 firefox
 flatpak
