@@ -5,12 +5,21 @@
 set -o errexit                  # abort on nonzero exitstatus
 set -o nounset                  # abort on unbound variable
 
-MOUNTPOINT=/mnt/backup-offsite
+MOUNTPOINT=/run/media/david/offsite-backup
 
 if ! findmnt $MOUNTPOINT > /dev/null; then
-	mount $MOUNTPOINT
+	echo Error: $MOUNTPOINT not mounted
+	exit 1
 fi
 
-RESTIC_REPOSITORY=$MOUNTPOINT "$HOME"/bin/do_backup
+echo "* Backing up restic"
+rsync --archive          \
+      --delete           \
+      --verbose          \
+      /mnt/backup        \
+      $MOUNTPOINT/
 
-umount $MOUNTPOINT
+touch $MOUNTPOINT/.last_backup
+
+sync
+udiskie-umount $MOUNTPOINT
