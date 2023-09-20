@@ -445,7 +445,8 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   :init
   (add-hook 'c-ts-mode-hook 'eglot-ensure)
   :custom
-  (c-ts-mode-indent-style "linux")
+  (c-ts-mode-indent-style 'linux)
+  (c-ts-mode-indent-offset 8)
   (comment-style 'extra-line))
 
 (use-package markdown-mode
