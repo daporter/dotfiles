@@ -27,6 +27,7 @@ haveged
 htop
 hyperfine
 indent
+inetutils
 intel-ucode
 isync
 iwd
