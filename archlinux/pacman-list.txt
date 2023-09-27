@@ -59,7 +59,6 @@ perl-image-exiftool
 poppler-glib
 python-gpgme
 python-pipx
-python-pyserial
 rebuild-detector
 redshift
 restic
