@@ -28,8 +28,8 @@ qmk-git
 st
 tree-sitter-bash-git
 tree-sitter-bibtex-git
-tree-sitter-c-git
-tree-sitter-cpp-git
+tree-sitter-c
+tree-sitter-cpp
 tree-sitter-css-git
 tree-sitter-html-git
 tree-sitter-javascript-git
