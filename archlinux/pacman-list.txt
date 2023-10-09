@@ -65,6 +65,7 @@ ripgrep
 shellcheck
 stow
 sxhkd
+sxiv
 tealdeer
 tree
 ttc-iosevka
