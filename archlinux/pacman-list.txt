@@ -32,6 +32,7 @@ inetutils
 intel-ucode
 isync
 iwd
+jq
 kitty
 libertinus-font
 libvterm
@@ -81,6 +82,7 @@ ttf-noto-nerd
 ttf-roboto
 ttf-roboto-mono
 ttf-sourcecodepro-nerd
+typescript-language-server
 udiskie
 usbutils
 uthash
