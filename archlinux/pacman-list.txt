@@ -11,6 +11,7 @@ bottom
 calibre
 choose
 cmake
+djview
 dmenu
 duf
 dunst
