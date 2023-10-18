@@ -68,6 +68,8 @@ stow
 sxhkd
 sxiv
 tealdeer
+texlive-binextra
+texlive-latex
 tree
 ttc-iosevka
 ttc-iosevka-aile
