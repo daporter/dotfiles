@@ -5,15 +5,17 @@ control + super + alt + shift + Escape
 super + b
     firefox --new-window
 
-XF86AudioRaiseVolume
-    pamixer --increase 10
-XF86AudioLowerVolume
-    pamixer --decrease 10
+{XF86AudioLowerVolume, XF86AudioRaiseVolume}
+    pamixer {--decrease, --increase} 10 ; \
+    kill -34 "$(cat ~/.cache/sbar.pid)"
 
-XF86MonBrightnessUp
-    xbacklight -inc 10
-XF86MonBrightnessDown
-    xbacklight -dec 10
+XF86AudioMute
+    pamixer --toggle-mute ; \
+    kill -34 "$(cat ~/.cache/sbar.pid)"
+
+{XF86MonBrightnessDown, XF86MonBrightnessUp}
+    xbacklight {-dec, -inc} 10 ; \
+    kill -35 "$(cat ~/.cache/sbar.pid))"
 
 # Dynamic menus
 

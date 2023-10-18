@@ -21,7 +21,7 @@ setxkbmap -option compose:menu
 lxpolkit &
 1password --silent &
 
-~/bin/dwmbar &
+~/bin/sbar &
 ~/bin/configure_monitors
 
 exec ~/bin/startdwm
