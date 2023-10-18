@@ -1,5 +1,12 @@
 #!/bin/env sh
 
+update_key_indicators () {
+	key_ind=''
+	if [ $(xset q | awk '/Caps Lock:/ {print $4}') = on ]; then
+		key_ind=' Caps '
+	fi
+}
+
 update_cpu () {
 	cpu="  $(grep -o "^[^ ]*" /proc/loadavg )"
 }
@@ -65,7 +72,7 @@ update_vol () {
 }
 
 display () {
-	xsetroot -name " $net_traf   $cpu   $memory   $disk   $bat   $vol   $wifi   $time "
+	xsetroot -name "$key_ind $net_traf   $cpu   $memory   $disk   $bat   $vol   $wifi   $time "
 }
 
 # Initialisation.
@@ -81,11 +88,13 @@ sec=0
 #
 # where m = 34+n
 
-# trap	"<function>;display"		"RTMIN+n"
-trap	"update_vol;display"		"RTMIN"
-trap	"update_bat;display"		"RTMIN+1"
+# trap	"<function>;display"		        "RTMIN+n"
+trap	"update_vol;display"		        "RTMIN"
+trap	"update_key_indicators;display"		"RTMIN+1"
+
 
 # Run all modules immediately on startup to set initial values.
+update_key_indicators
 update_net_traffic
 update_cpu
 update_memory
