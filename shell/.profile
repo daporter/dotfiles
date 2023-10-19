@@ -42,6 +42,9 @@ export BLOCKSIZE
 TIME_STYLE=long-iso
 export TIME_STYLE
 
+MAKEFLAGS="-j$(nproc)"
+export MAKEFLAGS
+
 # The `par` paragraph formatter.
 #
 # From the par man page:
