@@ -230,7 +230,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
         '((regular)
           (t
            :default-family "Iosevka Comfy"
-           :variable-pitch-family "Iosevka Comfy Motion Duo")))
+           :variable-pitch-family "sans-serif")))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))
