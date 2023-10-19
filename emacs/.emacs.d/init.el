@@ -189,7 +189,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
   (setq modus-themes-prompts '(semibold))
   (setq modus-themes-variable-pitch-ui t)
   (setq modus-themes-headings '((1 . (light variable-pitch 1.5))))
-  (setq modus-themes-to-toggle '(modus-operandi modus-vivendi))
+  (setq modus-themes-to-toggle '(modus-vivendi-tinted modus-operandi-tinted))
 
   :config
   (load-theme (car modus-themes-to-toggle) t))
