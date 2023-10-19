@@ -8,7 +8,7 @@ update_key_indicators () {
 }
 
 update_cpu () {
-	cpu="  $(grep -o "^[^ ]*" /proc/loadavg )"
+	cpu="  $(grep -o "^[^ ]*" /proc/loadavg )"
 }
 
 update_memory () {
@@ -25,8 +25,18 @@ update_time () {
 }
 
 update_battery () {
-	read -r bat_capacity </sys/class/power_supply/BAT0/capacity
-	bat="󰁹 $bat_capacity%"
+	read -r status </sys/class/power_supply/BAT0/status
+	read -r cap </sys/class/power_supply/BAT0/capacity
+
+	if [ "$status" = Charging ]; then
+		bat="󰂄 $cap%"
+	elif [ "$cap" -ge 66 ]; then
+		vol="󰂂 $cap%"
+	elif [ "$cap" -ge 33 ]; then
+		vol="󰁿 $cap%"
+	else
+		bat="󰁹 $cap%"
+	fi
 }
 
 calc_net_traffic () {
@@ -50,7 +60,7 @@ calc_net_traffic () {
 update_net_traffic () {
 	rx=$(calc_net_traffic /sys/class/net/wlan0/statistics/rx_bytes)
 	tx=$(calc_net_traffic /sys/class/net/wlan0/statistics/tx_bytes)
-	net_traf="$rx🠋 $tx🠉"
+	net_traf="$rx▾ $tx▴"
 }
 
 update_wifi () {
@@ -59,20 +69,27 @@ update_wifi () {
 	if [ -n "$data" ]; then
 		wifi="  $data $network"
 	else
-		wifi="睊"
+		wifi="󰖪"
 	fi
 }
 
 update_vol () {
-	if [ "$(pamixer --get-mute)" = false ]; then
-		vol="🔊 $(pamixer --get-volume)%"
+	mute=$(pamixer --get-mute)
+	volume=$(pamixer --get-volume)
+
+	if [ "$mute" = true ]; then
+		vol="󰝟"
+	elif [ "$volume" -ge 66 ]; then
+		vol="󰕾 $volume%"
+	elif [ "$volume" -ge 33 ]; then
+		vol=" $volume%"
 	else
-		vol="🔇 0%"
+		vol="󰕿 $volume%"
 	fi
 }
 
 update_weather () {
-	weather="$(curl --silent 'wttr.in?format=%c+%C+%t' | sed -E 's/  +/ /g' | sed -E 's/\+([0-9])/\1/')"
+	weather="$(curl --silent 'wttr.in?format=%c+%C+%t' | xargs | sed 's/ +/ /')"
 }
 
 display () {
