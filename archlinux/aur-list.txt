@@ -15,6 +15,7 @@ google-chrome
 i810-dri
 kmonad-bin
 markdownlint-cli
+noto-color-emoji-fontconfig
 ocrmypdf
 october
 otf-bitstream-charter
@@ -22,7 +23,6 @@ otf-elstob
 otf-im-fell-types
 otf-spectral
 otf-spectralsc
-otf-symbola
 paru
 qmk-git
 st

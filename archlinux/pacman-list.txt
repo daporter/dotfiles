@@ -79,6 +79,7 @@ ttf-hack
 ttf-inconsolata
 ttf-iosevka-nerd
 ttf-jetbrains-mono
+ttf-nerd-fonts-symbols
 ttf-noto-nerd
 ttf-roboto
 ttf-roboto-mono
