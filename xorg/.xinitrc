@@ -13,13 +13,12 @@ fi
 
 xset b off           # no bell
 xset r rate 200 55   # repeat after 200 ms, 55 char/s
-
 xsetroot -cursor_name left_ptr
-
 setxkbmap -option compose:menu
 
 lxpolkit &
 1password --silent &
+sxhkd &
 
 ~/bin/sbar &
 ~/bin/configure_monitors
