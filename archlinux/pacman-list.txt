@@ -70,6 +70,7 @@ sxiv
 tealdeer
 texlive-binextra
 texlive-latex
+torbrowser-launcher
 tree
 ttc-iosevka
 ttc-iosevka-aile
