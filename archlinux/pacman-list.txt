@@ -24,6 +24,7 @@ gdb
 github-cli
 glab
 grub
+gucharmap
 haveged
 htop
 hyperfine
