@@ -88,15 +88,11 @@ update_vol () {
 	fi
 }
 
-update_weather () {
-	weather="$(curl --silent 'wttr.in?format=%c+%C+%t' | xargs | sed 's/ +/ /')"
-}
-
 display () {
 	if [ "$has_battery" = true ]; then
-		status="$key_ind $net_traf   $cpu   $memory   $disk   $vol   $bat   $wifi   $weather   $time "
+		status="$key_ind $net_traf   $cpu   $memory   $disk   $vol   $bat   $wifi   $time "
 	else
-		status="$key_ind $net_traf   $cpu   $memory   $disk   $vol   $wifi   $weather   $time "
+		status="$key_ind $net_traf   $cpu   $memory   $disk   $vol   $wifi   $time "
 	fi
 	xsetroot -name "$status"
 }
@@ -131,7 +127,6 @@ update_time
 update_wifi
 update_disk
 [ "$has_battery" = true ] && update_battery
-update_weather
 update_vol
 update_key_indicators
 display
@@ -152,7 +147,6 @@ do
 		[ $((sec %  30)) -eq 3 ] && update_wifi
 		[ $((sec %  60)) -eq 4 ] && update_disk
 		[ $((sec %  60)) -eq 5 ] && [ "$has_battery" = true ] && update_battery
-		[ $((sec % 600)) -eq 5 ] && update_weather
 
 		sec=$((sec + 1))
 	}
