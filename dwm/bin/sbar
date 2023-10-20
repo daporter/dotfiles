@@ -88,11 +88,20 @@ update_vol () {
 	fi
 }
 
+update_mail() {
+	count=$(notmuch count 'tag:unread NOT tag:archived')
+	if [ "$count" = '0' ]; then
+		mail=
+	else
+		mail="  $count"
+	fi
+}
+
 display () {
 	if [ "$has_battery" = true ]; then
-		status="$key_ind $net_traf   $cpu   $memory   $disk   $vol   $bat   $wifi   $time "
+		status="$key_ind  $mail  $net_traf   $cpu   $memory   $disk   $vol   $bat   $wifi   $time "
 	else
-		status="$key_ind $net_traf   $cpu   $memory   $disk   $vol   $wifi   $time "
+		status="$key_ind  $mail  $net_traf   $cpu   $memory   $disk   $vol   $wifi   $time "
 	fi
 	xsetroot -name "$status"
 }
@@ -108,16 +117,15 @@ if [ -e /sys/class/power_supply/BAT0 ]; then
 fi
 
 # Signals.
-
+#
 # To update a module from an external command, send a signal:
 #
 #   $ kill -m "$(cat ~/.cache/pidofbar)"
 #
 # where m = 34+n
-
-# trap	"<function>;display"		        "RTMIN+n"
-trap	"update_vol;display"		        "RTMIN"
-trap	"update_key_indicators;display"		"RTMIN+1"
+trap "update_vol"            "RTMIN"
+trap "update_key_indicators" "RTMIN+1"
+trap "update_mail"           "RTMIN+2"
 
 # Run all modules immediately on startup to set initial values.
 update_net_traffic
@@ -129,6 +137,7 @@ update_disk
 [ "$has_battery" = true ] && update_battery
 update_vol
 update_key_indicators
+update_mail
 display
 
 while true
@@ -139,14 +148,14 @@ do
 
 		update_net_traffic      # update every second
 
-		[ $((sec %   2)) -eq 0 ] && display
+		[ $((sec %  2)) -eq 0 ] && display
 
-		[ $((sec %  15)) -eq 0 ] && update_cpu
-		[ $((sec %  15)) -eq 1 ] && update_memory
-		[ $((sec %  30)) -eq 2 ] && update_time
-		[ $((sec %  30)) -eq 3 ] && update_wifi
-		[ $((sec %  60)) -eq 4 ] && update_disk
-		[ $((sec %  60)) -eq 5 ] && [ "$has_battery" = true ] && update_battery
+		[ $((sec % 15)) -eq 0 ] && update_cpu
+		[ $((sec % 15)) -eq 1 ] && update_memory
+		[ $((sec % 30)) -eq 2 ] && update_time
+		[ $((sec % 30)) -eq 3 ] && update_wifi
+		[ $((sec % 60)) -eq 4 ] && update_disk
+		[ $((sec % 60)) -eq 5 ] && [ "$has_battery" = true ] && update_battery
 
 		sec=$((sec + 1))
 	}

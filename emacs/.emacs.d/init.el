@@ -626,6 +626,13 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
      ("s" ("+spam" "-inbox") "Mark as spam")
      ("d" ("+deleted" "-inbox") "Delete")))
   (notmuch-mua-user-agent-function #'notmuch-mua-user-agent-full)
+
+  ;; # After each tagging operation, signal the window manager status bar
+  ;; # updater.
+  (notmuch-after-tag-hook
+   (lambda ()
+     (shell-command-to-string "kill -36 $(cat ~/.cache/sbar.pid)")))
+
   :config
   (add-hook 'notmuch-message-mode-hook #'turn-off-auto-fill)
   (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check))

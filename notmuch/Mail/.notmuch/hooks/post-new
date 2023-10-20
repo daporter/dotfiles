@@ -58,3 +58,6 @@ notmuch tag -inbox +lists +list/pulsar \
 notmuch tag -inbox +lists +list/logos \
         -- 'from:"~protesilaos/logos@lists.sr.ht"' \
            or 'to:"~protesilaos/logos@lists.sr.ht"'
+
+# Signal the window manager status bar updater.
+kill -36 "$(cat ~/.cache/sbar.pid)"
