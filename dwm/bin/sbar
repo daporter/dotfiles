@@ -8,11 +8,11 @@ update_key_indicators () {
 }
 
 update_cpu () {
-	cpu="  $(grep -o "^[^ ]*" /proc/loadavg )"
+	cpu=" $(grep -o "^[^ ]*" /proc/loadavg )"
 }
 
 update_memory () {
-	memory="  $(free -h | awk '(NR==2){ print $4 }')"
+	memory=" $(free -h | awk '(NR==2){ print $4 }')"
 }
 
 
@@ -21,7 +21,7 @@ update_disk () {
 }
 
 update_time () {
-	time="  $(date "+%a %d %b %R")"
+	time=" $(date "+%a %d %b %R")"
 }
 
 update_battery () {
@@ -29,13 +29,13 @@ update_battery () {
 	read -r cap </sys/class/power_supply/BAT0/capacity
 
 	if [ "$status" = Charging ]; then
-		bat="󰂄 $cap%"
+		bat="󰂄$cap%"
 	elif [ "$cap" -ge 66 ]; then
-		vol="󰂂 $cap%"
+		vol="󰂂$cap%"
 	elif [ "$cap" -ge 33 ]; then
-		vol="󰁿 $cap%"
+		vol="󰁿$cap%"
 	else
-		bat="󰁹 $cap%"
+		bat="󰁹$cap%"
 	fi
 }
 
@@ -67,7 +67,7 @@ update_wifi () {
 	data=$(awk 'NR==3 {printf("%.0f%%", $3*10/7)}' /proc/net/wireless)
 	network=$(iwctl station wlan0 show | awk '/Connected network/ {print $3}')
 	if [ -n "$data" ]; then
-		wifi="  $data $network"
+		wifi=" $data $network"
 	else
 		wifi="󰖪"
 	fi
@@ -93,15 +93,15 @@ update_mail() {
 	if [ "$count" = '0' ]; then
 		mail=
 	else
-		mail="  $count"
+		mail=" $count"
 	fi
 }
 
 display () {
 	if [ "$has_battery" = true ]; then
-		status="$key_ind  $mail  $net_traf   $cpu   $memory   $disk   $vol   $bat   $wifi   $time "
+		status="$key_ind  $mail  $net_traf   $cpu   $memory   $disk   $vol   $bat   $wifi   $time"
 	else
-		status="$key_ind  $mail  $net_traf   $cpu   $memory   $disk   $vol   $wifi   $time "
+		status="$key_ind  $mail  $net_traf   $cpu   $memory   $disk   $vol   $wifi   $time"
 	fi
 	xsetroot -name "$status"
 }
@@ -123,9 +123,9 @@ fi
 #   $ kill -m "$(cat ~/.cache/pidofbar)"
 #
 # where m = 34+n
-trap "update_vol"            "RTMIN"
-trap "update_key_indicators" "RTMIN+1"
-trap "update_mail"           "RTMIN+2"
+trap "update_vol;display"            "RTMIN"
+trap "update_key_indicators;display" "RTMIN+1"
+trap "update_mail;display"           "RTMIN+2"
 
 # Run all modules immediately on startup to set initial values.
 update_net_traffic

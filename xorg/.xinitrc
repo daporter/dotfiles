@@ -16,10 +16,11 @@ xset r rate 200 55   # repeat after 200 ms, 55 char/s
 xsetroot -cursor_name left_ptr
 setxkbmap -option compose:menu
 
-1password --silent &
-sxhkd &
-
+picom -b
 ~/bin/sbar &
-~/bin/configure_monitors
+sxhkd &
+feh --bg-fill --no-fehbg ~/.config/wallpapers/wallpaper.jpg
+
+1password --silent &
 
 exec ~/bin/startdwm

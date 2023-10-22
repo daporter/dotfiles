@@ -45,6 +45,9 @@ export TIME_STYLE
 MAKEFLAGS="-j$(nproc)"
 export MAKEFLAGS
 
+# Set LS_COLORS.
+test -r "$HOME/.dir_colors" && eval "$(dircolors "$HOME"/.dir_colors)"
+
 # The `par` paragraph formatter.
 #
 # From the par man page:

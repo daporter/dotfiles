@@ -56,6 +56,8 @@ HISTCONTROL="erasedups:ignoreboth"
 # Don't record uninteresting commands
 export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
 
+alias ls="ls -ah --color=auto"
+
 for sh in "$HOME"/.rc.d/*.sh ; do
     # shellcheck source=/dev/null
     . "$sh"

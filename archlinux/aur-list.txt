@@ -9,7 +9,6 @@ dict-moby-thesaurus
 dict-wikt-en-all
 dict-wn
 dropbox
-dwm
 gnu-c-manual
 google-chrome
 i810-dri
@@ -25,7 +24,6 @@ otf-spectral
 otf-spectralsc
 paru
 qmk-git
-st
 tree-sitter-bash-git
 tree-sitter-bibtex-git
 tree-sitter-c
