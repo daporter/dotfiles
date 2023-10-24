@@ -166,6 +166,13 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
       (newline)))
   (global-set-key (kbd "<C-return>") #'my/simple-new-line-below))
 
+(defun my/open-line-and-indent ()
+  "Like `newline-and-indent', but do not move the point."
+  (interactive)
+  (save-excursion
+    (newline-and-indent)))
+(global-set-key (kbd "C-o") #'my/open-line-and-indent)
+
 (use-package paren
   :custom
   (show-paren-context-when-offscreen 'overlay))
