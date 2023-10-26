@@ -48,6 +48,7 @@ net-tools
 noto-fonts-emoji
 obsidian
 openssh
+opendoas
 otf-fira-mono
 pamixer
 pandoc-cli
