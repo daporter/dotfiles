@@ -565,7 +565,8 @@ The original function doesn't work well with empty lines."
 
 (use-package eshell
   :config
-  (add-to-list 'eshell-modules-list 'eshell-smart))
+  (dolist (module '(eshell-smart eshell-tramp))
+    (add-to-list 'eshell-modules-list module)))
 
 (use-package eshell-toggle
   :ensure t
