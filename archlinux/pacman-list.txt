@@ -33,7 +33,6 @@ intel-ucode
 isync
 iwd
 jq
-kitty
 libertinus-font
 libvterm
 lsd

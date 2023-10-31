@@ -234,7 +234,7 @@ When called interactively without a prefix numeric argument, N is
   (setq fontaine-presets
         '((regular)
           (t
-           :default-family "Iosevka Comfy"
+           :default-family "Iosevka Nerd Font"
            :variable-pitch-family "sans-serif")))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
   (fontaine-set-preset
