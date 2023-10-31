@@ -296,6 +296,11 @@ When called interactively without a prefix numeric argument, N is
   :init
   (lin-global-mode 1))
 
+(use-package transpose-frame
+  :ensure t
+  :bind (("C-c t t" . transpose-frame)
+         ("C-c t <right>" . flop-frame)))
+
 (use-package vterm
   :ensure t
   :commands vterm)
@@ -357,9 +362,9 @@ The original function doesn't work well with empty lines."
 
   (define-key whole-line-or-region-local-mode-map
               [remap comment-dwim]
-              'heartman/comment-whole-line-or-region))
+              'heartman/comment-whole-line-or-region)
 
-(whole-line-or-region-global-mode 1))
+  (whole-line-or-region-global-mode 1))
 
 (use-package compile
   :config
