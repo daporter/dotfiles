@@ -27,6 +27,7 @@ otf-spectral
 otf-spectralsc
 paru
 qmk-git
+scc
 tree-sitter-bash-git
 tree-sitter-bibtex-git
 tree-sitter-c
