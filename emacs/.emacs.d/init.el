@@ -44,10 +44,6 @@
   (kept-new-versions 6)
   (create-lockfiles nil)
 
-  (window-divider-default-right-width 2)
-  (window-divider-default-bottom-width 1)
-  (window-divider-default-places t)
-
   ;; Do not allow the cursor in the minibuffer prompt
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
@@ -91,9 +87,8 @@
                  set-goal-column))
     (put cmd 'disabled nil))
 
-  ;; Display windows with 2 columns of margin.
-  (setq-default left-margin-width 2)
-  (setq-default right-margin-width 2)
+  (modify-all-frames-parameters '((internal-border-width . 10)
+                                  (scroll-bar-width  . 5)))
 
   ;; Specify the fonts to use for displaying emoji.
   (set-fontset-font t 'emoji
@@ -111,7 +106,6 @@
   (electric-pair-mode 1)
   (electric-quote-mode 1)
   (fringe-mode 0)
-  (window-divider-mode 1)
   (winner-mode 1)
   (auto-insert-mode t)
   (pixel-scroll-precision-mode 1)
@@ -184,46 +178,25 @@ When called interactively without a prefix numeric argument, N is
   (dired-recursive-copies 'always)
   (dired-dwim-target t))                ; try to guess target directory for copy
 
-(use-package modus-themes
+(use-package ef-themes
   :ensure t
-  :init
-  (require 'modus-themes)
-  (setq modus-themes-bold-constructs t)
-  (setq modus-themes-italic-constructs t)
-  (setq modus-themes-mixed-fonts t)
-  (setq modus-themes-prompts '(semibold))
-  (setq modus-themes-variable-pitch-ui t)
-  (setq modus-themes-headings '((1 . (light variable-pitch 1.5))))
-  (setq modus-themes-to-toggle '(modus-vivendi-tinted modus-operandi-tinted))
-
-  :config
-  (load-theme (car modus-themes-to-toggle) t))
-
-(use-package prot-modeline
-  :load-path "lisp"
   :custom
-  (prot-modeline-string-truncate-length 30)
+  (ef-themes-mixed-fonts t)
+  (ef-themes-variable-pitch-ui t)
+  (ef-themes-region '(neutral intense))
+  (ef-themes-to-toggle '(ef-elea-dark ef-maris-dark))
   :config
-  (setq-default mode-line-format
-                '("%e"
-                  prot-modeline-kbd-macro
-                  prot-modeline-narrow
-                  prot-modeline-input-method
-                  prot-modeline-buffer-status
-                  " "
-                  prot-modeline-buffer-identification
-                  "  "
-                  prot-modeline-major-mode
-                  prot-modeline-process
-                  "  "
-                  prot-modeline-vc-branch
-                  "  "
-                  prot-modeline-flymake
-                  "  "
-                  prot-modeline-align-right
-                  prot-modeline-misc-info))
+  ;; Disable all other themes to avoid awkward blending:
+  (mapc #'disable-theme custom-enabled-themes)
+  (ef-themes-select 'ef-elea-dark))
 
-  (prot-modeline-subtle-mode 1))
+(use-package spacious-padding
+  :ensure t
+  :custom
+  (spacious-padding-widths
+   '(:internal-border-width 10 :right-divider-width 30 :scroll-bar-width 10))
+  :config
+  (spacious-padding-mode 1))
 
 (use-package fontaine
   :ensure t
@@ -357,6 +330,40 @@ When called interactively without a prefix numeric argument, N is
   (smart-tabs-add-language-support css css-mode-hook
     ((smie-indent-line . css-indent-offset)))
   (smart-tabs-insinuate 'sh 'mhtml 'nxml 'css))
+
+(use-package whole-line-or-region
+  :ensure t
+  :config
+
+  ;; When whole-line-or-region-mode is activn, comment-dwim doesn't no longer
+  ;; works properly on empty lines.  The following fix is taken from
+  ;;
+  ;;   https://github.com/purcell/whole-line-or-region/issues/16
+
+  (defun heartman/comment-whole-line-or-region (prefix)
+    "Override comment-whole-line-or-region.
+
+The original function doesn't work well with empty lines."
+    (interactive "*p")
+    (if (heartman/current-line-empty-p)
+        (funcall-interactively 'comment-dwim prefix)
+      (funcall-interactively 'whole-line-or-region-comment-dwim-2 prefix)))
+
+  (defun heartman/current-line-empty-p ()
+    "Check whether the current line is empty."
+    (save-excursion
+      (beginning-of-line)
+      (looking-at-p "[[:space:]]*$")))
+
+  (define-key whole-line-or-region-local-mode-map
+              [remap comment-dwim]
+              'heartman/comment-whole-line-or-region))
+
+(whole-line-or-region-global-mode 1))
+
+(use-package compile
+  :config
+  (global-set-key (kbd "<f5>") 'recompile))
 
 (use-package editorconfig
   :ensure t
@@ -660,7 +667,10 @@ When called interactively without a prefix numeric argument, N is
   :hook
   ((pdf-view-mode . pdf-history-minor-mode)
    (pdf-view-mode . pdf-view-fit-page-to-window)
-   (pdf-view-mode . pdf-view-auto-slice-minor-mode))
+   (pdf-view-mode . pdf-view-auto-slice-minor-mode)
+   (pdf-view-mode . pdf-view-midnight-minor-mode))
+  :custom
+  (pdf-view-midnight-colors '("#eaf2ef" . "#222524"))
   :config
   (pdf-loader-install))
 
