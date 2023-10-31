@@ -89,6 +89,7 @@ typescript-language-server
 udiskie
 usbutils
 uthash
+valgrind
 vi
 webkit2gtk
 xf86-video-intel
