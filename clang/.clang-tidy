@@ -3,6 +3,8 @@ FormatStyle: file       # uses .clang-format in the closest parent dir
 Checks: >-
   -*,
   bugprone-*,
+  -bugprone-assignment-in-if-condition,
+  -bugprone-easily-swappable-parameters,
   cert-*,
   clang-analyzer-*,
   google-*,
