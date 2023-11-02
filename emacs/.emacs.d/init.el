@@ -670,15 +670,14 @@ The original function doesn't work well with empty lines."
 (use-package pdf-tools
   :ensure t
   :magic ("%PDF" . pdf-view-mode)
+  :init (pdf-tools-install)
   :hook
   ((pdf-view-mode . pdf-history-minor-mode)
    (pdf-view-mode . pdf-view-fit-page-to-window)
    (pdf-view-mode . pdf-view-auto-slice-minor-mode)
    (pdf-view-mode . pdf-view-midnight-minor-mode))
   :custom
-  (pdf-view-midnight-colors '("#eaf2ef" . "#222524"))
-  :config
-  (pdf-loader-install))
+  (pdf-view-midnight-colors '("#eaf2ef" . "#222524")))
 
 (use-package nov
   :ensure t
