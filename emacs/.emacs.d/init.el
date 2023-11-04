@@ -339,31 +339,6 @@ When called interactively without a prefix numeric argument, N is
 (use-package whole-line-or-region
   :ensure t
   :config
-
-  ;; When whole-line-or-region-mode is activn, comment-dwim doesn't no longer
-  ;; works properly on empty lines.  The following fix is taken from
-  ;;
-  ;;   https://github.com/purcell/whole-line-or-region/issues/16
-
-  (defun heartman/comment-whole-line-or-region (prefix)
-    "Override comment-whole-line-or-region.
-
-The original function doesn't work well with empty lines."
-    (interactive "*p")
-    (if (heartman/current-line-empty-p)
-        (funcall-interactively 'comment-dwim prefix)
-      (funcall-interactively 'whole-line-or-region-comment-dwim-2 prefix)))
-
-  (defun heartman/current-line-empty-p ()
-    "Check whether the current line is empty."
-    (save-excursion
-      (beginning-of-line)
-      (looking-at-p "[[:space:]]*$")))
-
-  (define-key whole-line-or-region-local-mode-map
-              [remap comment-dwim]
-              'heartman/comment-whole-line-or-region)
-
   (whole-line-or-region-global-mode 1))
 
 (use-package compile
