@@ -48,6 +48,8 @@
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
 
+  (comment-multi-line t)
+
   ;; Prefer tree-sitter-enabled modes.
   (major-mode-remap-alist
    '((bash-mode . bash-ts-mode)
@@ -434,8 +436,15 @@ When called interactively without a prefix numeric argument, N is
   (add-hook 'c-ts-mode-hook 'eglot-ensure)
   :custom
   (c-ts-mode-indent-style 'linux)
-  (c-ts-mode-indent-offset 8)
-  (comment-style 'extra-line))
+  (c-ts-mode-indent-offset 8))
+
+(use-package cc-mode
+  :init
+  (defun my/c-set-style ()
+    "Set the C style to \"linux\"."
+    (c-set-style "linux"))
+
+  (add-hook 'c-mode-hook #'my/c-set-style))
 
 (use-package markdown-mode
   :ensure t
