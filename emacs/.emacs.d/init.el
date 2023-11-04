@@ -433,7 +433,10 @@ When called interactively without a prefix numeric argument, N is
   :after eglot
   :defer t
   :init
-  (add-hook 'c-ts-mode-hook 'eglot-ensure)
+  (add-hook 'c-ts-mode-hook #'eglot-ensure)
+  :bind
+  (:map c-ts-mode-map
+        ("C-c o" . ff-find-other-file))
   :custom
   (c-ts-mode-indent-style 'linux)
   (c-ts-mode-indent-offset 8))
