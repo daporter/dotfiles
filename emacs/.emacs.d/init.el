@@ -210,7 +210,7 @@ When called interactively without a prefix numeric argument, N is
         '((regular)
           (t
            :default-family "Iosevka Nerd Font"
-           :variable-pitch-family "sans-serif")))
+           :variable-pitch-family "Roboto")))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))
