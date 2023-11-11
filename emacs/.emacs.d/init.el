@@ -564,6 +564,10 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :bind ("C-c e" . eshell-toggle))
 
+(use-package eat
+  :ensure t
+  :hook (eshell-load-hook . eat-eshell-mode))
+
 (use-package sxhkdrc-mode
   :ensure t
   :mode "sxhkdrc\\'")
