@@ -87,6 +87,7 @@ ttf-roboto-mono
 ttf-sourcecodepro-nerd
 typescript-language-server
 udiskie
+unclutter
 usbutils
 uthash
 valgrind
