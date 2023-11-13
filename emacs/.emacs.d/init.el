@@ -300,8 +300,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package transpose-frame
   :ensure t
-  :bind (("C-c t t" . transpose-frame)
-         ("C-c t <right>" . flop-frame)))
+  :bind (("C-c f t" . transpose-frame)
+         ("C-c f <right>" . flop-frame)))
 
 (use-package vterm
   :ensure t
@@ -579,6 +579,21 @@ When called interactively without a prefix numeric argument, N is
 (use-package magit
   :ensure t
   :commands magit-status)
+
+(use-package hl-todo
+  :ensure t
+  :hook prog-mode
+  :bind (:map hl-todo-mode-map
+              ("C-c t p" . hl-todo-previous)
+              ("C-c t n" . hl-todo-next)
+              ("C-c t o" . hl-todo-occur)
+              ("C-c t i" . hl-todo-insert)))
+
+(use-package magit-todos
+  :ensure t
+  :after magit
+  :config
+  (magit-todos-mode 1))
 
 (use-package denote
   :ensure t
