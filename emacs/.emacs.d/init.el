@@ -578,7 +578,11 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package magit
   :ensure t
-  :commands magit-status)
+  :commands magit-status
+  :custom
+  (git-commit-summary-max-length 50)
+  (git-commit-style-convention-checks '(non-empty-second-line
+                                        overlong-summary-line)))
 
 (use-package hl-todo
   :ensure t
