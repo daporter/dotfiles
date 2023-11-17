@@ -1,9 +1,0 @@
----
-CompileFlags:
-  Add:
-    - -xc
-    - -std=c17
-    - -pedantic
-    - -Wall
-    - -Wextra
-    - -Werror
