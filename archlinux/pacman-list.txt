@@ -130,3 +130,4 @@ xorg-xvinfo
 xorg-xwd
 xorg-xwud
 xournalpp
+yaml-language-server
