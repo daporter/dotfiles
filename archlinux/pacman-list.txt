@@ -39,6 +39,7 @@ lsd
 maim
 man-pages
 marksman
+moreutils
 msmtp
 mtr
 mupdf
