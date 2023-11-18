@@ -180,6 +180,13 @@ When called interactively without a prefix numeric argument, N is
   (dired-recursive-copies 'always)
   (dired-dwim-target t))                ; try to guess target directory for copy
 
+(use-package ediff
+  :custom
+  (ediff-keep-variants         nil)
+  (ediff-show-clashes-only     t)
+  (ediff-split-window-function 'split-window-horizontally)
+  (ediff-window-setup-function 'ediff-setup-windows-plain))
+
 (use-package ef-themes
   :ensure t
   :custom
