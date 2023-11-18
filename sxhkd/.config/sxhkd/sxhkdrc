@@ -22,7 +22,7 @@ XF86AudioMute
 # If @ is added at the beginning of the keysym, the command will be
 # run on key release events, otherwise on key press events.
 ~@Caps_Lock
-    kill -35 "$(cat ~/.cache/sbar.pid)"
+    kill -SIGRTMIN "$(cat /tmp/mtstatus.pid)"
 
 # Dynamic menus
 

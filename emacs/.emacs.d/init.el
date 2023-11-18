@@ -655,7 +655,7 @@ When called interactively without a prefix numeric argument, N is
   ;; # updater.
   (notmuch-after-tag-hook
    (lambda ()
-     (shell-command-to-string "kill -36 $(cat ~/.cache/sbar.pid)")))
+     (shell-command-to-string "kill -SIGRTMIN+1 $(cat /tmp/mtstatus.pid)")))
 
   :config
   (add-hook 'notmuch-message-mode-hook #'turn-off-auto-fill)
