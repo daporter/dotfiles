@@ -216,8 +216,8 @@ When called interactively without a prefix numeric argument, N is
   (setq fontaine-presets
         '((regular)
           (t
-           :default-family "Iosevka Nerd Font"
-           :variable-pitch-family "Roboto")))
+           :default-family "Iosevka Comfy Motion"
+           :variable-pitch-family "Iosevka Comfy Motion Duo")))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))
