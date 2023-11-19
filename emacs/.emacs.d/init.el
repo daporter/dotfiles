@@ -580,7 +580,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package eat
   :ensure t
-  :hook (eshell-load-hook . eat-eshell-mode))
+  :config
+  (eat-eshell-mode 1)
+  (eat-eshell-visual-command-mode 1))
 
 (use-package detached
   :ensure t
