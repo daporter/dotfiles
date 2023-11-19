@@ -9,6 +9,7 @@ dict-moby-thesaurus
 dict-wikt-en-all
 dict-wn
 dropbox
+dtach
 gitlint
 gnu-c-manual
 google-chrome

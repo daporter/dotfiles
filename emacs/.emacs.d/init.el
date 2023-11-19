@@ -582,6 +582,22 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :hook (eshell-load-hook . eat-eshell-mode))
 
+(use-package detached
+  :ensure t
+  :init
+  (detached-init)
+  :custom
+  (detached-show-output-on-attach t)
+  (detached-terminal-data-command system-type)
+  (detached-list-config
+   '((:function detached-list--command-str                                 :name "Command"   :length 25)
+     (:function detached-list--status-str                                  :name "Status"    :length 10)
+     (:function detached--host-str         :face detached-host-face        :name "Host"      :length 15)
+     (:function detached--working-dir-str  :face detached-working-dir-face :name "Directory" :length 25)
+     (:function detached--metadata-str     :face detached-metadata-face    :name "Metadata"  :length 15)
+     (:function detached--duration-str     :face detached-duration-face    :name "Duration"  :length 15)
+     (:function detached--creation-str     :face detached-creation-face    :name "Created"   :length 20))))
+
 (use-package sxhkdrc-mode
   :ensure t
   :mode "sxhkdrc\\'")
