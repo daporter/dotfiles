@@ -365,6 +365,8 @@ When called interactively without a prefix numeric argument, N is
 (use-package whole-line-or-region
   :ensure t
   :config
+  ;; I don’t like the changed behaviour of comment-dwim.
+  (define-key whole-line-or-region-local-mode-map [remap comment-dwim] nil)
   (whole-line-or-region-global-mode 1))
 
 (use-package compile
