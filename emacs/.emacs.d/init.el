@@ -307,15 +307,15 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package transpose-frame
   :ensure t
-  :bind (("C-c f t" . transpose-frame)
+  :bind (("C-c f t"       . transpose-frame)
          ("C-c f <right>" . flop-frame)))
 
 (use-package which-key
   :ensure t
   :config
-  (which-key-mode 1)
   ;; I'm currently experimenting with this configuration:
-  (which-key-setup-side-window-right-bottom))
+  (which-key-setup-side-window-right-bottom)
+  (which-key-mode 1))
 
 (use-package vterm
   :ensure t
