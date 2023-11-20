@@ -187,17 +187,27 @@ When called interactively without a prefix numeric argument, N is
   (ediff-split-window-function 'split-window-horizontally)
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
+(use-package emacs
+  :config
+  (require-theme 'modus-themes) ; `require-theme' is ONLY for the built-in Modus themes
+
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs t
+        modus-themes-mixed-fonts t
+        modus-themes-prompts '(semibold)
+        modus-themes-variable-pitch-ui t
+        modus-themes-headings '((1 . (light variable-pitch 1.5))))
+
+  (load-theme 'modus-vivendi))
+
 (use-package ef-themes
   :ensure t
   :custom
   (ef-themes-mixed-fonts t)
   (ef-themes-variable-pitch-ui t)
   (ef-themes-region '(neutral intense))
-  (ef-themes-to-toggle '(ef-elea-dark ef-maris-dark))
-  :config
-  ;; Disable all other themes to avoid awkward blending:
-  (mapc #'disable-theme custom-enabled-themes)
-  (ef-themes-select 'ef-elea-dark))
+  (ef-themes-to-toggle '(ef-elea-dark ef-maris-dark)))
 
 (use-package spacious-padding
   :ensure t
@@ -719,7 +729,7 @@ When called interactively without a prefix numeric argument, N is
    (pdf-view-mode . pdf-view-auto-slice-minor-mode)
    (pdf-view-mode . pdf-view-midnight-minor-mode))
   :custom
-  (pdf-view-midnight-colors '("#eaf2ef" . "#222524")))
+  (pdf-view-midnight-colors '("#ffffff" . "#000000")))
 
 (use-package nov
   :ensure t
