@@ -19,7 +19,6 @@ setxkbmap -option compose:menu
 picom -b
 ~/bin/sbar &
 sxhkd &
-feh --bg-fill --no-fehbg ~/.config/wallpapers/wallpaper.jpg
 unclutter --fork
 
 1password --silent &
