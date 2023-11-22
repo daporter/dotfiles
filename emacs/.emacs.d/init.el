@@ -797,3 +797,10 @@ When called interactively without a prefix numeric argument, N is
   (mail-specify-envelope-from t)
   (message-sendmail-envelope-from 'header)
   (mail-envelope-from 'header))
+
+(use-package youtube-dl
+  :load-path "lisp/youtube-dl-emacs"
+  :commands (youtube-dl youtube-dl-list)
+  :custom
+  (youtube-dl-program "yt-dlp")
+  (youtube-dl-directory "~/Downloads"))
