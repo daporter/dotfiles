@@ -409,7 +409,11 @@ When called interactively without a prefix numeric argument, N is
 (use-package eglot
   :bind
   (:map eglot-mode-map
-        ("C-c f" . eglot-format)))
+        ("C-c l f" . eglot-format)
+        ("C-c l h" . eldoc)
+        ("C-c l o" . eglot-code-action-organize-imports)
+        ("C-c l q" . eglot-code-action-quickfix)
+        ("C-c l r" . eglot-rename)))
 
 (use-package text-mode
   :defer t
