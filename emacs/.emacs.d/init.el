@@ -402,6 +402,10 @@ When called interactively without a prefix numeric argument, N is
     (setq-local fill-column 80))
   (add-hook 'prog-mode-hook #'my/set-fill-column))
 
+(use-package eldoc
+  :custom
+  (eldoc-echo-area-use-multiline-p nil))
+
 (use-package eglot
   :bind
   (:map eglot-mode-map
