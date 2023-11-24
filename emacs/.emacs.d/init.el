@@ -212,8 +212,11 @@ When called interactively without a prefix numeric argument, N is
 (use-package spacious-padding
   :ensure t
   :custom
-  (spacious-padding-widths
-   '(:internal-border-width 10 :right-divider-width 30 :scroll-bar-width 10))
+  (spacious-padding-widths '(:internal-border-width 10
+                             :header-line-width 4
+                             :mode-line-width 6
+                             :right-divider-width 30
+                             :scroll-bar-width 10))
   :config
   (spacious-padding-mode 1))
 
