@@ -429,7 +429,9 @@ When called interactively without a prefix numeric argument, N is
         ("C-c l h" . eldoc)
         ("C-c l o" . eglot-code-action-organize-imports)
         ("C-c l q" . eglot-code-action-quickfix)
-        ("C-c l r" . eglot-rename)))
+        ("C-c l r" . eglot-rename))
+  :config
+  (add-hook 'eglot-managed-mode-hook (lambda () (eglot-inlay-hints-mode 0))))
 
 (use-package text-mode
   :defer t
