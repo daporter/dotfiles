@@ -7,11 +7,11 @@ super + b
 
 {XF86AudioLowerVolume, XF86AudioRaiseVolume}
     pamixer {--decrease, --increase} 10 && \
-    kill -34 "$(cat ~/.cache/sbar.pid)"
+    kill -SIGRTMIN+2 "$(cat /tmp/mtstatus.pid)"
 
 XF86AudioMute
     pamixer --toggle-mute && \
-    kill -34 "$(cat ~/.cache/sbar.pid)"
+    kill -SIGRTMIN+2 "$(cat /tmp/mtstatus.pid)"
 
 {XF86MonBrightnessDown, XF86MonBrightnessUp}
     xbacklight {-dec, -inc} 10
