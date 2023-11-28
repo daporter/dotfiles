@@ -323,6 +323,19 @@ When called interactively without a prefix numeric argument, N is
   :bind (("C-c f t"       . transpose-frame)
          ("C-c f <right>" . flop-frame)))
 
+(use-package pulsar
+  :ensure t
+  :bind
+  (("C-c h p" . pulsar-pulse-line)
+   ("C-c h h" . pulsar-highlight-line))
+  :hook
+  ((next-error       . pulsar-pulse-line)
+   (minibuffer-setup . pulsar-pulse-line)
+   (imenu-after-jump . pulsar-recenter-top)
+   (imenu-after-jump . pulsar-reveal-entry))
+  :config
+  (pulsar-global-mode 1))
+
 (use-package which-key
   :ensure t
   :config
