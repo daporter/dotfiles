@@ -735,11 +735,6 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (send-mail-function 'sendmail-send-it))
 
-(use-package dictionary
-  :bind ("M-#" . dictionary-lookup-definition)
-  :custom
-  (dictionary-server "localhost"))
-
 (use-package kbd-mode
   :load-path "lisp"
   :mode "\\.kbd\\'"

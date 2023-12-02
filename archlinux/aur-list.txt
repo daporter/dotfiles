@@ -4,11 +4,6 @@ aflplusplus
 anki
 ansifilter
 debtap
-dict-foldoc
-dict-gcide
-dict-moby-thesaurus
-dict-wikt-en-all
-dict-wn
 dropbox
 dtach
 gitlint
