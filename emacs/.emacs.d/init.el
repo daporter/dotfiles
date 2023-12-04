@@ -235,6 +235,14 @@ When called interactively without a prefix numeric argument, N is
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))
 
+(use-package all-the-icons-dired
+  :ensure t
+  :hook dired-mode)
+
+(use-package all-the-icons-ibuffer
+  :ensure t
+  :hook ibuffer-mode)
+
 (use-package apropos
   :defer t
   :custom
