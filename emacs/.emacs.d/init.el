@@ -187,19 +187,23 @@ When called interactively without a prefix numeric argument, N is
   (ediff-split-window-function 'split-window-horizontally)
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
-(use-package emacs
+(use-package modus-themes
+  :ensure t
   :config
-  (require-theme 'modus-themes) ; `require-theme' is ONLY for the built-in Modus themes
-
   ;; Add all your customizations prior to loading the themes
-  (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs t
-        modus-themes-mixed-fonts t
-        modus-themes-prompts '(semibold)
-        modus-themes-variable-pitch-ui t
-        modus-themes-headings '((1 . (light variable-pitch 1.5))))
+  (setq modus-themes-bold-constructs   t)
+  (setq modus-themes-italic-constructs t)
+  (setq modus-themes-mixed-fonts       t)
+  (setq modus-themes-prompts           '(bold))
+  (setq modus-themes-headings
+        '((1  .(light variable-pitch 1.5))))
+  (setq modus-themes-variable-pitch-ui t)
 
-  (load-theme 'modus-vivendi))
+  ;; Always remember to reload the theme for changes to take effect!
+  (setq modus-themes-common-palette-overrides
+        modus-themes-preset-overrides-faint)
+
+  (modus-themes-load-theme 'modus-vivendi))
 
 (use-package ef-themes
   :ensure t
