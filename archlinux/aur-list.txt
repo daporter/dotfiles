@@ -12,9 +12,6 @@ google-chrome
 i810-dri
 kmonad-bin
 markdownlint-cli
-nordic-theme
-nordzy-cursors
-nordzy-icon-theme
 noto-color-emoji-fontconfig
 ocrmypdf
 october
