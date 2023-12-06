@@ -531,14 +531,7 @@ When called interactively without a prefix numeric argument, N is
 (use-package elisp-mode
   :defer t
   :config
-  (defun my/configure-capfs-emacs-lisp-mode ()
-    (require 'cape)
-    (setq-local completion-at-point-functions
-                (list (cape-super-capf #'elisp-completion-at-point
-                                       #'dabbrev-capf)
-                      #'cape-dict)))
-  (add-hook 'emacs-lisp-mode-hook #'my/disable-indent-tabs-mode)
-  (add-hook 'emacs-lisp-mode-hook #'my/configure-capfs-emacs-lisp-mode))
+  (add-hook 'emacs-lisp-mode-hook #'my/disable-indent-tabs-mode))
 
 (use-package c-ts-mode
   :after eglot
@@ -593,16 +586,7 @@ When called interactively without a prefix numeric argument, N is
   (defun my/configure-whitespace-sh-mode ()
     (setq-local whitespace-style
                 (remove 'indentation whitespace-style)))
-  (add-hook 'whitespace-mode-hook #'my/configure-whitespace-sh-mode)
-
-  (defun my/configure-capfs-sh-mode ()
-    (require 'cape)
-    (setq-local completion-at-point-functions
-                (list #'cape-file
-                      (cape-super-capf #'sh-completion-at-point-function
-                                       #'dabbrev-capf)
-                      #'cape-dict)))
-  (add-hook 'sh-mode-hook #'my/configure-capfs-sh-mode))
+  (add-hook 'whitespace-mode-hook #'my/configure-whitespace-sh-mode))
 
 (use-package python-mode
   :ensure t
