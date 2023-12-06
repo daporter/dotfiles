@@ -36,7 +36,10 @@
   ;; Improve the spacing of underlines.
   (x-use-underline-position-properties nil)
 
-  (backup-directory-alist
+  ;; Necessary for visual-fill-column-mode:
+  (mode-line-right-align-edge 'right-fringe)
+
+  (fringe-directory-alist
    `(("." . ,(concat user-emacs-directory "backup/"))))
   (backup-by-copying t)
   (version-control t)
@@ -218,7 +221,7 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (spacious-padding-widths '(:internal-border-width 10
                              :header-line-width 4
-                             :mode-line-width 6
+                             :tab-width 4
                              :right-divider-width 30
                              :scroll-bar-width 10))
   :config
@@ -239,13 +242,35 @@ When called interactively without a prefix numeric argument, N is
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))
 
-(use-package all-the-icons-dired
+(use-package nerd-icons
+  :ensure t)
+
+(use-package nerd-icons-dired
   :ensure t
   :hook dired-mode)
 
-(use-package all-the-icons-ibuffer
+(use-package nerd-icons-ibuffer
   :ensure t
   :hook ibuffer-mode)
+
+(use-package nerd-icons-completion
+  :ensure t
+  :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
+  :config
+  (nerd-icons-completion-mode))
+
+(use-package nerd-icons-corfu
+  :ensure t
+  :after corfu
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+(use-package doom-modeline
+  :ensure t
+  :hook (after-init . doom-modeline-mode)
+  :custom
+  (doom-modeline-buffer-encoding nil)
+  (doom-modeline-indent-info t))
 
 (use-package apropos
   :defer t
