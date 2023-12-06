@@ -190,6 +190,18 @@ When called interactively without a prefix numeric argument, N is
   (ediff-split-window-function 'split-window-horizontally)
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
+(use-package spacious-padding
+  :ensure t
+  :custom
+  (spacious-padding-widths '(:internal-border-width 10
+                             :header-line-width      4
+                             :mode-line-width        6
+                             :tab-width              4
+                             :right-divider-width   30
+                             :scroll-bar-width      10))
+  :config
+  (spacious-padding-mode 1))
+
 (use-package modus-themes
   :ensure t
   :config
@@ -236,8 +248,9 @@ When called interactively without a prefix numeric argument, N is
   (setq fontaine-presets
         '((regular)
           (t
-           :default-family "Iosevka Comfy Motion"
-           :variable-pitch-family "Iosevka Comfy Motion Duo")))
+           :default-family "Iosevka Nerd Font"
+           :variable-pitch-family "XCharter"
+           :variable-pitch-height 1.1)))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))
@@ -270,7 +283,12 @@ When called interactively without a prefix numeric argument, N is
   :hook (after-init . doom-modeline-mode)
   :custom
   (doom-modeline-buffer-encoding nil)
-  (doom-modeline-indent-info t))
+  (doom-modeline-indent-info t)
+  :config
+  (custom-set-faces
+  '(mode-line ((t (:family "Noto Sans" :height 0.9))))
+  '(mode-line-active ((t (:family "Noto Sans" :height 0.9)))) ; For 29+
+  '(mode-line-inactive ((t (:family "Noto Sans" :height 0.9))))))
 
 (use-package apropos
   :defer t
@@ -770,7 +788,8 @@ When called interactively without a prefix numeric argument, N is
 
   :config
   (add-hook 'notmuch-message-mode-hook #'turn-off-auto-fill)
-  (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check))
+  (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check)
+  (add-hook 'notmuch-show-mode-hook (lambda () (variable-pitch-mode 1))))
 
 (use-package sendmail
   :custom
