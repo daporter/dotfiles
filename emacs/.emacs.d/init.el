@@ -223,21 +223,10 @@ When called interactively without a prefix numeric argument, N is
 (use-package ef-themes
   :ensure t
   :custom
-  (ef-themes-mixed-fonts t)
-  (ef-themes-variable-pitch-ui t)
-  (ef-themes-region '(neutral intense))
-  (ef-themes-to-toggle '(ef-elea-dark ef-maris-dark)))
-
-(use-package spacious-padding
-  :ensure t
-  :custom
-  (spacious-padding-widths '(:internal-border-width 10
-                             :header-line-width 4
-                             :tab-width 4
-                             :right-divider-width 30
-                             :scroll-bar-width 10))
-  :config
-  (spacious-padding-mode 1))
+  (ef-themes-mixed-fonts       t)
+  (ef-themes-variable-pitch-ui nil)
+  (ef-themes-region            '(neutral intense))
+  (ef-themes-to-toggle         '(ef-elea-dark ef-maris-dark)))
 
 (use-package fontaine
   :ensure t
@@ -282,13 +271,13 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :hook (after-init . doom-modeline-mode)
   :custom
+  (doom-modeline-height          0)
   (doom-modeline-buffer-encoding nil)
-  (doom-modeline-indent-info t)
-  :config
-  (custom-set-faces
-  '(mode-line ((t (:family "Noto Sans" :height 0.9))))
-  '(mode-line-active ((t (:family "Noto Sans" :height 0.9)))) ; For 29+
-  '(mode-line-inactive ((t (:family "Noto Sans" :height 0.9))))))
+  (doom-modeline-indent-info     t)
+  :custom-face
+  (mode-line          ((t (:family "Liberation Sans" :height 0.95))))
+  (mode-line-active   ((t (:family "Liberation Sans" :height 0.95))))
+  (mode-line-inactive ((t (:family "Liberation Sans" :height 0.95)))))
 
 (use-package apropos
   :defer t
