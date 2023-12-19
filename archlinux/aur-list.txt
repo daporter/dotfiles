@@ -1,5 +1,6 @@
 1password
 1password-cli
+adwaita-qt6-git
 aflplusplus
 anki
 ansifilter

@@ -60,6 +60,7 @@ poppler-glib
 python-gpgme
 python-pipx
 picom
+qt6ct
 rebuild-detector
 redshift
 restic
