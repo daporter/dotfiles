@@ -17,10 +17,12 @@ xsetroot -cursor_name left_ptr
 setxkbmap -option compose:menu
 
 picom -b
-~/bin/sbar &
+redshift &
 sxhkd &
 unclutter --fork
 
 1password --silent &
+
+~/bin/sbar &
 
 exec ~/bin/startdwm
