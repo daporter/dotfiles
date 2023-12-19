@@ -73,6 +73,7 @@ tealdeer
 texlive-binextra
 texlive-latex
 torbrowser-launcher
+traceroute
 tree
 ttc-iosevka
 ttc-iosevka-aile
