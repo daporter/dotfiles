@@ -64,8 +64,6 @@
      (typescript-mode . typescript-ts-mode)
      (yaml-mode . yaml-ts-mode)))
 
-  ;; Emacs 28: Hide commands in M-x which do not work in the current
-  ;; mode.  Vertico commands are hidden in normal buffers.
   (read-extended-command-predicate
    #'command-completion-default-include-p)
 
@@ -82,6 +80,10 @@
   (user-full-name "David Porter")
   (mail-host-address "daporter.net")
 
+  (window-divider-default-right-width  1)
+  (window-divider-default-bottom-width 0)
+  (window-divider-default-places       t)
+
   :config
   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
   (load custom-file)
@@ -93,7 +95,7 @@
     (put cmd 'disabled nil))
 
   (modify-all-frames-parameters '((internal-border-width . 10)
-                                  (scroll-bar-width  . 5)))
+                                  (scroll-bar-width      .  5)))
 
   ;; Specify the fonts to use for displaying emoji.
   (set-fontset-font t 'emoji
@@ -110,7 +112,8 @@
   (savehist-mode 1)
   (electric-pair-mode 1)
   (electric-quote-mode 1)
-  (fringe-mode 0)
+  (fringe-mode 10)
+  (window-divider-mode 1)
   (winner-mode 1)
   (auto-insert-mode t)
   (pixel-scroll-precision-mode 1)
@@ -123,6 +126,8 @@
   (global-set-key (kbd "C-M-<backspace>") 'backward-kill-sexp)
   (global-set-key (kbd "C-M-?") 'hippie-expand)
   (global-set-key (kbd "C-x j") #'duplicate-dwim)
+
+  (load-theme 'daporter t)
 
   (defun my/insert-date-time (prefix)
     "Insert the current date and time.
@@ -190,44 +195,6 @@ When called interactively without a prefix numeric argument, N is
   (ediff-split-window-function 'split-window-horizontally)
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
-(use-package spacious-padding
-  :ensure t
-  :custom
-  (spacious-padding-widths '(:internal-border-width 10
-                             :header-line-width      4
-                             :mode-line-width        6
-                             :tab-width              4
-                             :right-divider-width   30
-                             :scroll-bar-width      10))
-  :config
-  (spacious-padding-mode 1))
-
-(use-package modus-themes
-  :ensure t
-  :config
-  ;; Add all your customizations prior to loading the themes
-  (setq modus-themes-bold-constructs   t)
-  (setq modus-themes-italic-constructs t)
-  (setq modus-themes-mixed-fonts       t)
-  (setq modus-themes-prompts           '(bold))
-  (setq modus-themes-headings
-        '((1  .(light variable-pitch 1.5))))
-  (setq modus-themes-variable-pitch-ui t)
-
-  ;; Always remember to reload the theme for changes to take effect!
-  (setq modus-themes-common-palette-overrides
-        modus-themes-preset-overrides-faint)
-
-  (modus-themes-load-theme 'modus-vivendi))
-
-(use-package ef-themes
-  :ensure t
-  :custom
-  (ef-themes-mixed-fonts       t)
-  (ef-themes-variable-pitch-ui nil)
-  (ef-themes-region            '(neutral intense))
-  (ef-themes-to-toggle         '(ef-elea-dark ef-maris-dark)))
-
 (use-package fontaine
   :ensure t
   :defer t
@@ -238,6 +205,7 @@ When called interactively without a prefix numeric argument, N is
         '((regular)
           (t
            :default-family "Iosevka Nerd Font"
+           :fixed-pitch-family "IBM Plex Mono"
            :variable-pitch-family "XCharter"
            :variable-pitch-height 1.1)))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
@@ -266,18 +234,6 @@ When called interactively without a prefix numeric argument, N is
   :after corfu
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-
-(use-package doom-modeline
-  :ensure t
-  :hook (after-init . doom-modeline-mode)
-  :custom
-  (doom-modeline-height          0)
-  (doom-modeline-buffer-encoding nil)
-  (doom-modeline-indent-info     t)
-  :custom-face
-  (mode-line          ((t (:family "Liberation Sans" :height 0.95))))
-  (mode-line-active   ((t (:family "Liberation Sans" :height 0.95))))
-  (mode-line-inactive ((t (:family "Liberation Sans" :height 0.95)))))
 
 (use-package apropos
   :defer t
@@ -383,8 +339,6 @@ When called interactively without a prefix numeric argument, N is
 (use-package which-key
   :ensure t
   :config
-  ;; I'm currently experimenting with this configuration:
-  (which-key-setup-side-window-right-bottom)
   (which-key-mode 1))
 
 (use-package vterm
@@ -785,7 +739,7 @@ When called interactively without a prefix numeric argument, N is
    (pdf-view-mode . pdf-view-auto-slice-minor-mode)
    (pdf-view-mode . pdf-view-midnight-minor-mode))
   :custom
-  (pdf-view-midnight-colors '("#ffffff" . "#000000")))
+  (pdf-view-midnight-colors '("#ffffff" . "#121212")))
 
 (use-package nov
   :ensure t
