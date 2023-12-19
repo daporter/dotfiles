@@ -266,6 +266,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package proced
   :custom
+  (proced-auto-update-flag t)
   (proced-enable-color-flag t))
 
 (use-package saveplace
