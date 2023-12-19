@@ -414,12 +414,9 @@ When called interactively without a prefix numeric argument, N is
   :defer t
   :init
   (defun my/set-fill-column ()
-    (setq-local fill-column 80))
-  (add-hook 'prog-mode-hook #'my/set-fill-column)
-  :custom
-  (prettify-symbols-unprettify-at-point 'right-edge)
-  :config
-  (global-prettify-symbols-mode 1))
+    (setq-local fill-column 80)
+    (display-fill-column-indicator-mode 1))
+  (add-hook 'prog-mode-hook #'my/set-fill-column))
 
 (use-package eldoc
   :custom
