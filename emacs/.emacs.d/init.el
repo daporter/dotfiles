@@ -39,7 +39,7 @@
   ;; Necessary for visual-fill-column-mode:
   (mode-line-right-align-edge 'right-fringe)
 
-  (fringe-directory-alist
+  (backup-directory-alist
    `(("." . ,(concat user-emacs-directory "backup/"))))
   (backup-by-copying t)
   (version-control t)
