@@ -716,10 +716,6 @@ When called interactively without a prefix numeric argument, N is
   (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check)
   (add-hook 'notmuch-show-mode-hook (lambda () (variable-pitch-mode 1))))
 
-(use-package sendmail
-  :custom
-  (send-mail-function 'sendmail-send-it))
-
 (use-package kbd-mode
   :load-path "lisp"
   :mode "\\.kbd\\'"
