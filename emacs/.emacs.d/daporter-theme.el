@@ -153,6 +153,7 @@
    `(flymake-note        ((t (:underline (:style wave :color ,green300)))))
    '(compilation-error   ((t (:inherit error))))
    '(compilation-warning ((t (:inherit warning))))
+   '(compilation-column-number ((t :inherit default :inherit underline)))
 
    ;; --- Help -------------------------------------------------------
    `(help-key-binding ((t (:inherit fixed-pitch :background ,base03
@@ -221,7 +222,7 @@
    '(org-level-8         ((t (:inherit org-level-1))))
    `(org-headline-done   ((t (:foreground ,base00))))
    `(org-special-keyword ((t (:inherit fixed-pitch :foreground ,base1))))
-   '(org-todo            ((t (:inherit font-lock-keyword-face :weight bold))))
+   `(org-todo            ((t (:foreground ,green300 :weight bold))))
    
    ;; --- Org Agenda --------------------------------------------------------
    '(org-agenda-structure           ((t (:weight bold))))
