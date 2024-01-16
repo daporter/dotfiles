@@ -23,6 +23,4 @@ unclutter --fork
 
 1password --silent &
 
-~/bin/sbar &
-
 exec ~/bin/startdwm
