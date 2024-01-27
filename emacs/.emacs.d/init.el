@@ -643,6 +643,128 @@ When called interactively without a prefix numeric argument, N is
          ("C-h x" . helpful-command)
          ("C-h ." . helpful-at-point)))
 
+(use-package avy
+  :ensure t
+  :bind   (("C-." . avy-goto-char-timer))
+  :custom
+  (avy-keys '(?d ?a ?n ?e ?s ?r ?u ?c ?g))
+  (avy-dispatch-alist '((?m . avy-action-mark)
+                        (?i . avy-action-ispell)
+                        (?  . avy-action-mark-to-char)
+                        (?z . avy-action-zap-to-char)
+                        (?, . avy-action-embark)
+                        (?h . avy-action-helpful)
+                        (?x . avy-action-exchange)
+
+                        (11 . avy-action-kill-line)
+                        (25 . avy-action-yank-line)
+
+                        (?w . avy-action-easy-copy)
+                        (?k . avy-action-kill-stay)
+                        (?y . avy-action-yank)
+                        (?t . avy-action-teleport)
+
+                        (?W . avy-action-copy-whole-line)
+                        (?K . avy-action-kill-whole-line)
+                        (?Y . avy-action-yank-whole-line)
+                        (?T . avy-action-teleport-whole-line)))
+
+  :config
+  (defun avy-action-easy-copy (pt)
+    (unless (require 'easy-kill nil t)
+      (user-error "Easy Kill not found, please install."))
+    (goto-char pt)
+    (cl-letf (((symbol-function 'easy-kill-activate-keymap)
+               (lambda ()
+                 (let ((map (easy-kill-map)))
+                   (set-transient-map
+                    map
+                    (lambda ()
+                      ;; Prevent any error from activating the keymap forever.
+                      (condition-case err
+                          (or (and (not (easy-kill-exit-p this-command))
+                                   (or (eq this-command
+                                           (lookup-key map (this-single-command-keys)))
+                                       (let ((cmd (key-binding
+                                                   (this-single-command-keys) nil t)))
+                                         (command-remapping cmd nil (list map)))))
+                              (ignore
+                               (easy-kill-destroy-candidate)
+                               (unless (or (easy-kill-get mark) (easy-kill-exit-p this-command))
+                                 (easy-kill-save-candidate))))
+                        (error (message "%s:%s" this-command (error-message-string err))
+                               nil)))
+                    (lambda ()
+                      (let ((dat (ring-ref avy-ring 0)))
+                        (select-frame-set-input-focus
+                         (window-frame (cdr dat)))
+                        (select-window (cdr dat))
+                        (goto-char (car dat)))))))))
+      (easy-kill)))
+
+  (defun avy-action-exchange (pt)
+    "Exchange sexp at PT with the one at point."
+    (set-mark pt)
+    (transpose-sexps 0))
+
+  (defun avy-action-helpful (pt)
+    (save-excursion
+      (goto-char pt)
+      (helpful-at-point))
+    (select-window
+     (cdr (ring-ref avy-ring 0)))
+    t)
+
+  (defun avy-action-embark (pt)
+    (unwind-protect
+        (save-excursion
+          (goto-char pt)
+          (embark-act))
+      (select-window
+       (cdr (ring-ref avy-ring 0))))
+    t)
+
+  (defun avy-action-kill-line (pt)
+    (save-excursion
+      (goto-char pt)
+      (kill-line))
+    (select-window
+     (cdr (ring-ref avy-ring 0)))
+    t)
+
+  (defun avy-action-copy-whole-line (pt)
+    (save-excursion
+      (goto-char pt)
+      (cl-destructuring-bind (start . end)
+          (bounds-of-thing-at-point 'line)
+        (copy-region-as-kill start end)))
+    (select-window
+     (cdr
+      (ring-ref avy-ring 0)))
+    t)
+
+  (defun avy-action-kill-whole-line (pt)
+    (save-excursion
+      (goto-char pt)
+      (kill-whole-line))
+    (select-window
+     (cdr
+      (ring-ref avy-ring 0)))
+    t)
+
+  (defun avy-action-yank-whole-line (pt)
+    (avy-action-copy-whole-line pt)
+    (save-excursion (yank))
+    t)
+
+  (defun avy-action-teleport-whole-line (pt)
+    (avy-action-kill-whole-line pt)
+    (save-excursion (yank)) t)
+
+  (defun avy-action-mark-to-char (pt)
+    (activate-mark)
+    (goto-char pt)))
+
 (use-package lin
   :ensure t
   :init
