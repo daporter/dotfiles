@@ -39,141 +39,415 @@
   ;; Necessary for visual-fill-column-mode:
   (mode-line-right-align-edge 'right-fringe)
 
-  (backup-directory-alist
-   `(("." . ,(concat user-emacs-directory "backup/"))))
-  (backup-by-copying t)
-  (version-control t)
-  (delete-old-versions t)
-  (kept-new-versions 6)
-  (create-lockfiles nil)
+  (display-buffer-alist
+   '(
+     ("^\\*[Ee]shell [Ee]xport: .*\\*$"
+      (display-buffer-reuse-window display-buffer-use-some-window))
 
-  ;; Do not allow the cursor in the minibuffer prompt
-  (minibuffer-prompt-properties
-   '(read-only t cursor-intangible t face minibuffer-prompt))
+     ;; ----------------------------------------------------------------
+     ;; Windows on top
+     ;; ----------------------------------------------------------------
 
-  (comment-multi-line t)
+     ("\\*\\(?:Org Select\\|Agenda Commands\\)\\*"
+      (display-buffer-below-selected
+       display-buffer-in-side-window)
+      (body-function . select-window)
+      (window-height . (lambda (win) (fit-window-to-buffer win nil 12)))
+      (side . top)
+      (slot . -2)
+      (preserve-size . (nil . t))
+      (window-parameters . ((mode-line-format . nil))))
 
-  ;; Prefer tree-sitter-enabled modes.
-  (major-mode-remap-alist
-   '((bash-mode . bash-ts-mode)
-     (c-mode . c-ts-mode)
-     (c++-mode . c++-ts-mode)
-     (css-mode . css-ts-mode)
-     (js2-mode . js-ts-mode)
-     (json-mode . json-ts-mode)
-     (typescript-mode . typescript-ts-mode)
-     (yaml-mode . yaml-ts-mode)))
+     ("\\*Buffer List\\*" (display-buffer-in-side-window)
+      (side . top)
+      (slot . 0)
+      (window-height . shrink-window-if-larger-than-buffer))
 
-  (read-extended-command-predicate
-   #'command-completion-default-include-p)
+     ((lambda (buf act) (member (buffer-mode buf) my/occur-grep-modes-list))
+      (display-buffer-reuse-mode-window
+       display-buffer-in-direction
+       display-buffer-in-side-window)
+      (side . top)
+      (slot . 5)
+      (window-height . (lambda (win) (fit-window-to-buffer win 20 10)))
+      (direction . above)
+      (body-function . select-window))
 
-  (isearch-lazy-count t)
-  (lazy-count-prefix-format "(%s/%s) ")
-  (lazy-count-suffix-format nil)
+     ;; ----------------------------------------------------------------
+     ;; Windows on the side
+     ;; ----------------------------------------------------------------
 
-  (read-file-name-completion-ignore-case t)
-  (read-buffer-completion-ignore-case t)
-  (completion-ignore-case t)
-  (enable-recursive-minibuffers t)
-  (send-mail-function 'smtpmail-send-it)
+     ("\\*Faces\\*" (display-buffer-in-side-window)
+      (window-width . 0.25)
+      (side . right)
+      (slot . -2)
+      (window-parameters . ((no-other-window . t)
+                            ;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+                            )))
 
-  (user-full-name "David Porter")
-  (mail-host-address "daporter.net")
+     ;; ----------------------------------------------------------------
+     ;; Windows at the bottom
+     ;; ----------------------------------------------------------------
 
-  (window-divider-default-right-width  1)
-  (window-divider-default-bottom-width 0)
-  (window-divider-default-places       t)
+     ("\\*Backtrace\\*" (display-buffer-in-side-window)
+      (window-height . 0.20)
+      (side . bottom)
+      (slot . -9)
+      ;; (preserve-size . (nil . t))
+      ;; (window-parameters . (;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+      ;;                       ))
+      )
 
-  :config
-  (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
-  (load custom-file)
+     ("\\*RefTex" (display-buffer-in-side-window)
+      (window-height . 0.25)
+      (side . bottom)
+      (slot . -9)
+      ;; (preserve-size . (nil . t))
+      ;; (window-parameters . (;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+      ;;                       ))
+      )
 
-  (dolist (cmd '(upcase-region
-                 downcase-region
-                 narrow-to-region
-                 set-goal-column))
-    (put cmd 'disabled nil))
+     ;; ("\\*scratch\\*"
+     ;;  display-buffer-in-side-window
+     ;;  (body-function . select-window)
+     ;;  ;; (window-width 35)
+     ;;  (window-height . (lambda (win) (fit-window-to-buffer win 20 nil 85)))
+     ;;  (side . bottom)
+     ;;  (slot . -8))
 
-  (modify-all-frames-parameters '((internal-border-width . 10)
-                                  (scroll-bar-width      .  5)))
+     ((lambda (buf act) (member (buffer-mode buf) my/message-modes-list))
+      (display-buffer-at-bottom display-buffer-in-side-window)
+      (window-height . 0.25)
+      (side . bottom)
+      (slot . -6)
+      ;; (preserve-size . (nil . t))
+      ;; (window-parameters . ((no-other-window . #'ignore)
+      ;;                       ;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+      ;;                       ))
+      )
 
-  ;; Specify the fonts to use for displaying emoji.
-  (set-fontset-font t 'emoji
-                    (cond
-                     ((member "Noto Color Emoji" (font-family-list)) "Noto Color Emoji")
-                     ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
-                     ((member "Symbola" (font-family-list)) "Symbola")))
+     ("\\*\\(?:Warnings\\|Compile-Log\\|Messages\\)\\*" ;\\|Tex Help\\|TeX errors
+      (display-buffer-at-bottom display-buffer-in-side-window display-buffer-in-direction)
+      (window-height . (lambda (win) (fit-window-to-buffer
+                                      win
+                                      (floor (frame-height) 5))))
+      (side . bottom)
+      (direction . below)
+      (slot . -5)
+      ;; (preserve-size . (nil . t))
+      (window-parameters . ((split-window . #'ignore)
+                            ;; (no-other-window . t)
+                            ;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+                            )))
 
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-  (server-start)
-  (repeat-mode 1)
-  (column-number-mode 1)
-  (delete-selection-mode 1)
-  (savehist-mode 1)
-  (electric-pair-mode 1)
-  (electric-quote-mode 1)
-  (fringe-mode 10)
-  (window-divider-mode 1)
-  (winner-mode 1)
-  (auto-insert-mode t)
-  (pixel-scroll-precision-mode 1)
-  (find-function-setup-keys)
+     ("[Oo]utput\\*" display-buffer-in-side-window
+      (window-height . (lambda (win)
+                         (fit-window-to-buffer win (floor (frame-height) 2.5))))
+      (side . bottom)
+      (slot . -4)
+      ;; (preserve-size . (nil . t))
+      ;; (window-parameters . ((no-other-window . t)
+      ;;                       ;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+      ;;                       ))
+      )
 
-  (global-set-key (kbd "C-z") 'undo)
-  (global-set-key (kbd "C-S-z") 'undo-redo)
-  (global-set-key (kbd "M-o") 'other-window)
-  (global-set-key (kbd "s-b") 'switch-to-buffer)
-  (global-set-key (kbd "C-M-<backspace>") 'backward-kill-sexp)
-  (global-set-key (kbd "C-M-?") 'hippie-expand)
-  (global-set-key (kbd "C-x j") #'duplicate-dwim)
+     ("\\*Async Shell Command\\*" display-buffer-in-side-window
+      (window-height . 0.20)
+      (side . bottom)
+      (slot . -4)
+      ;; (preserve-size . (nil . t))
+      (window-parameters . ((no-other-window . t)
+                            ;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+                            )))
 
-  (load-theme 'daporter t)
+     ("\\*\\(Register Preview\\).*" (display-buffer-in-side-window)
+      (window-height . 0.20)       ; See the :hook
+      (side . bottom)
+      (slot . -3)
+      (window-parameters . ((no-other-window . t)
+                            ;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+                            )))
 
-  (defun my/insert-date-time (prefix)
-    "Insert the current date and time.
+     ("\\*Completions\\*" (display-buffer-in-side-window)
+      (window-height . 0.20)
+      (side . bottom)
+      (slot . -2)
+      ;; (window-parameters . ((no-other-window . t)
+      ;;                       ;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+      ;;                       ))
+      )
+
+     ("\\*Apropos\\*" (display-buffer-in-side-window)
+      ;; (window-height . 0.40)
+      (window-width . 65)
+      (side . right)
+      (slot . -2)
+      (window-parameters . (;; (no-other-window . t)
+                            ;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+                            )))
+
+
+     ((lambda (buf act) (or (seq-some (lambda (regex) (string-match-p regex buf))
+                                      my/repl-names-list)
+                            (seq-some (lambda (mode)
+                                        (equal
+                                         (buffer-mode buf)
+                                         mode))
+                                      my/repl-modes-list)))
+      (display-buffer-reuse-window
+       display-buffer-in-direction
+       display-buffer-in-side-window)
+      (body-function . select-window)
+      ;; display-buffer-at-bottom
+      (window-height . .35)
+      (window-width .  .40)
+      ;; (preserve-size . (nil . t))
+      (direction . below)
+      (side . bottom)
+      (slot . 1))
+
+     ((lambda (buf act) (member (buffer-mode buf) my/help-modes-list))
+      (display-buffer-reuse-window
+       display-buffer-in-direction
+       display-buffer-in-side-window)
+      (body-function . select-window)
+      ;; (direction . bottom)
+      ;; (window-height . (lambda (win) (fit-window-to-buffer win 25 14)))
+      (window-width . 77 ;; (lambda (win) (fit-window-to-buffer win nil nil 75 65))
+                    )
+      (direction . below)
+      (side . right)
+      (slot . 2)
+      (window-parameters . ((split-window . #'ignore)
+                            ;; (no-other-window . t)
+                            ;; (mode-line-format . (:eval (my/helper-window-mode-line-format)))
+                            )))
+
+     ("^\\*eldoc.*\\*$"
+      (display-buffer-reuse-window
+       display-buffer-in-direction
+       display-buffer-in-side-window)
+      ;; (body-function . select-window)
+      ;; (direction . bottom)
+      ;; (window-height . (lambda (win) (fit-window-to-buffer win 25 14)))
+      (window-width . 82 ;; (lambda (win) (fit-window-to-buffer win nil nil 75 65))
+                    )
+      (direction . below)
+      (side . below)
+      (slot . 2)
+      (window-parameters . ((split-window . #'ignore)
+                            (no-other-window . t)
+                            (mode-line-format . none))))
+
+     ((lambda (buf act) (member (buffer-mode buf) '(ibuffer-mode bookmark-bmenu-mode)))
+      (;; display-buffer-reuse-window
+       ;; display-buffer-in-side-window
+       ;;display-buffer-at-bottom
+       display-buffer-below-selected)
+      (body-function . select-window)
+      (direction . below)
+      (window-height . (lambda (win) (fit-window-to-buffer win 30 7)))
+      ;; (dedicated . t)
+      ;; (window-width . (lambda (win) (fit-window-to-buffer win nil nil 85 55)))
+      ;; (direction . right)
+      (side . bottom)
+      (slot . 2))
+
+     ))
+
+   (backup-directory-alist
+    `(("." . ,(concat user-emacs-directory "backup/"))))
+   (backup-by-copying t)
+   (version-control t)
+   (delete-old-versions t)
+   (kept-new-versions 6)
+   (create-lockfiles nil)
+
+   ;; Do not allow the cursor in the minibuffer prompt
+   (minibuffer-prompt-properties
+    '(read-only t cursor-intangible t face minibuffer-prompt))
+
+   (comment-multi-line t)
+
+   ;; Prefer tree-sitter-enabled modes.
+   (major-mode-remap-alist
+    '((bash-mode . bash-ts-mode)
+      (c-mode . c-ts-mode)
+      (c++-mode . c++-ts-mode)
+      (css-mode . css-ts-mode)
+      (js2-mode . js-ts-mode)
+      (json-mode . json-ts-mode)
+      (typescript-mode . typescript-ts-mode)
+      (yaml-mode . yaml-ts-mode)))
+
+   (read-extended-command-predicate
+    #'command-completion-default-include-p)
+
+   (isearch-lazy-count t)
+   (lazy-count-prefix-format "(%s/%s) ")
+   (lazy-count-suffix-format nil)
+
+   (read-file-name-completion-ignore-case t)
+   (read-buffer-completion-ignore-case t)
+   (completion-ignore-case t)
+   (enable-recursive-minibuffers t)
+   (send-mail-function 'smtpmail-send-it)
+
+   (user-full-name "David Porter")
+   (mail-host-address "daporter.net")
+
+   (window-divider-default-right-width  1)
+   (window-divider-default-bottom-width 0)
+   (window-divider-default-places       t)
+
+   :config
+   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
+   (load custom-file)
+
+   (dolist (cmd '(upcase-region
+                  downcase-region
+                  narrow-to-region
+                  set-goal-column))
+     (put cmd 'disabled nil))
+
+   (modify-all-frames-parameters '((internal-border-width . 10)
+                                   (scroll-bar-width      .  5)))
+
+   ;; Specify the fonts to use for displaying emoji.
+   (set-fontset-font t 'emoji
+                     (cond
+                      ((member "Noto Color Emoji" (font-family-list)) "Noto Color Emoji")
+                      ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
+                      ((member "Symbola" (font-family-list)) "Symbola")))
+
+   (defun buffer-mode (&optional buffer-or-name)
+     "Returns the major mode associated with a buffer.
+If buffer-or-name is nil return current buffer's mode."
+     (buffer-local-value 'major-mode
+                         (if buffer-or-name
+                             (get-buffer buffer-or-name)
+                           (current-buffer))))
+
+   (defvar my/occur-grep-modes-list '(occur-mode
+                                      grep-mode
+                                      xref--xref-buffer-mode
+                                      ivy-occur-grep-mode
+                                      ivy-occur-mode
+                                      locate-mode
+                                      flymake-diagnostics-buffer-mode
+                                      rg-mode)
+     "List of major-modes used in occur-type buffers")
+
+   (defvar my/repl-modes-list '(matlab-shell-mode
+                                eshell-mode
+                                geiser-repl-mode
+                                shell-mode
+                                eat-mode
+                                ;; vterm-mode
+                                inferior-python-mode
+                                cider-repl-mode
+                                fennel-repl-mode
+                                jupyter-repl-mode
+                                inferior-ess-julia-mode)
+     "List of major-modes used in REPL buffers")
+
+   (defvar my/repl-names-list
+     '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
+       "\\*.*REPL.*\\*"
+       "\\*MATLAB\\*"
+       "\\*Python\\*"
+       "^\\*jupyter-repl.*?\\(\\*\\|<[[:digit:]]>\\)$"
+       "\\*Inferior .*\\*$"
+       "^\\*julia.*\\*$"
+       "^\\*cider-repl.*\\*$"
+       "\\*ielm\\*"
+       "\\*edebug\\*")
+     "List of buffer names used in REPL buffers")
+
+   (defvar my/help-modes-list '(helpful-mode
+                                help-mode
+                                pydoc-mode
+                                eldoc-mode
+                                TeX-special-mode)
+     "List of major-modes used in documentation buffers")
+
+   (defvar my/man-modes-list '(Man-mode woman-mode)
+     "List of major-modes used in Man-type buffers")
+
+   (defvar my/message-modes-list '(compilation-mode
+                                   edebug-eval-mode)
+     "List of major-modes used in message buffers")
+
+   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+   (server-start)
+   (repeat-mode 1)
+   (column-number-mode 1)
+   (delete-selection-mode 1)
+   (savehist-mode 1)
+   (electric-pair-mode 1)
+   (electric-quote-mode 1)
+   (fringe-mode 10)
+   (window-divider-mode 1)
+   (winner-mode 1)
+   (auto-insert-mode t)
+   (pixel-scroll-precision-mode 1)
+   (find-function-setup-keys)
+
+   (global-set-key (kbd "C-z") 'undo)
+   (global-set-key (kbd "C-S-z") 'undo-redo)
+   (global-set-key (kbd "M-o") 'other-window)
+   (global-set-key (kbd "s-b") 'switch-to-buffer)
+   (global-set-key (kbd "C-M-<backspace>") 'backward-kill-sexp)
+   (global-set-key (kbd "C-M-?") 'hippie-expand)
+   (global-set-key (kbd "C-x j") #'duplicate-dwim)
+
+   (load-theme 'daporter t)
+
+   (defun my/insert-date-time (prefix)
+     "Insert the current date and time.
   With PREFIX, use `ID' format, e.g. 20230323113431."
-    (interactive "P")
-    (let ((format (if (equal prefix '(4))
-                      "%Y%m%d%H%M%S"
-                    "%Y-%m-%d %H:%M:%S")))
-      (insert (format-time-string format))))
-  (global-set-key (kbd "C-c d") #'my/insert-date-time)
+     (interactive "P")
+     (let ((format (if (equal prefix '(4))
+                       "%Y%m%d%H%M%S"
+                     "%Y-%m-%d %H:%M:%S")))
+       (insert (format-time-string format))))
+   (global-set-key (kbd "C-c d") #'my/insert-date-time)
 
-  ;; The following functions were copied from
-  ;; https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/prot-lisp/prot-simple.el
+   ;; The following functions were copied from
+   ;; https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/prot-lisp/prot-simple.el
 
-  (defun my/simple-new-line-above (n)
-    "Create N empty lines above the current one.
+   (defun my/simple-new-line-above (n)
+     "Create N empty lines above the current one.
 When called interactively without a prefix numeric argument, N is
 1."
-    (interactive "p")
-    (let ((point-min (point-min)))
-      (if (or (bobp)
-              (eq (point) point-min)
-              (eq (line-number-at-pos point-min) 1))
-          (progn
-            (goto-char (line-beginning-position))
-            (dotimes (_ n) (insert "\n"))
-            (forward-line (- n)))
-        (forward-line (- n))
-        (my/simple-new-line-below n))))
-  (global-set-key (kbd "<C-S-return>") #'my/simple-new-line-above)
+     (interactive "p")
+     (let ((point-min (point-min)))
+       (if (or (bobp)
+               (eq (point) point-min)
+               (eq (line-number-at-pos point-min) 1))
+           (progn
+             (goto-char (line-beginning-position))
+             (dotimes (_ n) (insert "\n"))
+             (forward-line (- n)))
+         (forward-line (- n))
+         (my/simple-new-line-below n))))
+   (global-set-key (kbd "<C-S-return>") #'my/simple-new-line-above)
 
-  (defun my/simple-new-line-below (n)
-    "Create N empty lines below the current one.
+   (defun my/simple-new-line-below (n)
+     "Create N empty lines below the current one.
 When called interactively without a prefix numeric argument, N is
 1."
-    (interactive "p")
-    (goto-char (line-end-position))
-    (dotimes (_ n) (insert "\n")))
-  (global-set-key (kbd "<C-return>") #'my/simple-new-line-below)
+     (interactive "p")
+     (goto-char (line-end-position))
+     (dotimes (_ n) (insert "\n")))
+   (global-set-key (kbd "<C-return>") #'my/simple-new-line-below)
 
-  (defun my/open-line-and-indent ()
-    "Like `newline-and-indent', but do not move the point."
-    (interactive)
-    (save-excursion
-      (newline-and-indent)))
-  (global-set-key (kbd "C-o") #'my/open-line-and-indent))
+   (defun my/open-line-and-indent ()
+     "Like `newline-and-indent', but do not move the point."
+     (interactive)
+     (save-excursion
+       (newline-and-indent)))
+   (global-set-key (kbd "C-o") #'my/open-line-and-indent))
 
 (use-package paren
   :custom
@@ -313,6 +587,50 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :defer t
   :bind ("C-c p d" . cape-dict))
+
+(use-package popper
+  :ensure t
+  :bind (("C-`"   . popper-toggle)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        (append my/help-modes-list
+                my/man-modes-list
+                my/repl-modes-list
+                my/repl-names-list
+                my/occur-grep-modes-list
+                '(Custom-mode
+                  compilation-mode
+                  messages-buffer-mode)
+                '(("^\\*Warnings\\*$" . hide)
+                  ("^\\*Compile-Log\\*$" . hide)
+                  ;; "^\\*Messages\\*$"
+                  "^\\*Backtrace\\*"
+                  "^\\*Apropos"
+                  "^Calc:"
+                  "^\\*eldoc\\*"
+                  "^\\*TeX errors\\*"
+                  "^\\*TeX Help\\*"
+                  "^\\*ielm\\*"
+                  "^\\*ChatGPT\\*"
+                  "^\\*gptel-quick\\*"
+                  "\\*Shell Command Output\\*"
+                  ("\\*Async Shell Command\\*" . hide)
+                  ("\\*Detached Shell Command\\*" . hide)
+                  "\\*Completions\\*"
+                  ;; "\\*scratch.*\\*$"
+                  "[Oo]utput\\*")))
+
+  ;; Group by project.el project root, with fall back to default-directory
+  (setq popper-group-function #'popper-group-by-directory)
+
+  :custom
+  (popper-display-control nil)
+
+  :config
+  (popper-mode +1)
+  (popper-echo-mode +1))
 
 (use-package lin
   :ensure t
@@ -595,10 +913,6 @@ When called interactively without a prefix numeric argument, N is
   :config
   (dolist (module '(eshell-smart eshell-tramp))
     (add-to-list 'eshell-modules-list module)))
-
-(use-package eshell-toggle
-  :ensure t
-  :bind ("C-c e" . eshell-toggle))
 
 (use-package eat
   :ensure t
