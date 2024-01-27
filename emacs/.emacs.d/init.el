@@ -632,6 +632,15 @@ When called interactively without a prefix numeric argument, N is
   (popper-mode +1)
   (popper-echo-mode +1))
 
+(use-package helpful
+  :ensure t
+  :bind (("C-h f" . helpful-callable)
+         ("C-h F" . helpful-function)
+         ("C-h v" . helpful-variable)
+         ("C-h k" . helpful-key)
+         ("C-h x" . helpful-command)
+         ("C-h ." . helpful-at-point)))
+
 (use-package lin
   :ensure t
   :init
