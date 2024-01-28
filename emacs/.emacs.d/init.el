@@ -255,199 +255,199 @@
 
      ))
 
-   (backup-directory-alist
-    `(("." . ,(concat user-emacs-directory "backup/"))))
-   (backup-by-copying t)
-   (version-control t)
-   (delete-old-versions t)
-   (kept-new-versions 6)
-   (create-lockfiles nil)
+  (backup-directory-alist
+   `(("." . ,(concat user-emacs-directory "backup/"))))
+  (backup-by-copying t)
+  (version-control t)
+  (delete-old-versions t)
+  (kept-new-versions 6)
+  (create-lockfiles nil)
 
-   ;; Do not allow the cursor in the minibuffer prompt
-   (minibuffer-prompt-properties
-    '(read-only t cursor-intangible t face minibuffer-prompt))
+  ;; Do not allow the cursor in the minibuffer prompt
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt))
 
-   (comment-multi-line t)
+  (comment-multi-line t)
 
-   ;; Prefer tree-sitter-enabled modes.
-   (major-mode-remap-alist
-    '((bash-mode . bash-ts-mode)
-      (c-mode . c-ts-mode)
-      (c++-mode . c++-ts-mode)
-      (css-mode . css-ts-mode)
-      (js2-mode . js-ts-mode)
-      (json-mode . json-ts-mode)
-      (typescript-mode . typescript-ts-mode)
-      (yaml-mode . yaml-ts-mode)))
+  ;; Prefer tree-sitter-enabled modes.
+  (major-mode-remap-alist
+   '((bash-mode . bash-ts-mode)
+     (c-mode . c-ts-mode)
+     (c++-mode . c++-ts-mode)
+     (css-mode . css-ts-mode)
+     (js2-mode . js-ts-mode)
+     (json-mode . json-ts-mode)
+     (typescript-mode . typescript-ts-mode)
+     (yaml-mode . yaml-ts-mode)))
 
-   (read-extended-command-predicate
-    #'command-completion-default-include-p)
+  (read-extended-command-predicate
+   #'command-completion-default-include-p)
 
-   (isearch-lazy-count t)
-   (lazy-count-prefix-format "(%s/%s) ")
-   (lazy-count-suffix-format nil)
+  (isearch-lazy-count t)
+  (lazy-count-prefix-format "(%s/%s) ")
+  (lazy-count-suffix-format nil)
 
-   (read-file-name-completion-ignore-case t)
-   (read-buffer-completion-ignore-case t)
-   (completion-ignore-case t)
-   (enable-recursive-minibuffers t)
-   (send-mail-function 'smtpmail-send-it)
+  (read-file-name-completion-ignore-case t)
+  (read-buffer-completion-ignore-case t)
+  (completion-ignore-case t)
+  (enable-recursive-minibuffers t)
+  (send-mail-function 'smtpmail-send-it)
 
-   (user-full-name "David Porter")
-   (mail-host-address "daporter.net")
+  (user-full-name "David Porter")
+  (mail-host-address "daporter.net")
 
-   (window-divider-default-right-width  1)
-   (window-divider-default-bottom-width 0)
-   (window-divider-default-places       t)
+  (window-divider-default-right-width  1)
+  (window-divider-default-bottom-width 0)
+  (window-divider-default-places       t)
 
-   :config
-   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
-   (load custom-file)
+  :config
+  (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
+  (load custom-file)
 
-   (dolist (cmd '(upcase-region
-                  downcase-region
-                  narrow-to-region
-                  set-goal-column))
-     (put cmd 'disabled nil))
+  (dolist (cmd '(upcase-region
+                 downcase-region
+                 narrow-to-region
+                 set-goal-column))
+    (put cmd 'disabled nil))
 
-   (modify-all-frames-parameters '((internal-border-width . 10)
-                                   (scroll-bar-width      .  5)))
+  (modify-all-frames-parameters '((internal-border-width . 10)
+                                  (scroll-bar-width      .  5)))
 
-   ;; Specify the fonts to use for displaying emoji.
-   (set-fontset-font t 'emoji
-                     (cond
-                      ((member "Noto Color Emoji" (font-family-list)) "Noto Color Emoji")
-                      ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
-                      ((member "Symbola" (font-family-list)) "Symbola")))
+  ;; Specify the fonts to use for displaying emoji.
+  (set-fontset-font t 'emoji
+                    (cond
+                     ((member "Noto Color Emoji" (font-family-list)) "Noto Color Emoji")
+                     ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
+                     ((member "Symbola" (font-family-list)) "Symbola")))
 
-   (defun buffer-mode (&optional buffer-or-name)
-     "Returns the major mode associated with a buffer.
+  (defun buffer-mode (&optional buffer-or-name)
+    "Returns the major mode associated with a buffer.
 If buffer-or-name is nil return current buffer's mode."
-     (buffer-local-value 'major-mode
-                         (if buffer-or-name
-                             (get-buffer buffer-or-name)
-                           (current-buffer))))
+    (buffer-local-value 'major-mode
+                        (if buffer-or-name
+                            (get-buffer buffer-or-name)
+                          (current-buffer))))
 
-   (defvar my/occur-grep-modes-list '(occur-mode
-                                      grep-mode
-                                      xref--xref-buffer-mode
-                                      ivy-occur-grep-mode
-                                      ivy-occur-mode
-                                      locate-mode
-                                      flymake-diagnostics-buffer-mode
-                                      rg-mode)
-     "List of major-modes used in occur-type buffers")
+  (defvar my/occur-grep-modes-list '(occur-mode
+                                     grep-mode
+                                     xref--xref-buffer-mode
+                                     ivy-occur-grep-mode
+                                     ivy-occur-mode
+                                     locate-mode
+                                     flymake-diagnostics-buffer-mode
+                                     rg-mode)
+    "List of major-modes used in occur-type buffers")
 
-   (defvar my/repl-modes-list '(matlab-shell-mode
-                                eshell-mode
-                                geiser-repl-mode
-                                shell-mode
-                                eat-mode
-                                ;; vterm-mode
-                                inferior-python-mode
-                                cider-repl-mode
-                                fennel-repl-mode
-                                jupyter-repl-mode
-                                inferior-ess-julia-mode)
-     "List of major-modes used in REPL buffers")
+  (defvar my/repl-modes-list '(matlab-shell-mode
+                               eshell-mode
+                               geiser-repl-mode
+                               shell-mode
+                               eat-mode
+                               ;; vterm-mode
+                               inferior-python-mode
+                               cider-repl-mode
+                               fennel-repl-mode
+                               jupyter-repl-mode
+                               inferior-ess-julia-mode)
+    "List of major-modes used in REPL buffers")
 
-   (defvar my/repl-names-list
-     '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
-       "\\*.*REPL.*\\*"
-       "\\*MATLAB\\*"
-       "\\*Python\\*"
-       "^\\*jupyter-repl.*?\\(\\*\\|<[[:digit:]]>\\)$"
-       "\\*Inferior .*\\*$"
-       "^\\*julia.*\\*$"
-       "^\\*cider-repl.*\\*$"
-       "\\*ielm\\*"
-       "\\*edebug\\*")
-     "List of buffer names used in REPL buffers")
+  (defvar my/repl-names-list
+    '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
+      "\\*.*REPL.*\\*"
+      "\\*MATLAB\\*"
+      "\\*Python\\*"
+      "^\\*jupyter-repl.*?\\(\\*\\|<[[:digit:]]>\\)$"
+      "\\*Inferior .*\\*$"
+      "^\\*julia.*\\*$"
+      "^\\*cider-repl.*\\*$"
+      "\\*ielm\\*"
+      "\\*edebug\\*")
+    "List of buffer names used in REPL buffers")
 
-   (defvar my/help-modes-list '(helpful-mode
-                                help-mode
-                                pydoc-mode
-                                eldoc-mode
-                                TeX-special-mode)
-     "List of major-modes used in documentation buffers")
+  (defvar my/help-modes-list '(helpful-mode
+                               help-mode
+                               pydoc-mode
+                               eldoc-mode
+                               TeX-special-mode)
+    "List of major-modes used in documentation buffers")
 
-   (defvar my/man-modes-list '(Man-mode woman-mode)
-     "List of major-modes used in Man-type buffers")
+  (defvar my/man-modes-list '(Man-mode woman-mode)
+    "List of major-modes used in Man-type buffers")
 
-   (defvar my/message-modes-list '(compilation-mode
-                                   edebug-eval-mode)
-     "List of major-modes used in message buffers")
+  (defvar my/message-modes-list '(compilation-mode
+                                  edebug-eval-mode)
+    "List of major-modes used in message buffers")
 
-   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-   (server-start)
-   (repeat-mode 1)
-   (column-number-mode 1)
-   (delete-selection-mode 1)
-   (savehist-mode 1)
-   (electric-pair-mode 1)
-   (electric-quote-mode 1)
-   (fringe-mode 10)
-   (window-divider-mode 1)
-   (winner-mode 1)
-   (auto-insert-mode t)
-   (pixel-scroll-precision-mode 1)
-   (find-function-setup-keys)
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  (server-start)
+  (repeat-mode 1)
+  (column-number-mode 1)
+  (delete-selection-mode 1)
+  (savehist-mode 1)
+  (electric-pair-mode 1)
+  (electric-quote-mode 1)
+  (fringe-mode 10)
+  (window-divider-mode 1)
+  (winner-mode 1)
+  (auto-insert-mode t)
+  (pixel-scroll-precision-mode 1)
+  (find-function-setup-keys)
 
-   (global-set-key (kbd "C-z") 'undo)
-   (global-set-key (kbd "C-S-z") 'undo-redo)
-   (global-set-key (kbd "M-o") 'other-window)
-   (global-set-key (kbd "s-b") 'switch-to-buffer)
-   (global-set-key (kbd "C-M-<backspace>") 'backward-kill-sexp)
-   (global-set-key (kbd "C-M-?") 'hippie-expand)
-   (global-set-key (kbd "C-x j") #'duplicate-dwim)
+  (global-set-key (kbd "C-z") 'undo)
+  (global-set-key (kbd "C-S-z") 'undo-redo)
+  (global-set-key (kbd "M-o") 'other-window)
+  (global-set-key (kbd "s-b") 'switch-to-buffer)
+  (global-set-key (kbd "C-M-<backspace>") 'backward-kill-sexp)
+  (global-set-key (kbd "C-M-?") 'hippie-expand)
+  (global-set-key (kbd "C-x j") #'duplicate-dwim)
 
-   (load-theme 'daporter t)
+  (load-theme 'daporter t)
 
-   (defun my/insert-date-time (prefix)
-     "Insert the current date and time.
+  (defun my/insert-date-time (prefix)
+    "Insert the current date and time.
   With PREFIX, use `ID' format, e.g. 20230323113431."
-     (interactive "P")
-     (let ((format (if (equal prefix '(4))
-                       "%Y%m%d%H%M%S"
-                     "%Y-%m-%d %H:%M:%S")))
-       (insert (format-time-string format))))
-   (global-set-key (kbd "C-c d") #'my/insert-date-time)
+    (interactive "P")
+    (let ((format (if (equal prefix '(4))
+                      "%Y%m%d%H%M%S"
+                    "%Y-%m-%d %H:%M:%S")))
+      (insert (format-time-string format))))
+  (global-set-key (kbd "C-c d") #'my/insert-date-time)
 
-   ;; The following functions were copied from
-   ;; https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/prot-lisp/prot-simple.el
+  ;; The following functions were copied from
+  ;; https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/prot-lisp/prot-simple.el
 
-   (defun my/simple-new-line-above (n)
-     "Create N empty lines above the current one.
+  (defun my/simple-new-line-above (n)
+    "Create N empty lines above the current one.
 When called interactively without a prefix numeric argument, N is
 1."
-     (interactive "p")
-     (let ((point-min (point-min)))
-       (if (or (bobp)
-               (eq (point) point-min)
-               (eq (line-number-at-pos point-min) 1))
-           (progn
-             (goto-char (line-beginning-position))
-             (dotimes (_ n) (insert "\n"))
-             (forward-line (- n)))
-         (forward-line (- n))
-         (my/simple-new-line-below n))))
-   (global-set-key (kbd "<C-S-return>") #'my/simple-new-line-above)
+    (interactive "p")
+    (let ((point-min (point-min)))
+      (if (or (bobp)
+              (eq (point) point-min)
+              (eq (line-number-at-pos point-min) 1))
+          (progn
+            (goto-char (line-beginning-position))
+            (dotimes (_ n) (insert "\n"))
+            (forward-line (- n)))
+        (forward-line (- n))
+        (my/simple-new-line-below n))))
+  (global-set-key (kbd "<C-S-return>") #'my/simple-new-line-above)
 
-   (defun my/simple-new-line-below (n)
-     "Create N empty lines below the current one.
+  (defun my/simple-new-line-below (n)
+    "Create N empty lines below the current one.
 When called interactively without a prefix numeric argument, N is
 1."
-     (interactive "p")
-     (goto-char (line-end-position))
-     (dotimes (_ n) (insert "\n")))
-   (global-set-key (kbd "<C-return>") #'my/simple-new-line-below)
+    (interactive "p")
+    (goto-char (line-end-position))
+    (dotimes (_ n) (insert "\n")))
+  (global-set-key (kbd "<C-return>") #'my/simple-new-line-below)
 
-   (defun my/open-line-and-indent ()
-     "Like `newline-and-indent', but do not move the point."
-     (interactive)
-     (save-excursion
-       (newline-and-indent)))
-   (global-set-key (kbd "C-o") #'my/open-line-and-indent))
+  (defun my/open-line-and-indent ()
+    "Like `newline-and-indent', but do not move the point."
+    (interactive)
+    (save-excursion
+      (newline-and-indent)))
+  (global-set-key (kbd "C-o") #'my/open-line-and-indent))
 
 (use-package paren
   :custom
@@ -532,7 +532,7 @@ When called interactively without a prefix numeric argument, N is
                                       try-expand-line
                                       try-expand-dabbrev-from-kill
                                       try-complete-lisp-symbol-partially
-                                      try-complete-lisp-symbol))))
+                                      try-complete-lisp-symbol)))
 
 (use-package bookmark
   :defer t
@@ -590,6 +590,25 @@ When called interactively without a prefix numeric argument, N is
   :defer t
   :bind ("C-c p d" . cape-dict))
 
+(use-package embark
+  :ensure t
+  :bind (("C-," . embark-act)
+         ("C-;" . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+(use-package embark-consult
+  :ensure t
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
 (use-package popper
   :ensure t
   :bind (("C-`"   . popper-toggle)
@@ -645,7 +664,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package avy
   :ensure t
-  :bind   (("C-." . avy-goto-char-timer))
+  :bind   (("C-." . avy-goto-char-timer)
+           :map isearch-mode-map
+           ("C-." . avy-isearch))
   :custom
   (avy-keys '(?d ?a ?n ?e ?s ?r ?u ?c ?g))
   (avy-dispatch-alist '((?m . avy-action-mark)
