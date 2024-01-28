@@ -167,6 +167,7 @@
    `(lazy-highlight ((t (:foreground ,base04 :background ,yellow700))))
    
    ;; --- Magit ---------------------------------------------------------
+   '(git-commit-summary           ((t (:inherit default))))
    `(magit-branch-local           ((t (:foreground ,green300))))
    `(magit-branch-remote          ((t (:foreground ,blue300))))
    '(magit-tag                    ((t (:inherit default))))
