@@ -1101,10 +1101,15 @@ When called interactively without a prefix numeric argument, N is
 (use-package magit
   :ensure t
   :commands magit-status
+  :bind (:map project-prefix-map
+              ("m" . magit-project-status))
   :custom
   (git-commit-summary-max-length 50)
   (git-commit-style-convention-checks '(non-empty-second-line
-                                        overlong-summary-line)))
+                                        overlong-summary-line))
+  :config
+  (add-to-list 'project-switch-commands
+               '(magit-project-status "Magit" "m")))
 
 (use-package hl-todo
   :ensure t
