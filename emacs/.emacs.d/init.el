@@ -393,14 +393,6 @@ If buffer-or-name is nil return current buffer's mode."
   (pixel-scroll-precision-mode 1)
   (find-function-setup-keys)
 
-  (global-set-key (kbd "C-z") 'undo)
-  (global-set-key (kbd "C-S-z") 'undo-redo)
-  (global-set-key (kbd "M-o") 'other-window)
-  (global-set-key (kbd "s-b") 'switch-to-buffer)
-  (global-set-key (kbd "C-M-<backspace>") 'backward-kill-sexp)
-  (global-set-key (kbd "C-M-?") 'hippie-expand)
-  (global-set-key (kbd "C-x j") #'duplicate-dwim)
-
   (load-theme 'daporter t)
 
   (defun my/insert-date-time (prefix)
@@ -587,8 +579,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package cape
   :ensure t
-  :defer t
-  :bind ("C-c p d" . cape-dict))
+  :defer t)
 
 (use-package embark
   :ensure t
@@ -798,9 +789,6 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package pulsar
   :ensure t
-  :bind
-  (("C-c h p" . pulsar-pulse-line)
-   ("C-c h h" . pulsar-highlight-line))
   :hook
   ((next-error       . pulsar-pulse-line)
    (minibuffer-setup . pulsar-pulse-line)
