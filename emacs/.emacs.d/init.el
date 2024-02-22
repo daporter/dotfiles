@@ -1114,12 +1114,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package hl-todo
   :ensure t
-  :hook prog-mode
-  :bind (:map hl-todo-mode-map
-              ("C-c t p" . hl-todo-previous)
-              ("C-c t n" . hl-todo-next)
-              ("C-c t o" . hl-todo-occur)
-              ("C-c t i" . hl-todo-insert)))
+  :hook prog-mode)
 
 (use-package magit-todos
   :ensure t
