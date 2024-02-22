@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (use-package package
   :hook (package-menu-mode . hl-line-mode)
   :custom
@@ -580,6 +582,18 @@ When called interactively without a prefix numeric argument, N is
 (use-package cape
   :ensure t
   :defer t)
+
+(use-package consult
+  :ensure t
+  :bind (("C-x b"             . consult-buffer)
+         ("C-x 4 b"           . consult-buffer-other-window)
+         ("C-x 5 b"           . consult-buffer-other-frame)
+         ("C-x p b"           . consult-project-buffer)
+         ("M-y"               . consult-yank-pop)
+         ("C-c m"             . consult-man)
+         ("C-c i"             . consult-info)
+         ([remap Info-search] . consult-info)
+         ("M-g o"             . consult-outline)))
 
 (use-package embark
   :ensure t
