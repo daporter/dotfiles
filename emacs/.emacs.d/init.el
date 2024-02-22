@@ -857,8 +857,7 @@ When called interactively without a prefix numeric argument, N is
   (whole-line-or-region-global-mode 1))
 
 (use-package compile
-  :config
-  (global-set-key (kbd "<f5>") 'recompile))
+  :bind ("C-c l" . compile))
 
 (use-package editorconfig
   :ensure t
@@ -1221,6 +1220,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package org-agenda
   :defer t
+  :bind ("C-c t" . org-todo-list)
   :custom
   (org-agenda-todo-ignore-scheduled 'future)
   (org-agenda-sorting-strategy
