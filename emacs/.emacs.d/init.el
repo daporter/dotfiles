@@ -381,18 +381,6 @@ If buffer-or-name is nil return current buffer's mode."
     "List of major-modes used in message buffers")
 
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-  (server-start)
-  (repeat-mode 1)
-  (column-number-mode 1)
-  (delete-selection-mode 1)
-  (savehist-mode 1)
-  (electric-pair-mode 1)
-  (electric-quote-mode 1)
-  (fringe-mode 10)
-  (window-divider-mode 1)
-  (auto-insert-mode t)
-  (pixel-scroll-precision-mode 1)
-  (find-function-setup-keys)
 
   (load-theme 'daporter t)
 
@@ -1296,3 +1284,48 @@ When called interactively without a prefix numeric argument, N is
 (use-package winner
   :config
   (winner-mode 1))
+
+(use-package elec-pair
+  :config
+  (electric-pair-mode 1))
+
+(use-package electric
+  :defer t
+  :config
+  (electric-quote-mode 1))
+
+(use-package repeat
+  :config
+  (repeat-mode 1))
+
+(use-package server
+  :config
+  (server-start))
+
+(use-package simple
+  :config
+  (column-number-mode 1))
+
+(use-package delsel
+  :config
+  (delete-selection-mode 1))
+
+(use-package fringe
+  :config
+  (fringe-mode 10))
+
+(use-package frame
+  :config
+  (window-divider-mode 1))
+
+(use-package autoinsert
+  :config
+  (auto-insert-mode t))
+
+(use-package pixel-scroll
+  :config
+  (pixel-scroll-precision-mode 1))
+
+(use-package find-func
+  :config
+  (find-function-setup-keys))
