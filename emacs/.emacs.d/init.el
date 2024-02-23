@@ -1224,7 +1224,10 @@ When called interactively without a prefix numeric argument, N is
    '((agenda habit-down time-up priority-down category-keep)
      (todo scheduled-up)
      (tags priority-down category-keep)
-     (search category-keep))))
+     (search category-keep)))
+  :config
+  ;; Don’t steal my keybindings!
+  (keymap-unset org-mode-map "C-," t))
 
 (use-package gnus
   :commands gnus
