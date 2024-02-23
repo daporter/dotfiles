@@ -390,7 +390,6 @@ If buffer-or-name is nil return current buffer's mode."
   (electric-quote-mode 1)
   (fringe-mode 10)
   (window-divider-mode 1)
-  (winner-mode 1)
   (auto-insert-mode t)
   (pixel-scroll-precision-mode 1)
   (find-function-setup-keys)
@@ -1258,3 +1257,7 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (youtube-dl-program "yt-dlp")
   (youtube-dl-directory "~/Downloads"))
+
+(use-package winner
+  :config
+  (winner-mode 1))
