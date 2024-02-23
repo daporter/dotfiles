@@ -14,7 +14,7 @@
    '(("gnu" . 2)
      ("nongnu" . 1)))
 
-  (use-package-compute-statistics 1))
+  (use-package-compute-statistics nil))
 
 (use-package emacs
   :init
@@ -451,11 +451,13 @@ When called interactively without a prefix numeric argument, N is
   (compilation-auto-jump-to-first-error 'if-location-known))
 
 (use-package dired
+  :defer t
   :custom
   (dired-recursive-copies 'always)
   (dired-dwim-target t))                ; try to guess target directory for copy
 
 (use-package ediff
+  :defer t
   :custom
   (ediff-keep-variants         nil)
   (ediff-show-clashes-only     t)
@@ -480,7 +482,8 @@ When called interactively without a prefix numeric argument, N is
    (or (fontaine-restore-latest-preset) 'regular)))
 
 (use-package nerd-icons
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package nerd-icons-dired
   :ensure t
@@ -534,6 +537,7 @@ When called interactively without a prefix numeric argument, N is
   (bookmark-save-flag 1))
 
 (use-package proced
+  :defer t
   :custom
   (proced-auto-update-flag t)
   (proced-enable-color-flag t))
@@ -548,8 +552,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package marginalia
   :ensure t
-  :bind (:map minibuffer-local-map ("M-m" . marginalia-cycle))
-  :init (marginalia-mode 1))
+  :init (marginalia-mode 1)
+  :bind (:map minibuffer-local-map ("M-m" . marginalia-cycle)))
 
 (use-package orderless
   :ensure t
@@ -1071,6 +1075,7 @@ When called interactively without a prefix numeric argument, N is
   :mode "\\.ya?ml\\'")
 
 (use-package eshell
+  :defer t
   :config
   (dolist (module '(eshell-smart eshell-tramp))
     (add-to-list 'eshell-modules-list module)))
