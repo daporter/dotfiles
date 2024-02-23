@@ -822,6 +822,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package whitespace
   :defer t
+  :bind ("C-c w" . whitespace-cleanup)
   :custom
   (whitespace-style '(face
                       trailing
