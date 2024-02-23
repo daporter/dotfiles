@@ -435,6 +435,8 @@ When called interactively without a prefix numeric argument, N is
   (show-paren-context-when-offscreen 'overlay))
 
 (use-package compile
+  :bind (:map prog-mode-map
+              ("C-c l" . compile))
   :custom
   (compilation-auto-jump-to-first-error 'if-location-known))
 
@@ -576,15 +578,15 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package consult
   :ensure t
-  :bind (("C-x b"             . consult-buffer)
-         ("C-x 4 b"           . consult-buffer-other-window)
-         ("C-x 5 b"           . consult-buffer-other-frame)
-         ("C-x p b"           . consult-project-buffer)
-         ("M-y"               . consult-yank-pop)
-         ("C-c m"             . consult-man)
-         ("C-c i"             . consult-info)
-         ([remap Info-search] . consult-info)
-         ("M-g o"             . consult-outline)))
+  :bind (([remap switch-to-buffer]              . consult-buffer)
+         ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
+         ([remap switch-to-buffer-other-frame]  . consult-buffer-other-frame)
+         ([remap project-switch-to-buffer]      . consult-project-buffer)
+         ([remap yank-pop]                      . consult-yank-pop)
+         ("C-c m"                               . consult-man)
+         ("C-c i"                               . consult-info)
+         ([remap Info-search]                   . consult-info)
+         ("C-c o"                               . consult-outline)))
 
 (use-package embark
   :ensure t
@@ -651,12 +653,11 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package helpful
   :ensure t
-  :bind (("C-h f" . helpful-callable)
-         ("C-h F" . helpful-function)
-         ("C-h v" . helpful-variable)
-         ("C-h k" . helpful-key)
-         ("C-h x" . helpful-command)
-         ("C-h ." . helpful-at-point)))
+  :bind (([remap describe-function]  . helpful-callable)
+         ([remap describe-variable]  . helpful-variable)
+         ([remap describe-key]       . helpful-key)
+         ([remap describe-command]   . helpful-command)
+         ([remap display-local-help] . helpful-at-point)))
 
 (use-package avy
   :ensure t
@@ -819,7 +820,10 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package whitespace
   :defer t
-  :bind ("C-c w" . whitespace-cleanup)
+  :bind (:map prog-mode-map
+              ("C-c w" . whitespace-cleanup)
+              :map text-mode-map
+              ("C-c w" . whitespace-cleanup))
   :custom
   (whitespace-style '(face
                       trailing
@@ -855,9 +859,6 @@ When called interactively without a prefix numeric argument, N is
   ;; I don’t like the changed behaviour of comment-dwim.
   (define-key whole-line-or-region-local-mode-map [remap comment-dwim] nil)
   (whole-line-or-region-global-mode 1))
-
-(use-package compile
-  :bind ("C-c l" . compile))
 
 (use-package editorconfig
   :ensure t
@@ -934,7 +935,8 @@ When called interactively without a prefix numeric argument, N is
 (use-package unfill
   :ensure t
   :commands (unfill-region unfill-paragraph)
-  :bind ("C-c q" . unfill-paragraph))
+  :bind (:map text-mode-map
+              ("C-c q" . unfill-paragraph)))
 
 (use-package lorem-ipsum
   :ensure t
@@ -1119,7 +1121,7 @@ When called interactively without a prefix numeric argument, N is
 (use-package notmuch
   :load-path "/usr/share/emacs/site-lisp"
   :commands notmuch
-  :bind ("C-c m" . notmuch)
+  :bind ("C-c n" . notmuch)
   :custom
   (notmuch-show-logo nil)
   (mail-user-agent #'notmuch-mua-new-mail)
