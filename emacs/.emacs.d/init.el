@@ -1179,14 +1179,15 @@ When called interactively without a prefix numeric argument, N is
 (use-package pdf-tools
   :ensure t
   :magic ("%PDF" . pdf-view-mode)
-  :init (pdf-tools-install)
   :hook
   ((pdf-view-mode . pdf-history-minor-mode)
    (pdf-view-mode . pdf-view-fit-page-to-window)
    (pdf-view-mode . pdf-view-auto-slice-minor-mode)
    (pdf-view-mode . pdf-view-midnight-minor-mode))
   :custom
-  (pdf-view-midnight-colors '("#ffffff" . "#121212")))
+  (pdf-view-midnight-colors '("#ffffff" . "#121212"))
+  :config
+  (pdf-loader-install))
 
 (use-package nov
   :ensure t
