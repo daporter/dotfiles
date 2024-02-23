@@ -1265,6 +1265,29 @@ When called interactively without a prefix numeric argument, N is
   (youtube-dl-program "yt-dlp")
   (youtube-dl-directory "~/Downloads"))
 
+(use-package windmove
+  :config
+  (windmove-default-keybindings)
+  (windmove-display-default-keybindings)
+  (windmove-swap-states-default-keybindings '(control shift))
+  (windmove-delete-default-keybindings)
+  (defvar-keymap windmove-repeat-map
+    :doc "Keymap for windmove operations"
+    :repeat t
+    "<left>"    #'windmove-left
+    "S-<left>"  #'windmove-swap-states-left
+    "<right>"   #'windmove-right
+    "S-<right>" #'windmove-swap-states-right
+    "<up>"      #'windmove-up
+    "S-<up>"    #'windmove-swap-states-up
+    "<down>"    #'windmove-down
+    "S-<down>"  #'windmove-swap-states-down)
+  (map-keymap
+   (lambda (_key cmd)
+     (when (symbolp cmd)
+       (put cmd 'repeat-map 'windmove-repeat-map)))
+   windmove-repeat-map))
+
 (use-package winner
   :config
   (winner-mode 1))
