@@ -797,8 +797,14 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package transpose-frame
   :ensure t
-  :bind (("C-c f t"       . transpose-frame)
-         ("C-c f <right>" . flop-frame)))
+  :config
+  (defvar-keymap my/transpose-frame-map
+    :doc "Keymap for transpose-frame"
+    :repeat t
+    "f" #'flop-frame
+    "t" #'transpose-frame)
+  (keymap-set global-map
+              "C-c f" (cons "Transpose Frame" my/transpose-frame-map)))
 
 (use-package pulsar
   :ensure t
