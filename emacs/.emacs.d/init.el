@@ -489,12 +489,6 @@ When called interactively without a prefix numeric argument, N is
   :config
   (nerd-icons-completion-mode))
 
-(use-package nerd-icons-corfu
-  :ensure t
-  :after corfu
-  :config
-  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-
 (use-package apropos
   :defer t
   :custom
@@ -572,9 +566,87 @@ When called interactively without a prefix numeric argument, N is
   (corfu-history-mode 1)
   (add-to-list 'savehist-additional-variables 'corfu-history))
 
+(use-package nerd-icons-corfu
+  :ensure t
+  :after corfu
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+;; Some notes CAPFs.
+;;
+;; (Taken from https://www.reddit.com/r/emacs/comments/td0nth/comment/i0i8hi7/?context=3&share_id=CfzOVcILIBvpQKfRmTanK)
+;;
+;; You've always been able to add multiple CAPFs to the variable
+;; `completion-at-point-functions'.  This isn't CAPE-specific (other than the
+;; fact that CAPE provides a few simple CAPFs for easy use).  But this
+;; "multi-CAPF" setup may not function like you expect.  The reason is that CAPF
+;; completion is a two-step process.
+;;
+;; Step 1: Each CAPF on the list is asked first whether it can complete at this
+;; location.  So if you are in a string, a CAPF might say "no, I can't complete
+;; in strings", and just return nil.  The first CAPF on the list to say it can
+;; in principle provide some completions "wins".  But it hasn't yet actually
+;; checked for completions!
+;;
+;; Step 2: The winning CAPF is asked for the completions at point.  But maybe it
+;; returns no completions at all!  If so, completion is over.
+;;
+;; This is fine if, say; the first CAPF on your list works outside of strings,
+;; and the next works inside of strings; they'll dovetail nicely.  But what if
+;; they both work "in the same place"?  CAPFs can themselves set a property
+;; `:exclusive 'no', which means "if Step 2 fails, go back to Step 1" and try
+;; the next CAPF, but in practice none do, since Emacs has some bugs related to
+;; this.  To me it's strange to let the CAPFs themselves decide this; this
+;; should be a user choice.  Cape makes that possible.
+
 (use-package cape
   :ensure t
-  :defer t)
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-file t)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev t)
+  (add-to-list 'completion-at-point-functions #'cape-dict t)
+
+  (defun my/cape-capf-setup-elisp ()
+    (setq-local completion-at-point-functions
+                (list (cape-capf-properties
+                       (cape-capf-inside-code
+                        (cape-capf-super #'elisp-completion-at-point
+                                         #'cape-elisp-symbol))
+                       :exclusive)
+                      t)))
+
+  (defun my/cape-capf-setup-eglot ()
+    (setq-local completion-at-point-functions
+                (list (cape-capf-properties
+                       (cape-capf-inside-code
+                        (cape-capf-super #'eglot-completion-at-point
+                                         #'cape-keyword))
+                       :exclusive)
+                      t)))
+
+  (defun my/cape-capf-setup-org ()
+    (setq-local completion-at-point-functions
+                (list #'pcomplete-completions-at-point
+                      #'cape-elisp-block
+                      t)))
+
+  (defun my/cape-capf-setup-eshell ()
+    (setq-local completion-at-point-functions
+                (list (cape-capf-super #'pcomplete-completions-at-point
+                                       #'comint-completion-at-point
+                                       #'cape-history)
+                      t)))
+
+  (defun my/cape-capf-setup-sh ()
+    (setq-local completion-at-point-functions
+                (list #'sh-completion-at-point-function
+                      t)))
+
+  :hook ((emacs-lisp-mode    . my/cape-capf-setup-elisp)
+         (eglot-managed-mode . my/cape-capf-setup-eglot)
+         (org-mode           . my/cape-capf-setup-org)
+         (eshell-mode        . my/cape-capf-setup-eshell)
+         (sh-mode            . my/cape-capf-setup-sh)))
 
 (use-package consult
   :ensure t
@@ -913,13 +985,7 @@ When called interactively without a prefix numeric argument, N is
   (define-key text-mode-map (kbd "C-c P") #'repunctuate-sentences)
   (defun my/disable-indent-tabs-mode ()
     (setq-local indent-tabs-mode nil))
-  (defun my/configure-capfs-text-mode ()
-    (require 'cape)
-    (add-hook 'completion-at-point-functions #'cape-file 90 t)
-    (add-hook 'completion-at-point-functions #'cape-dabbrev 91 t)
-    (add-hook 'completion-at-point-functions #'cape-dict 92 t))
-  (add-hook 'text-mode-hook #'my/disable-indent-tabs-mode)
-  (add-hook 'text-mode-hook #'my/configure-capfs-text-mode))
+  (add-hook 'text-mode-hook #'my/disable-indent-tabs-mode))
 
 (use-package flymake-vale
   :load-path "lisp/flymake-vale"
@@ -970,7 +1036,6 @@ When called interactively without a prefix numeric argument, N is
 (use-package markdown-mode
   :ensure t
   :init
-  (add-hook 'markdown-mode-hook 'eglot-ensure)
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode))
   :custom
@@ -1331,3 +1396,10 @@ When called interactively without a prefix numeric argument, N is
 (use-package find-func
   :config
   (find-function-setup-keys))
+
+(use-package dabbrev
+  :custom
+  (dabbrev-check-all-buffers nil)
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode))
