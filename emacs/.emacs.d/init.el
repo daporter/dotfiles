@@ -1025,14 +1025,6 @@ When called interactively without a prefix numeric argument, N is
   (c-ts-mode-indent-style 'linux)
   (c-ts-mode-indent-offset 8))
 
-(use-package cc-mode
-  :init
-  (defun my/c-set-style ()
-    "Set the C style to \"linux\"."
-    (c-set-style "linux"))
-
-  (add-hook 'c-mode-hook #'my/c-set-style))
-
 (use-package markdown-mode
   :ensure t
   :init
