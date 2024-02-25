@@ -1395,3 +1395,7 @@ When called interactively without a prefix numeric argument, N is
   :config
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode))
+
+(use-package pcmpl-args
+  :ensure t
+  :after pcomplete)
