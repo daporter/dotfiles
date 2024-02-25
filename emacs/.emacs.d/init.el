@@ -1319,10 +1319,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package windmove
   :config
-  (windmove-default-keybindings)
-  (windmove-display-default-keybindings)
-  (windmove-swap-states-default-keybindings '(control shift))
-  (windmove-delete-default-keybindings)
+  (windmove-default-keybindings 'control)
+  (windmove-delete-default-keybindings 'none '(control shift))
+  (windmove-swap-states-default-keybindings '(meta shift))
   (defvar-keymap windmove-repeat-map
     :doc "Keymap for windmove operations"
     :repeat t
