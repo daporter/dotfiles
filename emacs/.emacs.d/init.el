@@ -436,7 +436,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package compile
   :bind (:map prog-mode-map
-              ("C-c l" . compile))
+              ("C-c c" . compile))
   :custom
   (compilation-auto-jump-to-first-error 'if-location-known))
 
