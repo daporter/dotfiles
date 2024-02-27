@@ -271,17 +271,6 @@
 
   (comment-multi-line t)
 
-  ;; Prefer tree-sitter-enabled modes.
-  (major-mode-remap-alist
-   '((bash-mode . bash-ts-mode)
-     (c-mode . c-ts-mode)
-     (c++-mode . c++-ts-mode)
-     (css-mode . css-ts-mode)
-     (js2-mode . js-ts-mode)
-     (json-mode . json-ts-mode)
-     (typescript-mode . typescript-ts-mode)
-     (yaml-mode . yaml-ts-mode)))
-
   (read-extended-command-predicate
    #'command-completion-default-include-p)
 
@@ -960,22 +949,51 @@ When called interactively without a prefix numeric argument, N is
   (defun my/set-fill-column ()
     (setq-local fill-column 80)
     (display-fill-column-indicator-mode 1))
-  (add-hook 'prog-mode-hook #'my/set-fill-column))
+
+  :hook
+  (prog-mode . my/set-fill-column))
 
 (use-package eldoc
   :custom
   (eldoc-echo-area-use-multiline-p nil))
 
+(use-package treesit
+  :init
+  (defun my/remap-treesitter-modes ()
+    ;; Prefer tree-sitter-enabled modes.
+    (major-mode-remap-alist
+     '((bash-mode . bash-ts-mode)
+       (c-mode . c-ts-mode)
+       (c++-mode . c++-ts-mode)
+       (css-mode . css-ts-mode)
+       (js2-mode . js-ts-mode)
+       (json-mode . json-ts-mode)
+       (typescript-mode . typescript-ts-mode)
+       (yaml-mode . yaml-ts-mode))))
+
+  :hook
+  (after-init . my/enable-treesiter)
+
+  :custom
+  (treesit-font-lock-level 4))
+
 (use-package eglot
+  :init
+  (defun my/eglot-disable-hints ()
+    (eglot-inlay-hints-mode 0))
+
+  :hook
+  ((c-ts-mode          . eglot-ensure)
+   (css-ts-mode        . eglot-ensure)
+   (eglot-managed-mode . my/eglot-disable-hints))
+
   :bind
   (:map eglot-mode-map
         ("C-c l f" . eglot-format)
         ("C-c l h" . eldoc)
         ("C-c l o" . eglot-code-action-organize-imports)
         ("C-c l q" . eglot-code-action-quickfix)
-        ("C-c l r" . eglot-rename))
-  :config
-  (add-hook 'eglot-managed-mode-hook (lambda () (eglot-inlay-hints-mode 0))))
+        ("C-c l r" . eglot-rename)))
 
 (use-package text-mode
   :defer t
@@ -1016,8 +1034,6 @@ When called interactively without a prefix numeric argument, N is
 (use-package c-ts-mode
   :after eglot
   :defer t
-  :init
-  (add-hook 'c-ts-mode-hook #'eglot-ensure)
   :bind
   (:map c-ts-mode-map
         ("C-c o" . ff-find-other-file))
