@@ -95,6 +95,9 @@ usbutils
 uthash
 valgrind
 vi
+vscode-css-languageserver
+vscode-html-languageserver
+vscode-json-languageserver
 webkit2gtk
 xclip
 xf86-video-intel
