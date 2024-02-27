@@ -1354,7 +1354,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package repeat
   :config
-  (repeat-mode 1))
+  :hook (after-init . repeat-mode)
+  :bind ("C-_" . repeat))                        ; reuse one of the ‘undo’ bindings
 
 (use-package server
   :config
