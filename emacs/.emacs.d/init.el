@@ -1399,3 +1399,7 @@ When called interactively without a prefix numeric argument, N is
 (use-package pcmpl-args
   :ensure t
   :after pcomplete)
+
+(use-package page-break-lines
+  :ensure t
+  :hook (after-init . global-page-break-lines-mode))
