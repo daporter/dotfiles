@@ -533,8 +533,7 @@ When called interactively without a prefix numeric argument, N is
   :defer t
   :custom
   (completion-styles '(orderless basic))
-  (completion-category-overrides
-   '((file (styles basic partial-completion)))))
+  (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package vertico
   :ensure t
