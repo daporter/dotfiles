@@ -1419,3 +1419,6 @@ When called interactively without a prefix numeric argument, N is
 (use-package page-break-lines
   :ensure t
   :hook (after-init . global-page-break-lines-mode))
+
+(use-package hl-line
+  :hook (prog-mode text-mode conf-mode))
