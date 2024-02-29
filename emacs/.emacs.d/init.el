@@ -14,6 +14,9 @@
    '(("gnu" . 2)
      ("nongnu" . 1)))
 
+  ;; Allow built-in packages to be upgraded via a package archive.
+  (package-install-upgrade-built-in t)
+
   (use-package-compute-statistics nil))
 
 (use-package emacs
