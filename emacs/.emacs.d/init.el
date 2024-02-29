@@ -961,18 +961,18 @@ When called interactively without a prefix numeric argument, N is
   :init
   (defun my/remap-treesitter-modes ()
     ;; Prefer tree-sitter-enabled modes.
-    (major-mode-remap-alist
-     '((bash-mode . bash-ts-mode)
-       (c-mode . c-ts-mode)
-       (c++-mode . c++-ts-mode)
-       (css-mode . css-ts-mode)
-       (js2-mode . js-ts-mode)
-       (json-mode . json-ts-mode)
-       (typescript-mode . typescript-ts-mode)
-       (yaml-mode . yaml-ts-mode))))
+    (setq major-mode-remap-alist
+          '((bash-mode       . bash-ts-mode)
+            (c-mode          . c-ts-mode)
+            (c++-mode        . c++-ts-mode)
+            (css-mode        . css-ts-mode)
+            (js2-mode        . js-ts-mode)
+            (json-mode       . json-ts-mode)
+            (typescript-mode . typescript-ts-mode)
+            (yaml-mode       . yaml-ts-mode))))
 
   :hook
-  (after-init . my/enable-treesiter)
+  (after-init . my/remap-treesitter-modes)
 
   :custom
   (treesit-font-lock-level 4))
