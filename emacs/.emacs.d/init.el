@@ -1422,7 +1422,8 @@ When called interactively without a prefix numeric argument, N is
   :hook (after-init . global-page-break-lines-mode))
 
 (use-package hl-line
-  :hook (prog-mode text-mode conf-mode))
+  :hook (prog-mode text-mode conf-mode notmuch-search))
+
 (use-package desc-text
   :bind ("C-c p" . describe-text-properties))
 
