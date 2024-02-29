@@ -79,6 +79,7 @@ ttc-iosevka
 ttc-iosevka-aile
 ttc-iosevka-etoile
 ttc-iosevka-slab
+ttf-fira-code
 ttf-hack
 ttf-inconsolata
 ttf-iosevka-nerd

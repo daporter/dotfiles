@@ -40,4 +40,5 @@ tree-sitter-regex-git
 tree-sitter-yaml-git
 ttf-literata
 vale-git
+visual-studio-code-bin
 zotero
