@@ -452,11 +452,10 @@ When called interactively without a prefix numeric argument, N is
         (locate-user-emacs-file "fontaine-latest-state.eld"))
   (setq fontaine-presets
         '((regular)
-          (t
-           :default-family "Iosevka Nerd Font"
-           :fixed-pitch-family "IBM Plex Mono"
-           :variable-pitch-family "XCharter"
-           :variable-pitch-height 1.1)))
+          (t :default-family "Iosevka Nerd Font"
+             :fixed-pitch-serif-family "Iosevka Slab"
+             :variable-pitch-family "XCharter"
+             :variable-pitch-height 1.1)))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
   (fontaine-set-preset
    (or (fontaine-restore-latest-preset) 'regular)))
@@ -1011,7 +1010,7 @@ When called interactively without a prefix numeric argument, N is
   :commands flymake-vale-load)
 
 (use-package visual-line-mode
-  :hook (text-mode . visual-line-mode))
+  :hook (text-mode))
 
 (use-package adaptive-wrap
   :ensure t
@@ -1236,7 +1235,8 @@ When called interactively without a prefix numeric argument, N is
   :config
   (add-hook 'notmuch-message-mode-hook #'turn-off-auto-fill)
   (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check)
-  (add-hook 'notmuch-show-mode-hook (lambda () (variable-pitch-mode 1))))
+  (add-hook 'notmuch-show-mode-hook
+            (lambda () (variable-pitch-mode 1))))
 
 (use-package kbd-mode
   :load-path "lisp"
@@ -1423,3 +1423,12 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package hl-line
   :hook (prog-mode text-mode conf-mode))
+(use-package face-remap
+  :init
+  (defun my/variable-pitch-set-line-spacing ()
+    ;; The font XCharter needs extra line spacing.
+    (when (eq buffer-face-mode-face 'variable-pitch)
+      (setq-local line-spacing 2)))
+
+  :hook
+  (buffer-face-mode . my/variable-pitch-set-line-spacing))
