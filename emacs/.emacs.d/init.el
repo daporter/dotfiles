@@ -722,7 +722,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package avy
   :ensure t
-  :bind   (("C-." . avy-goto-char-timer)
+  :bind   (("C-." . avy-goto-char-2)
            :map isearch-mode-map
            ("C-." . avy-isearch))
   :custom
