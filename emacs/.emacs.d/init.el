@@ -1423,6 +1423,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package hl-line
   :hook (prog-mode text-mode conf-mode))
+(use-package desc-text
+  :bind ("C-c p" . describe-text-properties))
+
 (use-package face-remap
   :init
   (defun my/variable-pitch-set-line-spacing ()
