@@ -30,17 +30,65 @@
   (advice-add #'completing-read-multiple
               :filter-args #'crm-indicator)
 
+  (defun buffer-mode (&optional buffer-or-name)
+    "Returns the major mode associated with a buffer.
+If buffer-or-name is nil return current buffer's mode."
+    (buffer-local-value 'major-mode
+                        (if buffer-or-name
+                            (get-buffer buffer-or-name)
+                          (current-buffer))))
+
+  (defvar my/occur-grep-modes-list '(occur-mode
+                                     grep-mode
+                                     xref--xref-buffer-mode
+                                     ivy-occur-grep-mode
+                                     ivy-occur-mode
+                                     locate-mode
+                                     flymake-diagnostics-buffer-mode
+                                     rg-mode)
+    "List of major-modes used in occur-type buffers")
+
+  (defvar my/repl-modes-list '(matlab-shell-mode
+                               eshell-mode
+                               geiser-repl-mode
+                               shell-mode
+                               eat-mode
+                               ;; vterm-mode
+                               inferior-python-mode
+                               cider-repl-mode
+                               fennel-repl-mode
+                               jupyter-repl-mode
+                               inferior-ess-julia-mode)
+    "List of major-modes used in REPL buffers")
+
+  (defvar my/repl-names-list
+    '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
+      "\\*.*REPL.*\\*"
+      "\\*MATLAB\\*"
+      "\\*Python\\*"
+      "^\\*jupyter-repl.*?\\(\\*\\|<[[:digit:]]>\\)$"
+      "\\*Inferior .*\\*$"
+      "^\\*julia.*\\*$"
+      "^\\*cider-repl.*\\*$"
+      "\\*ielm\\*"
+      "\\*edebug\\*")
+    "List of buffer names used in REPL buffers")
+
+  (defvar my/help-modes-list '(helpful-mode
+                               help-mode
+                               pydoc-mode
+                               eldoc-mode
+                               TeX-special-mode)
+    "List of major-modes used in documentation buffers")
+
+  (defvar my/man-modes-list '(Man-mode woman-mode)
+    "List of major-modes used in Man-type buffers")
+
+  (defvar my/message-modes-list '(compilation-mode
+                                  edebug-eval-mode)
+    "List of major-modes used in message buffers")
+
   :custom
-  (initial-buffer-choice t)             ; always start with *scratch*
-  (frame-title-format '("%b"))
-  (use-short-answers t)
-
-  ;; Improve the spacing of underlines.
-  (x-use-underline-position-properties nil)
-
-  ;; Necessary for visual-fill-column-mode:
-  (mode-line-right-align-edge 'right-fringe)
-
   (display-buffer-alist
    '(
      ("^\\*[Ee]shell [Ee]xport: .*\\*$"
@@ -257,6 +305,17 @@
 
      ))
 
+  (cursor-type 'bar)
+  (initial-buffer-choice t)             ; always start with *scratch*
+  (frame-title-format '("%b"))
+  (use-short-answers t)
+
+  ;; Improve the spacing of underlines.
+  (x-use-underline-position-properties nil)
+
+  ;; Necessary for visual-fill-column-mode:
+  (mode-line-right-align-edge 'right-fringe)
+
   (backup-directory-alist
    `(("." . ,(concat user-emacs-directory "backup/"))))
   (backup-by-copying t)
@@ -311,67 +370,9 @@
                      ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
                      ((member "Symbola" (font-family-list)) "Symbola")))
 
-  (defun buffer-mode (&optional buffer-or-name)
-    "Returns the major mode associated with a buffer.
-If buffer-or-name is nil return current buffer's mode."
-    (buffer-local-value 'major-mode
-                        (if buffer-or-name
-                            (get-buffer buffer-or-name)
-                          (current-buffer))))
-
-  (defvar my/occur-grep-modes-list '(occur-mode
-                                     grep-mode
-                                     xref--xref-buffer-mode
-                                     ivy-occur-grep-mode
-                                     ivy-occur-mode
-                                     locate-mode
-                                     flymake-diagnostics-buffer-mode
-                                     rg-mode)
-    "List of major-modes used in occur-type buffers")
-
-  (defvar my/repl-modes-list '(matlab-shell-mode
-                               eshell-mode
-                               geiser-repl-mode
-                               shell-mode
-                               eat-mode
-                               ;; vterm-mode
-                               inferior-python-mode
-                               cider-repl-mode
-                               fennel-repl-mode
-                               jupyter-repl-mode
-                               inferior-ess-julia-mode)
-    "List of major-modes used in REPL buffers")
-
-  (defvar my/repl-names-list
-    '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
-      "\\*.*REPL.*\\*"
-      "\\*MATLAB\\*"
-      "\\*Python\\*"
-      "^\\*jupyter-repl.*?\\(\\*\\|<[[:digit:]]>\\)$"
-      "\\*Inferior .*\\*$"
-      "^\\*julia.*\\*$"
-      "^\\*cider-repl.*\\*$"
-      "\\*ielm\\*"
-      "\\*edebug\\*")
-    "List of buffer names used in REPL buffers")
-
-  (defvar my/help-modes-list '(helpful-mode
-                               help-mode
-                               pydoc-mode
-                               eldoc-mode
-                               TeX-special-mode)
-    "List of major-modes used in documentation buffers")
-
-  (defvar my/man-modes-list '(Man-mode woman-mode)
-    "List of major-modes used in Man-type buffers")
-
-  (defvar my/message-modes-list '(compilation-mode
-                                  edebug-eval-mode)
-    "List of major-modes used in message buffers")
-
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
-  (load-theme 'daporter t)
+  (load-theme 'my-iceberg t)
 
   (defun my/insert-date-time (prefix)
     "Insert the current date and time.
