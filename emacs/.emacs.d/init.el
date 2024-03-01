@@ -1438,3 +1438,6 @@ When called interactively without a prefix numeric argument, N is
 
   :hook
   (buffer-face-mode . my/variable-pitch-set-line-spacing))
+
+(use-package recentf
+  :hook (after-init))
