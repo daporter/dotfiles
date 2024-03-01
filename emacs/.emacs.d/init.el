@@ -308,6 +308,7 @@ If buffer-or-name is nil return current buffer's mode."
 
      ))
 
+  (line-spacing 0.15)
   (cursor-type 'bar)
   (initial-buffer-choice t)             ; always start with *scratch*
   (frame-title-format '("%b"))
@@ -348,10 +349,6 @@ If buffer-or-name is nil return current buffer's mode."
 
   (user-full-name "David Porter")
   (mail-host-address "daporter.net")
-
-  (window-divider-default-right-width  1)
-  (window-divider-default-bottom-width 0)
-  (window-divider-default-places       t)
 
   :config
   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
@@ -423,6 +420,13 @@ When called interactively without a prefix numeric argument, N is
       (newline-and-indent)))
   (global-set-key (kbd "C-o") #'my/open-line-and-indent))
 
+(use-package faces
+  :config
+  (set-face-attribute 'default           nil :font "Iosevka-10")
+  (set-face-attribute 'fixed-pitch       nil :font "Iosevka-10")
+  (set-face-attribute 'fixed-pitch-serif nil :font "Iosevka Slab-10")
+  (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
+
 (use-package paren
   :custom
   (show-paren-context-when-offscreen 'overlay))
@@ -446,22 +450,6 @@ When called interactively without a prefix numeric argument, N is
   (ediff-show-clashes-only     t)
   (ediff-split-window-function 'split-window-horizontally)
   (ediff-window-setup-function 'ediff-setup-windows-plain))
-
-(use-package fontaine
-  :ensure t
-  :defer t
-  :init
-  (setq fontaine-latest-state-file
-        (locate-user-emacs-file "fontaine-latest-state.eld"))
-  (setq fontaine-presets
-        '((regular)
-          (t :default-family "Iosevka Nerd Font"
-             :fixed-pitch-serif-family "Iosevka Slab"
-             :variable-pitch-family "XCharter"
-             :variable-pitch-height 1.1)))
-  (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
-  (fontaine-set-preset
-   (or (fontaine-restore-latest-preset) 'regular)))
 
 (use-package nerd-icons
   :ensure t
@@ -1264,6 +1252,21 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :mode ("\\.epub\\'" . nov-mode))
 
+(use-package org
+  :hook (org-mode . variable-pitch-mode)
+  :custom
+  (org-hide-emphasis-markers t)
+  (org-pretty-entities t)
+  (org-ellipsis "…"))
+
+(use-package org-indent
+  :hook (org-mode))
+
+(use-package org-modern
+  :ensure t
+  :after org
+  :config (global-org-modern-mode 1))
+
 (use-package org-noter
   :ensure t
   :commands org-noter
@@ -1392,10 +1395,6 @@ When called interactively without a prefix numeric argument, N is
   :config
   (fringe-mode 10))
 
-(use-package frame
-  :config
-  (window-divider-mode 1))
-
 (use-package autoinsert
   :config
   (auto-insert-mode t))
@@ -1433,8 +1432,10 @@ When called interactively without a prefix numeric argument, N is
   :init
   (defun my/variable-pitch-set-line-spacing ()
     ;; The font XCharter needs extra line spacing.
-    (when (eq buffer-face-mode-face 'variable-pitch)
-      (setq-local line-spacing 2)))
+    (if (and buffer-face-mode
+             (eq buffer-face-mode-face 'variable-pitch))
+        (setq-local line-spacing 0.25)
+      (kill-local-variable 'line-spacing))) ; revert to global setting
 
   :hook
   (buffer-face-mode . my/variable-pitch-set-line-spacing))
