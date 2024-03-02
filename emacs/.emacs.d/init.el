@@ -1436,3 +1436,16 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package recentf
   :hook (after-init))
+
+(use-package ligature
+  :ensure t
+  :config
+  ;; Enable all Iosevka ligatures in programming modes
+  (ligature-set-ligatures
+   '(prog-mode text-mode)
+   '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->"
+     "<---->" "<!--" "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>"
+     "<==>" "<===>" "<====>" "<!---" "<~~" "<~" "~>" "~~>" "::" ":::" "=="
+     "!=" "===" "!==" ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:"
+     "-:" "=:" "<******>" "++" "+++" ""))
+  (global-ligature-mode t))
