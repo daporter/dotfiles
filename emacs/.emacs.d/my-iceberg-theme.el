@@ -229,7 +229,7 @@
    `(hl-line   ((t (:background ,bg-1))))
 
    ;; Line Numbers
-   `(line-number              ((t (:foreground ,fg-2))))
+   `(line-number              ((t (:inherit fixed-pitch :foreground ,fg-2))))
    `(line-number-current-line ((t (:inherit line-number :foreground ,yellow))))
 
    ;; Linum
@@ -249,6 +249,13 @@
    ;; Markdown
    `(markdown-blockquote-face         ((t (:inherit org-quote))))
    `(markdown-code-face               ((t (:inherit org-code))))
+   `(markdown-header-face             ((t (:inherit bold))))
+   `(markdown-header-face-1           ((t (:inherit org-level-1))))
+   `(markdown-header-face-2           ((t (:inherit org-level-2))))
+   `(markdown-header-face-3           ((t (:inherit org-level-3))))
+   `(markdown-header-face-4           ((t (:inherit org-level-4))))
+   `(markdown-header-face-5           ((t (:inherit org-level-5))))
+   `(markdown-header-face-6           ((t (:inherit org-level-6))))
    `(markdown-html-attr-name-face     ((t (:inherit fixed-pitch))))
    `(markdown-html-attr-value-face    ((t (:inherit fixed-pitch))))
    `(markdown-html-entity-face        ((t (:inherit fixed-pitch))))
@@ -257,10 +264,12 @@
    `(markdown-inline-code-face        ((t (:inherit markdown-code-face))))
    `(markdown-language-info-face      ((t (:inherit fixed-pitch))))
    `(markdown-language-keyword-face   ((t (:inherit fixed-pitch))))
+   `(markdown-markup-face             ((t (:inherit markdown-code-face))))
    `(markdown-metadata-key-face       ((t (:inherit org-document-info-keyword))))
+   `(markdown-metadata-value-face     ((t (:inherit markdown-metadata-key-face))))
    `(markdown-pre-face                ((t (:inherit fixed-pitch))))
-   `(markdown-url-face                ((t (:inherit (fixed-pitch shadow)))))
    `(markdown-table-face              ((t (:inherit fixed-pitch))))
+   `(markdown-url-face                ((t (:inherit (fixed-pitch shadow)))))
 
    ;; Message
    `(message-header-cc         ((t (:foreground ,green+1))))
@@ -324,7 +333,7 @@
    `(org-column-title              ((t (:inhenrit (org-column bold) :underline t))))
    `(org-date                      ((t (:inherit (org-agenda-date bold) :underline t))))
    `(org-document-info             ((t (:foreground ,cyan))))
-   `(org-document-info-keyword     ((t (:inherit (fixed-pitch font-lock-comment-face)))))
+   `(org-document-info-keyword     ((t (:inherit (fixed-pitch font-lock-comment-face) :height 0.9))))
    `(org-document-title            ((t (:inherit bold :foreground ,yellow :height 1.44))))
    `(org-done                      ((t (:inherit (fixed-pitch shadow)))))
    `(org-drawer                    ((t (:inherit org-meta-line))))
@@ -337,11 +346,11 @@
    `(org-level-1                   ((t (:inherit bold :foreground ,red :height 1.3))))
    `(org-level-2                   ((t (:inherit bold :foreground ,orange :height 1.2))))
    `(org-level-3                   ((t (:inherit bold :foreground ,yellow :height 1.1))))
-   `(org-level-4                   ((t (:inherit bold :foreground ,green))))
-   `(org-level-5                   ((t (:foreground ,cyan))))
-   `(org-level-6                   ((t (:foreground ,magenta))))
-   `(org-level-7                   ((t (:foreground ,blue))))
-   `(org-level-8                   ((t (:foreground ,fg))))
+   `(org-level-4                   ((t (:inherit (bold italic) :foreground ,green))))
+   `(org-level-5                   ((t (:inherit (bold italic) :foreground ,cyan))))
+   `(org-level-6                   ((t (:inherit italic :foreground ,magenta))))
+   `(org-level-7                   ((t (:inherit italic :foreground ,blue))))
+   `(org-level-8                   ((t (:inherit italic :foreground ,fg))))
    `(org-link                      ((t (:inherit link))))
    `(org-meta-line                 ((t (:inherit (fixed-pitch shadow) :height 0.9))))
    `(org-modern-date-active        ((t (:inherit org-modern-label :foreground ,fg-1 :background ,bg+2))))
@@ -362,6 +371,16 @@
    `(org-upcoming-deadline         ((t (:foreground ,red))))
    `(org-verbatim                  ((t (:inherit (fixed-pitch) :background ,bg+1))))
    `(org-warning                   ((t (:inherit warning))))
+
+     ;; Outline
+   `(outline-1 ((t (:inherit org-level-1))))
+   `(outline-2 ((t (:inherit org-level-2))))
+   `(outline-3 ((t (:inherit org-level-3))))
+   `(outline-4 ((t (:inherit org-level-4))))
+   `(outline-5 ((t (:inherit org-level-5))))
+   `(outline-6 ((t (:inherit org-level-6))))
+   `(outline-7 ((t (:inherit org-level-7))))
+   `(outline-8 ((t (:inherit org-level-8))))
 
    ;; Search
    `(isearch         ((t (:foreground ,bg-1 :background ,yellow))))
@@ -418,7 +437,7 @@
    `(whitespace-indentation      ((t (:foreground ,bg+1))))
    `(whitespace-line             ((t (:underline (:style wave :color ,magenta)))))
    `(whitespace-newline          ((t (:inherit whitespace-space))))
-   `(whitespace-space            ((t (:foreground ,bg+3))))
+   `(whitespace-space            ((t (:inherit fixed-pitch :foreground ,bg+3))))
    `(whitespace-space-after-tab  ((t (:inherit warning))))
    `(whitespace-space-before-tab ((t (:inherit warning))))
    `(whitespace-tab              ((t (:inherit whitespace-space))))
