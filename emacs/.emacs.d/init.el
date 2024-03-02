@@ -586,13 +586,7 @@ When called interactively without a prefix numeric argument, N is
   (add-to-list 'completion-at-point-functions #'cape-dict t)
 
   (defun my/cape-capf-setup-elisp ()
-    (setq-local completion-at-point-functions
-                (list (cape-capf-properties
-                       (cape-capf-inside-code
-                        (cape-capf-super #'elisp-completion-at-point
-                                         #'cape-elisp-symbol))
-                       :exclusive)
-                      t)))
+    (setq-local completion-at-point-functions '(elisp-completion-at-point t)))
 
   (defun my/cape-capf-setup-eglot ()
     (setq-local completion-at-point-functions
