@@ -467,51 +467,6 @@ When called interactively without a prefix numeric argument, N is
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package popper
-  :ensure t
-  :bind (("C-`"   . popper-toggle)
-         ("M-`"   . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
-  :init
-  (setq popper-reference-buffers
-        (append my/help-modes-list
-                my/man-modes-list
-                my/repl-modes-list
-                my/repl-names-list
-                my/occur-grep-modes-list
-                '(Custom-mode
-                  compilation-mode
-                  messages-buffer-mode)
-                '(("^\\*Warnings\\*$" . hide)
-                  ("^\\*Compile-Log\\*$" . hide)
-                  ;; "^\\*Messages\\*$"
-                  "^\\*Backtrace\\*"
-                  "^\\*Apropos"
-                  "^Calc:"
-                  "^\\*eldoc\\*"
-                  "^\\*TeX errors\\*"
-                  "^\\*TeX Help\\*"
-                  "^\\*ielm\\*"
-                  "^\\*ChatGPT\\*"
-                  "^\\*gptel-quick\\*"
-                  "\\*Shell Command Output\\*"
-                  ("\\*Async Shell Command\\*" . hide)
-                  ("\\*Detached Shell Command\\*" . hide)
-                  "\\*Completions\\*"
-                  ;; "\\*scratch.*\\*$"
-                  "[Oo]utput\\*")))
-
-  ;; Group by project.el project root, with fall back to default-directory
-  (setq popper-group-function #'popper-group-by-directory)
-
-  :custom
-  (popper-display-control nil)
-
-  :config
-  (popper-mode +1)
-  (popper-echo-mode +1))
-
-
 (use-package avy
   :ensure t
   :bind   (("C-." . avy-goto-char-2)
