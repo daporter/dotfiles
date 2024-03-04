@@ -1134,6 +1134,8 @@ When called interactively without a prefix numeric argument, N is
   :bind (:map project-prefix-map
               ("m" . magit-project-status))
   :custom
+  (magit-display-buffer-function
+   'magit-display-buffer-same-window-except-diff-v1)
   (git-commit-summary-max-length 50)
   (git-commit-style-convention-checks '(non-empty-second-line
                                         overlong-summary-line))
