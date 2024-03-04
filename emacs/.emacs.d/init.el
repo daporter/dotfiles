@@ -165,6 +165,9 @@ When called interactively without a prefix numeric argument, N is
   (global-set-key (kbd "C-o") #'my/open-line-and-indent))
 
 (use-package window
+  :bind
+  (("C-<tab>" . next-buffer)
+   ("C-S-<iso-lefttab>" . previous-buffer))
   :custom
   (display-buffer-alist
    `((,(rx (| "*shell*" "*eshell*"))
