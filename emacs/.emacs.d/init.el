@@ -1029,6 +1029,7 @@ When called interactively without a prefix numeric argument, N is
   :defer t
   :bind ("C-c t" . org-todo-list)
   :custom
+  (org-agenda-window-setup 'current-window)
   (org-agenda-todo-ignore-scheduled 'future)
   (org-agenda-sorting-strategy
    '((agenda habit-down time-up priority-down category-keep)
