@@ -1004,6 +1004,7 @@ When called interactively without a prefix numeric argument, N is
 (use-package elisp-mode
   :defer t
   :hook (emacs-lisp-mode  . my/disable-indent-tabs-mode)
+  :bind ("C-x x e" . eval-buffer))
 
 (use-package c-ts-mode
   :after eglot
