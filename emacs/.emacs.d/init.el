@@ -696,13 +696,6 @@ When called interactively without a prefix numeric argument, N is
   (popper-mode +1)
   (popper-echo-mode +1))
 
-(use-package helpful
-  :ensure t
-  :bind (([remap describe-function]  . helpful-callable)
-         ([remap describe-variable]  . helpful-variable)
-         ([remap describe-key]       . helpful-key)
-         ([remap describe-command]   . helpful-command)
-         ([remap display-local-help] . helpful-at-point)))
 
 (use-package avy
   :ensure t
@@ -716,7 +709,6 @@ When called interactively without a prefix numeric argument, N is
                         (?  . avy-action-mark-to-char)
                         (?z . avy-action-zap-to-char)
                         (?, . avy-action-embark)
-                        (?h . avy-action-helpful)
                         (?x . avy-action-exchange)
 
                         (11 . avy-action-kill-line)
@@ -770,14 +762,6 @@ When called interactively without a prefix numeric argument, N is
     (set-mark pt)
     (transpose-sexps 0))
 
-  (defun avy-action-helpful (pt)
-    (save-excursion
-      (goto-char pt)
-      (helpful-at-point))
-    (select-window
-     (cdr (ring-ref avy-ring 0)))
-    t)
-
   (defun avy-action-embark (pt)
     (unwind-protect
         (save-excursion
@@ -827,11 +811,6 @@ When called interactively without a prefix numeric argument, N is
   (defun avy-action-mark-to-char (pt)
     (activate-mark)
     (goto-char pt)))
-
-(use-package lin
-  :ensure t
-  :init
-  (lin-global-mode 1))
 
 (use-package transpose-frame
   :ensure t
@@ -1449,3 +1428,7 @@ When called interactively without a prefix numeric argument, N is
      "!=" "===" "!==" ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:"
      "-:" "=:" "<******>" "++" "+++"))
   (global-ligature-mode t))
+
+(use-package olivetti
+  :ensure t
+  :commands olivetti-mode)
