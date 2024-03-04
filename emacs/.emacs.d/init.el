@@ -1,5 +1,11 @@
 ;; -*- lexical-binding: t; -*-
 
+;;; Utility functions
+
+(defun my/set-cursor-type-bar ()
+  "Set the cursor type to bar in the current buffer."
+  (setq-local cursor-type 'bar))
+
 (use-package package
   :hook (package-menu-mode . hl-line-mode)
   :custom
@@ -309,7 +315,7 @@ If buffer-or-name is nil return current buffer's mode."
      ))
 
   (line-spacing 0.15)
-  (cursor-type 'bar)
+  (cursor-type 'box)
   (initial-buffer-choice t)             ; always start with *scratch*
   (frame-title-format '("%b"))
   (use-short-answers t)
@@ -369,8 +375,6 @@ If buffer-or-name is nil return current buffer's mode."
                      ((member "Noto Color Emoji" (font-family-list)) "Noto Color Emoji")
                      ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
                      ((member "Symbola" (font-family-list)) "Symbola")))
-
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
   (load-theme 'my-iceberg t)
 
@@ -914,6 +918,7 @@ When called interactively without a prefix numeric argument, N is
     (display-fill-column-indicator-mode 1))
 
   :hook
+  (prog-mode . my/set-cursor-type-bar)
   (prog-mode . my/set-fill-column))
 
 (use-package eldoc
@@ -967,6 +972,9 @@ When called interactively without a prefix numeric argument, N is
   (defun my/disable-indent-tabs-mode ()
     (setq-local indent-tabs-mode nil))
   (add-hook 'text-mode-hook #'my/disable-indent-tabs-mode))
+
+  :hook
+  (text-mode . my/set-cursor-type-bar)
 
 (use-package flymake-vale
   :load-path "lisp/flymake-vale"
@@ -1094,6 +1102,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package conf-mode
   :defer t
+  :hook (text-mode . my/set-cursor-type-bar)
   :bind ("C-M-i" . completion-at-point))
 
 (use-package yaml-ts-mode
