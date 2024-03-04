@@ -1021,6 +1021,7 @@ When called interactively without a prefix numeric argument, N is
   :init
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode))
+  :hook (markdown-mode . variable-pitch-mode)
   :custom
   (markdown-command "pandoc")
   (markdown-asymmetric-header t)
