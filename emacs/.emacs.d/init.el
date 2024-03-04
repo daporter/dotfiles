@@ -6,6 +6,11 @@
   "Set the cursor type to bar in the current buffer."
   (setq-local cursor-type 'bar))
 
+(defun my/disable-indent-tabs-mode ()
+  (setq-local indent-tabs-mode nil))
+
+;;; Package definitions
+
 (use-package package
   :hook (package-menu-mode . hl-line-mode)
   :custom
@@ -36,6 +41,7 @@
                    crm-separator)
                   (car args))
           (cdr args)))
+
   (advice-add #'completing-read-multiple
               :filter-args #'crm-indicator)
 
@@ -969,12 +975,10 @@ When called interactively without a prefix numeric argument, N is
   ;; For some reason, the following doesn't work with :bind
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
   (define-key text-mode-map (kbd "C-c P") #'repunctuate-sentences)
-  (defun my/disable-indent-tabs-mode ()
-    (setq-local indent-tabs-mode nil))
-  (add-hook 'text-mode-hook #'my/disable-indent-tabs-mode))
 
   :hook
   (text-mode . my/set-cursor-type-bar)
+  (text-mode . my/disable-indent-tabs-mode))
 
 (use-package flymake-vale
   :load-path "lisp/flymake-vale"
@@ -999,8 +1003,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package elisp-mode
   :defer t
-  :config
-  (add-hook 'emacs-lisp-mode-hook #'my/disable-indent-tabs-mode))
+  :hook (emacs-lisp-mode  . my/disable-indent-tabs-mode)
 
 (use-package c-ts-mode
   :after eglot
