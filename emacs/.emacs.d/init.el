@@ -1116,6 +1116,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package eshell
   :defer t
+  :bind
+  (:map eshell-hist-mode-map ("C-<up>" . nil)) ; used by windmove
   :config
   (dolist (module '(eshell-smart eshell-tramp))
     (add-to-list 'eshell-modules-list module)))
