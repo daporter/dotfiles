@@ -235,6 +235,9 @@ When called interactively without a prefix numeric argument, N is
   (switch-to-buffer-in-dedicated-window 'pop)
   (switch-to-buffer-obey-display-actions t))
 
+(use-package bindings
+  :bind ("M-o" . mode-line-other-buffer))
+
 (use-package faces
   :config
   (set-face-attribute 'default           nil :font "Iosevka-10")
