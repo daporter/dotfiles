@@ -1008,7 +1008,12 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (org-hide-emphasis-markers t)
   (org-pretty-entities t)
-  (org-ellipsis "…"))
+  (org-ellipsis "…")
+  :config
+  ;; When following links, use find-file.  To follow a link in another window,
+  ;; use C-x 4 C-o.
+  (setf (alist-get 'file org-link-frame-setup)
+        'find-file))
 
 (use-package org-indent
   :hook (org-mode))
