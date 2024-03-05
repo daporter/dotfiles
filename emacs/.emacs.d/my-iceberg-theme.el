@@ -381,6 +381,12 @@
    `(outline-7 ((t (:inherit org-level-7))))
    `(outline-8 ((t (:inherit org-level-8))))
 
+   ;; RE Builder
+   `(reb-match-0 ((t (:inherit highlight))))
+   `(reb-match-1 ((t (:inherit isearch))))
+   `(reb-match-2 ((t (:inherit isearch-group-1))))
+   `(reb-match-3 ((t (:inherit isearch-group-2))))
+
    ;; Search
    `(isearch         ((t (:foreground ,bg-1 :background ,yellow))))
    `(isearch-group-1 ((t (:foreground ,bg-1 :background ,magenta))))
