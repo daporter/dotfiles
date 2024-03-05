@@ -36,36 +36,36 @@
        (bg+2 "#1F212E")                 ; l: 15%
        (bg+3 "#33374D")                 ; l: 25%
 
-       (fg-2 "#4f5363")                 ; l: 35%
-       (fg-1 "#8e92a4")                 ; l: 60%
-       (fg   "#c6c8d2")                 ; hsl 230 11% 80%
-       (fg+1 "#e3e4e8")                 ; l: 90%
+       (fg-2 "#70758f")                 ; l: 50%
+       (fg-1 "#aaadbb")                 ; l: 70%
+       (fg   "#e2e3e8")                 ; hsl 230 11% 90%
+       (fg+1 "#f1f1f4")                 ; l: 95%
 
-       (red        "#e27878")           ; hsl:   0 65% 68%
-       (red-bg-1   "#3f0d0d")           ; l: 15%
-       (red-bg     "#611515")           ; l: 23%
-       (red-bg+1   "#7a1a1a")           ; l: 29%
-       (red+1      "#edabab")           ; l: 80%
-       (orange     "#e2a578")           ; hsl:  25 65% 68%
-       (orange-bg  "#613415")           ; l: 23%
-       (orange+1   "#edc6ab")           ; l: 80%
-       (green      "#b5bf82")           ; hsl:  70 32% 63%
-       (green-bg-1 "#2e321a")           ; l: 15%
-       (green-bg   "#414724")           ; l: 21%
-       (green-bg+1 "#575e31")           ; l: 28%
-       (green+1    "#cdd4ab")           ; l: 75%
-       (yellow     "#C2B489")           ; hsl:  45 32% 65%
-       (yellow-bg  "#4a4126")           ; l: 22%
-       (yellow+1   "#d7ceb2")           ; l: 77%
-       (cyan       "#89b9c2")           ; hsl: 190 32% 65%
-       (cyan-bg    "#26444a")           ; l: 22%
-       (cyan+1     "#b2d1d7")           ; l: 77%
-       (blue       "#85a0c7")           ; hsl: 215 37% 65%
-       (blue-bg    "#23354d")           ; l: 22%
-       (blue+1     "#afc1da")           ; l: 77%
-       (magenta    "#a093c8")           ; hsl: 255 32% 68%
-       (magenta-bg "#31274e")           ; l: 23%
-       (magenta+1  "#c4bcdc")           ; l: 80%
+       (red        "#edabab")           ; hsl: 0   65 80
+       (orange     "#edc6ab")           ; hsl: 25  65 80
+       (yellow     "#e6ddb3")           ; hsl: 50  50 80
+       (green      "#dde6b3")           ; hsl: 80  50 80
+       (cyan       "#b3dee6")           ; hsl: 190 50 80
+       (blue       "#b3c8e6")           ; hsl: 215 50 80
+       (magenta    "#bfb3e6")           ; hsl: 255 50 80
+       (red-bg-1   (color-darken-name  red     80))
+       (red-bg     (color-darken-name  red     70))
+       (red-bg+1   (color-darken-name  red     55))
+       (red+1      (color-lighten-name red     25))
+       (orange-bg  (color-darken-name  orange  70))
+       (orange+1   (color-darken-name  orange  25))
+       (yellow-bg  (color-darken-name  yellow  70))
+       (yellow+1   (color-lighten-name yellow  25))
+       (green-bg-1 (color-darken-name  green   80))
+       (green-bg   (color-darken-name  green   70))
+       (green-bg+1 (color-darken-name  green   55))
+       (green+1    (color-darken-name  green   25))
+       (cyan-bg    (color-darken-name  cyan    70))
+       (cyan+1     (color-lighten-name cyan    25))
+       (blue-bg    (color-darken-name  blue    70))
+       (blue+1     (color-darken-name  blue    25))
+       (magenta-bg (color-darken-name  magenta 70))
+       (magenta+1  (color-darken-name  magenta 25))
 
        (black "black")
        (white "white"))
