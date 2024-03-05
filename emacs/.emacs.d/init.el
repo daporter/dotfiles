@@ -248,6 +248,11 @@ When called interactively without a prefix numeric argument, N is
   (set-face-attribute 'fixed-pitch-serif nil :font "Iosevka Slab-10")
   (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
 
+(use-package isearch
+  :bind (:map isearch-mode-map
+              ;; Allow M-c to capitalise word and exit the search.  The original command is still available via M-s c.
+              ("M-c" . nil)))
+
 (use-package paren
   :custom
   (show-paren-context-when-offscreen 'overlay))
