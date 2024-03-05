@@ -738,6 +738,7 @@ When called interactively without a prefix numeric argument, N is
         ("C-c l h" . eldoc)
         ("C-c l o" . eglot-code-action-organize-imports)
         ("C-c l q" . eglot-code-action-quickfix)
+        ("M-<return>" . eglot-code-action-quickfix)
         ("C-c l r" . eglot-rename)))
 
 (use-package text-mode
