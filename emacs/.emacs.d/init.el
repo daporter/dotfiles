@@ -251,9 +251,10 @@ When called interactively without a prefix numeric argument, N is
   (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
 
 (use-package simple
-  ;; Free C-t to use for a more frequently used command.  C-" was previously
+  ;; Free C-t to use for a more frequently used command.  C-’ was previously
   ;; unbound.
-  :bind ("C-<quotedbl>" . transpose-chars))
+  :bind ("C-'" . transpose-chars)
+  :config (column-number-mode 1))
 
 (use-package isearch
   :bind (:map isearch-mode-map
@@ -468,9 +469,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package embark
   :ensure t
-  :bind (("C-," . embark-act)
-         ("C-;" . embark-dwim)
-         ("C-h B" . embark-bindings))
+  :bind (("C-<quotedbl>" . embark-act)
+         ("C-."          . embark-dwim)
+         ("C-h B"        . embark-bindings))
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
   :config
@@ -487,9 +488,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package avy
   :ensure t
-  :bind   (("C-." . avy-goto-char-2)
+  :bind   (("C-," . avy-goto-char-2)
            :map isearch-mode-map
-           ("C-." . avy-isearch))
+           ("C-," . avy-isearch))
   :custom
   (avy-keys '(?d ?a ?n ?e ?s ?r ?u ?c ?g))
   (avy-dispatch-alist '((?m . avy-action-mark)
@@ -1158,10 +1159,6 @@ When called interactively without a prefix numeric argument, N is
 (use-package server
   :config
   (server-start))
-
-(use-package simple
-  :config
-  (column-number-mode 1))
 
 (use-package delsel
   :config
