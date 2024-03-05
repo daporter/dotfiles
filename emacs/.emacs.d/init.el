@@ -179,6 +179,13 @@ When called interactively without a prefix numeric argument, N is
       (window . root)
       (window-height . 0.33))
 
+     (,(rx "*Embark Actions*")
+      (display-buffer-reuse-mode-window
+       display-buffer-below-selected)
+      (window-height . fit-window-to-buffer)
+      (window-parameters . ((no-other-window . t)
+                            (mode-line-format . none))))
+
      ((or . ((derived-mode . messages-buffer-mode)
              (derived-mode . backtrace-mode)
              ,(rx "*Warnings*")))
