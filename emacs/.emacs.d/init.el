@@ -166,8 +166,10 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package window
   :bind
-  (("C-<tab>" . next-buffer)
-   ("C-S-<iso-lefttab>" . previous-buffer))
+  (("C-<tab>"           . next-buffer)
+   ("C-S-<iso-lefttab>" . previous-buffer)
+   ("C-t"               . switch-to-buffer)) ; was transpose-chars
+
   :custom
   (display-buffer-alist
    `((,(rx (| "*shell*" "*eshell*"))
@@ -247,6 +249,11 @@ When called interactively without a prefix numeric argument, N is
   (set-face-attribute 'fixed-pitch       nil :font "Iosevka-10")
   (set-face-attribute 'fixed-pitch-serif nil :font "Iosevka Slab-10")
   (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
+
+(use-package simple
+  ;; Free C-t to use for a more frequently used command.  C-" was previously
+  ;; unbound.
+  :bind ("C-<quotedbl>" . transpose-chars))
 
 (use-package isearch
   :bind (:map isearch-mode-map
