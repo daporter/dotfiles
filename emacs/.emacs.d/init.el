@@ -413,11 +413,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package cape
   :ensure t
-  :init
-  (add-to-list 'completion-at-point-functions #'cape-file t)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev t)
-  (add-to-list 'completion-at-point-functions #'cape-dict t)
-
+  :preface
   (defun my/cape-capf-setup-elisp ()
     (setq-local completion-at-point-functions '(elisp-completion-at-point t)))
 
@@ -452,7 +448,12 @@ When called interactively without a prefix numeric argument, N is
          (eglot-managed-mode . my/cape-capf-setup-eglot)
          (org-mode           . my/cape-capf-setup-org)
          (eshell-mode        . my/cape-capf-setup-eshell)
-         (sh-mode            . my/cape-capf-setup-sh)))
+         (sh-mode            . my/cape-capf-setup-sh))
+
+  :config
+  (add-to-list 'completion-at-point-functions #'cape-file t)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev t)
+  (add-to-list 'completion-at-point-functions #'cape-dict t))
 
 (use-package consult
   :ensure t
@@ -704,7 +705,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package prog-mode
   :defer t
-  :init
+  :preface
   (defun my/set-fill-column ()
     (setq-local fill-column 80)
     (display-fill-column-indicator-mode 1))
@@ -743,9 +744,9 @@ When called interactively without a prefix numeric argument, N is
     (eglot-inlay-hints-mode 0))
 
   :hook
-  ((c-ts-mode          . eglot-ensure)
-   (css-ts-mode        . eglot-ensure)
-   (eglot-managed-mode . my/eglot-disable-hints))
+  (((c-ts-mode css-ts-mode) . eglot-ensure)
+   (eglot-managed-mode      . my/setup-eldoc-eglot)
+   (eglot-managed-mode      . my/eglot-disable-hints))
 
   :bind
   (:map eglot-mode-map
@@ -1216,7 +1217,7 @@ When called interactively without a prefix numeric argument, N is
   :bind ("C-c p" . describe-text-properties))
 
 (use-package face-remap
-  :init
+  :preface
   (defun my/variable-pitch-set-line-spacing ()
     ;; The font XCharter needs extra line spacing.
     (if (and buffer-face-mode
