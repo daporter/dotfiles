@@ -1,4 +1,4 @@
-;;; my-iceberg-theme.el --- My implementation of Google's Material 3 theme  -*- lexical-binding: t; -*-
+;;; my-iceberg-theme.el --- My implementation of the Iceberg theme  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  David Porter
 
@@ -67,6 +67,7 @@
        (green-bg     (color-darken-name  green   factor-bg))
        (green-bg+1   (color-darken-name  green   factor-bg+1))
        (green-fg+1   (color-darken-name  green   factor-fg+1))
+       (cyan-bg      (color-darken-name  cyan    factor-bg))
        (cyan-fg+1    (color-lighten-name cyan    factor-fg+1))
        (blue-fg+1    (color-darken-name  blue    factor-fg+1))
        (magenta-bg   (color-darken-name  magenta factor-bg))
@@ -96,8 +97,9 @@
    `(minibuffer-prompt     ((t (:foreground ,cyan))))
    `(mode-line             ((t (:family "Roboto"   :foreground ,fg-1 :background ,bg+2 :box (:color ,fg-2)))))
    `(mode-line-inactive    ((t (:inherit mode-line :foreground ,bg+3 :background ,bg+1 :box (:color ,bg+3)))))
-   `(region                ((t (:background ,bg+2))))
-   `(secondary-selection   ((t (:background ,bg+3))))
+   `(nobreak-space         ((t (:inherit default))))
+   `(region                ((t (:background ,bg+3))))
+   `(secondary-selection   ((t (:background ,cyan-bg))))
    `(shadow                ((t (:foreground ,fg-2))))
    `(success               ((t (:foreground ,green))))
    `(tooltip               ((t (:background ,bg+2 :foreground ,white))))
@@ -181,9 +183,9 @@
 
 ;;;;; Flymake
 
-   `(flymake-errline  ((t (:underline (:style wave :color ,red)))))
-   `(flymake-warnline ((t (:underline (:style wave :color ,yellow)))))
-   `(flymake-infoline ((t (:underline (:style wave :color ,green)))))
+   `(flymake-error   ((t (:underline (:style wave :color ,red)))))
+   `(flymake-note    ((t (:underline (:style wave :color ,green)))))
+   `(flymake-warning ((t (:underline (:style wave :color ,yellow)))))
 
 ;;;;; Font Lock
 
