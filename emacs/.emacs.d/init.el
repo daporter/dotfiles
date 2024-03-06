@@ -716,10 +716,18 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package eldoc
   :custom
-  (eldoc-echo-area-use-multiline-p nil))
+  (eldoc-documentation-strategy eldoc-documentation-compose-eagerly)
+  (eldoc-echo-area-use-multiline-p nil)
+
+  :config
+  (add-to-list 'display-buffer-alist
+               `(,(rx "*eldoc*")
+                 (display-buffer-below-selected)
+                 (dedicated . t)
+                 (window-height . fit-window-to-buffer))))
 
 (use-package treesit
-  :init
+  :preface
   (defun my/remap-treesitter-modes ()
     ;; Prefer tree-sitter-enabled modes.
     (setq major-mode-remap-alist
@@ -739,7 +747,10 @@ When called interactively without a prefix numeric argument, N is
   (treesit-font-lock-level 4))
 
 (use-package eglot
-  :init
+  :preface
+  (defun my/setup-eldoc-eglot ()
+    (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly))
+
   (defun my/eglot-disable-hints ()
     (eglot-inlay-hints-mode 0))
 
@@ -750,12 +761,12 @@ When called interactively without a prefix numeric argument, N is
 
   :bind
   (:map eglot-mode-map
-        ("C-c l f" . eglot-format)
-        ("C-c l h" . eldoc)
-        ("C-c l o" . eglot-code-action-organize-imports)
-        ("C-c l q" . eglot-code-action-quickfix)
+        ("C-c l f"    . eglot-format)
+        ("C-c l h"    . eldoc)
+        ("C-c l o"    . eglot-code-action-organize-imports)
+        ("C-c l q"    . eglot-code-action-quickfix)
         ("M-<return>" . eglot-code-action-quickfix)
-        ("C-c l r" . eglot-rename)))
+        ("C-c l r"    . eglot-rename)))
 
 (use-package text-mode
   :defer t
