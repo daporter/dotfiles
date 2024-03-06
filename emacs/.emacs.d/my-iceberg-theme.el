@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(require 'color)
+
 (deftheme my-iceberg
   "My version of the Iceberg theme."
   :background-mode 'dark)
@@ -43,29 +45,35 @@
 
        (red        "#edabab")           ; hsl: 0   65 80
        (orange     "#edc6ab")           ; hsl: 25  65 80
-       (yellow     "#e6ddb3")           ; hsl: 50  50 80
+       (yellow     "#ede1ab")           ; hsl: 50  65 80
        (green      "#dde6b3")           ; hsl: 80  50 80
        (cyan       "#b3dee6")           ; hsl: 190 50 80
        (blue       "#b3c8e6")           ; hsl: 215 50 80
        (magenta    "#bfb3e6")           ; hsl: 255 50 80
-       (red-bg-1   (color-darken-name  red     80))
-       (red-bg     (color-darken-name  red     70))
-       (red-bg+1   (color-darken-name  red     55))
-       (red+1      (color-lighten-name red     25))
-       (orange-bg  (color-darken-name  orange  70))
-       (orange+1   (color-darken-name  orange  25))
-       (yellow-bg  (color-darken-name  yellow  70))
-       (yellow+1   (color-lighten-name yellow  25))
-       (green-bg-1 (color-darken-name  green   80))
-       (green-bg   (color-darken-name  green   70))
-       (green-bg+1 (color-darken-name  green   55))
-       (green+1    (color-darken-name  green   25))
-       (cyan-bg    (color-darken-name  cyan    70))
-       (cyan+1     (color-lighten-name cyan    25))
-       (blue-bg    (color-darken-name  blue    70))
-       (blue+1     (color-darken-name  blue    25))
-       (magenta-bg (color-darken-name  magenta 70))
-       (magenta+1  (color-darken-name  magenta 25))
+
+       (factor-bg-1 80)
+       (factor-bg   70)
+       (factor-bg+1 60)
+       (factor-fg+1 25)
+
+       (red-bg-1     (color-darken-name  red     factor-bg-1))
+       (red-bg       (color-darken-name  red     factor-bg))
+       (red-bg+1     (color-darken-name  red     factor-bg+1))
+       (red-fg+1     (color-lighten-name red     factor-fg+1))
+       (orange-bg    (color-darken-name  orange  factor-bg))
+       (orange-fg+1  (color-darken-name  orange  factor-fg+1))
+       (yellow-bg    (color-darken-name  yellow  factor-bg))
+       (yellow-fg+1  (color-lighten-name yellow  factor-fg+1))
+       (green-bg-1   (color-darken-name  green   factor-bg-1))
+       (green-bg     (color-darken-name  green   factor-bg))
+       (green-bg+1   (color-darken-name  green   factor-bg+1))
+       (green-fg+1   (color-darken-name  green   factor-fg+1))
+       (cyan-bg      (color-darken-name  cyan    factor-bg))
+       (cyan-fg+1    (color-lighten-name cyan    factor-fg+1))
+       (blue-bg      (color-darken-name  blue    factor-bg))
+       (blue-fg+1    (color-darken-name  blue    factor-fg+1))
+       (magenta-bg   (color-darken-name  magenta factor-bg))
+       (magenta-fg+1 (color-darken-name  magenta factor-fg+1))
 
        (black "black")
        (white "white"))
@@ -271,10 +279,10 @@
    `(markdown-url-face                ((t (:inherit (fixed-pitch shadow)))))
 
    ;; Message
-   `(message-header-cc         ((t (:foreground ,green+1))))
+   `(message-header-cc         ((t (:foreground ,green-fg+1))))
    `(message-header-name       ((t (:inherit bold))))
    `(message-header-newsgroups ((t (:inherit message-header-other))))
-   `(message-header-other      ((t (:foreground ,magenta+1))))
+   `(message-header-other      ((t (:foreground ,magenta-fg+1))))
    `(message-header-subject    ((t (:foreground ,magenta))))
    `(message-header-to         ((t (:foreground ,green))))
    `(message-header-xheader    ((t (:inherit message-header-other))))
@@ -371,7 +379,7 @@
    `(org-verbatim                  ((t (:inherit org-code))))
    `(org-warning                   ((t (:inherit warning))))
 
-     ;; Outline
+   ;; Outline
    `(outline-1 ((t (:inherit org-level-1))))
    `(outline-2 ((t (:inherit org-level-2))))
    `(outline-3 ((t (:inherit org-level-3))))
@@ -411,12 +419,12 @@
    `(ansi-color-cyan           ((t (:foreground ,cyan))))
    `(ansi-color-white          ((t (:foreground ,fg+1))))
    `(ansi-color-bright-black   ((t (:foreground ,bg-1))))
-   `(ansi-color-bright-red     ((t (:foreground ,red+1))))
-   `(ansi-color-bright-green   ((t (:foreground ,green+1))))
-   `(ansi-color-bright-blue    ((t (:foreground ,blue+1))))
-   `(ansi-color-bright-yellow  ((t (:foreground ,yellow+1))))
-   `(ansi-color-bright-magenta ((t (:foreground ,magenta+1))))
-   `(ansi-color-bright-cyan    ((t (:foreground ,cyan+1))))
+   `(ansi-color-bright-red     ((t (:foreground ,red-fg+1))))
+   `(ansi-color-bright-green   ((t (:foreground ,green-fg+1))))
+   `(ansi-color-bright-blue    ((t (:foreground ,blue-fg+1))))
+   `(ansi-color-bright-yellow  ((t (:foreground ,yellow-fg+1))))
+   `(ansi-color-bright-magenta ((t (:foreground ,magenta-fg+1))))
+   `(ansi-color-bright-cyan    ((t (:foreground ,cyan-fg+1))))
    `(ansi-color-bright-white   ((t (:foreground ,white))))
 
    ;; Transient
