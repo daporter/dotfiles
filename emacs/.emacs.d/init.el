@@ -172,19 +172,11 @@ When called interactively without a prefix numeric argument, N is
 
   :custom
   (display-buffer-alist
-   `((,(rx (| "*shell*" "*eshell*"))
+   `((,(rx "*Async Shell Command*")
       (display-buffer-in-side-window)
       (side . bottom)
-      (slot . -1)
-      (window . root)
-      (window-height . 0.33))
-
-     (,(rx "*Embark Actions*")
-      (display-buffer-reuse-mode-window
-       display-buffer-below-selected)
-      (window-height . fit-window-to-buffer)
-      (window-parameters . ((no-other-window . t)
-                            (mode-line-format . none))))
+      (slot . -2)
+      (window-height . 0.20))
 
      ((or . ((derived-mode . messages-buffer-mode)
              (derived-mode . backtrace-mode)
@@ -481,10 +473,18 @@ When called interactively without a prefix numeric argument, N is
          ("C-h B"        . embark-bindings))
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
+
   :config
-  ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+               `(,(rx "*Embark Actions*")
+                 (display-buffer-reuse-mode-window
+                  display-buffer-below-selected)
+                 (window-height . fit-window-to-buffer)
+                 (window-parameters . ((no-other-window . t)
+                                       (mode-line-format . none)))))
+  (add-to-list 'display-buffer-alist
+               `(,(rx (| "*Embark Collect Live*"
+                         "*Embark Collect Completions*"))
                  nil
                  (window-parameters (mode-line-format . none)))))
 
@@ -906,6 +906,13 @@ When called interactively without a prefix numeric argument, N is
   :bind
   (:map eshell-hist-mode-map ("C-<up>" . nil)) ; used by windmove
   :config
+  (add-to-list 'display-buffer-alist
+               `(,(rx "*eshell*")
+                 (display-buffer-in-side-window)
+                 (side . bottom)
+                 (slot . -1)
+                 (window-height . 0.33)))
+
   (dolist (module '(eshell-smart eshell-tramp))
     (add-to-list 'eshell-modules-list module)))
 
