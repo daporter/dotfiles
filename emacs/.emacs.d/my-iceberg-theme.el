@@ -52,7 +52,7 @@
        (magenta    "#bfb3e6")           ; hsl: 255 50 80
 
        (factor-bg-1 80)
-       (factor-bg   70)
+       (factor-bg   75)
        (factor-bg+1 60)
        (factor-fg+1 25)
 
