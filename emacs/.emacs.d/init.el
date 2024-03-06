@@ -469,9 +469,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package embark
   :ensure t
-  :bind (("C-<quotedbl>" . embark-act)
-         ("C-."          . embark-dwim)
-         ("C-h B"        . embark-bindings))
+  :bind (("C-="   . embark-act)
+         ("C-+"   . embark-dwim)
+         ("C-h B" . embark-bindings))
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
 
@@ -1254,3 +1254,8 @@ When called interactively without a prefix numeric argument, N is
 (use-package olivetti
   :ensure t
   :commands olivetti-mode)
+
+(use-package expand-region
+  :ensure t
+  :bind ("C-\"" . er/expand-region)
+  :custom (expand-region-contract-fast-key "/"))
