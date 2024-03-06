@@ -932,10 +932,6 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :mode "sxhkdrc\\'")
 
-(use-package olivetti
-  :ensure t
-  :commands olivetti)
-
 (use-package magit
   :ensure t
   :commands magit-status
