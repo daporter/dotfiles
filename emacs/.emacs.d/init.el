@@ -166,8 +166,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package window
   :bind
-  (("C-<tab>"           . next-buffer)
-   ("C-S-<iso-lefttab>" . previous-buffer)
+  (("C-<tab>"           . previous-buffer)
+   ("C-S-<iso-lefttab>" . next-buffer)
    ("C-t"               . switch-to-buffer)) ; was transpose-chars
 
   :custom
