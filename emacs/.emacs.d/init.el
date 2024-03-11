@@ -915,8 +915,6 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package eshell
   :defer t
-  :bind
-  (:map eshell-hist-mode-map ("C-<up>" . nil)) ; used by windmove
   :config
   (add-to-list 'display-buffer-alist
                `(,(rx "*eshell*")
@@ -927,6 +925,13 @@ When called interactively without a prefix numeric argument, N is
 
   (dolist (module '(eshell-smart eshell-tramp))
     (add-to-list 'eshell-modules-list module)))
+
+(use-package em-hist
+  :preface
+  (defun my/remove-eshell-hist-binding ()
+    "Remove binding C-<up>, since it’s used by windmove."
+    (keymap-unset eshell-hist-mode-map "C-<up>" :remove))
+  :hook (eshell-hist-load . my/remove-eshell-hist-binding))
 
 (use-package sxhkdrc-mode
   :ensure t
