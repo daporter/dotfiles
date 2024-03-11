@@ -167,8 +167,7 @@ When called interactively without a prefix numeric argument, N is
 (use-package window
   :bind
   (("C-<tab>"           . previous-buffer)
-   ("C-S-<iso-lefttab>" . next-buffer)
-   ("C-t"               . switch-to-buffer)) ; was transpose-chars
+   ("C-S-<iso-lefttab>" . next-buffer))
 
   :custom
   (display-buffer-alist
@@ -239,6 +238,11 @@ When called interactively without a prefix numeric argument, N is
   (switch-to-buffer-in-dedicated-window 'pop)
   (switch-to-buffer-obey-display-actions t))
 
+(use-package keymap
+  :config
+  ;; Make C-t behave as C-x.
+  (key-translate "C-t" "C-x"))
+
 (use-package bindings
   :bind ("M-o" . mode-line-other-buffer))
 
@@ -250,9 +254,6 @@ When called interactively without a prefix numeric argument, N is
   (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
 
 (use-package simple
-  ;; Free C-t to use for a more frequently used command.  C-’ was previously
-  ;; unbound.
-  :bind ("C-'" . transpose-chars)
   :config (column-number-mode 1))
 
 (use-package isearch
