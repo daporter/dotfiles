@@ -100,6 +100,7 @@ vscode-css-languageserver
 vscode-html-languageserver
 vscode-json-languageserver
 webkit2gtk
+xcape
 xclip
 xf86-video-intel
 xf86-video-vesa
