@@ -1284,3 +1284,10 @@ When called interactively without a prefix numeric argument, N is
                                     next-line))
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
+
+(use-package org-anki
+  :ensure t
+  :commands (org-anki-sync-entry)
+  :custom
+  (org-anki-model-fields '(("Basic" "Front" "Back" "Extra" "Source")
+                           ("Cloze" "Text" "Extra" "Source"))))
