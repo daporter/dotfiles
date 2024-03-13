@@ -72,6 +72,7 @@ sxiv
 tealdeer
 texlive-binextra
 texlive-latex
+texlive-plaingeneric
 torbrowser-launcher
 traceroute
 tree
