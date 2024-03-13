@@ -1,7 +1,7 @@
 ! Make c and u act as Hyper keys when pressed (in conjunction with
 ! xcape).
-keycode 54  = Hyper_L Hyper_L Hyper_L
 keycode 30  = Hyper_R Hyper_R Hyper_R
+keycode 54  = Hyper_L Hyper_L Hyper_L
 keycode 254 = c C
 keycode 255 = u U
 

@@ -1,15 +1,18 @@
 ;; -*- lexical-binding: t; -*-
 
-;;; Utility functions
+;;; Code:
+
+;;;; Utility functions
 
 (defun my/set-cursor-type-bar ()
   "Set the cursor type to bar in the current buffer."
   (setq-local cursor-type 'bar))
 
 (defun my/disable-indent-tabs-mode ()
+  "Turn off Indent-Tabs mode."
   (setq-local indent-tabs-mode nil))
 
-;;; Package definitions
+;;;; Package definitions
 
 (use-package package
   :hook (package-menu-mode . hl-line-mode)
@@ -255,6 +258,10 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package simple
   :config (column-number-mode 1))
+
+(use-package paragraphs
+  :bind (("M-p" . backward-paragraph)
+         ("M-n" . forward-paragraph)))
 
 (use-package isearch
   :bind (:map isearch-mode-map
@@ -697,12 +704,11 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package flymake
   :defer t
-  :hook ((prog-mode text-mode) . flymake-mode-on)
+  :hook (prog-mode text-mode)
   :bind (:map flymake-mode-map
-              ("M-p" . flymake-goto-prev-error)
-              ("M-n" . flymake-goto-next-error))
-  :custom
-  (flymake-fringe-indicator-position nil))
+              ("H-n" . flymake-goto-next-error)
+              ("H-p" . flymake-goto-prev-error))
+  :custom (flymake-fringe-indicator-position nil))
 
 (use-package prog-mode
   :defer t
