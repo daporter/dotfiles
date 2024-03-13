@@ -1271,3 +1271,16 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :bind ("C-\"" . er/expand-region)
   :custom (expand-region-contract-fast-key "/"))
+
+(use-package keyfreq
+  :ensure t
+  :custom
+  (keyfreq-file (concat user-emacs-directory "keyfreq"))
+  :config
+  (setq keyfreq-excluded-commands '(self-insert-command
+                                    forward-char
+                                    backward-char
+                                    previous-line
+                                    next-line))
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
