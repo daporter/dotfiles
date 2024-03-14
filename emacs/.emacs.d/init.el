@@ -1291,3 +1291,8 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (org-anki-model-fields '(("Basic" "Front" "Back" "Extra" "Source")
                            ("Cloze" "Text" "Extra" "Source"))))
+
+(use-package auth-source-1password
+  :ensure t
+  :config
+  (auth-source-1password-enable))
