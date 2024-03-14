@@ -485,6 +485,11 @@
    `(orderless-match-face-2 ((t (:inherit bold :foreground  ,blue))))
    `(orderless-match-face-3 ((t (:inherit bold :foreground  ,magenta))))
 
+;;;;; Org Noter
+
+   `(org-noter-notes-exist-face    ((t (:inherit bold :foreground  ,green))))
+   `(org-noter-no-notes-exist-face ((t (:inherit bold :foreground  ,orange))))
+
 ;;;;; Transient
 
    `(transient-key ((t (:inherit help-key-binding))))
