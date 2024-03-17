@@ -170,11 +170,13 @@ When called interactively without a prefix numeric argument, N is
 (use-package window
   :bind
   (("C-<tab>"           . previous-buffer)
-   ("C-S-<iso-lefttab>" . next-buffer))
+   ("C-S-<iso-lefttab>" . next-buffer)
+   ("H-b"               . switch-to-buffer))
 
   :custom
   (display-buffer-alist
-   `((,(rx "*Async Shell Command*")
+   `((,(rx (| "*Async Shell Command*"
+              "*Shell Command Output*"))
       (display-buffer-in-side-window)
       (side . bottom)
       (slot . -2)
@@ -241,13 +243,11 @@ When called interactively without a prefix numeric argument, N is
   (switch-to-buffer-in-dedicated-window 'pop)
   (switch-to-buffer-obey-display-actions t))
 
-(use-package keymap
-  :config
-  ;; Make C-t behave as C-x.
-  (key-translate "C-t" "C-x"))
-
 (use-package bindings
   :bind ("M-o" . mode-line-other-buffer))
+
+(use-package files
+  :bind ("H-s" . save-buffer))
 
 (use-package faces
   :config

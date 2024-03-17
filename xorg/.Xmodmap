@@ -1,9 +1,8 @@
 ! Make c and u act as Hyper keys when pressed (in conjunction with
 ! xcape).
-keycode 30  = Hyper_R Hyper_R Hyper_R
-keycode 54  = Hyper_L Hyper_L Hyper_L
-keycode 254 = c C
-keycode 255 = u U
 
-remove mod4 = Hyper_L Hyper_R
-add    mod3 = Hyper_L Hyper_R
+keycode 135  = Hyper_L Hyper_L Hyper_L
+
+remove mod3 = ISO_Level5_Shift
+remove mod4 = Hyper_L
+add    mod3 = Hyper_L Hyper_L Hyper_L
