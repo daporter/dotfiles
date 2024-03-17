@@ -722,7 +722,8 @@ When called interactively without a prefix numeric argument, N is
 
   :hook
   (prog-mode . my/set-cursor-type-bar)
-  (prog-mode . my/set-fill-column))
+  (prog-mode . my/set-fill-column)
+  (prog-mode . turn-on-auto-fill))
 
 (use-package eldoc
   :custom
