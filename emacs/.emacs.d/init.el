@@ -257,6 +257,8 @@ When called interactively without a prefix numeric argument, N is
   (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
 
 (use-package simple
+  :bind (("C-z" . undo)                 ; default: suspend-frame
+         ("C-S-z" . undo-redo))
   :config (column-number-mode 1))
 
 (use-package paragraphs
