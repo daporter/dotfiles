@@ -1300,3 +1300,17 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :config
   (auth-source-1password-enable))
+
+(use-package gptel
+  :ensure t
+  :commands (gptel gptel-send)
+  :config
+  (gptel-make-anthropic "Claude"
+    :stream t
+    :key #'gptel-api-key-from-auth-source)
+  (gptel-make-openai "Perplexity"
+    :host "api.perplexity.ai"
+    :key #'gptel-api-key-from-auth-source
+    :endpoint "/chat/completions"
+    :stream t
+    :models '("sonar-medium-chat")))
