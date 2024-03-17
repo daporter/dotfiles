@@ -1282,10 +1282,12 @@ When called interactively without a prefix numeric argument, N is
   (keyfreq-file (concat user-emacs-directory "keyfreq"))
   :config
   (setq keyfreq-excluded-commands '(self-insert-command
+                                    org-self-insert-command
                                     forward-char
                                     backward-char
                                     previous-line
-                                    next-line))
+                                    next-line
+                                    pixel-scroll-precision))
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
 
