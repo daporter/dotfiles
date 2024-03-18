@@ -11,8 +11,8 @@ if [ -r "$HOME"/.Xresources ]; then
 	xrdb -I "$HOME" -merge "$HOME"/.Xresources
 fi
 
-xset b off           # no bell
-xset r rate 200 55   # repeat after 200 ms, 55 char/s
+xset b off                      # no bell
+xset r rate 200 200             # repeat after 200 ms, 200 char/s
 xsetroot -cursor_name left_ptr
 xmodmap "$HOME"/.Xmodmap
 xcape -e 'Hyper_L=c;Hyper_R=u'
