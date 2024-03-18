@@ -389,7 +389,8 @@ When called interactively without a prefix numeric argument, N is
                   corfu-popupinfo-delay nil)
       (corfu-mode 1)))
   :hook
-  (minibuffer-setup , my/corfu-enable-in-minibuffer)
+  ((minibuffer-setup . my/corfu-enable-in-minibuffer)
+   (eshell-mode . corfu-mode))
   :bind (:map corfu-map
               ("SPC" . corfu-insert-separator)) ; to work well with orderless
   :init
