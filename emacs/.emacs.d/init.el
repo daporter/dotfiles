@@ -1201,7 +1201,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package repeat
   :config
-  :hook (after-init . repeat-mode)
+  :hook (after-init)
   :bind ("C-_" . repeat))                        ; reuse one of the ‘undo’ bindings
 
 (use-package server
