@@ -84,7 +84,7 @@
 ;;;;; Base
 
    `(border                ((t (:foreground ,bg+2 :background ,bg-1))))
-   `(cursor                ((t (:background ,white))))
+   `(cursor                ((t (:background ,red))))
    `(default               ((t (:foreground ,fg :background ,bg))))
    `(error                 ((t (:foreground ,red))))
    `(fringe                ((t (:foreground ,fg-2))))
@@ -211,7 +211,7 @@
 
 ;;;;; Help
 
-   `(help-key-binding ((t (:background ,bg+1 :weight light :box (:line-width (-1 . -1) :color ,bg+2)))))
+   `(help-key-binding ((t (:background ,bg+2 :weight light :box (:line-width (-1 . -1) :color ,bg+3)))))
 
 ;;;;; HL-Line
 
