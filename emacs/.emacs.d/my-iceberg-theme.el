@@ -43,13 +43,13 @@
        (fg   "#e2e3e8")                 ; hsl 230 11% 90%
        (fg+1 "#f1f1f4")                 ; l: 95%
 
-       (red        "#edabab")           ; hsl: 0   65 80
-       (orange     "#edc6ab")           ; hsl: 25  65 80
-       (yellow     "#ede1ab")           ; hsl: 50  65 80
-       (green      "#dde6b3")           ; hsl: 80  50 80
-       (cyan       "#b3dee6")           ; hsl: 190 50 80
-       (blue       "#b3c8e6")           ; hsl: 215 50 80
-       (magenta    "#bfb3e6")           ; hsl: 255 50 80
+       (red        "#e48181")           ; hsl: 0   65 70
+       (orange     "#e4aa81")           ; hsl: 25  65 70
+       (yellow     "#e4d281")           ; hsl: 50  65 70
+       (green      "#cbd98c")           ; hsl: 80  50 70
+       (cyan       "#8ccdd9")           ; hsl: 190 50 70
+       (blue       "#8cacd9")           ; hsl: 215 50 70
+       (magenta    "#9e8cd9")           ; hsl: 255 50 70
 
        (factor-bg-1 80)
        (factor-bg   75)
@@ -321,7 +321,7 @@
 
 ;;;;; Show Paren
 
-   `(show-paren-match    ((t (:box (:line-width (-1 . -1) :color ,fg-2)))))
+   `(show-paren-match    ((t (:foreground ,yellow :background ,yellow-bg))))
    `(show-paren-mismatch ((t (:background ,red-bg))))
 
 ;;;;; Terminal
@@ -438,12 +438,12 @@
    `(markdown-html-tag-name-face      ((t (:inherit fixed-pitch))))
    `(markdown-inline-code-face        ((t (:inherit markdown-code-face))))
    `(markdown-language-info-face      ((t (:inherit fixed-pitch))))
-   `(markdown-language-keyword-face   ((t (:inherit fixed-pitch))))
+   `(markdown-language-keyword-face   ((t (:inherit (fixed-pitch shadow)))))
    `(markdown-line-break-face         ((t (:inherit default))))
    `(markdown-markup-face             ((t (:inherit (fixed-pitch shadow)))))
    `(markdown-metadata-key-face       ((t (:inherit (fixed-pitch font-lock-comment-face) :height 0.9))))
    `(markdown-metadata-value-face     ((t (:inherit markdown-metadata-key-face))))
-   `(markdown-pre-face                ((t (:inherit fixed-pitch :background ,bg+1))))
+   `(markdown-pre-face                ((t (:inherit fixed-pitch :background ,bg+1 :extend t))))
    `(markdown-table-face              ((t (:inherit fixed-pitch))))
    `(markdown-url-face                ((t (:inherit (fixed-pitch shadow)))))
 
