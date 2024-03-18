@@ -772,12 +772,12 @@ When called interactively without a prefix numeric argument, N is
 
   :bind
   (:map eglot-mode-map
-        ("C-c l f"    . eglot-format)
-        ("C-c l h"    . eldoc)
-        ("C-c l o"    . eglot-code-action-organize-imports)
-        ("C-c l q"    . eglot-code-action-quickfix)
-        ("M-<return>" . eglot-code-action-quickfix)
-        ("C-c l r"    . eglot-rename)))
+        ("C-c e f"    . eglot-format)
+        ("C-c e h"    . eldoc)
+        ("C-c e o"    . eglot-code-action-organize-imports)
+        ("C-c e r"    . eglot-rename)
+        ("C-c e q"    . eglot-code-action-quickfix)
+        ("H-f"        . eglot-code-action-quickfix)))
 
 (use-package text-mode
   :defer t
