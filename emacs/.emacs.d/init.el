@@ -4,6 +4,16 @@
 
 ;;;; Utility functions
 
+(defun my/goto-emacs-dir ()
+  "Open Emacs directory"
+  (interactive)
+  (find-file user-emacs-directory))
+
+(defun my/load-config ()
+  "Load config"
+  (interactive)
+  (load-file user-init-file))
+
 (defun my/set-cursor-type-bar ()
   "Set the cursor type to bar in the current buffer."
   (setq-local cursor-type 'bar))
@@ -33,8 +43,16 @@
 
   (use-package-compute-statistics nil))
 
+(use-package use-package
+  :bind (:map my/lint-map
+              ("u" . use-package-lint))
+  :custom
+  (use-package-verbose t)
+  (use-package-minimum-reported-time 0)
+  (use-package-enable-imenu-support t))
+
 (use-package emacs
-  :init
+  :preface
   ;; Add prompt indicator to `completing-read-multiple'.  We display
   ;; [CRM<separator>], e.g., [CRM,] if the separator is a comma.
   (defun crm-indicator (args)
@@ -167,11 +185,89 @@ When called interactively without a prefix numeric argument, N is
       (newline-and-indent)))
   (global-set-key (kbd "C-o") #'my/open-line-and-indent))
 
+(use-package keymap
+  :config
+  (defvar-keymap my/buffer-map :doc "My prefix keymap for buffers."
+                 "E" #'erase-buffer
+                 "k" #'kill-buffer)
+  (keymap-set (current-global-map)
+              "C-c b"
+              (cons "Buffer" my/buffer-map))
+
+  (defvar-keymap my/comment-map :doc "My prefix keymap for comments.")
+  (keymap-set (current-global-map)
+              "C-c c"
+              (cons "Comment" my/comment-map))
+
+  (defvar-keymap my/config-map :doc "My prefix keymap for config actions."
+                 "d" #'my/goto-emacs-dir
+                 "l" #'my/load-config)
+  (keymap-set (current-global-map)
+              "C-c C"
+              (cons "Config" my/config-map))
+
+  (defvar-keymap my/file-map :doc "My prefix keymap for files.")
+  (keymap-set (current-global-map)
+              "C-c f"
+              (cons "File" my/file-map))
+
+  (defvar-keymap my/lint-map :doc "My prefix keymap for linting.")
+  (keymap-set (current-global-map)
+              "C-c l"
+              (cons "Linting" my/lint-map))
+
+  (defvar-keymap my/compile-map :doc "My prefix keymap for compile actions.")
+  (keymap-set (current-global-map)
+              "C-c m"
+              (cons "Compile" my/compile-map))
+
+  (defvar-keymap my/quit-map :doc "My prefix keymap for quitting.")
+  (keymap-set (current-global-map)
+              "C-c q"
+              (cons "Quit" my/quit-map))
+
+  (defvar-keymap my/register-map :doc "My prefix keymap for registers.")
+  (keymap-set (current-global-map)
+              "C-c r"
+              (cons "Register" my/register-map))
+
+  (defvar-keymap my/search-map :doc "My prefix keymap for search.")
+  (keymap-set (current-global-map)
+              "C-c s"
+              (cons "Search" my/search-map))
+
+  (defvar-keymap my/spelling-map :doc "My prefix keymap for spelling.")
+  (keymap-set (current-global-map)
+              "C-c S"
+              (cons "Spelling" my/spelling-map))
+
+  (defvar-keymap my/toggle-map :doc "My prefix keymap for toggling settings.")
+  (keymap-set (current-global-map)
+              "C-c t"
+              (cons "Toggle" my/toggle-map))
+
+  (defvar-keymap my/vc-map :doc "My prefix keymap for version control.")
+  (keymap-set (current-global-map)
+              "C-c v"
+              (cons "VC" my/vc-map))
+
+  (defvar-keymap my/window-map :doc "My prefix keymap for windows.")
+  (keymap-set (current-global-map)
+              "C-c w"
+              (cons "Window" my/window-map)))
+
 (use-package window
   :bind
   (("C-<tab>"           . previous-buffer)
    ("C-S-<iso-lefttab>" . next-buffer)
-   ("H-b"               . switch-to-buffer))
+   :map my/buffer-map
+   ("d" . kill-buffer-and-window)
+   :map my/window-map
+   ("d" . delete-window)
+   ("H" . split-window-below)
+   ("m" . delete-other-windows)
+   ("o" . other-window)
+   ("V" . split-window-right))
 
   :custom
   (display-buffer-alist
@@ -244,10 +340,18 @@ When called interactively without a prefix numeric argument, N is
   (switch-to-buffer-obey-display-actions t))
 
 (use-package bindings
-  :bind ("M-o" . mode-line-other-buffer))
+  :bind (:map my/buffer-map
+              ("o" . mode-line-other-buffer)))
 
 (use-package files
-  :bind ("H-s" . save-buffer))
+  :bind (:map my/buffer-map
+              ("r" . revert-buffer)
+              ("s" . save-buffer)
+              :map my/file-map
+              ("f" . find-file)
+              :map my/quit-map
+              ("q" . save-buffers-kill-emacs)
+              ("r" . restart-emacs)))
 
 (use-package faces
   :config
@@ -257,9 +361,15 @@ When called interactively without a prefix numeric argument, N is
   (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
 
 (use-package simple
-  :bind (("C-z" . undo)                 ; default: suspend-frame
-         ("C-S-z" . undo-redo))
+  :bind (("C-z"   . undo)
+         ("C-S-z" . undo-redo))       ; default: suspend-frame
+
   :config (column-number-mode 1))
+
+(use-package newcomment
+  :bind (:map my/comment-map
+              ("c" . comment-dwim)
+              ("l" . comment-line)))
 
 (use-package paragraphs
   :bind (("M-p" . backward-paragraph)
@@ -274,21 +384,44 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (show-paren-context-when-offscreen 'overlay))
 
+(use-package display-line-numbers
+  :bind (:map my/toggle-map
+              ("n" . display-line-numbers-mode)))
+
+(use-package ibuffer
+  :bind (:map my/buffer-map ("a" . ibuffer)))
+
 (use-package compile
-  :bind (:map prog-mode-map
-              ("C-c c" . compile))
+  :bind (:map my/compile-map
+              ("e" . compile-goto-error)
+              ("K" . kill-compilation)
+              ("m" . compile)
+              ("r" . recompile))
   :hook (compilation-filter . ansi-color-compilation-filter)
   :custom
   (compilation-auto-jump-to-first-error 'if-location-known))
 
 (use-package dired
-  :defer t
+  :bind (("C-c d" . dired-jump)
+         ("C-c D" . dired-jump-other-window))
   :custom
   (dired-recursive-copies 'always)
   (dired-dwim-target t))                ; try to guess target directory for copy
 
+(use-package project
+  :commands (project-find-file
+             project-switch-to-buffer
+             project-switch-project
+             project-switch-project-open-file)
+  :config
+  (keymap-set global-map "C-c p" (cons "Project" project-prefix-map)))
+
 (use-package ediff
-  :defer t
+  :commands (ediff-buffers
+             ediff-current-file
+             ediff-files
+             ediff-regions-linewise
+             ediff-regions-wordwise)
   :custom
   (ediff-keep-variants         nil)
   (ediff-show-clashes-only     t)
@@ -296,8 +429,7 @@ When called interactively without a prefix numeric argument, N is
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (use-package nerd-icons
-  :ensure t
-  :defer t)
+  :ensure t)
 
 (use-package nerd-icons-dired
   :ensure t
@@ -314,12 +446,14 @@ When called interactively without a prefix numeric argument, N is
   (nerd-icons-completion-mode))
 
 (use-package apropos
-  :defer t
   :custom
   (apropos-sort-by-scores t))
 
 (use-package ispell
-  :defer t
+  :bind (:map my/spelling-map
+              ("b" . ispell-buffer)
+              ("r" . ispell-region)
+              ("w" . ispell-word))
   :custom (ispell-dictionary "australian-w_accents"))
 
 (use-package hippie-exp
@@ -339,23 +473,20 @@ When called interactively without a prefix numeric argument, N is
                                       try-complete-lisp-symbol)))
 
 (use-package bookmark
-  :defer t
   :custom
   ;; Save bookmarks on each modification.
   (bookmark-save-flag 1))
 
 (use-package proced
-  :defer t
+  :commands (proced)
   :custom
   (proced-auto-update-flag t)
   (proced-enable-color-flag t))
 
 (use-package saveplace
-  :defer t
   :init (save-place-mode 1))
 
 (use-package savehist
-  :defer t
   :init (savehist-mode 1))
 
 (use-package marginalia
@@ -365,14 +496,12 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package orderless
   :ensure t
-  :defer t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package vertico
   :ensure t
-  :defer t
   :init
   (vertico-mode 1)
   :custom
@@ -380,7 +509,6 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package corfu
   :ensure t
-  :defer t
   :preface
   (defun my/corfu-enable-in-minibuffer ()
     "Enable Corfu in the minibuffer."
@@ -483,10 +611,33 @@ When called interactively without a prefix numeric argument, N is
          ([remap switch-to-buffer-other-frame]  . consult-buffer-other-frame)
          ([remap project-switch-to-buffer]      . consult-project-buffer)
          ([remap yank-pop]                      . consult-yank-pop)
-         ("C-c m"                               . consult-man)
-         ("C-c i"                               . consult-info)
+         ([remap imenu]                         . consult-imenu)
+         ;; ("C-c m"                               . consult-man)
          ([remap Info-search]                   . consult-info)
-         ("C-c o"                               . consult-outline)))
+         ("C-c k"                               . consult-yank-from-kill-ring)
+         ("C-c o"                               . consult-outline)
+         :map my/buffer-map
+         ("b" . consult-buffer)
+         ("i" . consult-imenu)
+         ("m" . consult-mark)
+         ("p" . consult-project-buffer)
+         ("s" . consult-buffer-other-window)
+         :map my/file-map
+         ("b" . consult-bookmark)
+         ("l" . consult-locate)
+         ("r" . consult-recent-file)
+         :map my/lint-map
+         ("c" . consult-flymake)
+         :map my/register-map
+         ("l" . consult-register-load)
+         ("r" . consult-register)
+         ("s" . consult-register-store)
+         :map my/search-map
+         ("b" . consult-multi-occur)
+         ("h" . consult-org-heading)
+         ("k" . consult-yank-pop)
+         ("l" . consult-line)
+         ("d" . consult-ripgrep)))
 
 (use-package embark
   :ensure t
@@ -632,14 +783,13 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package transpose-frame
   :ensure t
-  :config
-  (defvar-keymap my/transpose-frame-map
-    :doc "Keymap for transpose-frame"
-    :repeat t
-    "f" #'flop-frame
-    "t" #'transpose-frame)
-  (keymap-set global-map
-              "C-c f" (cons "Transpose Frame" my/transpose-frame-map)))
+  :bind (:map my/window-map
+              ("r" . transpose-frame)
+              ("s" . flop-frame)))
+
+(use-package rainbow-mode
+  :bind (:map my/toggle-map
+              ("r" . rainbow-mode)))
 
 (use-package pulsar
   :ensure t
@@ -653,19 +803,21 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package which-key
   :ensure t
-  :config
-  (which-key-mode 1))
+  :hook
+  (after-init)
+  :custom
+  (which-key-show-early-on-C-h t)
+  (which-key-idle-delay .75)
+  (which-key-idle-secondary-delay 0.05)
+  (which-key-side-window-max-height 0.5))
 
 (use-package vterm
   :ensure t
   :commands vterm)
 
 (use-package whitespace
-  :defer t
-  :bind (:map prog-mode-map
-              ("C-c w" . whitespace-cleanup)
-              :map text-mode-map
-              ("C-c w" . whitespace-cleanup))
+  :bind (:map my/buffer-map
+              ("w" . whitespace-cleanup))
   :custom
   (whitespace-style '(face
                       trailing
@@ -695,17 +847,10 @@ When called interactively without a prefix numeric argument, N is
     ((smie-indent-line . css-indent-offset)))
   (smart-tabs-insinuate 'sh 'mhtml 'nxml 'css))
 
-(use-package whole-line-or-region
-  :ensure t
-  :config
-  ;; I don’t like the changed behaviour of comment-dwim.
-  (define-key whole-line-or-region-local-mode-map [remap comment-dwim] nil)
-  (whole-line-or-region-global-mode 1))
-
 (use-package editorconfig
   :ensure t
-  :config
-  (editorconfig-mode 1))
+  :hook
+  (after-init))
 
 (use-package titlecase
   :ensure t
@@ -716,15 +861,13 @@ When called interactively without a prefix numeric argument, N is
   :custom (titlecase-style 'chicago))
 
 (use-package flymake
-  :defer t
   :hook (prog-mode text-mode)
-  :bind (:map flymake-mode-map
-              ("H-n" . flymake-goto-next-error)
-              ("H-p" . flymake-goto-prev-error))
+  :bind (:map my/lint-map
+              ("d" . flymake-show-buffer-diagnostics)
+              ("p" . flymake-show-project-diagnostics))
   :custom (flymake-fringe-indicator-position nil))
 
 (use-package prog-mode
-  :defer t
   :preface
   (defun my/set-fill-column ()
     (setq-local fill-column 80)
@@ -737,7 +880,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package eldoc
   :custom
-  (eldoc-documentation-strategy eldoc-documentation-compose-eagerly)
+  (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
   (eldoc-echo-area-use-multiline-p nil)
 
   :config
@@ -786,11 +929,9 @@ When called interactively without a prefix numeric argument, N is
         ("C-c e h"    . eldoc)
         ("C-c e o"    . eglot-code-action-organize-imports)
         ("C-c e r"    . eglot-rename)
-        ("C-c e q"    . eglot-code-action-quickfix)
-        ("H-f"        . eglot-code-action-quickfix)))
+        ("C-c e q"    . eglot-code-action-quickfix)))
 
 (use-package text-mode
-  :defer t
   :config
   ;; For some reason, the following doesn't work with :bind
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
@@ -819,16 +960,16 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package lorem-ipsum
   :ensure t
-  :defer t)
+  :commands (lorem-ipsum-insert-list
+             lorem-ipsum-insert-paragraphs
+             lorem-ipsum-insert-sentences))
 
 (use-package elisp-mode
-  :defer t
   :hook (emacs-lisp-mode  . my/disable-indent-tabs-mode)
   :bind ("C-x x e" . eval-buffer))
 
 (use-package c-ts-mode
   :after eglot
-  :defer t
   :bind
   (:map c-ts-mode-map
         ("C-c o" . ff-find-other-file))
@@ -859,74 +1000,74 @@ When called interactively without a prefix numeric argument, N is
   :hook (markdown-mode . flymake-markdownlint-setup))
 
 (use-package sh-script
-  :defer t
-  :config
+  :after whitespace
+  :preface
   (defun my/configure-tab-width-sh-mode ()
     (setq tab-width sh-basic-offset))
-  (add-hook 'sh-mode-hook #'my/configure-tab-width-sh-mode)
 
-  (use-package whitespace)
   (defun my/configure-whitespace-sh-mode ()
     (setq-local whitespace-style
                 (remove 'indentation whitespace-style)))
-  (add-hook 'whitespace-mode-hook #'my/configure-whitespace-sh-mode))
+  :hook
+  ((sh-mode . my/configure-tab-width-sh-mode)
+   (whitespace-mode . my/configure-whitespace-sh-mode)))
 
 (use-package python-mode
   :ensure t
-  :defer t
-  :config
+  :after whitespace
+  :preface
   (defun my/configure-tab-width-python-mode ()
     (setq tab-width python-indent-offset))
-  (add-hook 'python-mode-hook #'my/configure-tab-width-python-mode)
 
-  (use-package whitespace)
   (defun my/configure-whitespace-python-mode ()
     (setq-local whitespace-style
                 (remove 'indentation whitespace-style)))
-  (add-hook 'python-mode-hook #'my/configure-whitespace-python-mode))
+  :hook
+  ((python-mode . my/configure-tab-width-python-mode)
+   (python-mode . my/configure-whitespace-python-mode)))
 
 (use-package mhtml-mode
   :mode "\\.html\\'"
-  :config
+  :after whitespace
+  :preface
   (defun my/configure-tab-width-mhtml-mode ()
     (setq tab-width sgml-basic-offset))
-  (add-hook 'mhtml-mode-hook #'my/configure-tab-width-mhtml-mode)
 
-  (use-package whitespace)
   (defun my/configure-whitespace-mhtml-mode ()
     (setq-local whitespace-style
                 (remove 'indentation whitespace-style)))
-  (add-hook 'mhtml-mode-hook #'my/configure-whitespace-mhtml-mode))
+  :hook
+  ((mhtml-mode . my/configure-tab-width-mhtml-mode)
+   (mhtml-mode . my/configure-whitespace-mhtml-mode)))
 
 (use-package nxml-mode
-  :defer t
-  :config
+  :after whitespace
+  :preface
   (defun my/configure-tab-width-nxml-mode ()
     (setq tab-width nxml-child-indent))
-  (add-hook 'nxml-mode-hook #'my/configure-tab-width-nxml-mode)
 
-  (use-package whitespace)
   (defun my/configure-whitespace-nxml-mode ()
     (setq-local whitespace-style
                 (remove 'indentation whitespace-style)))
-  (add-hook 'nxml-mode-hook #'my/configure-whitespace-nxml-mode))
+  :hook
+  ((nxml-mode . my/configure-tab-width-nxml-mode)
+   (nxml-mode . my/configure-whitespace-nxml-mode)))
 
 (use-package css-ts-mode
-  :defer t
-  :config
+  :after whitespace
+  :preface
   (defun my/configure-tab-width-css-ts-mode ()
     (setq css-indent-offset 2)
     (setq tab-width css-indent-offset))
-  (add-hook 'css-ts-mode-hook #'my/configure-tab-width-css-ts-mode)
 
-  (use-package whitespace)
   (defun my/configure-whitespace-css-ts-mode ()
     (setq-local whitespace-style
                 (remove 'indentation whitespace-style)))
-  (add-hook 'css-ts-mode-hook #'my/configure-whitespace-css-ts-mode))
+  :hook
+  ((css-ts-mode . my/configure-tab-width-css-ts-mode)
+   (css-ts-mode . my/configure-whitespace-css-ts-mode)))
 
 (use-package conf-mode
-  :defer t
   :hook (text-mode . my/set-cursor-type-bar)
   :bind ("C-M-i" . completion-at-point))
 
@@ -935,7 +1076,7 @@ When called interactively without a prefix numeric argument, N is
   :mode "\\.ya?ml\\'")
 
 (use-package eshell
-  :defer t
+  :commands (eshell)
   :config
   (add-to-list 'display-buffer-alist
                `(,(rx "*eshell*")
@@ -960,9 +1101,15 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package magit
   :ensure t
+  :after project
   :commands magit-status
   :bind (:map project-prefix-map
-              ("m" . magit-project-status))
+              ("m" . magit-project-status)
+              :map my/vc-map
+              ("f" . magit-file-dispatch)
+              ("l" . magit-log)
+              ("L" . magit-log-buffer-file)
+              ("s" . magit-status))
   :custom
   (magit-display-buffer-function
    'magit-display-buffer-same-window-except-diff-v1)
@@ -1099,8 +1246,8 @@ When called interactively without a prefix numeric argument, N is
   (org-noter-auto-save-last-location t))
 
 (use-package org-agenda
-  :defer t
-  :bind ("C-c t" . org-todo-list)
+  :bind (:map my/search-map
+              ("t" . org-todo-list))
   :custom
   (org-agenda-window-setup 'current-window)
   (org-agenda-todo-ignore-scheduled 'future)
@@ -1149,7 +1296,6 @@ When called interactively without a prefix numeric argument, N is
   (gnus-sum-thread-tree-indent          "  "))
 
 (use-package sendmail
-  :defer t
   :custom
   (send-mail-function 'sendmail-send-it)
   (sendmail-program "msmtp")
@@ -1165,6 +1311,22 @@ When called interactively without a prefix numeric argument, N is
   (youtube-dl-directory "~/Downloads"))
 
 (use-package windmove
+  :preface
+  (defun my/split-window-right-and-focus ()
+    "Split the window horizontally and focus the new window."
+    (interactive)
+    (split-window-right)
+    (windmove-right))
+
+  (defun my/split-window-below-and-focus ()
+    "Split the window vertically and focus the new window."
+    (interactive)
+    (split-window-below)
+    (windmove-down))
+
+  :bind (:map my/window-map
+              ("h" . my/split-window-below-and-focus)
+              ("v" . my/split-window-right-and-focus))
   :config
   (windmove-default-keybindings 'control)
   (windmove-delete-default-keybindings 'none '(control shift))
@@ -1187,6 +1349,9 @@ When called interactively without a prefix numeric argument, N is
    windmove-repeat-map))
 
 (use-package winner
+  :bind (:map my/window-map
+              ("u" . winner-undo)
+              ("U" . winner-redo))
   :config
   (winner-mode 1))
 
@@ -1195,7 +1360,6 @@ When called interactively without a prefix numeric argument, N is
   (electric-pair-mode 1))
 
 (use-package electric
-  :defer t
   :config
   (electric-quote-mode 1))
 
@@ -1244,10 +1408,9 @@ When called interactively without a prefix numeric argument, N is
   :hook (after-init . global-page-break-lines-mode))
 
 (use-package hl-line
+  :bind (:map my/toggle-map
+              ("h" . hl-line-mode))
   :hook (prog-mode text-mode conf-mode notmuch-search))
-
-(use-package desc-text
-  :bind ("C-c p" . describe-text-properties))
 
 (use-package face-remap
   :preface
@@ -1279,7 +1442,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package olivetti
   :ensure t
-  :commands olivetti-mode)
+  :bind (:map my/toggle-map
+              ("o" . olivetti-mode)))
 
 (use-package expand-region
   :ensure t
@@ -1326,3 +1490,174 @@ When called interactively without a prefix numeric argument, N is
     :endpoint "/chat/completions"
     :stream t
     :models '("sonar-medium-chat")))
+
+(use-package meow
+  :ensure t
+  :custom
+  (meow-use-clipboard t)
+  (meow-goto-line-function #'consult-goto-line)
+  :config
+(defconst meow-cheatsheet-physical-layout-sweep
+"
+┏━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┓             ┏━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┓
+┃  <AD01> │  <AD02> │  <AD03> │  <AD04> │  <AD05> ┃             ┃  <AD06> │  <AD07> │  <AD08> │  <AD09> │  <AD10> ┃
+┃         |         |         |         |         ┃             ┃         |         |         |         |         ┃
+┠─┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┃             ┠─┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┃
+┃         │         │         │         │         ┃             ┃         │         │         │         │         ┃
+┃         |         |         |         |         ┃             ┃         |         |         |         |         ┃
+┠─────────┼─────────┼─────────┼─────────┼─────────┨             ┠─────────┼─────────┼─────────┼─────────┼─────────┨
+┃  <AC01> │  <AC02> │  <AC03> │  <AC04> │  <AC05> ┃             ┃  <AC06> │  <AC07> │  <AC08> │  <AC09> │  <AC10> ┃
+┃         |         |         |         |         ┃             ┃         |         |         |         |         ┃
+┃┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┃             ┃┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┃
+┃         │         │         │         │         ┃             ┃         │         │         │         │         ┃
+┃         |         |         |         |         ┃             ┃         |         |         |         |         ┃
+┠─────────┼─────────┼─────────┼─────────┼─────────┨             ┠─────────┼─────────┼─────────┼─────────┼─────────┨
+┃  <AB01> │  <AB02> │  <AB03> │  <AB04> │  <AB05> ┃             ┃  <AB06> │  <AB07> │  <AB08> │  <AB09> │  <AB10> ┃
+┃         |         |         |         |         ┃             ┃         |         |         |         |         ┃
+┃┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┃             ┃┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┼┄┄┄┄┄┄┄┄┄┃
+┃         │         │         │         │         ┃             ┃         │         │         │         │         ┃
+┃         |         |         |         |         ┃             ┃         |         |         |         |         ┃
+┗━━━━━━━━━┷━━━━━━━━━┷━━━━━━━━━┷━━━━━━━━━┷━━━━━━━━━┛             ┗━━━━━━━━━┷━━━━━━━━━┷━━━━━━━━━┷━━━━━━━━━┷━━━━━━━━━┛
+
+                                   ┏━━━━━━━━━┯━━━━━━━━━┓   ┏━━━━━━━━━┯━━━━━━━━━┓
+                                   ┃  BKSP   │  <AA01> ┃   ┃   SPC   │   RET   ┃
+                                   ┃         │         ┃   ┃         │         ┃
+                                   ┗━━━━━━━━━┷━━━━━━━━━┛   ┗━━━━━━━━━┷━━━━━━━━━┛
+")
+
+(defconst meow-cheatsheet-layout-hands-down
+  '((<AD01> "j"	"J")
+    (<AD02> "g"	"G")
+    (<AD03> "m"	"M")
+    (<AD04> "p"	"P")
+    (<AD05> "v"	"V")
+    (<AD06> "z"	"Z")
+    (<AD07> ","	";")
+    (<AD08> "."	":")
+    (<AD09> "q"	"Q")
+    (<AD10> "'"	"\"")
+    (<AC01> "r"	"R")
+    (<AC02> "s"	"S")
+    (<AC03> "n"	"N")
+    (<AC04> "d"	"D")
+    (<AC05> "b"	"B")
+    (<AC06> "/"	"?")
+    (<AC07> "a"	"A")
+    (<AC08> "e"	"E")
+    (<AC09> "i"	"I")
+    (<AC10> "h"	"H")
+    (<AB01> "x"	"X")
+    (<AB02> "f"	"F")
+    (<AB03> "l"	"L")
+    (<AB04> "c"	"C")
+    (<AB05> "w"	"W")
+    (<AB06> "-"	"_")
+    (<AB07> "o"	"O")
+    (<AB08> "u"	"U")
+    (<AB09> "y"	"Y")
+    (<AB10> "k"	"K")
+    (<AA01> "t"	"T")))
+
+(setq meow-cheatsheet-physical-layout meow-cheatsheet-physical-layout-sweep)
+(setq meow-cheatsheet-layout meow-cheatsheet-layout-hands-down)
+
+(meow-thing-register 'angle
+                       '(pair ("<") (">"))
+                       '(pair ("<") (">")))
+  (add-to-list 'meow-char-thing-table '(?a . angle))
+
+  (meow-normal-define-key
+   ;; Expansion.
+   '("0" . meow-expand-0)
+   '("1" . meow-expand-1)
+   '("2" . meow-expand-2)
+   '("3" . meow-expand-3)
+   '("4" . meow-expand-4)
+   '("5" . meow-expand-5)
+   '("6" . meow-expand-6)
+   '("7" . meow-expand-7)
+   '("8" . meow-expand-8)
+   '("9" . meow-expand-9)
+
+   ;; Top row:
+
+   '("j" . xref-find-definitions)
+   '("J" . xref-go-back)
+   '("g" . meow-bounds-of-thing)
+   '("G" . meow-beginning-of-thing)
+   '("m" . meow-inner-of-thing)
+   '("M" . meow-end-of-thing)
+   '("p" . meow-join)
+   '("v" . meow-visit)
+
+   '("z" . meow-search)
+   '("," . meow-open-below)
+   '(";" . meow-open-above)
+   '("." . meow-prev)
+   '(":" . meow-prev-expand)
+   '("q" . meow-delete)
+   '("Q" . meow-backward-delete)
+   '("'" . meow-save)
+   '("\"" . meow-yank)
+
+   ;; Middle row:
+
+   '("r" . meow-line)
+   '("s" . meow-block)
+   '("S" . meow-to-block)
+   '("n" . meow-mark-word)
+   '("N" . meow-mark-symbol)
+   '("d" . meow-insert)
+   '("D" . meow-append)
+   '("b" . meow-till)
+   '("B" . meow-find)
+
+   '("/" . meow-undo)
+   '("?" . meow-undo-in-selection)
+   '("a" . meow-left)
+   '("A" . meow-left-expand)
+   '("e" . meow-next)
+   '("E" . meow-next-expand)
+   '("i" . meow-right)
+   '("I" . meow-right-expand)
+   '("h" . meow-change)
+   '("H" . meow-replace)
+
+   ;; Bottom row:
+
+   '("x" . meow-reverse)
+   '("X" . meow-goto-line)
+   '("f" . meow-quit)
+   '("F" . meow-sync-grab)
+   '("l" . meow-back-word)
+   '("L" . meow-back-symbol)
+   '("c" . meow-next-word)
+   '("C" . meow-next-symbol)
+   '("w" . meow-grab)
+   '("W" . meow-swap-grab)
+
+   '("-" . negative-argument)
+   '("u" . meow-kill)
+   '("o" . meow-cancel-selection)
+   '("y" . repeat)
+   '("k" . meow-pop-selection)
+
+   ;; Thumb keys.
+
+   '("t" . avy-goto-char-timer)
+
+   ;; Misc.
+
+   '("%" . meow-query-replace)
+   '("@" . meow-query-replace-regexp)
+
+   '("<escape>" . ignore))
+
+  (meow-leader-define-key
+   ;; Remember, can’t use x, h, c, m, or g.
+   '("SPC" . execute-extended-command)
+   '("/" . meow-keypad-describe-key)
+   '("," . comment-dwim))
+
+  (meow-setup-indicator)
+  (meow-global-mode 1))
