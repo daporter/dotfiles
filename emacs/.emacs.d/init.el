@@ -1053,7 +1053,7 @@ When called interactively without a prefix numeric argument, N is
   ((nxml-mode . my/configure-tab-width-nxml-mode)
    (nxml-mode . my/configure-whitespace-nxml-mode)))
 
-(use-package css-ts-mode
+(use-package css-mode
   :after whitespace
   :preface
   (defun my/configure-tab-width-css-ts-mode ()
