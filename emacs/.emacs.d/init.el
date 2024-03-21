@@ -1177,6 +1177,7 @@ When called interactively without a prefix numeric argument, N is
      ("f" ("+flagged") "Flag")
      ("s" ("+spam" "-inbox") "Mark as spam")
      ("d" ("+deleted" "-inbox") "Delete")))
+  (notmuch-tag-formats '(("flagged" tag))) ; Show the tag name, not an icon
   (notmuch-mua-user-agent-function #'notmuch-mua-user-agent-full)
 
   ;; # After each tagging operation, signal the window manager status bar
