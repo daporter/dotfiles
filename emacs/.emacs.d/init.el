@@ -943,10 +943,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package flymake-vale
   :load-path "lisp/flymake-vale"
-  :commands flymake-vale-load)
-
-(use-package visual-line-mode
-  :hook (text-mode))
+  :hook (text-mode . flymake-vale-load))
 
 (use-package adaptive-wrap
   :ensure t
