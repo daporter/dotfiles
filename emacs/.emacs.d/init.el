@@ -1191,13 +1191,6 @@ When called interactively without a prefix numeric argument, N is
   (add-hook 'notmuch-show-mode-hook
             (lambda () (variable-pitch-mode 1))))
 
-(use-package kbd-mode
-  :load-path "lisp"
-  :mode "\\.kbd\\'"
-  :custom
-  (kbd-mode-kill-kmonad "pkill -9 kmonad")
-  (kbd-mode-start-kmonad "kmonad ~/.config/kmonad/kd87.kbd"))
-
 (use-package pdf-tools
   :ensure t
   :magic ("%PDF" . pdf-view-mode)
