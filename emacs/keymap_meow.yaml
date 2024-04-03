@@ -1,0 +1,15 @@
+layout:
+  qmk_keyboard: ferris/sweep
+  qmk_layout: LAYOUT_split_3x5_2
+layers:
+  Meow:
+    - [ {t: join, s: ""}, {t: "grab", s: "pop-grab"}, {t: "[thing]", s: "←thing"}, {t: "←thing→", s: "thing→"}, {t: "visit", s: ""},
+        {t: "search", s: ""}, {t: "word←", s: "sym←"}, {t: change, s: replace}, {t: "delete", s: ""}, {t: "→word", s: "→sym"}  ]
+    - [ {t: line, s: "goto-line"}, {t: "block", s: "(→block)"}, {t: "←word→", s: "←sym→"}, {t: "insert", s: "↑open"}, {t: "append", s: "open↓"},
+        {t: undo, s: undo-in-sel}, {t: "←", s: "←ex"}, {t: "↑", s: "↑ex"}, {t: "↓", s: "ex↓"}, {t: "→", s: "ex→"}, ]
+    - [ {t: reverse, s: ""}, {t: sync-grab, s: "swap-grab"}, {t: till, s: ""}, {t: find, s: ""}, {t: "repeat", s: ""},
+        {t: "-", s: ""}, {t: "kill", s: ""}, {t: "copy", s: ""}, {t: "yank", s: "yank-pop"}, {t: "cancel-sel", s: "pop-sel"}]
+    - {t: ⌫}
+    - {t: avy}
+    - {t: ␣}
+    - {t: ⏎}

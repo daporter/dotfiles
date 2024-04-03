@@ -1488,8 +1488,8 @@ When called interactively without a prefix numeric argument, N is
   (meow-use-clipboard t)
   (meow-goto-line-function #'consult-goto-line)
   :config
-(defconst meow-cheatsheet-physical-layout-sweep
-"
+  (defconst meow-cheatsheet-physical-layout-sweep
+    "
 ┏━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┓             ┏━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┓
 ┃  <AD01> │  <AD02> │  <AD03> │  <AD04> │  <AD05> ┃             ┃  <AD06> │  <AD07> │  <AD08> │  <AD09> │  <AD10> ┃
 ┃         |         |         |         |         ┃             ┃         |         |         |         |         ┃
@@ -1516,46 +1516,58 @@ When called interactively without a prefix numeric argument, N is
                                    ┗━━━━━━━━━┷━━━━━━━━━┛   ┗━━━━━━━━━┷━━━━━━━━━┛
 ")
 
-(defconst meow-cheatsheet-layout-hands-down
-  '((<AD01> "j"	"J")
-    (<AD02> "g"	"G")
-    (<AD03> "m"	"M")
-    (<AD04> "p"	"P")
-    (<AD05> "v"	"V")
-    (<AD06> "z"	"Z")
-    (<AD07> ","	";")
-    (<AD08> "."	":")
-    (<AD09> "q"	"Q")
-    (<AD10> "'"	"\"")
-    (<AC01> "r"	"R")
-    (<AC02> "s"	"S")
-    (<AC03> "n"	"N")
-    (<AC04> "d"	"D")
-    (<AC05> "b"	"B")
-    (<AC06> "/"	"?")
-    (<AC07> "a"	"A")
-    (<AC08> "e"	"E")
-    (<AC09> "i"	"I")
-    (<AC10> "h"	"H")
-    (<AB01> "x"	"X")
-    (<AB02> "f"	"F")
-    (<AB03> "l"	"L")
-    (<AB04> "c"	"C")
-    (<AB05> "w"	"W")
-    (<AB06> "-"	"_")
-    (<AB07> "o"	"O")
-    (<AB08> "u"	"U")
-    (<AB09> "y"	"Y")
-    (<AB10> "k"	"K")
-    (<AA01> "t"	"T")))
+  (defconst meow-cheatsheet-layout-hands-down
+    '((<AD01> "j" "J")
+      (<AD02> "g" "G")
+      (<AD03> "m" "M")
+      (<AD04> "p" "P")
+      (<AD05> "v" "V")
+      (<AD06> "#" "$")
+      (<AD07> "." ":")
+      (<AD08> "/" "*")
+      (<AD09> "\"" "[")
+      (<AD10> "'" "]")
+      (<AC01> "r" "R")
+      (<AC02> "s" "S")
+      (<AC03> "n" "N")
+      (<AC04> "d" "D")
+      (<AC05> "b" "B")
+      (<AC06> "," ";")
+      (<AC07> "a" "A")
+      (<AC08> "e" "E")
+      (<AC09> "i" "I")
+      (<AC10> "h" "H")
+      (<AB01> "x" "X")
+      (<AB02> "f" "F")
+      (<AB03> "l" "L")
+      (<AB04> "c" "C")
+      (<AB05> "w" "W")
+      (<AB06> "-" "+")
+      (<AB07> "o" "O")
+      (<AB08> "u" "U")
+      (<AB09> "y" "Y")
+      (<AB10> "k" "K")
+      (<AA01> "t" "T")))
 
-(setq meow-cheatsheet-physical-layout meow-cheatsheet-physical-layout-sweep)
-(setq meow-cheatsheet-layout meow-cheatsheet-layout-hands-down)
+  (setq meow-cheatsheet-physical-layout meow-cheatsheet-physical-layout-sweep)
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-hands-down)
 
-(meow-thing-register 'angle
+  (meow-thing-register 'angle
                        '(pair ("<") (">"))
                        '(pair ("<") (">")))
   (add-to-list 'meow-char-thing-table '(?a . angle))
+
+  (add-to-list 'meow-mode-state-list '(notmuch-hello-mode . motion))
+  (add-to-list 'meow-mode-state-list '(notmuch-search-mode . motion))
+  (add-to-list 'meow-mode-state-list '(notmuch-show-mode . motion))
+
+  ;; Use the ‘t’ key as another leader key.  This map will be available only in
+  ;; normal mode, this keymap should contain keys we want to use only while
+  ;; we’re in normal mode.  This probably means we only want text-editing
+  ;; commands; operations that are more widely relevant, such as window
+  ;; operations, probably belong on Meow’s leader key (SPC).
+  (defvar-keymap my/meow-leader-t-map
+    :doc "My meow keymap for the ‘t’ leader key.")
 
   (meow-normal-define-key
    ;; Expansion.
@@ -1572,81 +1584,78 @@ When called interactively without a prefix numeric argument, N is
 
    ;; Top row:
 
-   '("j" . xref-find-definitions)
-   '("J" . xref-go-back)
-   '("g" . meow-bounds-of-thing)
-   '("G" . meow-beginning-of-thing)
-   '("m" . meow-inner-of-thing)
-   '("M" . meow-end-of-thing)
-   '("p" . meow-join)
+   '("j" . meow-join)
+   '("g" . meow-grab)
+   '("G" . meow-pop-grab)
+   '("m" . meow-bounds-of-thing)
+   '("M" . meow-beginning-of-thing)
+   '("p" . meow-inner-of-thing)
+   '("P" . meow-end-of-thing)
    '("v" . meow-visit)
 
-   '("z" . meow-search)
-   '("," . meow-open-below)
-   '(";" . meow-open-above)
-   '("." . meow-prev)
-   '(":" . meow-prev-expand)
-   '("q" . meow-delete)
-   '("Q" . meow-backward-delete)
-   '("'" . meow-save)
-   '("\"" . meow-yank)
+   '(";" . meow-search)
+   '("." . meow-back-word)
+   '("&" . meow-back-symbol)
+   '("/" . meow-change)
+   '("*" . meow-replace)
+   '("\"" . meow-delete)
+   '("'" . meow-next-word)
+   '("?" . meow-next-symbol)
 
    ;; Middle row:
 
    '("r" . meow-line)
+   '("R" . meow-goto-line)
    '("s" . meow-block)
    '("S" . meow-to-block)
    '("n" . meow-mark-word)
    '("N" . meow-mark-symbol)
    '("d" . meow-insert)
-   '("D" . meow-append)
-   '("b" . meow-till)
-   '("B" . meow-find)
+   '("D" . meow-open-above)
+   '("b" . meow-append)
+   '("B" . meow-open-below)
 
-   '("/" . meow-undo)
-   '("?" . meow-undo-in-selection)
+   '("," . meow-undo)
+   '(";" . meow-undo-in-selection)
    '("a" . meow-left)
    '("A" . meow-left-expand)
-   '("e" . meow-next)
-   '("E" . meow-next-expand)
-   '("i" . meow-right)
-   '("I" . meow-right-expand)
-   '("h" . meow-change)
-   '("H" . meow-replace)
+   '("e" . meow-prev)
+   '("E" . meow-prev-expand)
+   '("i" . meow-next)
+   '("I" . meow-next-expand)
+   '("h" . meow-right)
+   '("H" . meow-right-expand)
 
    ;; Bottom row:
 
    '("x" . meow-reverse)
-   '("X" . meow-goto-line)
-   '("f" . meow-quit)
-   '("F" . meow-sync-grab)
-   '("l" . meow-back-word)
-   '("L" . meow-back-symbol)
-   '("c" . meow-next-word)
-   '("C" . meow-next-symbol)
-   '("w" . meow-grab)
-   '("W" . meow-swap-grab)
+   '("f" . meow-sync-grab)
+   '("F" . meow-swap-grab)
+   '("l" . meow-till)
+   '("c" . meow-find)
+   '("w" . repeat)
 
    '("-" . negative-argument)
    '("u" . meow-kill)
-   '("o" . meow-cancel-selection)
-   '("y" . repeat)
-   '("k" . meow-pop-selection)
+   '("o" . meow-save)
+   '("y" . meow-yank)
+   '("Y" . meow-yank-pop)
+   '("k" . meow-cancel-selection)
+   '("K" . meow-pop-selection)
 
-   ;; Thumb keys.
-
-   '("t" . avy-goto-char-timer)
+   ;; ‘t’ leader key mappings.
+   (cons "t" my/meow-leader-t-map)
 
    ;; Misc.
 
    '("%" . meow-query-replace)
-   '("@" . meow-query-replace-regexp)
+   '("#" . meow-query-replace-regexp)
 
    '("<escape>" . ignore))
 
   (meow-leader-define-key
-   ;; Remember, can’t use x, h, c, m, or g.
-   '("SPC" . execute-extended-command)
+   ;; Remember, can’t use x, h, c, m, or g. SPC isn’t a good idea either,
+   ;; because is SPC SPC is used in the Motion state.
    '("/" . meow-keypad-describe-key)
    '("," . comment-dwim))
 
