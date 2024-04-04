@@ -536,12 +536,12 @@ When called interactively without a prefix numeric argument, N is
                   corfu-popupinfo-delay nil)
       (corfu-mode 1)))
   :hook
-  ((minibuffer-setup . my/corfu-enable-in-minibuffer)
+  ((window-setup . global-corfu-mode)
+   (minibuffer-setup . my/corfu-enable-in-minibuffer)
    (eshell-mode . corfu-mode))
   :bind (:map corfu-map
               ("SPC" . corfu-insert-separator)) ; to work well with orderless
-  :init
-  (global-corfu-mode 1)
+  :config
   (corfu-echo-mode 1)
   (corfu-history-mode 1)
   (add-to-list 'savehist-additional-variables 'corfu-history))
