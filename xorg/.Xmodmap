@@ -1,8 +1,0 @@
-! Make c and u act as Hyper keys when pressed (in conjunction with
-! xcape).
-
-keycode 135  = Hyper_L Hyper_L Hyper_L
-
-remove mod3 = ISO_Level5_Shift
-remove mod4 = Hyper_L
-add    mod3 = Hyper_L Hyper_L Hyper_L

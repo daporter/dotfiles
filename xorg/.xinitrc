@@ -14,8 +14,7 @@ fi
 xset b off                      # no bell
 xset r rate 200 200             # repeat after 200 ms, 200 char/s
 xsetroot -cursor_name left_ptr
-xmodmap "$HOME"/.Xmodmap
-xcape -e 'Hyper_L=c;Hyper_R=u'
+
 setxkbmap -option compose:menu
 
 picom -b
