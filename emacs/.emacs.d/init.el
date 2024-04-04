@@ -4,6 +4,15 @@
 
 ;;;; Utility functions
 
+;; Enable standard Linux unicode input.
+;; https://emacs.stackexchange.com/questions/55994/unicode-input-from-keyboard-qmk-to-emacs
+(defun my/read-unicode-char (c1 c2 c3 c4 _trailing_space_ignored)
+  "Convert unicode input C1 C2 C3 C4 to the corresponding insert char call."
+  (interactive "c\nc\nc\nc\nc")
+  (insert-char (string-to-number (format "%c%c%c%c" c1 c2 c3 c4) 16)))
+
+(keymap-set global-map "C-S-u" #'my/read-unicode-char)
+
 (defun my/goto-emacs-dir ()
   "Open Emacs directory"
   (interactive)
