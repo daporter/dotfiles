@@ -359,10 +359,7 @@ When called interactively without a prefix numeric argument, N is
   :bind (:map my/buffer-map
               ("r" . revert-buffer)
               ("s" . save-buffer)
-              :map my/file-map
-              ("f" . find-file)
               :map my/quit-map
-              ("q" . save-buffers-kill-emacs)
               ("r" . restart-emacs)))
 
 (use-package fontset
