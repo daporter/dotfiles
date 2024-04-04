@@ -522,9 +522,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package vertico
   :ensure t
-  :init
-  (vertico-mode 1)
-  :custom
+  :hook (after-init)
+  :config
   (add-hook 'rfn-eshdadow-update-overlay-hook #'vertico-directory-tidy))
 
 (use-package corfu
@@ -953,7 +952,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package text-mode
   :config
-  ;; For some reason, the following doesn't work with :bind
+  ;; For some reason the following doesn't work with :bind
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
   (define-key text-mode-map (kbd "C-c P") #'repunctuate-sentences)
 
