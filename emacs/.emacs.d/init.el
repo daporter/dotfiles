@@ -230,7 +230,7 @@ When called interactively without a prefix numeric argument, N is
 
   (defvar-keymap my/compile-map :doc "My prefix keymap for compile actions.")
   (keymap-set (current-global-map)
-              "C-c m"
+              "C-c o"
               (cons "Compile" my/compile-map))
 
   (defvar-keymap my/quit-map :doc "My prefix keymap for quitting.")
@@ -417,7 +417,7 @@ When called interactively without a prefix numeric argument, N is
   :bind (:map my/compile-map
               ("e" . compile-goto-error)
               ("K" . kill-compilation)
-              ("m" . compile)
+              ("c" . compile)
               ("r" . recompile))
   :hook (compilation-filter . ansi-color-compilation-filter)
   :custom
