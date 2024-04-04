@@ -380,10 +380,11 @@ When called interactively without a prefix numeric argument, N is
   (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
 
 (use-package simple
-  :bind (("C-z"   . undo)
-         ("C-S-z" . undo-redo))       ; default: suspend-frame
-
-  :config (column-number-mode 1))
+  :hook ((after-init . global-visual-line-mode)
+         (after-init . column-number-mode))
+  :bind (("C-c a" . execute-extended-command)
+         ("C-z"   . undo)
+         ("C-S-z" . undo-redo)))        ; default: suspend-frame
 
 (use-package newcomment
   :bind (:map my/comment-map
