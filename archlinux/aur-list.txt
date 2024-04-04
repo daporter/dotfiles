@@ -25,8 +25,6 @@ paru
 qmk-git
 scc
 seer-gdb
-tree-sitter-bash
-tree-sitter-c
 tree-sitter-cpp
 tree-sitter-css-git
 tree-sitter-html-git
@@ -34,7 +32,6 @@ tree-sitter-javascript-git
 tree-sitter-json
 tree-sitter-make-git
 tree-sitter-markdown-git
-tree-sitter-python
 tree-sitter-regex-git
 tree-sitter-yaml-git
 ttf-literata

@@ -76,6 +76,9 @@ texlive-plaingeneric
 torbrowser-launcher
 traceroute
 tree
+tree-sitter-bash
+tree-sitter-c
+tree-sitter-python
 ttc-iosevka
 ttc-iosevka-aile
 ttc-iosevka-etoile
