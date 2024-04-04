@@ -1534,8 +1534,8 @@ When called interactively without a prefix numeric argument, N is
       (<AD06> "#" "$")
       (<AD07> "." ":")
       (<AD08> "/" "*")
-      (<AD09> "\"" "[")
-      (<AD10> "'" "]")
+      (<AD09> "\"" "?")
+      (<AD10> "'" "!")
       (<AC01> "r" "R")
       (<AC02> "s" "S")
       (<AC03> "n" "N")
@@ -1602,14 +1602,14 @@ When called interactively without a prefix numeric argument, N is
    '("P" . meow-end-of-thing)
    '("v" . meow-visit)
 
-   '(";" . meow-search)
+   '("#" . meow-search)
    '("." . meow-back-word)
-   '("&" . meow-back-symbol)
+   '(":" . meow-back-symbol)
    '("/" . meow-change)
    '("*" . meow-replace)
    '("\"" . meow-delete)
    '("'" . meow-next-word)
-   '("?" . meow-next-symbol)
+   '("!" . meow-next-symbol)
 
    ;; Middle row:
 
@@ -1654,11 +1654,6 @@ When called interactively without a prefix numeric argument, N is
 
    ;; ‘t’ leader key mappings.
    (cons "t" my/meow-leader-t-map)
-
-   ;; Misc.
-
-   '("%" . meow-query-replace)
-   '("#" . meow-query-replace-regexp)
 
    '("<escape>" . ignore))
 
