@@ -20,7 +20,7 @@ setxkbmap -option compose:menu
 picom -b
 redshift &
 sxhkd &
-unclutter --fork
+xbanish &
 
 1password --silent &
 

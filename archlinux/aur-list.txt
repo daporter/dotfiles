@@ -37,4 +37,5 @@ tree-sitter-yaml-git
 ttf-literata
 vale-git
 visual-studio-code-bin
+xbanish
 zotero
