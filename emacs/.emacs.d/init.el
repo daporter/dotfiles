@@ -632,14 +632,12 @@ When called interactively without a prefix numeric argument, N is
          ([remap project-switch-to-buffer]      . consult-project-buffer)
          ([remap yank-pop]                      . consult-yank-pop)
          ([remap imenu]                         . consult-imenu)
-         ;; ("C-c m"                               . consult-man)
          ([remap Info-search]                   . consult-info)
-         ("C-c k"                               . consult-yank-from-kill-ring)
-         ("C-c o"                               . consult-outline)
          :map my/buffer-map
          ("b" . consult-buffer)
          ("i" . consult-imenu)
          ("m" . consult-mark)
+         ("o" . consult-outline)
          ("p" . consult-project-buffer)
          ("s" . consult-buffer-other-window)
          :map my/file-map
