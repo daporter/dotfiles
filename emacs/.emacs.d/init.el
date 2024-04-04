@@ -193,6 +193,10 @@ When called interactively without a prefix numeric argument, N is
       (newline-and-indent)))
   (global-set-key (kbd "C-o") #'my/open-line-and-indent))
 
+(use-package custom
+  :custom
+  (custom-safe-themes t))
+
 (use-package keymap
   :config
   (defvar-keymap my/buffer-map :doc "My prefix keymap for buffers."
