@@ -272,6 +272,7 @@ When called interactively without a prefix numeric argument, N is
   :bind
   (("C-<tab>"           . previous-buffer)
    ("C-S-<iso-lefttab>" . next-buffer)
+   ("C-c e"             . switch-to-buffer)
    :map my/buffer-map
    ("d" . kill-buffer-and-window)
    :map my/window-map
