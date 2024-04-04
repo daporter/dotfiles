@@ -84,7 +84,6 @@ If buffer-or-name is nil return current buffer's mode."
                           (current-buffer))))
 
   :custom
-  (line-spacing 0.15)
   (cursor-type 'box)
   (initial-buffer-choice t)             ; always start with *scratch*
   (frame-title-format '("%b"))
@@ -361,6 +360,16 @@ When called interactively without a prefix numeric argument, N is
               :map my/quit-map
               ("q" . save-buffers-kill-emacs)
               ("r" . restart-emacs)))
+
+(use-package fontset
+  ;; Set this to nil to set symbols entirely separately
+  ;; Need it set to `t` in order to display org-modern-indent faces properly
+  :custom
+  (use-default-font-for-symbols t)
+  (line-spacing 0.15)
+  :config
+  ;; Use symbola for proper symbol glyphs, but have some fallbacks
+  (set-fontset-font t 'symbol "Symbola" nil))
 
 (use-package faces
   :config
