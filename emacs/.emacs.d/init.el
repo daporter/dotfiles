@@ -1421,9 +1421,7 @@ When called interactively without a prefix numeric argument, N is
   :hook (after-init . global-page-break-lines-mode))
 
 (use-package hl-line
-  :bind (:map my/toggle-map
-              ("h" . hl-line-mode))
-  :hook (prog-mode text-mode conf-mode notmuch-search))
+  :bind (:map my/toggle-map ("h" . hl-line-mode)))
 
 (use-package face-remap
   :preface
