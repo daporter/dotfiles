@@ -835,7 +835,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package whitespace
   :bind (:map my/buffer-map
-              ("w" . whitespace-cleanup))
+              ("w" . whitespace-cleanup)
+              :map my/toggle-map
+              ("w" . whitespace-mode))
   :custom
   (whitespace-style '(face
                       trailing
