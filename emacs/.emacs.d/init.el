@@ -360,6 +360,8 @@ When called interactively without a prefix numeric argument, N is
   :bind (:map my/buffer-map
               ("r" . revert-buffer)
               ("s" . save-buffer)
+              :map my/file-map
+              ("f" . find-file)
               :map my/quit-map
               ("r" . restart-emacs)))
 
