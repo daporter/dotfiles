@@ -637,11 +637,11 @@ When called interactively without a prefix numeric argument, N is
          ([remap Info-search]                   . consult-info)
          :map my/buffer-map
          ("b" . consult-buffer)
+         ("B" . consult-buffer-other-window)
          ("i" . consult-imenu)
          ("m" . consult-mark)
          ("o" . consult-outline)
          ("p" . consult-project-buffer)
-         ("s" . consult-buffer-other-window)
          :map my/file-map
          ("b" . consult-bookmark)
          ("l" . consult-locate)
