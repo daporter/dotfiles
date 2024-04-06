@@ -1614,13 +1614,12 @@ When called interactively without a prefix numeric argument, N is
    '("v" . meow-visit)
 
    '("#" . meow-search)
-   '("." . meow-back-word)
-   '(":" . meow-back-symbol)
-   '("/" . meow-change)
-   '("*" . meow-replace)
-   '("\"" . meow-delete)
-   '("'" . meow-next-word)
-   '("!" . meow-next-symbol)
+   '("." . meow-yank)
+   '(":" . meow-yank-pop)
+   '("/" . meow-save)
+   '("\"" . meow-kill)
+   '("'" . meow-cancel-selection)
+   '("!" . meow-pop-selection)
 
    ;; Middle row:
 
@@ -1656,12 +1655,13 @@ When called interactively without a prefix numeric argument, N is
    '("w" . repeat)
 
    '("-" . negative-argument)
-   '("u" . meow-kill)
-   '("o" . meow-save)
-   '("y" . meow-yank)
-   '("Y" . meow-yank-pop)
-   '("k" . meow-cancel-selection)
-   '("K" . meow-pop-selection)
+   '("u" . meow-back-word)
+   '("U" . meow-back-symbol)
+   '("o" . meow-change)
+   '("O" . meow-replace)
+   '("y" . meow-delete)
+   '("k" . meow-next-word)
+   '("K" . meow-next-symbol)
 
    ;; ‘t’ leader key mappings.
    (cons "t" my/meow-leader-t-map)
@@ -1669,8 +1669,8 @@ When called interactively without a prefix numeric argument, N is
    '("<escape>" . ignore))
 
   (meow-leader-define-key
-   ;; Remember, can’t use x, h, c, m, or g. SPC isn’t a good idea either,
-   ;; because is SPC SPC is used in the Motion state.
+   ;; Remember, can’t use x, h, c, m, or g. SPC isn’t a good idea either, since
+   ;; SPC SPC is used in the Motion state.
    '("/" . meow-keypad-describe-key)
    '("," . comment-dwim))
 
