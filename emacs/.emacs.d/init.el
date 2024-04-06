@@ -392,7 +392,9 @@ When called interactively without a prefix numeric argument, N is
 (use-package newcomment
   :bind (:map my/comment-map
               ("c" . comment-dwim)
-              ("l" . comment-line)))
+              ("l" . comment-line))
+  :custom
+  (comment-style 'extra-line))
 
 (use-package paragraphs
   :bind (("M-p" . backward-paragraph)
@@ -947,11 +949,11 @@ When called interactively without a prefix numeric argument, N is
 
   :bind
   (:map eglot-mode-map
-        ("C-c e f"    . eglot-format)
-        ("C-c e h"    . eldoc)
-        ("C-c e o"    . eglot-code-action-organize-imports)
-        ("C-c e r"    . eglot-rename)
-        ("C-c e q"    . eglot-code-action-quickfix)))
+        ("C-c g f"    . eglot-format)
+        ("C-c g h"    . eldoc)
+        ("C-c g o"    . eglot-code-action-organize-imports)
+        ("C-c g r"    . eglot-rename)
+        ("C-c g q"    . eglot-code-action-quickfix)))
 
 (use-package text-mode
   :config
@@ -1151,9 +1153,12 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package denote
   :ensure t
-  :commands (denote denote-rename-file)
+  :commands (denote denote-subdirectory denote-rename-file)
+  :hook (dired-mode . denote-dired-mode-in-directories)
   :custom
-  (denote-directory "~/Dropbox/journal"))
+  (denote-dired-directories (list denote-directory))
+  (denote-dired-directories-include-subdirectories t)
+  (denote-directory "~/Dropbox/notes"))
 
 ;; From the Notmuch documentation:
 ;;
