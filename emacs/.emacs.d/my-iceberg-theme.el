@@ -84,7 +84,7 @@
 ;;;;; Base
 
    `(border                ((t (:foreground ,bg+2 :background ,bg-1))))
-   `(cursor                ((t (:background ,red))))
+   `(cursor                ((t (:background ,orange))))
    `(default               ((t (:foreground ,fg :background ,bg))))
    `(error                 ((t (:foreground ,red))))
    `(fringe                ((t (:foreground ,fg-2))))
@@ -95,7 +95,7 @@
    `(link-visited          ((t (:foreground ,magenta :underline t))))
    `(match                 ((t (:background ,bg+3))))
    `(minibuffer-prompt     ((t (:foreground ,cyan))))
-   `(mode-line             ((t (:family "Roboto"   :foreground ,fg-1 :background ,bg+2 :box (:color ,fg-2)))))
+   `(mode-line             ((t (:family "Roboto"   :foreground ,fg-1 :background ,bg+2 :box (:color ,bg+3)))))
    `(mode-line-inactive    ((t (:inherit mode-line :foreground ,bg+3 :background ,bg+1 :box (:color ,bg+3)))))
    `(nobreak-space         ((t (:inherit default))))
    `(region                ((t (:background ,bg+3))))
@@ -194,14 +194,14 @@
    `(font-lock-constant-face      ((t (:foreground ,magenta :weight semi-bold))))
    `(font-lock-escape-face        ((t (:foreground ,magenta))))
    `(font-lock-function-name-face ((t (:inherit bold))))
-   `(font-lock-function-call-face ((t (:inherit default))))
+   `(font-lock-function-call-face ((t (:foreground unspecified))))
    `(font-lock-keyword-face       ((t (:foreground ,blue ))))
    `(font-lock-negation-char-face ((t (:foreground ,orange))))
    `(font-lock-preprocessor-face  ((t (:foreground ,orange))))
    `(font-lock-punctuation-face   ((t (:foreground ,fg-1))))
    `(font-lock-string-face        ((t (:foreground ,yellow))))
    `(font-lock-type-face          ((t (:foreground ,cyan :slant italic))))
-   `(font-lock-variable-name-face ((t (:inherit default))))
+   `(font-lock-variable-name-face ((t (:foreground unspecified))))
    '(font-lock-warning-face       ((t (:inherit error))))
 
 ;;;;; Flyspell
@@ -215,7 +215,7 @@
 
 ;;;;; HL-Line
 
-   `(hl-line ((t (:background ,bg-1))))
+   `(hl-line ((t (:background ,bg+3))))
 
 ;;;;; Line Numbers
 
@@ -227,11 +227,12 @@
    `(message-header-cc         ((t (:foreground ,green-fg+1))))
    `(message-header-name       ((t (:inherit bold))))
    `(message-header-newsgroups ((t (:inherit message-header-other))))
-   `(message-header-other      ((t (:foreground ,magenta-fg+1))))
-   `(message-header-subject    ((t (:foreground ,magenta))))
-   `(message-header-to         ((t (:foreground ,green))))
+   `(message-header-other      ((t (:foreground ,fg-1))))
+   `(message-header-subject    ((t (:inherit bold :foreground ,yellow))))
+   `(message-header-to         ((t (:foreground ,blue))))
    `(message-header-xheader    ((t (:inherit message-header-other))))
    `(message-mml               ((t (:inherit widget-button :foreground ,fg-2))))
+   `(message-cited-text-1      ((t (:foreground ,fg-1))))
 
 ;;;;; Org Mode
 
@@ -372,7 +373,7 @@
 
 ;;;;; Corfu
 
-   `(corfu-default    ((t (:foreg ,fg :background ,bg+1))))
+   `(corfu-default    ((t (:foreground ,fg :background ,bg+1))))
    `(corfu-current    ((t (:background ,bg+2))))
    '(corfu-deprecated ((t (:inherit font-lock-comment-face :strike-through t))))
    `(corfu-border     ((t (:background ,bg+3))))
@@ -423,7 +424,7 @@
 ;;;;; Markdown
 
    `(markdown-blockquote-face         ((t (:inherit org-quote))))
-   `(markdown-code-face               ((t (:inherit fixed-pitch :foreground ,magenta :background ,bg+1))))
+   `(markdown-code-face               ((t (:inherit fixed-pitch :background ,bg+1))))
    `(markdown-header-face             ((t (:inherit bold))))
    `(markdown-header-face-1           ((t (:inherit bold :foreground ,red :height 1.3))))
    `(markdown-header-face-2           ((t (:inherit bold :foreground ,orange :height 1.2))))
@@ -458,17 +459,17 @@
    `(notmuch-jump-key                     ((t (:inherit help-key-binding))))
    `(notmuch-message-summary-face         ((t (:inherit bold))))
    `(notmuch-search-count                 ((t (:foreground ,fg-2))))
-   `(notmuch-search-date                  ((t (:foreground ,cyan))))
-   `(notmuch-search-flagged-face          ((t (:inherit font-lock-keyword-face))))
-   `(notmuch-search-matching-authors      ((t (:foreground ,green))))
+   `(notmuch-search-date                  ((t (:foreground ,fg-1))))
+   `(notmuch-search-flagged-face          ((t (:foreground ,yellow))))
+   `(notmuch-search-matching-authors      ((t (:foreground ,fg))))
    `(notmuch-search-non-matching-authors  ((t (:inherit shadow))))
    `(notmuch-search-subject               ((t (:foreground ,fg))))
    `(notmuch-search-unread-face           ((t (:inherit bold))))
-   `(notmuch-tag-added                    ((t (:foreground ,cyan :underline t))))
-   `(notmuch-tag-deleted                  ((t (:foreground ,red :strike-through t))))
-   `(notmuch-tag-face                     ((t (:foreground ,blue))))
-   `(notmuch-tag-flagged                  ((t (:inherit font-lock-keyword-face))))
-   `(notmuch-tag-unread                   ((t (:foreground ,magenta))))
+   `(notmuch-tag-added                    ((t (:inherit (notmuch-tag-face underline)))))
+   `(notmuch-tag-deleted                  ((t (:inherit notmuch-tag-face :strike-through t))))
+   `(notmuch-tag-face                     ((t (:inherit italic :foreground ,fg-1))))
+   `(notmuch-tag-flagged                  ((t (:inherit notmuch-tag-face :foreground ,orange))))
+   `(notmuch-tag-unread                   ((t (:inherit notmuch-tag-face))))
    `(notmuch-tree-match-author-face       ((t (:inherit notmuch-search-matching-authors))))
    `(notmuch-tree-match-date-face         ((t (:inherit notmuch-search-date))))
    `(notmuch-tree-match-face              ((t (:foreground ,fg))))
@@ -476,7 +477,7 @@
    `(notmuch-tree-no-match-date-face      ((t (:inherit shadow))))
    `(notmuch-tree-no-match-face           ((t (:inherit shadow))))
    `(notmuch-wash-cited-text              ((t (:inherit message-cited-text-1))))
-   `(notmuch-wash-toggle-button           ((t (:inherit widget-n :foreground ,fg-2))))
+   `(notmuch-wash-toggle-button           ((t (:inherit (shadow italic)))))
 
 ;;;;; Orderless
 
