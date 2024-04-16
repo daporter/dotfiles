@@ -541,11 +541,15 @@ When called interactively without a prefix numeric argument, N is
                   corfu-popupinfo-delay nil)
       (corfu-mode 1)))
   :hook
-  ((window-setup . global-corfu-mode)
+  ((window-setup     . global-corfu-mode)
    (minibuffer-setup . my/corfu-enable-in-minibuffer)
-   (eshell-mode . corfu-mode))
+   (eshell-mode      . corfu-mode))
   :bind (:map corfu-map
-              ("SPC" . corfu-insert-separator)) ; to work well with orderless
+              ("M-SPC"     . corfu-insert-separator)
+              ("<tab>"     . corfu-next)
+              ("<backtab>" . corfu-previous))
+  :custom
+  (corfu-cycle t)
   :config
   (corfu-echo-mode 1)
   (corfu-history-mode 1)
@@ -557,7 +561,7 @@ When called interactively without a prefix numeric argument, N is
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
-;; Some notes CAPFs.
+;; Some notes on CAPFs.
 ;;
 ;; (Taken from https://www.reddit.com/r/emacs/comments/td0nth/comment/i0i8hi7/?context=3&share_id=CfzOVcILIBvpQKfRmTanK)
 ;;
