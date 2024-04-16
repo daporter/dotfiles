@@ -663,8 +663,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package embark
   :ensure t
-  :bind (("C-="   . embark-act)
-         ("C-+"   . embark-dwim)
+  :bind (("C-."   . embark-act)
+         ("C-#"   . embark-dwim)
          ("C-h B" . embark-bindings))
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
@@ -1247,6 +1247,10 @@ When called interactively without a prefix numeric argument, N is
   ;; use C-x 4 C-o.
   (setf (alist-get 'file org-link-frame-setup)
         'find-file))
+
+(use-package org-table
+  :config
+  (keymap-unset org-mode-map "C-#" t))  ; Don’t take my Embark binding
 
 (use-package org-indent
   :hook (org-mode))
