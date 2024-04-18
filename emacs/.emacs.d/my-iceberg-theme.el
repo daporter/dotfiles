@@ -195,6 +195,7 @@
    `(font-lock-escape-face        ((t (:foreground ,magenta))))
    `(font-lock-function-name-face ((t (:inherit bold))))
    `(font-lock-function-call-face ((t (:foreground unspecified))))
+   `(font-lock-operator-face      ((t (:foreground ,fg-1))))
    `(font-lock-keyword-face       ((t (:foreground ,blue ))))
    `(font-lock-negation-char-face ((t (:foreground ,orange))))
    `(font-lock-preprocessor-face  ((t (:foreground ,orange))))
