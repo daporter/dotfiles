@@ -891,8 +891,10 @@ When called interactively without a prefix numeric argument, N is
 (use-package flymake
   :hook (prog-mode text-mode)
   :bind (:map my/lint-map
-              ("d" . flymake-show-buffer-diagnostics)
-              ("p" . flymake-show-project-diagnostics))
+              ("<right>" . flymake-goto-next-error)
+              ("<left>"  . flymake-goto-prev-error)
+              ("d"       . flymake-show-buffer-diagnostics)
+              ("p"       . flymake-show-project-diagnostics))
   :custom (flymake-fringe-indicator-position nil))
 
 (use-package prog-mode
