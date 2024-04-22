@@ -62,6 +62,7 @@
        (red-fg+1     (color-lighten-name red     factor-fg+1))
        (orange-bg    (color-darken-name  orange  factor-bg))
        (yellow-bg    (color-darken-name  yellow  factor-bg))
+       (yellow-bg+1  (color-darken-name  yellow  factor-bg+1))
        (yellow-fg+1  (color-lighten-name yellow  factor-fg+1))
        (green-bg-1   (color-darken-name  green   factor-bg-1))
        (green-bg     (color-darken-name  green   factor-bg))
@@ -157,6 +158,24 @@
 
    `(eglot-mode-line             ((t (:foreground ,magenta))))
    `(eglot-highlight-symbol-face ((t (:background ,magenta-bg :foreground ,fg+1))))
+
+;;;;; Ediff
+
+   `(ediff-current-diff-Ancestor ((t (:background ,bg+2))))
+   `(ediff-current-diff-A        ((t (:background ,red-bg))))
+   `(ediff-current-diff-B        ((t (:background ,green-bg))))
+   `(ediff-current-diff-C        ((t (:background ,yellow-bg))))
+   `(ediff-fine-diff-A           ((t (:background ,red-bg+1))))
+   `(ediff-fine-diff-B           ((t (:background ,green-bg+1))))
+   `(ediff-fine-diff-C           ((t (:background ,yellow-bg+1))))
+   `(ediff-even-diff-Ancestor    ((t (:background ,bg+2))))
+   `(ediff-even-diff-A           ((t (:background ,bg+2))))
+   `(ediff-even-diff-B           ((t (:background ,bg+2))))
+   `(ediff-even-diff-C           ((t (:background ,bg+2))))
+   `(ediff-odd-diff-Ancestor     ((t (:inherit ediff-even-diff-Ancestor))))
+   `(ediff-odd-diff-A            ((t (:inherit ediff-even-diff-A))))
+   `(ediff-odd-diff-B            ((t (:inherit ediff-even-diff-B))))
+   `(ediff-odd-diff-C            ((t (:inherit ediff-even-diff-C))))
 
 ;;;;; Eldoc
 
