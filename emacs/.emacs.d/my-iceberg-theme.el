@@ -239,7 +239,7 @@
 
 ;;;;; Line Numbers
 
-   `(line-number              ((t (:inherit fixed-pitch :foreground ,fg-2))))
+   `(line-number              ((t (:inherit fixed-pitch :foreground ,bg+3))))
    `(line-number-current-line ((t (:inherit line-number :foreground ,yellow))))
 
 ;;;;; Message
