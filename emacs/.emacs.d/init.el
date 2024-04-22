@@ -430,8 +430,9 @@ When called interactively without a prefix numeric argument, N is
   :bind (("C-c d" . dired-jump)
          ("C-c D" . dired-jump-other-window))
   :custom
-  (dired-recursive-copies 'always)
-  (dired-dwim-target t))                ; try to guess target directory for copy
+  (dired-recursive-copies   'always)
+  (dired-dwim-target        t)          ; try to guess target directory for copy
+  (dired-auto-revert-buffer t))
 
 (use-package project
   :commands (project-find-file
@@ -441,6 +442,12 @@ When called interactively without a prefix numeric argument, N is
   :config
   (keymap-set global-map "C-c p" (cons "Project" project-prefix-map)))
 
+(use-package autorevert
+  :custom
+  ;; Whenever the disk state changes, Emacs should update as well.
+  (global-auto-revert-mode             t)
+  (global-auto-revert-non-file-buffers t))
+
 (use-package ediff
   :commands (ediff-buffers
              ediff-current-file
@@ -448,10 +455,10 @@ When called interactively without a prefix numeric argument, N is
              ediff-regions-linewise
              ediff-regions-wordwise)
   :custom
-  (ediff-keep-variants         nil)
-  (ediff-show-clashes-only     t)
   (ediff-split-window-function 'split-window-horizontally)
-  (ediff-window-setup-function 'ediff-setup-windows-plain))
+  (ediff-window-setup-function 'ediff-setup-windows-plain)
+  (ediff-keep-variants         nil)
+  (ediff-show-clashes-only     t))
 
 (use-package nerd-icons
   :ensure t)
@@ -499,8 +506,11 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package bookmark
   :custom
-  ;; Save bookmarks on each modification.
-  (bookmark-save-flag 1))
+  (bookmark-save-flag 1)) ;; Save bookmarks on each modification
+
+(use-package man
+  :custom
+  (Man-notify-method 'aggressive))
 
 (use-package proced
   :commands (proced)
