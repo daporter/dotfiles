@@ -1174,7 +1174,8 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (denote-dired-directories (list denote-directory))
   (denote-dired-directories-include-subdirectories t)
-  (denote-directory "~/Dropbox/notes"))
+  (denote-directory "~/Dropbox/notes")
+  (denote-journal-extras-title-format nil))
 
 ;; From the Notmuch documentation:
 ;;
