@@ -16,6 +16,7 @@ markdownlint-cli
 noto-color-emoji-fontconfig
 ocrmypdf
 october
+openvpn-update-systemd-resolved
 otf-bitstream-charter
 otf-elstob
 otf-im-fell-types
