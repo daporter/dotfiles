@@ -1014,6 +1014,11 @@ When called interactively without a prefix numeric argument, N is
   (c-ts-mode-indent-style 'linux)
   (c-ts-mode-indent-offset 8))
 
+(use-package apheleia
+  :ensure t
+  :config
+  (apheleia-global-mode 1))
+
 (use-package markdown-mode
   :ensure t
   :init
