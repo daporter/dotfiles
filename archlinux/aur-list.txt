@@ -36,6 +36,7 @@ tree-sitter-markdown-git
 tree-sitter-regex-git
 tree-sitter-yaml-git
 ttf-literata
+udiskie-dmenu-git
 vale-git
 visual-studio-code-bin
 xbanish
