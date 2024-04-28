@@ -39,5 +39,6 @@ ttf-literata
 udiskie-dmenu-git
 vale-git
 visual-studio-code-bin
+windscribe-v2-bin
 xbanish
 zotero
