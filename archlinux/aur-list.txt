@@ -1,17 +1,13 @@
 1password
 1password-cli
 adwaita-qt6-git
-aflplusplus
 anki
 ansifilter
-debtap
 dropbox
-dtach
 gitlint
 gnu-c-manual
 google-chrome
 i810-dri
-kmonad-bin
 markdownlint-cli
 noto-color-emoji-fontconfig
 ocrmypdf
@@ -19,7 +15,6 @@ october
 openvpn-update-systemd-resolved
 otf-bitstream-charter
 otf-elstob
-otf-im-fell-types
 otf-spectral
 otf-spectralsc
 paru
@@ -32,7 +27,6 @@ tree-sitter-html-git
 tree-sitter-javascript-git
 tree-sitter-json
 tree-sitter-make-git
-tree-sitter-markdown-git
 tree-sitter-regex-git
 tree-sitter-yaml-git
 ttf-literata
