@@ -399,6 +399,11 @@
    `(corfu-border     ((t (:background ,bg+3))))
    `(corfu-bar        ((t (:background ,fg-2))))
 
+;;;;; Embrace
+
+   `(embrace-help-key-face  ((t (:inherit help-key-binding))))
+   `(embrace-help-pair-face ((t (:foreground ,fg :background ,bg))))
+
 ;;;;; Magit
 
    `(git-commit-summary                    ((t (:inherit default))))

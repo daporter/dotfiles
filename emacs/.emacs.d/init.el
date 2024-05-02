@@ -409,6 +409,11 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (show-paren-context-when-offscreen 'overlay))
 
+(use-package embrace
+  :ensure t
+  :bind ("C-c @" . embrace-commander)
+  :hook (org-mode . embrace-org-mode-hook))
+
 (use-package display-line-numbers
   :bind (:map my/toggle-map
               ("n" . display-line-numbers-mode)))
@@ -1693,6 +1698,8 @@ When called interactively without a prefix numeric argument, N is
    '("y" . meow-delete)
    '("k" . meow-next-word)
    '("K" . meow-next-symbol)
+
+   '("@" . embrace-commander)
 
    ;; ‘t’ leader key mappings.
    (cons "t" my/meow-leader-t-map)
