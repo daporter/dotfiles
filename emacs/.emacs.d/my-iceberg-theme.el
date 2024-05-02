@@ -231,7 +231,7 @@
 
 ;;;;; Help
 
-   `(help-key-binding ((t (:background ,bg+2 :weight light :box (:line-width (-1 . -1) :color ,bg+3)))))
+   `(help-key-binding ((t (:foreground ,orange :background ,bg+2 :weight light :box (:line-width (-1 . -1) :color ,bg+3)))))
 
 ;;;;; HL-Line
 
