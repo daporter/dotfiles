@@ -64,7 +64,6 @@ traceroute
 tree
 tree-sitter-bash
 tree-sitter-c
-tree-sitter-cli
 tree-sitter-markdown
 tree-sitter-python
 ttc-iosevka
