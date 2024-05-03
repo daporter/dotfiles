@@ -46,6 +46,7 @@ pavucontrol
 pdftk
 perl-image-exiftool
 picom
+poppler-glib
 rebuild-detector
 redshift
 restic
