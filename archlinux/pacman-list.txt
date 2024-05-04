@@ -47,6 +47,7 @@ pdftk
 perl-image-exiftool
 picom
 poppler-glib
+prettier
 rebuild-detector
 redshift
 restic
