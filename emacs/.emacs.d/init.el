@@ -985,14 +985,15 @@ When called interactively without a prefix numeric argument, N is
         ("C-c g q"    . eglot-code-action-quickfix)))
 
 (use-package text-mode
+  :bind (:map my/toggle-map
+              ("v" . visual-fill-column-mode))
+  :hook
+  (text-mode . my/set-cursor-type-bar)
+  (text-mode . my/disable-indent-tabs-mode)
   :config
   ;; For some reason the following doesn't work with :bind
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
-  (define-key text-mode-map (kbd "C-c P") #'repunctuate-sentences)
-
-  :hook
-  (text-mode . my/set-cursor-type-bar)
-  (text-mode . my/disable-indent-tabs-mode))
+  (define-key text-mode-map (kbd "C-c P") #'repunctuate-sentences))
 
 (use-package flymake-vale
   :load-path "lisp/flymake-vale"
