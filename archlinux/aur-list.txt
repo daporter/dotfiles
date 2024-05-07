@@ -30,7 +30,6 @@ tree-sitter-make-git
 tree-sitter-regex-git
 tree-sitter-yaml-git
 ttf-literata
-udiskie-dmenu-git
 vale-git
 visual-studio-code-bin
 windscribe-v2-bin
