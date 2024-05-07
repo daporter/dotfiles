@@ -1545,7 +1545,7 @@ When called interactively without a prefix numeric argument, N is
     :key #'gptel-api-key-from-auth-source
     :endpoint "/chat/completions"
     :stream t
-    :models '("sonar-medium-chat")))
+    :models '("llama-3-sonar-large-32k-chat")))
 
 (use-package meow
   :ensure t
