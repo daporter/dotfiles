@@ -909,7 +909,9 @@ When called interactively without a prefix numeric argument, N is
               ("<right>" . flymake-goto-next-error)
               ("<left>"  . flymake-goto-prev-error)
               ("d"       . flymake-show-buffer-diagnostics)
-              ("p"       . flymake-show-project-diagnostics))
+              ("p"       . flymake-show-project-diagnostics)
+              :map my/toggle-map
+              ("f"       . flymake-mode))
   :custom (flymake-fringe-indicator-position nil))
 
 (use-package prog-mode
