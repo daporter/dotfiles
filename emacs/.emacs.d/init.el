@@ -431,6 +431,12 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (compilation-auto-jump-to-first-error 'if-location-known))
 
+(use-package gdb-mi
+  :custom
+  (gdb-many-windows t)
+  (gdb-default-window-configuration-file "gdb-config")
+  (gdb-restore-window-configuration-after-quit t))
+
 (use-package dired
   :bind (("C-c d" . dired-jump)
          ("C-c D" . dired-jump-other-window))
