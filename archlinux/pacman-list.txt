@@ -21,6 +21,7 @@ firefox
 flatpak
 github-cli
 glab
+go
 grub
 gucharmap
 htop
