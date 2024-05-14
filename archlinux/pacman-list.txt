@@ -21,14 +21,12 @@ firefox
 flatpak
 github-cli
 glab
-go
 grub
 gucharmap
 htop
 inetutils
 isync
 iwd
-jq
 libertinus-font
 libvterm
 maim
@@ -53,8 +51,6 @@ rebuild-detector
 redshift
 restic
 ripgrep
-rsync
-rust
 stow
 sxhkd
 sxiv
@@ -62,7 +58,6 @@ texlive-binextra
 texlive-latexextra
 texlive-plaingeneric
 torbrowser-launcher
-traceroute
 tree
 tree-sitter-bash
 tree-sitter-c
@@ -110,6 +105,7 @@ xorg-x11perf
 xorg-xbacklight
 xorg-xcmsdb
 xorg-xcursorgen
+xorg-xdpyinfo
 xorg-xdriinfo
 xorg-xev
 xorg-xgamma

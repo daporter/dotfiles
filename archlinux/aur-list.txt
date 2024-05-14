@@ -11,12 +11,12 @@ i810-dri
 markdownlint-cli
 noto-color-emoji-fontconfig
 ocrmypdf
-october
 openvpn-update-systemd-resolved
 otf-bitstream-charter
 otf-elstob
 otf-spectral
 otf-spectralsc
+otf-xcharter
 paru
 qmk-git
 scc
