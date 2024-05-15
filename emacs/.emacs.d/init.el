@@ -276,6 +276,7 @@ When called interactively without a prefix numeric argument, N is
    :map my/buffer-map
    ("d" . kill-buffer-and-window)
    :map my/window-map
+   ("b" . balance-windows)
    ("d" . delete-window)
    ("H" . split-window-below)
    ("m" . delete-other-windows)
