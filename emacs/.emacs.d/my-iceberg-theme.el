@@ -321,6 +321,21 @@
    `(outline-7 ((t (:inherit org-level-7))))
    `(outline-8 ((t (:inherit org-level-8))))
 
+;;;;; Proced
+
+   `(proced-cpu                  ((t (:foreground ,magenta))))
+   `(proced-emacs-pid            ((t (:inherit (proced-pid bold)))))
+   `(proced-executable           ((t (:foreground ,fg :inherit bold))))
+   `(proced-mem                  ((t (:foreground ,cyan))))
+   `(proced-memory-high-usage    ((t (:foreground ,orange))))
+   `(proced-memory-low-usage     ((t (:foreground ,green))))
+   `(proced-memory-medium-usage  ((t (:foreground ,yellow))))
+   `(proced-pid                  ((t (:foreground ,blue))))
+   `(proced-session-leader-pid   ((t (:inherit (proced-pid underline)))))
+   `(proced-sort-header          ((t (:foreground ,yellow :inherit underline))))
+   `(proced-time-colon           ((t (:inherit shadow))))
+   `(proced-user                 ((t (:inherit shadow))))
+
 ;;;;; RE Builder
 
    `(reb-match-0 ((t (:inherit highlight))))
