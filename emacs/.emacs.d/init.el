@@ -384,11 +384,12 @@ When called interactively without a prefix numeric argument, N is
   (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
 
 (use-package simple
-  :hook ((after-init . global-visual-line-mode)
-         (after-init . column-number-mode))
+  :hook ((after-init . column-number-mode))
   :bind (("C-c a" . execute-extended-command)
          ("C-z"   . undo)
-         ("C-S-z" . undo-redo)))        ; default: suspend-frame
+         ("C-S-z" . undo-redo)        ; default: suspend-frame
+         :map my/toggle-map
+         ("v" . visual-line-mode)))
 
 (use-package newcomment
   :bind (:map my/comment-map
