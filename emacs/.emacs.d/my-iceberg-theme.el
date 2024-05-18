@@ -414,6 +414,12 @@
    `(corfu-border     ((t (:background ,bg+3))))
    `(corfu-bar        ((t (:background ,fg-2))))
 
+;;;;; Denote
+
+   `(denote-faces-date      ((t (:foreground ,cyan))))
+   `(denote-faces-keywords  ((t (:foreground ,magenta))))
+   `(denote-faces-signature ((t (:foreground ,yellow))))
+
 ;;;;; Embrace
 
    `(embrace-help-key-face  ((t (:inherit help-key-binding))))
