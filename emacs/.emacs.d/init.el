@@ -1304,7 +1304,7 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :commands org-noter
   :custom
-  (org-noter-notes-search-path '("~/Dropbox/bibliography"))
+  (org-noter-notes-search-path '("~/Dropbox/notes/zettelkasten/2 - Source Material/Books"))
   (org-noter-auto-save-last-location t))
 
 (use-package org-agenda
