@@ -1045,6 +1045,7 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (markdown-command "pandoc")
   (markdown-asymmetric-header t)
+  (markdown-fontify-code-blocks-natively t)
   :config
   (define-auto-insert
     "/.*/Dropbox/Reference/.*\\.md\\'"
