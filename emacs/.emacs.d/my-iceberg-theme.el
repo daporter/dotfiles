@@ -527,10 +527,10 @@
 
 ;;;;; Orderless
 
-   `(orderless-match-face-0 ((t (:inherit bold :foreground  ,cyan))))
-   `(orderless-match-face-1 ((t (:inherit bold :foreground  ,green))))
-   `(orderless-match-face-2 ((t (:inherit bold :foreground  ,blue))))
-   `(orderless-match-face-3 ((t (:inherit bold :foreground  ,magenta))))
+   `(orderless-match-face-0 ((t (:background  ,yellow-bg))))
+   `(orderless-match-face-1 ((t (:background  ,orange-bg))))
+   `(orderless-match-face-2 ((t (:background  ,red-bg))))
+   `(orderless-match-face-3 ((t (:background  ,magenta-bg))))
 
 ;;;;; Org Noter
 
