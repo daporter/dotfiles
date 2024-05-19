@@ -201,7 +201,7 @@ When called interactively without a prefix numeric argument, N is
   :config
   (defvar-keymap my/buffer-map :doc "My prefix keymap for buffers."
                  "E" #'erase-buffer
-                 "k" #'kill-buffer)
+                 "k" #'kill-this-buffer)
   (keymap-set (current-global-map)
               "C-c b"
               (cons "Buffer" my/buffer-map))
