@@ -445,7 +445,8 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (dired-recursive-copies   'always)
   (dired-dwim-target        t)          ; try to guess target directory for copy
-  (dired-auto-revert-buffer t))
+  (dired-auto-revert-buffer t)
+  (dired-vc-rename-file     t))
 
 (use-package project
   :commands (project-find-file
