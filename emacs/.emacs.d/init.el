@@ -1196,10 +1196,13 @@ When called interactively without a prefix numeric argument, N is
   :commands (denote denote-subdirectory denote-rename-file)
   :hook (dired-mode . denote-dired-mode-in-directories)
   :custom
+  (denote-directory "~/Dropbox/notes")
+  (denote-file-type 'markdown-yaml)
   (denote-dired-directories (list denote-directory))
   (denote-dired-directories-include-subdirectories t)
-  (denote-directory "~/Dropbox/notes")
-  (denote-journal-extras-title-format nil))
+  (denote-journal-extras-title-format nil)
+  :config
+  (require 'denote-journal-extras))
 
 ;; From the Notmuch documentation:
 ;;
