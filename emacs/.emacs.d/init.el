@@ -353,6 +353,10 @@ When called interactively without a prefix numeric argument, N is
   (switch-to-buffer-in-dedicated-window 'pop)
   (switch-to-buffer-obey-display-actions t))
 
+(use-package menu-bar
+  :bind (:map my/toggle-map
+              ("m" . menu-bar-mode)))
+
 (use-package bindings
   :bind (:map my/buffer-map
               ("o" . mode-line-other-buffer)))
