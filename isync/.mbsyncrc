@@ -6,7 +6,7 @@ IMAPAccount migadu
 Host imap.migadu.com
 User david@daporter.net
 PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/Mail/migadu.gpg"
-SSLType IMAPS
+TLSType IMAPS
 
 IMAPStore migadu
 Account migadu
