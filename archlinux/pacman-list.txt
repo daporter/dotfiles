@@ -25,6 +25,7 @@ glab
 grub
 gtk2
 gucharmap
+hledger
 htop
 inetutils
 isync
