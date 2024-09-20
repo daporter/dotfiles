@@ -8,7 +8,6 @@ gitlint
 gnu-c-manual
 google-chrome
 i810-dri
-markdownlint-cli
 noto-color-emoji-fontconfig
 ocrmypdf
 openvpn-update-systemd-resolved
@@ -17,7 +16,8 @@ otf-elstob
 otf-spectral
 otf-spectralsc
 otf-xcharter
-paru
+paru-git
+paru-git-debug
 qmk-git
 scc
 seer-gdb
