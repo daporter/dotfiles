@@ -19,7 +19,6 @@ otf-ibm-plex
 otf-xcharter
 paru-git
 paru-git-debug
-paru-git
 python-alpha_vantage
 python-standardebooks
 python-yfinance
@@ -37,7 +36,6 @@ tree-sitter-regex-git
 tree-sitter-yaml-git
 ttf-adobe-source-serif-fonts
 ttf-elstob
-ttf-librebaskerville
 ttf-literata
 ttf-merriweather
 vale-git
