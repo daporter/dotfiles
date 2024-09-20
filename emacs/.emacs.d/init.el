@@ -1179,6 +1179,7 @@ When called interactively without a prefix numeric argument, N is
   (magit-display-buffer-function
    'magit-display-buffer-same-window-except-diff-v1)
   (git-commit-summary-max-length 50)
+  (magit-diff-refine-hunk t)
   (git-commit-style-convention-checks '(non-empty-second-line
                                         overlong-summary-line))
   :config
@@ -1312,7 +1313,7 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :commands org-noter
   :custom
-  (org-noter-notes-search-path '("~/Dropbox/notes/zettelkasten/2 - Source Material/Books"))
+  (org-noter-notes-search-path '("~/Dropbox/notes/zettelkasten/2-source_material/Books"))
   (org-noter-auto-save-last-location t))
 
 (use-package org-agenda
@@ -1735,3 +1736,26 @@ When called interactively without a prefix numeric argument, N is
 
   (meow-setup-indicator)
   (meow-global-mode 1))
+
+(use-package ledger-mode
+  :ensure t
+  :mode "\\.journal\\'")
+
+(use-package hledger-mode
+  :ensure t
+  :custom
+  (hledger-currency-string "$")
+  (hledger-comments-column comment-column)
+  (hledger-extra-args " --strict")
+  (hledger-life-expectancy 90)
+  (hledger-ratios-income-accounts hledger-top-income-account)
+  (hledger-ratios-liquid-asset-accounts "assets:cash")
+  (hledger-top-income-account "revenues")
+  (hledger-year-of-birth 1971))
+
+(use-package flymake-hledger
+  :ensure t
+  :after (ledger-mode flymake)
+  :hook (ledger-mode . flymake-hledger-enable))
+
+(put 'scroll-left 'disabled nil)
