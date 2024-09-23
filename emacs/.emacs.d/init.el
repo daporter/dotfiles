@@ -1758,4 +1758,7 @@ When called interactively without a prefix numeric argument, N is
   :after (ledger-mode flymake)
   :hook (ledger-mode . flymake-hledger-enable))
 
+(use-package csv-mode
+  :ensure t)
+
 (put 'scroll-left 'disabled nil)
