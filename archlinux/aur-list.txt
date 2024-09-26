@@ -42,5 +42,4 @@ vale-git
 visual-studio-code-bin
 windscribe-v2-bin
 xbanish
-z-library-bin
 zotero
