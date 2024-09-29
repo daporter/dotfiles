@@ -31,7 +31,6 @@ htop
 inetutils
 isync
 iwd
-ledger
 libreoffice-still
 libvterm
 maim

@@ -17,6 +17,7 @@ otf-bitstream-charter
 otf-elstob
 otf-ibm-plex
 otf-xcharter
+paisa-bin
 paru-git
 paru-git-debug
 python-alpha_vantage
