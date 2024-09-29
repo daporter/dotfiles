@@ -1739,7 +1739,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package ledger-mode
   :ensure t
-  :mode "\\.journal\\'")
+  :mode "\\.journal\\'"
+  :custom
+  (ledger-default-date-format ledger-iso-date-format))
 
 (use-package hledger-mode
   :ensure t
