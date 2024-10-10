@@ -54,6 +54,7 @@ perl-image-exiftool
 picom
 poppler-glib
 prettier
+python-hypothesis
 rebuild-detector
 redshift
 restic
