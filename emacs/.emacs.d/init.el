@@ -228,6 +228,11 @@ When called interactively without a prefix numeric argument, N is
               "C-c l"
               (cons "Linting" my/lint-map))
 
+  (defvar-keymap my/note-map :doc "My prefix keymap for notes.")
+  (keymap-set (current-global-map)
+              "C-c n"
+              (cons "Note" my/note-map))
+
   (defvar-keymap my/compile-map :doc "My prefix keymap for compile actions.")
   (keymap-set (current-global-map)
               "C-c o"
@@ -1199,7 +1204,16 @@ When called interactively without a prefix numeric argument, N is
 (use-package denote
   :ensure t
   :commands (denote denote-subdirectory denote-rename-file)
-  :hook (dired-mode . denote-dired-mode-in-directories)
+  :bind (:map my/note-map
+              ("c"   . denote-region)   ; "contents" mnemonic
+              ("d"   . denote-subdirectory)
+              ("i"   . denote-link)     ; "insert" mnemonic
+              ("I"   . denote-add-links)
+              ("b"   . denote-backlinks)
+              ("l f" . denote-find-link)
+              ("l b" . denote-find-backlink))
+  :hook ((dired-mode . denote-dired-mode-in-directories)
+         (text-mode  . denote-fontify-links-mode-maybe))
   :custom
   (denote-directory "~/Dropbox/notes")
   (denote-file-type 'markdown-yaml)
@@ -1208,6 +1222,14 @@ When called interactively without a prefix numeric argument, N is
   (denote-journal-extras-title-format nil)
   :config
   (require 'denote-journal-extras))
+
+(use-package consult-denote
+  :ensure t
+  :bind (:map my/note-map
+              ("f" . consult-denote-find)
+              ("g" . consult-denote-grep))
+  :config
+  (consult-denote-mode 1))
 
 ;; From the Notmuch documentation:
 ;;
@@ -1223,7 +1245,6 @@ When called interactively without a prefix numeric argument, N is
 (use-package notmuch
   :load-path "/usr/share/emacs/site-lisp"
   :commands notmuch
-  :bind ("C-c n" . notmuch)
   :custom
   (notmuch-show-logo nil)
   (mail-user-agent #'notmuch-mua-new-mail)
