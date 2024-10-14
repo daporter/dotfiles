@@ -1210,8 +1210,15 @@ When called interactively without a prefix numeric argument, N is
               ("i"   . denote-link)     ; "insert" mnemonic
               ("I"   . denote-add-links)
               ("b"   . denote-backlinks)
-              ("l f" . denote-find-link)
-              ("l b" . denote-find-backlink))
+              ("f l" . denote-find-link)
+              ("f b" . denote-find-backlink)
+              ("r"   . denote-rename-file)
+              ("R"   . denote-rename-file-using-front-matter)
+              :map dired-mode-map
+              ("C-c C-d C-i" . denote-link-dired-marked-notes)
+              ("C-c C-d C-r" . denote-dired-rename-files)
+              ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
+              ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
   :hook ((dired-mode . denote-dired-mode-in-directories)
          (text-mode  . denote-fontify-links-mode-maybe))
   :custom
@@ -1226,8 +1233,8 @@ When called interactively without a prefix numeric argument, N is
 (use-package consult-denote
   :ensure t
   :bind (:map my/note-map
-              ("f" . consult-denote-find)
-              ("g" . consult-denote-grep))
+              ("f f" . consult-denote-find)
+              ("f g" . consult-denote-grep))
   :config
   (consult-denote-mode 1))
 
