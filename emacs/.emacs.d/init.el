@@ -727,9 +727,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package avy
   :ensure t
-  :bind   (("C-," . avy-goto-char-timer)
-           :map isearch-mode-map
-           ("C-," . avy-isearch))
+  ;; :bind   (("C-," . avy-goto-char-timer)
+  ;;          :map isearch-mode-map
+  ;;          ("C-," . avy-isearch))
   :custom
   (avy-keys '(?d ?a ?n ?e ?s ?r ?u ?c ?g))
   (avy-dispatch-alist '((?m . avy-action-mark)
@@ -839,6 +839,10 @@ When called interactively without a prefix numeric argument, N is
   (defun avy-action-mark-to-char (pt)
     (activate-mark)
     (goto-char pt)))
+
+(use-package casual-avy
+  :ensure t
+  :bind ("C-," . casual-avy-tmenu))
 
 (use-package transpose-frame
   :ensure t
@@ -1144,6 +1148,23 @@ When called interactively without a prefix numeric argument, N is
 (use-package yaml-ts-mode
   :ensure t
   :mode "\\.ya?ml\\'")
+
+(use-package activities
+  :ensure t
+  :init
+  (activities-mode)
+  ;; Prevent `edebug' default bindings from interfering.
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+  :bind
+  (("C-x C-a C-n" . activities-new)
+   ("C-x C-a C-d" . activities-define)
+   ("C-x C-a C-a" . activities-resume)
+   ("C-x C-a C-s" . activities-suspend)
+   ("C-x C-a C-k" . activities-kill)
+   ("C-x C-a RET" . activities-switch)
+   ("C-x C-a b"   . activities-switch-buffer)
+   ("C-x C-a g"   . activities-revert)
+   ("C-x C-a l"   . activities-list)))
 
 (use-package eshell
   :commands (eshell)
