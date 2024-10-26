@@ -1795,9 +1795,9 @@ When called interactively without a prefix numeric argument, N is
 (use-package hledger-mode
   :ensure t
   :custom
+  (hledger-jfile (getenv "LEDGER_FILE"))
   (hledger-currency-string "$")
   (hledger-comments-column comment-column)
-  (hledger-extra-args " --strict")
   (hledger-life-expectancy 90)
   (hledger-ratios-income-accounts hledger-top-income-account)
   (hledger-ratios-liquid-asset-accounts "assets:cash")
