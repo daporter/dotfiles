@@ -462,6 +462,13 @@ When called interactively without a prefix numeric argument, N is
   (dired-auto-revert-buffer t)
   (dired-vc-rename-file     t))
 
+(use-package casual-dired
+  :ensure t
+  :bind (:map dired-mode-map
+	      ("C-o" . casual-dired-tmenu)
+	      ("s" . casual-dired-sort-by-tmenu)
+	      ("/" . casual-dired-search-replace-tmenu)))
+
 (use-package project
   :commands (project-find-file
              project-switch-to-buffer
