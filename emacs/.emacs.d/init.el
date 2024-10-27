@@ -460,7 +460,11 @@ When called interactively without a prefix numeric argument, N is
   (dired-recursive-copies   'always)
   (dired-dwim-target        t)          ; try to guess target directory for copy
   (dired-auto-revert-buffer t)
-  (dired-vc-rename-file     t))
+  (dired-vc-rename-file     t)
+
+  :config
+  (add-hook 'dired-mode-hook 'hl-line-mode)
+  (add-hook 'dired-mode-hook 'dired-async-mode))
 
 (use-package casual-dired
   :ensure t
