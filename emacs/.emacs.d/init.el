@@ -416,6 +416,11 @@ When called interactively without a prefix numeric argument, N is
               ;; Allow M-c to capitalise word and exit the search.  The original command is still available via M-s c.
               ("M-c" . nil)))
 
+(use-package casual-isearch
+  :ensure t
+  :bind (:map isearch-mode-map
+	      ("C-o" . casual-isearch-tmenu)))
+
 (use-package paren
   :custom
   (show-paren-context-when-offscreen 'overlay))
