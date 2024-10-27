@@ -1812,4 +1812,9 @@ When called interactively without a prefix numeric argument, N is
 (use-package csv-mode
   :ensure t)
 
+(use-package casual-info
+  :ensure t
+  :bind (:map Info-mode-map
+	      ("C-o" . casual-info-tmenu)))
+
 (put 'scroll-left 'disabled nil)
