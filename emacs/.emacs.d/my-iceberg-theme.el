@@ -409,10 +409,11 @@
 
 ;;;;; Avy
 
-   `(avy-lead-face   ((t (:foreground ,bg-1 :background ,red))))
-   `(avy-lead-face-0 ((t (:inherit avy-lead-face))))
-   `(avy-lead-face-1 ((t (:inherit avy-lead-face))))
-   `(avy-lead-face-2 ((t (:inherit avy-lead-face))))
+   `(avy-goto-char-timer-face ((t (:inherit bold :foreground ,black :background ,red))))
+   `(avy-lead-face            ((t (:inherit bold :foreground ,black :background ,yellow))))
+   `(avy-lead-face-0          ((t (:inherit avy-lead-face))))
+   `(avy-lead-face-1          ((t (:inherit avy-lead-face))))
+   `(avy-lead-face-2          ((t (:inherit avy-lead-face))))
 
 ;;;;; Corfu
 
