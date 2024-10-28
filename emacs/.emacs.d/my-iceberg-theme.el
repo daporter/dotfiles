@@ -88,6 +88,8 @@
    `(cursor                ((t (:background ,orange))))
    `(default               ((t (:foreground ,fg :background ,bg))))
    `(error                 ((t (:foreground ,red))))
+   `(escape-glyph          ((t (:foreground ,yellow))))
+   `(homoglyph             ((t (:foreground ,orange))))
    `(fringe                ((t (:foreground ,fg-2))))
    `(header-line           ((t (:background ,bg-1 :weight bold))))
    `(header-line-highlight ((t (:background ,bg+2))))
@@ -98,6 +100,7 @@
    `(minibuffer-prompt     ((t (:foreground ,cyan))))
    `(mode-line             ((t (:family "Roboto"   :foreground ,fg-1 :background ,bg+2 :box (:color ,bg+3)))))
    `(mode-line-inactive    ((t (:inherit mode-line :foreground ,bg+3 :background ,bg+1 :box (:color ,bg+3)))))
+   `(nobreak-hyphen        ((t (:inherit default))))
    `(nobreak-space         ((t (:inherit default))))
    `(region                ((t (:background ,bg+3))))
    `(secondary-selection   ((t (:background ,cyan-bg))))
@@ -241,6 +244,11 @@
 
    `(line-number              ((t (:inherit fixed-pitch :foreground ,bg+3))))
    `(line-number-current-line ((t (:inherit line-number :foreground ,yellow))))
+
+;;;;; Man
+
+   `(Man-overstrike           ((t (:inherit bold :foreground ,yellow))))
+   `(Man-underline            ((t (:inherit underline :foreground ,magenta))))
 
 ;;;;; Message
 
@@ -493,6 +501,11 @@
    `(markdown-pre-face                ((t (:inherit fixed-pitch :background ,bg+1 :extend t :family "Iosevka Slab"))))
    `(markdown-table-face              ((t (:inherit fixed-pitch))))
    `(markdown-url-face                ((t (:inherit (fixed-pitch shadow)))))
+
+;;;;; Nerd Icons
+
+   `(nerd-icons-blue     ((t (:foreground ,blue))))
+   `(nerd-icons-blue-alt ((t (:foreground ,blue-fg+1))))
 
 ;;;;; Notmuch
 
