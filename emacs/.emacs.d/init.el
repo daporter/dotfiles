@@ -197,6 +197,9 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (custom-safe-themes t))
 
+(use-package repeat
+  :init (repeat-mode 1))
+
 (use-package keymap
   :config
   (defvar-keymap my/buffer-map :doc "My prefix keymap for buffers."
