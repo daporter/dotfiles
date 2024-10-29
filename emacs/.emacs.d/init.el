@@ -862,8 +862,9 @@ When called interactively without a prefix numeric argument, N is
 (use-package transpose-frame
   :ensure t
   :bind (:map my/window-map
-              ("r" . transpose-frame)
-              ("s" . flop-frame)))
+              ("r" . rotate-frame)
+              ("-" . flip-frame)
+              ("|" . flop-frame)))
 
 (use-package rainbow-mode
   :bind (:map my/toggle-map
