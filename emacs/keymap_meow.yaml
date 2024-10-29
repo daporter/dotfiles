@@ -3,16 +3,46 @@ layout:
   qmk_layout: LAYOUT_split_3x5_2
 layers:
   Meow:
-    - [ {t: join, s: ""}, {t: "grab", s: "pop-grab"}, {t: "[thing]", s: "←thing"}, {t: "←thing→", s: "thing→"}, {t: "visit", s: ""},
-        {t: "search", s: ""}, {t: "yank", s: "yank-pop"}, {t: "copy", s: ""}, {t: "kill", s: ""}, {t: "cancel-sel", s: "pop-sel"}  ]
-    - [ {t: line, s: "goto-line"}, {t: "block", s: "(→block)"}, {t: "←word→", s: "←sym→"}, {t: "insert", s: "↑open"}, {t: "append", s: "open↓"},
-        {t: undo, s: undo-in-sel}, {t: "←", s: "←ex"}, {t: "↑", s: "↑ex"}, {t: "↓", s: "ex↓"}, {t: "→", s: "ex→"}, ]
-    - [ {t: reverse, s: ""}, {t: sync-grab, s: "swap-grab"}, {t: till, s: ""}, {t: find, s: ""}, {t: "repeat", s: ""},
-        {t: "-", s: ""}, {t: "word←", s: "sym←"}, {t: change, s: replace}, {t: "delete", s: ""}, {t: "→word", s: "→sym"} ]
-    - {t: ⌫}
-    - {t: avy}
-    - {t: ␣}
-    - {t: ⏎}
+    - [
+        { t: join, s: "" },
+        { t: "grab", s: "pop-grab" },
+        { t: "→thing←", s: "←thing" },
+        { t: "←thing→", s: "thing→" },
+        { t: "visit", s: "" },
+        { t: "search", s: "" },
+        { t: "yank", s: "yank-pop" },
+        { t: "copy", s: "" },
+        { t: "kill", s: "" },
+        { t: "cancel-sel", s: "pop-sel" },
+      ]
+    - [
+        { t: line, s: "goto-line" },
+        { t: "block", s: "(→block)" },
+        { t: "←word→", s: "←sym→" },
+        { t: "insert", s: "↑open" },
+        { t: "append", s: "open↓" },
+        { t: undo, s: undo-in-sel },
+        { t: "←", s: "←ex" },
+        { t: "↑", s: "↑ex" },
+        { t: "↓", s: "ex↓" },
+        { t: "→", s: "ex→" },
+      ]
+    - [
+        { t: reverse, s: "" },
+        { t: sync-grab, s: "swap-grab" },
+        { t: till, s: "" },
+        { t: find, s: "" },
+        { t: "repeat", s: "" },
+        { t: "-", s: "" },
+        { t: "word←", s: "sym←" },
+        { t: change, s: replace },
+        { t: "delete", s: "" },
+        { t: "→word", s: "→sym" },
+      ]
+    - { t: ⌫ }
+    - { t: avy }
+    - { t: ␣ }
+    - { t: ⏎ }
 
 draw_config:
   key_w: 70
@@ -149,7 +179,7 @@ draw_config:
         visibility: hidden;
     }
     /* End Tabler Icons Cleanup */
-  svg_extra_style: ''
+  svg_extra_style: ""
   shrink_wide_legends: 8
   glyph_tap_size: 14
   glyph_hold_size: 12
@@ -172,50 +202,50 @@ parse_config:
     type: trans
   mark_alternate_layer_activators: false
   qmk_remove_keycode_prefix:
-  - KC_
+    - KC_
   qmk_keycode_map:
-    XXXXXXX: ''
-    'NO': ''
+    XXXXXXX: ""
+    "NO": ""
     NUM: numlk
-    MINUS: '-'
-    MINS: '-'
-    EQUAL: '='
-    EQL: '='
-    LEFT_BRACKET: '['
-    LBRC: '['
-    RIGHT_BRACKET: ']'
-    RBRC: ']'
+    MINUS: "-"
+    MINS: "-"
+    EQUAL: "="
+    EQL: "="
+    LEFT_BRACKET: "["
+    LBRC: "["
+    RIGHT_BRACKET: "]"
+    RBRC: "]"
     BACKSLASH: \
     BSLS: \
-    NONUS_HASH: '#'
-    NUHS: '#'
+    NONUS_HASH: "#"
+    NUHS: "#"
     SEMICOLON: ;
     SCLN: ;
-    QUOTE: ''''
-    QUOT: ''''
-    GRAVE: '`'
-    GRV: '`'
-    COMMA: ','
-    COMM: ','
+    QUOTE: "'"
+    QUOT: "'"
+    GRAVE: "`"
+    GRV: "`"
+    COMMA: ","
+    COMM: ","
     DOT: .
     SLASH: /
     SLSH: /
-    TILDE: '~'
-    TILD: '~'
-    EXCLAIM: '!'
-    EXLM: '!'
-    AT: '@'
-    HASH: '#'
+    TILDE: "~"
+    TILD: "~"
+    EXCLAIM: "!"
+    EXLM: "!"
+    AT: "@"
+    HASH: "#"
     DOLLAR: $
     DLR: $
-    PERCENT: '%'
-    PERC: '%'
+    PERCENT: "%"
+    PERC: "%"
     CIRCUMFLEX: ^
     CIRC: ^
-    AMPERSAND: '&'
-    AMPR: '&'
-    ASTERISK: '*'
-    ASTR: '*'
+    AMPERSAND: "&"
+    AMPR: "&"
+    ASTERISK: "*"
+    ASTR: "*"
     LEFT_PAREN: (
     LPRN: (
     RIGHT_PAREN: )
@@ -223,88 +253,88 @@ parse_config:
     UNDERSCORE: _
     UNDS: _
     PLUS: +
-    LEFT_CURLY_BRACE: '{'
-    LCBR: '{'
-    RIGHT_CURLY_BRACE: '}'
-    RCBR: '}'
-    PIPE: '|'
-    COLON: ':'
-    COLN: ':'
+    LEFT_CURLY_BRACE: "{"
+    LCBR: "{"
+    RIGHT_CURLY_BRACE: "}"
+    RCBR: "}"
+    PIPE: "|"
+    COLON: ":"
+    COLN: ":"
     DOUBLE_QUOTE: '"'
     DQUO: '"'
     DQT: '"'
     LEFT_ANGLE_BRACKET: <
     LABK: <
     LT: <
-    RIGHT_ANGLE_BRACKET: '>'
-    RABK: '>'
-    GT: '>'
-    QUESTION: '?'
-    QUES: '?'
+    RIGHT_ANGLE_BRACKET: ">"
+    RABK: ">"
+    GT: ">"
+    QUESTION: "?"
+    QUES: "?"
   zmk_remove_keycode_prefix: []
   zmk_keycode_map:
-    EXCLAMATION: '!'
-    EXCL: '!'
-    AT_SIGN: '@'
-    AT: '@'
-    HASH: '#'
-    POUND: '#'
+    EXCLAMATION: "!"
+    EXCL: "!"
+    AT_SIGN: "@"
+    AT: "@"
+    HASH: "#"
+    POUND: "#"
     DOLLAR: $
     DLLR: $
-    PERCENT: '%'
-    PRCNT: '%'
+    PERCENT: "%"
+    PRCNT: "%"
     CARET: ^
-    AMPERSAND: '&'
-    AMPS: '&'
-    ASTERISK: '*'
-    ASTRK: '*'
-    STAR: '*'
+    AMPERSAND: "&"
+    AMPS: "&"
+    ASTERISK: "*"
+    ASTRK: "*"
+    STAR: "*"
     LEFT_PARENTHESIS: (
     LPAR: (
     RIGHT_PARENTHESIS: )
     RPAR: )
-    EQUAL: '='
+    EQUAL: "="
     PLUS: +
-    MINUS: '-'
+    MINUS: "-"
     UNDERSCORE: _
     UNDER: _
     SLASH: /
     FSLH: /
-    QUESTION: '?'
-    QMARK: '?'
+    QUESTION: "?"
+    QMARK: "?"
     BACKSLASH: \
     BSLH: \
-    PIPE: '|'
+    PIPE: "|"
     NON_US_BACKSLASH: \
-    PIPE2: '|'
-    NON_US_BSLH: '|'
+    PIPE2: "|"
+    NON_US_BSLH: "|"
     SEMICOLON: ;
     SEMI: ;
-    COLON: ':'
-    SINGLE_QUOTE: ''''
-    SQT: ''''
-    APOSTROPHE: ''''
-    APOS: ''''
+    COLON: ":"
+    SINGLE_QUOTE: "'"
+    SQT: "'"
+    APOSTROPHE: "'"
+    APOS: "'"
     DOUBLE_QUOTES: '"'
     DQT: '"'
-    COMMA: ','
+    COMMA: ","
     LESS_THAN: <
     LT: <
     PERIOD: .
     DOT: .
-    GREATER_THAN: '>'
-    GT: '>'
-    LEFT_BRACKET: '['
-    LBKT: '['
-    LEFT_BRACE: '{'
-    LBRC: '{'
-    RIGHT_BRACKET: ']'
-    RBKT: ']'
-    RIGHT_BRACE: '}'
-    RBRC: '}'
-    GRAVE: '`'
-    TILDE: '~'
-    NON_US_HASH: '#'
-    NUHS: '#'
-    TILDE2: '~'
+    GREATER_THAN: ">"
+    GT: ">"
+    LEFT_BRACKET: "["
+    LBKT: "["
+    LEFT_BRACE: "{"
+    LBRC: "{"
+    RIGHT_BRACKET: "]"
+    RBKT: "]"
+    RIGHT_BRACE: "}"
+    RBRC: "}"
+    GRAVE: "`"
+    TILDE: "~"
+    NON_US_HASH: "#"
+    NUHS: "#"
+    TILDE2: "~"
   zmk_combos: {}
