@@ -396,6 +396,17 @@ When called interactively without a prefix numeric argument, N is
   (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
 
 (use-package simple
+  :preface
+  ;; https://karthinks.com/software/emacs-window-management-almanac/#org-target--pop-global-mark-advice
+  ;;
+  ;; By default, pop-global-mark always switches buffers (if required) in the
+  ;; current window.  We’d like it to double as a window-switcher, which
+  ;; requires a little advice:
+  (define-advice pop-global-mark (:around (pgm) use-display-buffer)
+    "Make `pop-to-buffer' jump buffers via `display-buffer'."
+    (cl-letf (((symbol-function 'switch-to-buffer)
+               #'pop-to-buffer))
+      (funcall pgm)))
   :hook ((after-init . column-number-mode))
   :bind (("C-c a" . execute-extended-command)
          ("C-z"   . undo)
