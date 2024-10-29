@@ -31,6 +31,13 @@
   "Turn off Indent-Tabs mode."
   (setq-local indent-tabs-mode nil))
 
+;; https://karthinks.com/software/emacs-window-management-almanac/#with-other-window-an-elisp-helper
+(defmacro with-other-window (&rest body)
+  "Execute forms in BODY in the other-window."
+  `(unless (one-window-p)
+     (with-selected-window (other-window-for-scrolling)
+       ,@body)))
+
 ;;;; Package definitions
 
 (use-package package
@@ -128,6 +135,9 @@ If buffer-or-name is nil return current buffer's mode."
   :config
   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
   (load custom-file)
+
+  ;; https://karthinks.com/software/emacs-window-management-almanac/#scroll-other-window--built-in
+  (setq other-window-scroll-default #'get-lru-window)
 
   (dolist (cmd '(upcase-region
                  downcase-region
@@ -277,18 +287,73 @@ When called interactively without a prefix numeric argument, N is
               (cons "Window" my/window-map)))
 
 (use-package window
+  :preface
+  (defun my/other-window-mru ()
+    "Select the most recently used window on this frame."
+    (interactive)
+    (when-let ((mru-window
+                (get-mru-window
+                 nil nil 'not-this-one-dummy)))
+      (select-window mru-window)))
+
+  (defun my/next-buffer (&optional arg)
+    "Switch to the next ARGth buffer.
+
+With a universal prefix arg, run in the next window."
+    (interactive "P")
+    (if-let (((equal arg '(4)))
+             (win (other-window-for-scrolling)))
+        (with-selected-window win
+          (next-buffer)
+          (setq prefix-arg current-prefix-arg))
+      (next-buffer arg)))
+
+  (defun my/previous-buffer (&optional arg)
+    "Switch to the previous ARGth buffer.
+
+With a universal prefix arg, run in the next window."
+    (interactive "P")
+    (if-let (((equal arg '(4)))
+             (win (other-window-for-scrolling)))
+        (with-selected-window win
+          (previous-buffer)
+          (setq prefix-arg current-prefix-arg))
+      (previous-buffer arg)))
+
+  (defun my/switch-buffer (&optional arg)
+    (interactive "P")
+    (run-at-time
+     0 nil
+     (lambda (&optional arg)
+       (if-let (((equal arg '(4)))
+                (win (other-window-for-scrolling)))
+           (with-selected-window win
+             (switch-to-buffer
+              (read-buffer-to-switch
+               (format "Switch to buffer (%S)" win))))
+         (call-interactively #'switch-to-buffer)))
+     arg))
+
+  (defvar-keymap my/buffer-cycle-map
+    :doc "Keymap for cycling through buffers, intended for `repeat-mode'."
+    :repeat t
+    "<left>"  'my/previous-buffer
+    "<right>" 'my/next-buffer
+    "b"       'my/switch-buffer)
+
   :bind
-  (("C-c <left>"  . previous-buffer)
-   ("C-c <right>" . next-buffer)
-   ("C-c e"       . switch-to-buffer)
+  (("M-o"         . my/other-window-mru)
+   ("C-c <left>"  . my/previous-buffer)
+   ("C-c <right>" . my/next-buffer)
+   ("C-c b"       . my/switch-buffer)
    :map my/buffer-map
    ("d" . kill-buffer-and-window)
    :map my/window-map
+   ("o" . other-window)
    ("b" . balance-windows)
    ("d" . delete-window)
    ("H" . split-window-below)
    ("m" . delete-other-windows)
-   ("o" . other-window)
    ("V" . split-window-right))
 
   :custom
@@ -426,14 +491,25 @@ When called interactively without a prefix numeric argument, N is
          ("M-n" . forward-paragraph)))
 
 (use-package isearch
-  :bind (:map isearch-mode-map
-              ;; Allow M-c to capitalise word and exit the search.  The original command is still available via M-s c.
-              ("M-c" . nil)))
+  :preface
+  (defun isearch-other-window (regexp-p)
+    (interactive "P")
+    (with-other-window (isearch-forward regexp-p)))
+
+  (defun isearch-other-window-backwards (regexp-p)
+    (interactive "P")
+    (with-other-window (isearch-backward regexp-p)))
+
+  :bind (("C-M-s" . isearch-other-window)
+         :map isearch-mode-map
+         ;; Allow M-c to capitalise word and exit the search.  The original
+         ;; command is still available via M-s c.
+         ("M-c" . nil)))
 
 (use-package casual-isearch
   :ensure t
   :bind (:map isearch-mode-map
-	      ("C-o" . casual-isearch-tmenu)))
+              ("C-o" . casual-isearch-tmenu)))
 
 (use-package paren
   :custom
@@ -483,9 +559,9 @@ When called interactively without a prefix numeric argument, N is
 (use-package casual-dired
   :ensure t
   :bind (:map dired-mode-map
-	      ("C-o" . casual-dired-tmenu)
-	      ("s" . casual-dired-sort-by-tmenu)
-	      ("/" . casual-dired-search-replace-tmenu)))
+              ("C-o" . casual-dired-tmenu)
+              ("s"   . casual-dired-sort-by-tmenu)
+              ("/"   . casual-dired-search-replace-tmenu)))
 
 (use-package project
   :commands (project-find-file
@@ -1472,12 +1548,20 @@ When called interactively without a prefix numeric argument, N is
     (windmove-down))
 
   :bind (:map my/window-map
+              ("<left>"    . windmove-left)
+              ("<up>"      . windmove-up)
+              ("<down>"    . windmove-down)
+              ("<right>"   . windmove-right)
+              ("S-<left>"  . windmove-swap-states-left)
+              ("S-<up>"    . windmove-swap-states-up)
+              ("S-<down>"  . windmove-swap-states-down)
+              ("S-<right>" . windmove-swap-states-right)
               ("h" . my/split-window-below-and-focus)
               ("v" . my/split-window-right-and-focus))
   :config
   (windmove-default-keybindings 'control)
-  (windmove-delete-default-keybindings 'none '(control shift))
-  (windmove-swap-states-default-keybindings '(meta shift))
+  (windmove-swap-states-default-keybindings '(control shift))
+  (windmove-delete-default-keybindings 'none '(meta shift))
   (defvar-keymap windmove-repeat-map
     :doc "Keymap for windmove operations"
     :repeat t
