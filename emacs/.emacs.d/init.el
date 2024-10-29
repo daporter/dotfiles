@@ -746,14 +746,14 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package avy
   :ensure t
-  ;; :bind   (("C-," . avy-goto-char-timer)
-  ;;          :map isearch-mode-map
-  ;;          ("C-," . avy-isearch))
+  :bind   (("C-," . avy-goto-char-timer)
+           :map isearch-mode-map
+           ("C-," . avy-isearch))
   :custom
-  (avy-keys '(?d ?a ?n ?e ?s ?r ?u ?c ?g))
+  (avy-keys '(?d ?a ?n ?e ?s ?i ?r ?h ?c ?u))
   (avy-dispatch-alist '((?m . avy-action-mark)
-                        (?i . avy-action-ispell)
-                        (?  . avy-action-mark-to-char)
+                        (?I . avy-action-ispell)
+                        (?. . avy-action-mark-to-char)
                         (?z . avy-action-zap-to-char)
                         (?, . avy-action-embark)
                         (?x . avy-action-exchange)
@@ -858,10 +858,6 @@ When called interactively without a prefix numeric argument, N is
   (defun avy-action-mark-to-char (pt)
     (activate-mark)
     (goto-char pt)))
-
-(use-package casual-avy
-  :ensure t
-  :bind ("C-," . casual-avy-tmenu))
 
 (use-package transpose-frame
   :ensure t
