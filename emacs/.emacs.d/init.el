@@ -284,6 +284,14 @@ When called interactively without a prefix numeric argument, N is
               (cons "Window" my/window-map)))
 
 (use-package window
+  :preface
+  (defun my/fit-window-to-buffer-max-half-frame (&optional window)
+    "Fit WINDOW to buffer, with height no more than half current frame height."
+    (interactive)
+    (let ((w (or window (selected-window)))
+          (max-height (/ (frame-height) 2)))
+      (fit-window-to-buffer w max-height)))
+
   :bind
   (("M-o"         . other-window)
    ("C-c <left>"  . previous-buffer)
@@ -297,12 +305,21 @@ When called interactively without a prefix numeric argument, N is
    ("h" . split-window-right)
    ("u" . split-window-below)
    ("b" . balance-windows))
+
   :custom
   ;; By default, interactively switched buffers are exempt from the rules set in
   ;; ‘display-buffer-alist’ and friends. The following makes such buffers obey
   ;; the buffer display rules, making for a consistent buffer-switching
   ;; experience.
-  (switch-to-buffer-obey-display-actions t))
+  (switch-to-buffer-obey-display-actions t)
+
+  :config
+  (add-to-list 'display-buffer-alist
+               `(,(rx "*Occur*")
+                 (display-buffer-reuse-window
+                  display-buffer-in-direction)
+                 (direction . above)
+                 (window-height . my/fit-window-to-buffer-max-half-frame))))
 
 (use-package popper
   :ensure t
