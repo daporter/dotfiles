@@ -308,6 +308,7 @@ When called interactively without a prefix numeric argument, N is
   (popper-reference-buffers '("\\*Messages\\*$"
                               help-mode
                               "\\*Async Shell Command\\*$"))
+  (popper-display-control nil)
   :config
   (popper-mode 1)
   (popper-echo-mode 1))
