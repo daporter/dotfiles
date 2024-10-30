@@ -300,9 +300,10 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package popper
   :ensure t
-  :bind (("C-\""   . popper-toggle)
-         ("M-\""   . popper-cycle)
-         ("C-M-\"" . popper-toggle-type))
+  :bind (("C-'"   . popper-toggle)
+         ("M-'"   . popper-cycle)
+         ("C-M-'" . popper-toggle-type))
+
   :custom
   (popper-reference-buffers '("\\*Messages\\*$"
                               help-mode
