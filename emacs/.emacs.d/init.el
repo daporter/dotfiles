@@ -296,7 +296,13 @@ When called interactively without a prefix numeric argument, N is
    ("e" . delete-other-windows)
    ("h" . split-window-right)
    ("u" . split-window-below)
-   ("b" . balance-windows)))
+   ("b" . balance-windows))
+  :custom
+  ;; By default, interactively switched buffers are exempt from the rules set in
+  ;; ‘display-buffer-alist’ and friends. The following makes such buffers obey
+  ;; the buffer display rules, making for a consistent buffer-switching
+  ;; experience.
+  (switch-to-buffer-obey-display-actions t))
 
 (use-package popper
   :ensure t
