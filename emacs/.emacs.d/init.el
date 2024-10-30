@@ -880,6 +880,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package smart-tabs-mode
   :ensure t
+  ;; Currently getting eager macro-expansion failure, so disabling until fixed:
+  :disabled t
   :commands smart-tabs-mode
   :config
   (smart-tabs-add-language-support sh sh-mode-hook
