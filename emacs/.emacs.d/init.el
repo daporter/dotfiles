@@ -329,7 +329,9 @@ When called interactively without a prefix numeric argument, N is
 
   :custom
   (popper-reference-buffers '("\\*Messages\\*$"
+                              "\\*Warnings\\*$"
                               help-mode
+                              "\\*Occur\\*"
                               "\\*Async Shell Command\\*$"))
   (popper-display-control nil)
   :config
