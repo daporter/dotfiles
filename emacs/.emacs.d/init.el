@@ -136,9 +136,6 @@ If buffer-or-name is nil return current buffer's mode."
   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
   (load custom-file)
 
-  ;; https://karthinks.com/software/emacs-window-management-almanac/#scroll-other-window--built-in
-  (setq other-window-scroll-default #'get-lru-window)
-
   (dolist (cmd '(upcase-region
                  downcase-region
                  narrow-to-region
@@ -287,146 +284,32 @@ When called interactively without a prefix numeric argument, N is
               (cons "Window" my/window-map)))
 
 (use-package window
-  :preface
-  (defun my/other-window-mru ()
-    "Select the most recently used window on this frame."
-    (interactive)
-    (when-let ((mru-window
-                (get-mru-window
-                 nil nil 'not-this-one-dummy)))
-      (select-window mru-window)))
-
-  (defun my/next-buffer (&optional arg)
-    "Switch to the next ARGth buffer.
-
-With a universal prefix arg, run in the next window."
-    (interactive "P")
-    (if-let (((equal arg '(4)))
-             (win (other-window-for-scrolling)))
-        (with-selected-window win
-          (next-buffer)
-          (setq prefix-arg current-prefix-arg))
-      (next-buffer arg)))
-
-  (defun my/previous-buffer (&optional arg)
-    "Switch to the previous ARGth buffer.
-
-With a universal prefix arg, run in the next window."
-    (interactive "P")
-    (if-let (((equal arg '(4)))
-             (win (other-window-for-scrolling)))
-        (with-selected-window win
-          (previous-buffer)
-          (setq prefix-arg current-prefix-arg))
-      (previous-buffer arg)))
-
-  (defun my/switch-buffer (&optional arg)
-    (interactive "P")
-    (run-at-time
-     0 nil
-     (lambda (&optional arg)
-       (if-let (((equal arg '(4)))
-                (win (other-window-for-scrolling)))
-           (with-selected-window win
-             (switch-to-buffer
-              (read-buffer-to-switch
-               (format "Switch to buffer (%S)" win))))
-         (call-interactively #'switch-to-buffer)))
-     arg))
-
-  (defvar-keymap my/buffer-cycle-map
-    :doc "Keymap for cycling through buffers, intended for `repeat-mode'."
-    :repeat t
-    "<left>"  'my/previous-buffer
-    "<right>" 'my/next-buffer
-    "b"       'my/switch-buffer)
-
   :bind
-  (("M-o"         . my/other-window-mru)
-   ("C-c <left>"  . my/previous-buffer)
-   ("C-c <right>" . my/next-buffer)
-   ("C-c b"       . my/switch-buffer)
+  (("M-o"         . other-window)
+   ("C-c <left>"  . previous-buffer)
+   ("C-c <right>" . next-buffer)
+   ("C-c d"       . switch-to-buffer)
    :map my/buffer-map
    ("d" . kill-buffer-and-window)
    :map my/window-map
-   ("o" . other-window)
-   ("b" . balance-windows)
-   ("d" . delete-window)
-   ("H" . split-window-below)
-   ("m" . delete-other-windows)
-   ("V" . split-window-right))
+   ("a" . delete-window)
+   ("e" . delete-other-windows)
+   ("h" . split-window-right)
+   ("u" . split-window-below)
+   ("b" . balance-windows)))
 
+(use-package popper
+  :ensure t
+  :bind (("C-\""   . popper-toggle)
+         ("M-\""   . popper-cycle)
+         ("C-M-\"" . popper-toggle-type))
   :custom
-  (display-buffer-alist
-   `((,(rx (| "*Async Shell Command*"
-              "*Shell Command Output*"))
-      (display-buffer-in-side-window)
-      (side . bottom)
-      (slot . -2)
-      (window-height . 0.20))
-
-     ((or . ((derived-mode . messages-buffer-mode)
-             (derived-mode . backtrace-mode)
-             ,(rx "*Warnings*")))
-      (display-buffer-in-side-window)
-      (side . bottom)
-      (slot . 0)
-      (window-height . 0.33))
-
-     ((derived-mode . help-mode)
-      (display-buffer-in-side-window)
-      (side . right)
-      (slot . -1)
-      (window-width . 80)
-      (window-height . shrink-window-if-larger-than-buffer))
-
-     (,(rx "*info*")
-      (display-buffer-in-side-window)
-      (side . right)
-      (slot . 0)
-      (window-width . 80))
-
-     ((or . ((derived-mode . Man-mode)
-             (derived-mode . woman-mode)
-             ,(rx (: (| "*Man" "*woman"))
-                  (0+ anychar))))
-      (display-buffer-in-side-window)
-      (side . right)
-      (slot . 1)
-      (window-width . 80))
-
-     (,(rx "*Faces*")
-      (display-buffer-reuse-window
-       display-buffer-use-some-window)
-      (dedicated . t)
-      (window-height . fit-window-to-buffer)
-      (window-min-height . 20)
-      (window-width . 80)
-      (body-function . select-window))
-
-     ((or . ((derived-mode . occur-mode)
-             (derived-mode . grep-mode)))
-      (display-buffer-reuse-mode-window
-       display-buffer-below-selected)
-      (dedicated . t)
-      (body-function . select-window))
-
-     (,(rx (| "*Org Select*" "*Org Note*" "*Agenda Commands*"))
-      (display-buffer-in-side-window)
-      (side . bottom)
-      (slot . 0)
-      (dedicated . t)
-      (window-parameters . ((mode-line-format . none))))
-
-     (,(rx (: (| "*Output Preview" "*Register Preview")
-              (0+ anychar)))
-      (display-buffer-reuse-mode-window
-       display-buffer-at-bottom))))
-
-  (fit-window-to-buffer-horizontally t)
-  (fit-frame-to-buffer t)
-  (switch-to-buffer-in-dedicated-window 'pop)
-  (switch-to-buffer-obey-display-actions t))
+  (popper-reference-buffers '("\\*Messages\\*$"
+                              help-mode
+                              "\\*Async Shell Command\\*$"))
+  :config
+  (popper-mode 1)
+  (popper-echo-mode 1))
 
 (use-package menu-bar
   :bind (:map my/toggle-map
@@ -475,9 +358,8 @@ With a universal prefix arg, run in the next window."
                #'pop-to-buffer))
       (funcall pgm)))
   :hook ((after-init . column-number-mode))
-  :bind (("C-c a" . execute-extended-command)
-         ("C-z"   . undo)
-         ("C-S-z" . undo-redo)        ; default: suspend-frame
+  :bind (("C-c n" . execute-extended-command)
+         ("C-*"   . undo-redo)          ; i.e., C-S-/ since undo is C-/
          :map my/toggle-map
          ("v" . visual-line-mode)))
 
@@ -546,8 +428,6 @@ With a universal prefix arg, run in the next window."
   (gdb-restore-window-configuration-after-quit t))
 
 (use-package dired
-  :bind (("C-c d" . dired-jump)
-         ("C-c D" . dired-jump-other-window))
   :custom
   (dired-recursive-copies   'always)
   (dired-dwim-target        t)          ; try to guess target directory for copy
@@ -947,13 +827,6 @@ With a universal prefix arg, run in the next window."
   (defun avy-action-mark-to-char (pt)
     (activate-mark)
     (goto-char pt)))
-
-(use-package transpose-frame
-  :ensure t
-  :bind (:map my/window-map
-              ("r" . rotate-frame)
-              ("-" . flip-frame)
-              ("|" . flop-frame)))
 
 (use-package rainbow-mode
   :bind (:map my/toggle-map
@@ -1535,56 +1408,10 @@ With a universal prefix arg, run in the next window."
   (youtube-dl-program "yt-dlp")
   (youtube-dl-directory "~/Downloads"))
 
-(use-package windmove
-  :preface
-  (defun my/split-window-right-and-focus ()
-    "Split the window horizontally and focus the new window."
-    (interactive)
-    (split-window-right)
-    (windmove-right))
-
-  (defun my/split-window-below-and-focus ()
-    "Split the window vertically and focus the new window."
-    (interactive)
-    (split-window-below)
-    (windmove-down))
-
-  :bind (:map my/window-map
-              ("<left>"    . windmove-left)
-              ("<up>"      . windmove-up)
-              ("<down>"    . windmove-down)
-              ("<right>"   . windmove-right)
-              ("S-<left>"  . windmove-swap-states-left)
-              ("S-<up>"    . windmove-swap-states-up)
-              ("S-<down>"  . windmove-swap-states-down)
-              ("S-<right>" . windmove-swap-states-right)
-              ("h" . my/split-window-below-and-focus)
-              ("v" . my/split-window-right-and-focus))
-  :config
-  (windmove-default-keybindings 'control)
-  (windmove-swap-states-default-keybindings '(control shift))
-  (windmove-delete-default-keybindings 'none '(meta shift))
-  (defvar-keymap windmove-repeat-map
-    :doc "Keymap for windmove operations"
-    :repeat t
-    "<left>"    #'windmove-left
-    "S-<left>"  #'windmove-swap-states-left
-    "<right>"   #'windmove-right
-    "S-<right>" #'windmove-swap-states-right
-    "<up>"      #'windmove-up
-    "S-<up>"    #'windmove-swap-states-up
-    "<down>"    #'windmove-down
-    "S-<down>"  #'windmove-swap-states-down)
-  (map-keymap
-   (lambda (_key cmd)
-     (when (symbolp cmd)
-       (put cmd 'repeat-map 'windmove-repeat-map)))
-   windmove-repeat-map))
-
 (use-package winner
   :bind (:map my/window-map
-              ("u" . winner-undo)
-              ("U" . winner-redo))
+              ("<left>"  . winner-undo)
+              ("<right>" . winner-redo))
   :config
   (winner-mode 1))
 
