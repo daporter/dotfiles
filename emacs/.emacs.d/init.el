@@ -423,6 +423,8 @@ With a universal prefix arg, run in the next window."
       (display-buffer-reuse-mode-window
        display-buffer-at-bottom))))
 
+  (fit-window-to-buffer-horizontally t)
+  (fit-frame-to-buffer t)
   (switch-to-buffer-in-dedicated-window 'pop)
   (switch-to-buffer-obey-display-actions t))
 
