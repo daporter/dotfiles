@@ -4,25 +4,6 @@
 
 ;;;; Utility functions
 
-;; Enable standard Linux unicode input.
-;; https://emacs.stackexchange.com/questions/55994/unicode-input-from-keyboard-qmk-to-emacs
-(defun my/read-unicode-char (c1 c2 c3 c4 _trailing_space_ignored)
-  "Convert unicode input C1 C2 C3 C4 to the corresponding insert char call."
-  (interactive "c\nc\nc\nc\nc")
-  (insert-char (string-to-number (format "%c%c%c%c" c1 c2 c3 c4) 16)))
-
-(keymap-set global-map "C-S-u" #'my/read-unicode-char)
-
-(defun my/goto-emacs-dir ()
-  "Open Emacs directory"
-  (interactive)
-  (find-file user-emacs-directory))
-
-(defun my/load-config ()
-  "Load config"
-  (interactive)
-  (load-file user-init-file))
-
 (defun my/set-cursor-type-bar ()
   "Set the cursor type to bar in the current buffer."
   (setq-local cursor-type 'bar))
@@ -30,13 +11,6 @@
 (defun my/disable-indent-tabs-mode ()
   "Turn off Indent-Tabs mode."
   (setq-local indent-tabs-mode nil))
-
-;; https://karthinks.com/software/emacs-window-management-almanac/#with-other-window-an-elisp-helper
-(defmacro with-other-window (&rest body)
-  "Execute forms in BODY in the other-window."
-  `(unless (one-window-p)
-     (with-selected-window (other-window-for-scrolling)
-       ,@body)))
 
 ;;;; Package definitions
 
@@ -139,7 +113,8 @@ If buffer-or-name is nil return current buffer's mode."
   (dolist (cmd '(upcase-region
                  downcase-region
                  narrow-to-region
-                 set-goal-column))
+                 set-goal-column
+                 scroll-left))
     (put cmd 'disabled nil))
 
   (modify-all-frames-parameters '((internal-border-width . 10)
@@ -208,7 +183,27 @@ When called interactively without a prefix numeric argument, N is
   :init (repeat-mode 1))
 
 (use-package keymap
+  :preface
+  (defun my/goto-emacs-dir ()
+    "Open Emacs directory"
+    (interactive)
+    (find-file user-emacs-directory))
+
+  ;; Enable standard Linux unicode input.
+  ;; https://emacs.stackexchange.com/questions/55994/unicode-input-from-keyboard-qmk-to-emacs
+  (defun my/read-unicode-char (c1 c2 c3 c4 _trailing_space_ignored)
+    "Convert unicode input C1 C2 C3 C4 to the corresponding insert char call."
+    (interactive "c\nc\nc\nc\nc")
+    (insert-char (string-to-number (format "%c%c%c%c" c1 c2 c3 c4) 16)))
+
+  (defun my/load-config ()
+    "Load config"
+    (interactive)
+    (load-file user-init-file))
+
   :config
+  (keymap-set (current-global-map) "C-S-u" #'my/read-unicode-char)
+
   (defvar-keymap my/buffer-map :doc "My prefix keymap for buffers."
                  "E" #'erase-buffer
                  "k" #'kill-this-buffer)
@@ -387,6 +382,13 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package isearch
   :preface
+  ;; https://karthinks.com/software/emacs-window-management-almanac/#with-other-window-an-elisp-helper
+  (defmacro with-other-window (&rest body)
+    "Execute forms in BODY in the other-window."
+    `(unless (one-window-p)
+       (with-selected-window (other-window-for-scrolling)
+         ,@body)))
+
   (defun isearch-other-window (regexp-p)
     (interactive "P")
     (with-other-window (isearch-forward regexp-p)))
@@ -1788,4 +1790,3 @@ When called interactively without a prefix numeric argument, N is
   :bind (:map Info-mode-map
 	      ("C-o" . casual-info-tmenu)))
 
-(put 'scroll-left 'disabled nil)
