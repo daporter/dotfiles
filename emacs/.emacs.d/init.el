@@ -736,24 +736,21 @@ When called interactively without a prefix numeric argument, N is
            ("C-," . avy-isearch))
   :custom
   (avy-keys '(?d ?a ?n ?e ?s ?i ?r ?h ?c ?u))
-  (avy-dispatch-alist '((?m . avy-action-mark)
-                        (?I . avy-action-ispell)
-                        (?. . avy-action-mark-to-char)
+  (avy-dispatch-alist '((?. . avy-action-embark)
+                        (?m . avy-action-mark)
+                        (?l . avy-action-mark-to-char)
                         (?z . avy-action-zap-to-char)
-                        (?, . avy-action-embark)
+                        (?I . avy-action-ispell)
                         (?x . avy-action-exchange)
-
-                        (11 . avy-action-kill-line)
-                        (25 . avy-action-yank-line)
-
                         (?w . avy-action-easy-copy)
-                        (?k . avy-action-kill-stay)
-                        (?y . avy-action-yank)
-                        (?t . avy-action-teleport)
-
                         (?W . avy-action-copy-whole-line)
+                        (?k . avy-action-kill-stay)
+                        (11 . avy-action-kill-line)
                         (?K . avy-action-kill-whole-line)
+                        (?y . avy-action-yank)
+                        (25 . avy-action-yank-line)
                         (?Y . avy-action-yank-whole-line)
+                        (?t . avy-action-teleport)
                         (?T . avy-action-teleport-whole-line)))
 
   :config
@@ -1867,5 +1864,4 @@ When called interactively without a prefix numeric argument, N is
 (use-package casual-info
   :ensure t
   :bind (:map Info-mode-map
-	      ("C-o" . casual-info-tmenu)))
-
+              ("C-o" . casual-info-tmenu)))
