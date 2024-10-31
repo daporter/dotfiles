@@ -1161,7 +1161,12 @@ When called interactively without a prefix numeric argument, N is
                 (remove 'indentation whitespace-style)))
   :hook
   ((sh-mode . my/configure-tab-width-sh-mode)
-   (whitespace-mode . my/configure-whitespace-sh-mode)))
+   (whitespace-mode . my/configure-whitespace-sh-mode))
+
+  :init
+  ;; Is there a more idiomatic way to do this?:
+  (with-eval-after-load 'sh-script
+    (define-key sh-mode-map [remap display-local-help] #'man)))
 
 (use-package python-mode
   :ensure t
@@ -1253,6 +1258,9 @@ When called interactively without a prefix numeric argument, N is
                  (slot . -1)
                  (window-height . 0.33)))
 
+  (with-eval-after-load 'esh-mode
+    (define-key eshell-mode-map [remap display-local-help] #'man))
+
   (dolist (module '(eshell-smart eshell-tramp))
     (add-to-list 'eshell-modules-list module)))
 
@@ -1262,6 +1270,11 @@ When called interactively without a prefix numeric argument, N is
     "Remove binding C-<up>, since it’s used by windmove."
     (keymap-unset eshell-hist-mode-map "C-<up>" :remove))
   :hook (eshell-hist-load . my/remove-eshell-hist-binding))
+
+(use-package shell
+  :commands shell
+  :bind (:map shell-mode-map
+              ([remap display-local-help] . man)))
 
 (use-package sxhkdrc-mode
   :ensure t
