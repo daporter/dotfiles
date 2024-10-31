@@ -284,14 +284,6 @@ When called interactively without a prefix numeric argument, N is
               (cons "Window" my/window-map)))
 
 (use-package window
-  :preface
-  (defun my/fit-window-to-buffer-max-half-frame (&optional window)
-    "Fit WINDOW to buffer, with height no more than half current frame height."
-    (interactive)
-    (let ((w (or window (selected-window)))
-          (max-height (/ (frame-height) 2)))
-      (fit-window-to-buffer w max-height)))
-
   :bind
   (("M-o"         . other-window)
    ("C-c <left>"  . previous-buffer)
@@ -311,15 +303,7 @@ When called interactively without a prefix numeric argument, N is
   ;; ‘display-buffer-alist’ and friends. The following makes such buffers obey
   ;; the buffer display rules, making for a consistent buffer-switching
   ;; experience.
-  (switch-to-buffer-obey-display-actions t)
-
-  :config
-  (add-to-list 'display-buffer-alist
-               `(,(rx "*Occur*")
-                 (display-buffer-reuse-window
-                  display-buffer-in-direction)
-                 (direction . above)
-                 (window-height . my/fit-window-to-buffer-max-half-frame))))
+  (switch-to-buffer-obey-display-actions t))
 
 (use-package popper
   :ensure t
@@ -421,6 +405,16 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :bind (:map isearch-mode-map
               ("C-o" . casual-isearch-tmenu)))
+
+(use-package replace
+  :config
+  (add-to-list 'display-buffer-alist
+               `(,(rx "*Occur*")
+                 (display-buffer-reuse-window
+                  display-buffer-in-direction)
+                 (direction . above)
+                 (window-height . (lambda (w) (fit-window-to-buffer w 20 10)))
+                 (body-function . select-window))))
 
 (use-package paren
   :custom
@@ -726,7 +720,7 @@ When called interactively without a prefix numeric argument, N is
                `(,(rx "*Embark Actions*")
                  (display-buffer-reuse-mode-window
                   display-buffer-below-selected)
-                 (window-height . fit-window-to-buffer)
+                 (window-height . (lambda (w) (fit-window-to-buffer w 20 10)))
                  (window-parameters . ((no-other-window . t)
                                        (mode-line-format . none)))))
   (add-to-list 'display-buffer-alist
@@ -941,7 +935,15 @@ When called interactively without a prefix numeric argument, N is
               ("p"       . flymake-show-project-diagnostics)
               :map my/toggle-map
               ("f"       . flymake-mode))
-  :custom (flymake-fringe-indicator-position nil))
+  :custom (flymake-fringe-indicator-position nil)
+  :config
+  (add-to-list 'display-buffer-alist
+               '((major-mode . flymake-diagnostics-buffer-mode)
+                 (display-buffer-reuse-window
+                  display-buffer-in-direction)
+                 (direction . above)
+                 (window-height . (lambda (w) (fit-window-to-buffer w 20 10)))
+                 (body-function . select-window))))
 
 (use-package prog-mode
   :preface
@@ -964,7 +966,7 @@ When called interactively without a prefix numeric argument, N is
                `(,(rx "*eldoc*")
                  (display-buffer-below-selected)
                  (dedicated . t)
-                 (window-height . fit-window-to-buffer))))
+                 (window-height . (lambda (w) (fit-window-to-buffer w 20 10))))))
 
 (use-package treesit
   :preface
