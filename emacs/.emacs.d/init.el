@@ -713,8 +713,13 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package embark
   :ensure t
+  ;; C-. can be seen as a right-click context menu at point and M-. as
+  ;; left-click.  The keybindings are mnemonic, both acting at point (.).  By
+  ;; default, M-. is bound to xref-find-definitions, but overwriting it here is
+  ;; reasonable since embark-dwim acts like xref-find-definitions on the symbol
+  ;; at point.
   :bind (("C-."   . embark-act)
-         ("C-#"   . embark-dwim)
+         ("M-."   . embark-dwim)
          ("C-h B" . embark-bindings))
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
