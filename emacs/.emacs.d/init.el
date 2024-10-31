@@ -1835,6 +1835,11 @@ When called interactively without a prefix numeric argument, N is
   (meow-setup-indicator)
   (meow-global-mode 1))
 
+(use-package meow-tree-sitter
+  :ensure t
+  :init
+  (meow-tree-sitter-register-defaults))
+
 (use-package ledger-mode
   :ensure t
   :mode "\\.journal\\'"
