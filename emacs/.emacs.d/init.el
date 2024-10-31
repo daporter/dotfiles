@@ -417,6 +417,7 @@ When called interactively without a prefix numeric argument, N is
                   display-buffer-in-direction)
                  (direction . above)
                  (window-height . (lambda (w) (fit-window-to-buffer w 20 10)))
+                 (dedicated . t)
                  (body-function . select-window))))
 
 (use-package paren
@@ -723,7 +724,8 @@ When called interactively without a prefix numeric argument, N is
                `(,(rx "*Embark Actions*")
                  (display-buffer-reuse-mode-window
                   display-buffer-below-selected)
-                 (window-height . (lambda (w) (fit-window-to-buffer w 20 10)))
+                 (dedicated . t)
+                 (window-height . fit-window-to-buffer)
                  (window-parameters . ((no-other-window . t)
                                        (mode-line-format . none)))))
   (add-to-list 'display-buffer-alist
@@ -946,6 +948,7 @@ When called interactively without a prefix numeric argument, N is
                   display-buffer-in-direction)
                  (direction . above)
                  (window-height . (lambda (w) (fit-window-to-buffer w 20 10)))
+                 (dedicated . t)
                  (body-function . select-window))))
 
 (use-package prog-mode
