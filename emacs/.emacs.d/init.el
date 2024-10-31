@@ -311,7 +311,8 @@ When called interactively without a prefix numeric argument, N is
                               "\\*Warnings\\*$"
                               help-mode
                               "\\*Occur\\*"
-                              "\\*Async Shell Command\\*$"))
+                              "\\*Async Shell Command\\*$"
+                              flymake-diagnostics-buffer-mode))
   (popper-display-control nil)
   :config
   (popper-mode 1)
