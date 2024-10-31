@@ -722,22 +722,7 @@ When called interactively without a prefix numeric argument, N is
          ("M-."   . embark-dwim)
          ("C-h B" . embark-bindings))
   :init
-  (setq prefix-help-command #'embark-prefix-help-command)
-
-  :config
-  (add-to-list 'display-buffer-alist
-               `(,(rx "*Embark Actions*")
-                 (display-buffer-reuse-mode-window
-                  display-buffer-below-selected)
-                 (dedicated . t)
-                 (window-height . fit-window-to-buffer)
-                 (window-parameters . ((no-other-window . t)
-                                       (mode-line-format . none)))))
-  (add-to-list 'display-buffer-alist
-               `(,(rx (| "*Embark Collect Live*"
-                         "*Embark Collect Completions*"))
-                 nil
-                 (window-parameters (mode-line-format . none)))))
+  (setq prefix-help-command #'embark-prefix-help-command))
 
 (use-package embark-consult
   :ensure t
