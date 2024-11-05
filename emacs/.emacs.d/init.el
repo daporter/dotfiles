@@ -117,9 +117,6 @@ If buffer-or-name is nil return current buffer's mode."
                  scroll-left))
     (put cmd 'disabled nil))
 
-  (modify-all-frames-parameters '((internal-border-width . 10)
-                                  (scroll-bar-width      .  5)))
-
   ;; Specify the fonts to use for displaying emoji.
   (set-fontset-font t 'emoji
                     (cond

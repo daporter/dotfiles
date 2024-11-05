@@ -90,7 +90,7 @@
    `(error                 ((t (:foreground ,red))))
    `(escape-glyph          ((t (:foreground ,yellow))))
    `(homoglyph             ((t (:foreground ,orange))))
-   `(fringe                ((t (:foreground ,fg-2))))
+   `(fringe                ((t (:foreground ,fg-2 :background ,bg-1))))
    `(header-line           ((t (:background ,bg-1 :weight bold))))
    `(header-line-highlight ((t (:background ,bg+2))))
    `(highlight             ((t (:background ,bg+2))))

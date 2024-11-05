@@ -1,5 +1,3 @@
-(add-to-list 'default-frame-alist '(internal-border-width . 16))
-
 (setq frame-resize-pixelwise t)
 (setq frame-inhibit-implied-resize t)
 (setq use-dialog-box t)
