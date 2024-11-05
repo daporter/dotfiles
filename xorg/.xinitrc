@@ -12,7 +12,7 @@ if [ -r "$HOME"/.Xresources ]; then
 fi
 
 xset b off                      # no bell
-xset r rate 200 200             # repeat after 200 ms, 200 char/s
+xset r rate 200 100             # repeat after 200 ms, 100 char/s
 xsetroot -cursor_name left_ptr
 
 picom -b
