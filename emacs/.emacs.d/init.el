@@ -1218,6 +1218,7 @@ When called interactively without a prefix numeric argument, N is
    (css-ts-mode . my/configure-whitespace-css-ts-mode)))
 
 (use-package conf-mode
+  :mode "\\.service\\'"
   :hook (text-mode . my/set-cursor-type-bar)
   :bind ("C-M-i" . completion-at-point))
 
@@ -1816,12 +1817,11 @@ When called interactively without a prefix numeric argument, N is
    '("k" . meow-next-word)
    '("K" . meow-next-symbol)
 
-   '("@" . embrace-commander)
-
    ;; ‘t’ leader key mappings.
    (cons "t" my/meow-leader-t-map)
 
-   '("<escape>" . ignore))
+   '("<escape>" . ignore)
+   '("@"        . embrace-commander))
 
   (meow-leader-define-key
    ;; Remember, can’t use x, h, c, m, or g. SPC isn’t a good idea either, since
