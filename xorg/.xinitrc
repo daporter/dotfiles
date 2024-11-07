@@ -19,7 +19,7 @@ picom -b
 redshift &
 sxhkd &
 xbanish &
-
 1password --silent &
 
-exec ~/bin/startdwm
+/usr/bin/systemctl --user start mtstatus
+exec /usr/local/bin/dwm

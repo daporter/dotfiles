@@ -1,5 +1,6 @@
 [Unit]
 Description=X11 status bar
+After=graphical-session.target
 
 [Service]
 ExecStart=/usr/local/bin/mtstatus
@@ -7,5 +8,5 @@ ExecReload=/usr/bin/kill -SIGUSR1 $MAINPID
 Restart=always
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
 
