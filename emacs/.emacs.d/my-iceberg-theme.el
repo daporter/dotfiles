@@ -248,7 +248,7 @@
 ;;;;; Man
 
    `(Man-overstrike           ((t (:inherit bold :foreground ,yellow))))
-   `(Man-underline            ((t (:inherit underline :foreground ,magenta))))
+   `(Man-underline            ((t (:inherit underline :foreground ,cyan))))
 
 ;;;;; Message
 
