@@ -308,6 +308,7 @@ When called interactively without a prefix numeric argument, N is
                               "\\*Warnings\\*$"
                               help-mode
                               "\\*Occur\\*"
+                              "\\*Shell Command Output\\*$"
                               "\\*Async Shell Command\\*$"
                               flymake-diagnostics-buffer-mode))
   (popper-display-control nil)
