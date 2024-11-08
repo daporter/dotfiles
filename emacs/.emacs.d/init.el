@@ -910,10 +910,15 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package titlecase
   :ensure t
+  :after embark
   :commands (titlecase-region
              titlecase-line
              titlecase-sentence
              titlecase-dwim)
+  :bind (:map embark-region-map
+              ("T" . titlecase-region)
+              :map embark-heading-map
+              ("T" . titlecase-region))
   :custom (titlecase-style 'chicago))
 
 (use-package flymake
