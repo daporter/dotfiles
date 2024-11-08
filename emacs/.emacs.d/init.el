@@ -1006,7 +1006,6 @@ When called interactively without a prefix numeric argument, N is
   :hook
   (text-mode . my/set-cursor-type-bar)
   (text-mode . my/disable-indent-tabs-mode)
-  (text-mode . olivetti-mode)
   :config
   ;; For some reason the following doesn't work with :bind
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
