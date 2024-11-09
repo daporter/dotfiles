@@ -409,11 +409,6 @@ When called interactively without a prefix numeric argument, N is
          ;; command is still available via M-s c.
          ("M-c" . nil)))
 
-(use-package casual-isearch
-  :ensure t
-  :bind (:map isearch-mode-map
-              ("C-o" . casual-isearch-tmenu)))
-
 (use-package replace
   :config
   (add-to-list 'display-buffer-alist
@@ -467,13 +462,6 @@ When called interactively without a prefix numeric argument, N is
   :config
   (add-hook 'dired-mode-hook 'hl-line-mode)
   (add-hook 'dired-mode-hook 'dired-async-mode))
-
-(use-package casual-dired
-  :ensure t
-  :bind (:map dired-mode-map
-              ("C-o" . casual-dired-tmenu)
-              ("s"   . casual-dired-sort-by-tmenu)
-              ("/"   . casual-dired-search-replace-tmenu)))
 
 (use-package project
   :commands (project-find-file
@@ -1874,8 +1862,3 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package csv-mode
   :ensure t)
-
-(use-package casual-info
-  :ensure t
-  :bind (:map Info-mode-map
-              ("C-o" . casual-info-tmenu)))
