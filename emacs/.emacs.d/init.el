@@ -295,7 +295,14 @@ When called interactively without a prefix numeric argument, N is
   ;; ‘display-buffer-alist’ and friends. The following makes such buffers obey
   ;; the buffer display rules, making for a consistent buffer-switching
   ;; experience.
-  (switch-to-buffer-obey-display-actions t))
+  (switch-to-buffer-obey-display-actions t)
+
+  :config
+  (add-to-list 'display-buffer-alist
+               `(,(rx "*Warnings*")
+                 (display-buffer-in-side-window)
+                 (side . bottom)
+                 (window-height . (lambda (w) (fit-window-to-buffer w 10 5))))))
 
 (use-package popper
   :ensure t
