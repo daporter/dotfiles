@@ -308,6 +308,10 @@ When called interactively without a prefix numeric argument, N is
                  (side . bottom)
                  (window-height . (lambda (w) (fit-window-to-buffer w 10 5))))))
 
+(use-package minibuffer
+  :custom
+  (completion-cycle-threshold 3))       ; TAB cycle if only few candidates
+
 (use-package popper
   :ensure t
   :bind (("C-'"   . popper-toggle)
@@ -566,6 +570,7 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :custom
   (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package vertico
