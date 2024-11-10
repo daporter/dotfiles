@@ -106,6 +106,10 @@ If buffer-or-name is nil return current buffer's mode."
   (user-full-name "David Porter")
   (mail-host-address "daporter.net")
 
+  ;; TAB first tries to indent the current line, and if the line was already
+  ;; indented, then tries to complete the thing at point.
+  (tab-always-indent 'complete)
+
   :config
   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
   (load custom-file)
@@ -1533,7 +1537,7 @@ When called interactively without a prefix numeric argument, N is
 (use-package repeat
   :config
   :hook (after-init)
-  :bind ("C-_" . repeat))                        ; reuse one of the ‘undo’ bindings
+  :bind ("C-_" . repeat))               ; reuse one of the ‘undo’ bindings
 
 (use-package server
   :config
@@ -1560,11 +1564,10 @@ When called interactively without a prefix numeric argument, N is
   (find-function-setup-keys))
 
 (use-package dabbrev
-  :custom
-  (dabbrev-check-all-buffers nil)
   :config
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode))
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
 (use-package pcmpl-args
   :ensure t
