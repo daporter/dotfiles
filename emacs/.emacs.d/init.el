@@ -593,9 +593,14 @@ When called interactively without a prefix numeric argument, N is
    (minibuffer-setup . my/corfu-enable-in-minibuffer)
    (eshell-mode      . corfu-mode))
   :bind (:map corfu-map
-              ("M-SPC"     . corfu-insert-separator)
-              ("<tab>"     . corfu-next)
-              ("<backtab>" . corfu-previous))
+              ("M-SPC"               . corfu-insert-separator)
+              ("<tab>"               . corfu-next)
+              ("<backtab>"           . corfu-previous)
+              ([remap next-line]     . nil)
+              ([remap previous-line] . nil)
+              ("M-h"                 . nil)
+              ("C-h"                 . corfu-info-documentation)
+              ("M-."                 . corfu-info-location))
   :custom
   (corfu-cycle t)
   :config
