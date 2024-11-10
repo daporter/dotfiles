@@ -418,7 +418,7 @@
 ;;;;; Corfu
 
    `(corfu-default    ((t (:background ,bg+1))))
-   `(corfu-current    ((t (:inherit region))))
+   `(corfu-current    ((t (:inherit (region bold)))))
    '(corfu-deprecated ((t (:inherit font-lock-comment-face :strike-through t))))
    `(corfu-border     ((t (:background ,fg-2))))
    `(corfu-bar        ((t (:background ,fg-2))))

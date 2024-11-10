@@ -603,11 +603,17 @@ When called interactively without a prefix numeric argument, N is
   (corfu-history-mode 1)
   (add-to-list 'savehist-additional-variables 'corfu-history))
 
-(use-package nerd-icons-corfu
+(use-package kind-icon
   :ensure t
   :after corfu
+  :custom
+  (kind-icon-default-face 'corfu-default)
+  (kind-icon-blend-background t)
+  (kind-icon-blend-frac 0.08)
+  (kind-icon-extra-space 1)
   :config
-  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+  (plist-put kind-icon-default-style :height 0.85))
 
 ;; Some notes on CAPFs.
 ;;
