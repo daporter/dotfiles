@@ -417,10 +417,10 @@
 
 ;;;;; Corfu
 
-   `(corfu-default    ((t (:foreground ,fg :background ,bg+1))))
-   `(corfu-current    ((t (:background ,bg+2))))
+   `(corfu-default    ((t (:background ,bg+1))))
+   `(corfu-current    ((t (:inherit region))))
    '(corfu-deprecated ((t (:inherit font-lock-comment-face :strike-through t))))
-   `(corfu-border     ((t (:background ,bg+3))))
+   `(corfu-border     ((t (:background ,fg-2))))
    `(corfu-bar        ((t (:background ,fg-2))))
 
 ;;;;; Denote
