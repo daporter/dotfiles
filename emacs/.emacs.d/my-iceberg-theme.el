@@ -117,7 +117,7 @@
 ;;;;; Compilation
 
    `(compilation-info           ((t (:foreground ,green))))
-   `(compilation-warning        ((t (:foreground ,yellow :bold t))))
+   `(compilation-warning        ((t (:foreground ,yellow :weight bold))))
    `(compilation-error          ((t (:foreground ,red))))
    `(compilation-mode-line-fail ((t (:foreground ,red :weight bold))))
    `(compilation-mode-line-exit ((t (:foreground ,green :weight bold))))
@@ -247,7 +247,7 @@
 
 ;;;;; Man
 
-   `(Man-overstrike           ((t (:inherit bold :foreground ,yellow))))
+   `(Man-overstrike           ((t (:inherit bold))))
    `(Man-underline            ((t (:inherit underline :foreground ,cyan))))
 
 ;;;;; Message
