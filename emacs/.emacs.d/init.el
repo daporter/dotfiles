@@ -1273,13 +1273,6 @@ When called interactively without a prefix numeric argument, N is
 (use-package eshell
   :commands (eshell)
   :config
-  (add-to-list 'display-buffer-alist
-               `(,(rx "*eshell*")
-                 (display-buffer-in-side-window)
-                 (side . bottom)
-                 (slot . -1)
-                 (window-height . 0.33)))
-
   (with-eval-after-load 'esh-mode
     (define-key eshell-mode-map [remap display-local-help] #'man))
 
