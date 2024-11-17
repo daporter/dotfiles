@@ -300,6 +300,7 @@ When called interactively without a prefix numeric argument, N is
   ;; the buffer display rules, making for a consistent buffer-switching
   ;; experience.
   (switch-to-buffer-obey-display-actions t)
+  (fit-window-to-buffer-horizontally t)
 
   :config
   (add-to-list 'display-buffer-alist
