@@ -1031,6 +1031,13 @@ When called interactively without a prefix numeric argument, N is
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
   (define-key text-mode-map (kbd "C-c P") #'repunctuate-sentences))
 
+(use-package visual-line-mode
+  :hook (text-mode . visual-line-mode))
+
+(use-package visual-fill-column
+  :ensure t
+  :hook visual-line-mode)
+
 (use-package hideshow
   ;; https://github.com/karthink/.emacs.d/blob/master/lisp/setup-folds.el
   :commands (hs-cycle
