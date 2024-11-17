@@ -678,6 +678,7 @@ When called interactively without a prefix numeric argument, N is
   (defun my/cape-capf-setup-sh ()
     (setq-local completion-at-point-functions
                 (list #'sh-completion-at-point-function
+                      #'cape-file
                       t)))
 
   :hook ((emacs-lisp-mode    . my/cape-capf-setup-elisp)
