@@ -326,7 +326,8 @@ When called interactively without a prefix numeric argument, N is
                               "\\*Occur\\*"
                               "\\*Shell Command Output\\*$"
                               "\\*Async Shell Command\\*$"
-                              flymake-diagnostics-buffer-mode))
+                              flymake-diagnostics-buffer-mode
+                              compilation-mode))
   (popper-display-control nil)
   :config
   (popper-mode 1)
