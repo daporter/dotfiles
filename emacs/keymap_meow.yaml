@@ -6,8 +6,8 @@ layers:
     - [
         { t: join, s: "" },
         { t: "grab", s: "pop-grab" },
-        { t: "→thing←", s: "←thing" },
-        { t: "←thing→", s: "thing→" },
+        { t: "[thing]", s: ">thing" },
+        { t: ">thing<", s: "thing<" },
         { t: "visit", s: "" },
         { t: "search", s: "" },
         { t: "yank", s: "yank-pop" },
@@ -18,7 +18,7 @@ layers:
     - [
         { t: line, s: "goto-line" },
         { t: "block", s: "(→block)" },
-        { t: "←word→", s: "←sym→" },
+        { t: "[word]", s: "[sym]" },
         { t: "insert", s: "↑open" },
         { t: "append", s: "open↓" },
         { t: undo, s: undo-in-sel },
