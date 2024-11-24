@@ -434,6 +434,10 @@
    `(embrace-help-key-face  ((t (:inherit help-key-binding))))
    `(embrace-help-pair-face ((t (:foreground ,fg :background ,bg))))
 
+;;;;; Ledger
+
+   '(ledger-font-posting-amount-face ((t (:inherit default))))
+
 ;;;;; Magit
 
    `(git-commit-summary                    ((t (:inherit default))))
