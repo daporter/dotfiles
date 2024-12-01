@@ -512,9 +512,9 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package nerd-icons-completion
   :ensure t
-  :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
+  :after marginalia
   :config
-  (nerd-icons-completion-mode))
+  (add-hook 'marginalia-mode-hook 'nerd-icons-completion-marginalia-setup))
 
 (use-package apropos
   :custom
@@ -565,7 +565,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package marginalia
   :ensure t
-  :init (marginalia-mode 1)
+  :hook (after-init)
   :bind (:map minibuffer-local-map ("M-m" . marginalia-cycle)))
 
 (use-package orderless
