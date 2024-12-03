@@ -561,7 +561,7 @@ When called interactively without a prefix numeric argument, N is
   :init (save-place-mode 1))
 
 (use-package savehist
-  :init (savehist-mode 1))
+  :hook (after-init))
 
 (use-package marginalia
   :ensure t
