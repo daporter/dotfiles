@@ -1762,6 +1762,9 @@ When called interactively without a prefix numeric argument, N is
   (add-to-list 'meow-mode-state-list '(notmuch-search-mode . motion))
   (add-to-list 'meow-mode-state-list '(notmuch-show-mode . motion))
 
+  (add-to-list 'meow-selection-command-fallback
+               '(meow-cancel-selection . meow-pop-grab))
+
   ;; Use the ‘t’ key as another leader key.  This map will be available only in
   ;; normal mode, this keymap should contain keys we want to use only while
   ;; we’re in normal mode.  This probably means we only want text-editing
@@ -1786,21 +1789,26 @@ When called interactively without a prefix numeric argument, N is
    ;; Top row:
 
    '("j" . meow-join)
+   ;;'("J" . ignore)
    '("g" . meow-grab)
-   '("G" . meow-pop-grab)
+   ;;'("G" . ignore)
    '("m" . meow-bounds-of-thing)
    '("M" . meow-beginning-of-thing)
    '("p" . meow-inner-of-thing)
    '("P" . meow-end-of-thing)
    '("v" . meow-visit)
+   ;;'("V" . ignore)
 
    '("#" . meow-search)
+   ;;'("$" . ignore)
    '("." . meow-yank)
    '(":" . meow-yank-pop)
    '("/" . meow-save)
+   ;;'("*" . ignore)
    '("\"" . meow-kill)
-   '("'" . meow-cancel-selection)
-   '("!" . meow-pop-selection)
+   ;;'("?" . ignore)
+   '("'" . meow-pop-selection)
+   ;;'("!" . ignore)
 
    ;; Middle row:
 
@@ -1829,25 +1837,31 @@ When called interactively without a prefix numeric argument, N is
    ;; Bottom row:
 
    '("x" . meow-reverse)
+   ;;'("X" . ignore)
    '("f" . meow-sync-grab)
    '("F" . meow-swap-grab)
    '("l" . meow-till)
-   '("c" . meow-find)
+   '("L" . meow-find)
+   '("c" . meow-pop-to-mark)
+   '("C" . meow-unpop-to-mark)
    '("w" . repeat)
+   ;;'("W" . ignore)
 
    '("-" . negative-argument)
+   ;;'("+" . ignore)
    '("u" . meow-back-word)
    '("U" . meow-back-symbol)
    '("o" . meow-change)
    '("O" . meow-replace)
    '("y" . meow-delete)
+   ;;'("Y" . ignore)
    '("k" . meow-next-word)
    '("K" . meow-next-symbol)
 
    ;; ‘t’ leader key mappings.
    (cons "t" my/meow-leader-t-map)
 
-   '("<escape>" . ignore)
+   '("<escape>" . meow-cancel-selection)
    '("@"        . embrace-commander))
 
   (meow-leader-define-key
