@@ -1762,9 +1762,6 @@ When called interactively without a prefix numeric argument, N is
   (add-to-list 'meow-mode-state-list '(notmuch-search-mode . motion))
   (add-to-list 'meow-mode-state-list '(notmuch-show-mode . motion))
 
-  (add-to-list 'meow-selection-command-fallback
-               '(meow-cancel-selection . meow-pop-grab))
-
   ;; Use the ‘t’ key as another leader key.  This map will be available only in
   ;; normal mode, this keymap should contain keys we want to use only while
   ;; we’re in normal mode.  This probably means we only want text-editing
