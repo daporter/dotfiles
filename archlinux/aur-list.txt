@@ -23,7 +23,6 @@ paru-git-debug
 python-alpha_vantage
 python-standardebooks
 python-yfinance
-qmk-git
 scc
 seer-gdb
 stardict-bobotig-en

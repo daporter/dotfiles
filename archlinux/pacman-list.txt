@@ -54,7 +54,7 @@ perl-image-exiftool
 picom
 poppler-glib
 prettier
-python-hypothesis
+qmk
 rebuild-detector
 redshift
 restic
@@ -92,6 +92,7 @@ ttf-roboto-mono
 ttf-sourcecodepro-nerd
 typescript-language-server
 udiskie
+unzip
 usbutils
 uthash
 valgrind
