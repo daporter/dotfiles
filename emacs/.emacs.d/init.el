@@ -1857,6 +1857,8 @@ When called interactively without a prefix numeric argument, N is
 
    '("{" . backward-paragraph)
    '("}" . forward-paragraph)
+   '("%" . meow-query-replace)
+   '("C-%" . meow-query-replace-regexp)
 
    '("<escape>" . meow-cancel-selection)
    '("@"        . embrace-commander))
