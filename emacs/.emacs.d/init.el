@@ -1854,6 +1854,9 @@ When called interactively without a prefix numeric argument, N is
    ;; ‘t’ leader key mappings.
    (cons "t" my/meow-leader-t-map)
 
+   '("{" . backward-paragraph)
+   '("}" . forward-paragraph)
+
    '("<escape>" . meow-cancel-selection)
    '("@"        . embrace-commander))
 
