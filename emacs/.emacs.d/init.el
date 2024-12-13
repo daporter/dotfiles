@@ -1684,6 +1684,7 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (meow-use-clipboard t)
   (meow-goto-line-function #'consult-goto-line)
+  (meow-expand-hint-remove-delay 1.5)
   :config
   (defconst meow-cheatsheet-physical-layout-sweep
     "
