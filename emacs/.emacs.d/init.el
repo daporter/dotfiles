@@ -1902,3 +1902,18 @@ When called interactively without a prefix numeric argument, N is
   :mode (("\\.csv\\'" . csv-align-mode))
   :config
   (add-hook 'csv-align-mode-hook #'toggle-truncate-lines))
+
+(use-package modus-themes
+  :ensure t
+  :custom
+  (modus-themes-italic-constructs t)
+  (modus-themes-bold-constructs t)
+  (modus-themes-mixed-fonts t)
+  (modus-themes-prompts '(bold))
+  (modus-themes-variable-pitch-ui t))
+
+(use-package ef-themes
+  :ensure t
+  :custom
+  (ef-themes-mixed-fonts t)
+  (ef-themes-variable-pitch-ui t))
