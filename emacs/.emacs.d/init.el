@@ -392,10 +392,6 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (comment-style 'extra-line))
 
-(use-package paragraphs
-  :bind (("M-p" . backward-paragraph)
-         ("M-n" . forward-paragraph)))
-
 (use-package isearch
   :preface
   ;; https://karthinks.com/software/emacs-window-management-almanac/#with-other-window-an-elisp-helper
