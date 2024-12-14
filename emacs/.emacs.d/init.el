@@ -1018,6 +1018,16 @@ When called interactively without a prefix numeric argument, N is
         ("C-c g r"    . eglot-rename)
         ("C-c g q"    . eglot-code-action-quickfix)))
 
+(use-package dape
+  :vc (:url "https://github.com/svaante/dape.git" :rev :newest)
+  :ensure t
+  :custom
+  (dape-buffer-window-arrangement 'right)
+  (dape-inlay-hints t)
+  :config
+  ;; Kill compile buffer on build success:
+  (add-hook 'dape-compile-hook 'kill-buffer))
+
 (use-package text-mode
   :bind (:map my/toggle-map
               ("v" . visual-line-mode))
