@@ -266,7 +266,7 @@ When called interactively without a prefix numeric argument, N is
 
   (defvar-keymap my/toggle-map :doc "My prefix keymap for toggling settings.")
   (keymap-set (current-global-map)
-              "C-c t"
+              "C-c T"
               (cons "Toggle" my/toggle-map))
 
   (defvar-keymap my/vc-map :doc "My prefix keymap for version control.")
@@ -380,8 +380,7 @@ When called interactively without a prefix numeric argument, N is
                #'pop-to-buffer))
       (funcall pgm)))
   :hook ((after-init . column-number-mode))
-  :bind (("C-c n" . execute-extended-command)
-         ("C-*"   . undo-redo)          ; i.e., C-S-/ since undo is C-/
+  :bind (("C-*" . undo-redo)            ; i.e., C-S-/ since undo is C-/
          :map my/toggle-map
          ("v" . visual-line-mode)))
 
@@ -1866,6 +1865,18 @@ When called interactively without a prefix numeric argument, N is
   (meow-leader-define-key
    ;; Remember, can’t use x, h, c, m, or g. SPC isn’t a good idea either, since
    ;; SPC SPC is used in the Motion state.
+   '("u" . meow-universal-argument)
+   '("1" . meow-digit-argument)
+   '("2" . meow-digit-argument)
+   '("3" . meow-digit-argument)
+   '("4" . meow-digit-argument)
+   '("5" . meow-digit-argument)
+   '("6" . meow-digit-argument)
+   '("7" . meow-digit-argument)
+   '("8" . meow-digit-argument)
+   '("9" . meow-digit-argument)
+   '("0" . meow-digit-argument)
+   '("t" . meow-M-x)
    '("/" . meow-keypad-describe-key)
    '("," . comment-dwim))
 
