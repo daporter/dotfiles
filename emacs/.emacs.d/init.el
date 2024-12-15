@@ -1152,7 +1152,9 @@ When called interactively without a prefix numeric argument, N is
   :after eglot
   :bind
   (:map c-ts-mode-map
-        ("C-c o" . ff-find-other-file))
+        ("C-c o" . ff-find-other-file)
+        :map embark-identifier-map
+        ("m" . man))
   :custom
   (c-ts-mode-indent-style 'linux)
   (c-ts-mode-indent-offset 8))
