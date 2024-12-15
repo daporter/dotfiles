@@ -323,6 +323,7 @@ When called interactively without a prefix numeric argument, N is
   (popper-reference-buffers '("\\*Messages\\*$"
                               "\\*Warnings\\*$"
                               help-mode
+                              "\\*eldoc.*\\*$"
                               "\\*Occur\\*"
                               "\\*Shell Command Output\\*$"
                               "\\*Async Shell Command\\*$"
