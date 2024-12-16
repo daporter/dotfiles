@@ -88,8 +88,6 @@ If buffer-or-name is nil return current buffer's mode."
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
 
-  (comment-multi-line t)
-
   (read-extended-command-predicate
    #'command-completion-default-include-p)
 
