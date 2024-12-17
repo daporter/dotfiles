@@ -746,6 +746,7 @@ When called interactively without a prefix numeric argument, N is
            ("C-," . avy-isearch))
   :custom
   (avy-keys '(?d ?a ?n ?e ?s ?i ?r ?h ?c ?u))
+  (avy-background t)
   (avy-dispatch-alist '((?. . avy-action-embark)
                         (?m . avy-action-mark)
                         (?l . avy-action-mark-to-char)
@@ -1011,11 +1012,11 @@ When called interactively without a prefix numeric argument, N is
 
   :bind
   (:map eglot-mode-map
-        ("C-c g f"    . eglot-format)
-        ("C-c g h"    . eldoc)
-        ("C-c g o"    . eglot-code-action-organize-imports)
-        ("C-c g r"    . eglot-rename)
-        ("C-c g q"    . eglot-code-action-quickfix)))
+        ("C-c g f" . eglot-format)
+        ("C-c g h" . eldoc)
+        ("C-c g o" . eglot-code-action-organize-imports)
+        ("C-c g r" . eglot-rename)
+        ("C-c g q" . eglot-code-action-quickfix)))
 
 (use-package dape
   :vc (:url "https://github.com/svaante/dape.git" :rev :newest)
