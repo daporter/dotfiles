@@ -512,8 +512,14 @@
 
 ;;;;; Nerd Icons
 
+   `(nerd-icons-red      ((t (:foreground ,red))))
+   `(nerd-icons-orange   ((t (:foreground ,orange))))
+   `(nerd-icons-yellow   ((t (:foreground ,yellow))))
+   `(nerd-icons-green    ((t (:foreground ,green))))
+   `(nerd-icons-cyan     ((t (:foreground ,cyan))))
    `(nerd-icons-blue     ((t (:foreground ,blue))))
-   `(nerd-icons-blue-alt ((t (:foreground ,blue-fg+1))))
+   `(nerd-icons-maroon   ((t (:foreground ,magenta))))
+   `(nerd-icons-purple   ((t (:foreground ,magenta))))
 
 ;;;;; Notmuch
 
