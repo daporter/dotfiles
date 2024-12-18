@@ -163,7 +163,7 @@
 
 ;;;;; Dired
 
-   `(dired-broken-symlink ((t (:background ,red))))
+   `(dired-broken-symlink ((t (:background ,red-bg))))
    `(dired-directory      ((t (:inherit bold :foreground ,blue))))
    `(dired-flagged        ((t (:inherit bold :foreground ,red))))
    `(dired-header         ((t (:inherit bold :foreground ,cyan))))
