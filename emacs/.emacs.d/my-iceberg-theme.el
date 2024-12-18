@@ -365,8 +365,8 @@
 
 ;;;;; Show Paren
 
-   `(show-paren-match    ((t (:foreground ,yellow :background ,yellow-bg))))
-   `(show-paren-mismatch ((t (:background ,red-bg))))
+   `(show-paren-match    ((t (:foreground ,fg :background ,green-bg+1))))
+   `(show-paren-mismatch ((t (:foreground ,fg :background ,red-bg+1))))
 
 ;;;;; Terminal
 
