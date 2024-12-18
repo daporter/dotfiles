@@ -86,6 +86,7 @@ ttf-inconsolata
 ttf-iosevka-nerd
 ttf-jetbrains-mono
 ttf-nerd-fonts-symbols
+ttf-nerd-fonts-symbols-mono
 ttf-noto-nerd
 ttf-roboto
 ttf-roboto-mono
