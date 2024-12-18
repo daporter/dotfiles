@@ -508,7 +508,8 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :after marginalia
   :config
-  (add-hook 'marginalia-mode-hook 'nerd-icons-completion-marginalia-setup))
+  (nerd-icons-completion-mode 1)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
 (use-package apropos
   :custom
