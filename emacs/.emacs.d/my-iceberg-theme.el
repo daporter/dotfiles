@@ -43,13 +43,31 @@
        (fg   "#e2e3e8")                 ; hsl 230 11% 90%
        (fg+1 "#f1f1f4")                 ; l: 95%
 
-       (red        "#e48181")           ; hsl: 0   65 70
-       (orange     "#e4aa81")           ; hsl: 25  65 70
-       (yellow     "#e4d281")           ; hsl: 50  65 70
-       (green      "#cbd98c")           ; hsl: 80  50 70
-       (cyan       "#8ccdd9")           ; hsl: 190 50 70
-       (blue       "#8cacd9")           ; hsl: 215 50 70
-       (magenta    "#9e8cd9")           ; hsl: 255 50 70
+       (red     "#e48181")              ; hsl:   0 65 70
+       (orange  "#e4aa81")              ; hsl:  25 65 70
+       (yellow  "#e4d281")              ; hsl:  50 65 70
+       (green   "#cbd98c")              ; hsl:  80 50 70
+       (cyan    "#8ccdd9")              ; hsl: 190 50 70
+       (blue    "#8cacd9")              ; hsl: 215 50 70
+       (magenta "#9e8cd9")              ; hsl: 255 50 70
+
+       (factor-light 10)
+       (red-light     (color-lighten-name red     factor-light))
+       (orange-light  (color-lighten-name orange  factor-light))
+       (yellow-light  (color-lighten-name yellow  factor-light))
+       (green-light   (color-lighten-name green   factor-light))
+       (cyan-light    (color-lighten-name cyan    factor-light))
+       (blue-light    (color-lighten-name blue    factor-light))
+       (magenta-light (color-lighten-name magenta factor-light))
+
+       (factor-dark 15)
+       (red-dark     (color-darken-name red     factor-dark))
+       (orange-dark  (color-darken-name orange  factor-dark))
+       (yellow-dark  (color-darken-name yellow  factor-dark))
+       (green-dark   (color-darken-name green   factor-dark))
+       (cyan-dark    (color-darken-name cyan    factor-dark))
+       (blue-dark    (color-darken-name blue    factor-dark))
+       (magenta-dark (color-darken-name magenta factor-dark))
 
        (factor-bg-1 80)
        (factor-bg   75)
