@@ -451,12 +451,14 @@ When called interactively without a prefix numeric argument, N is
   (compilation-auto-jump-to-first-error 'if-location-known))
 
 (use-package gdb-mi
+  :commands (gdb)
   :custom
   (gdb-many-windows t)
   (gdb-default-window-configuration-file "gdb-config")
   (gdb-restore-window-configuration-after-quit t))
 
 (use-package dired
+  :defer t
   :custom
   (dired-recursive-copies   'always)
   (dired-dwim-target        t)          ; try to guess target directory for copy
@@ -494,7 +496,8 @@ When called interactively without a prefix numeric argument, N is
   (ediff-show-clashes-only     t))
 
 (use-package nerd-icons
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package nerd-icons-dired
   :ensure t
@@ -1022,6 +1025,7 @@ When called interactively without a prefix numeric argument, N is
 (use-package dape
   :vc (:url "https://github.com/svaante/dape.git" :rev :newest)
   :ensure t
+  :commands dape
   :custom
   (dape-buffer-window-arrangement 'right)
   (dape-inlay-hints t)
@@ -1348,8 +1352,7 @@ When called interactively without a prefix numeric argument, N is
 (use-package magit-todos
   :ensure t
   :after magit
-  :config
-  (magit-todos-mode 1))
+  :hook after-init)
 
 (use-package denote
   :ensure t
@@ -1476,6 +1479,7 @@ When called interactively without a prefix numeric argument, N is
         'find-file))
 
 (use-package org-table
+  :defer t
   :config
   (keymap-unset org-mode-map "C-#" t))  ; Don’t take my Embark binding
 
@@ -1545,6 +1549,7 @@ When called interactively without a prefix numeric argument, N is
   (gnus-sum-thread-tree-indent          "  "))
 
 (use-package sendmail
+  :commands sendmail-send-it
   :custom
   (send-mail-function 'sendmail-send-it)
   (sendmail-program "msmtp")
@@ -1563,8 +1568,7 @@ When called interactively without a prefix numeric argument, N is
   :bind (:map my/window-map
               ("<left>"  . winner-undo)
               ("<right>" . winner-redo))
-  :config
-  (winner-mode 1))
+  :hook (after-init))
 
 (use-package elec-pair
   :config
@@ -1596,8 +1600,7 @@ When called interactively without a prefix numeric argument, N is
   (auto-insert-mode t))
 
 (use-package pixel-scroll
-  :config
-  (pixel-scroll-precision-mode 1))
+  :hook (after-init . pixel-scroll-precision-mode))
 
 (use-package find-func
   :config
@@ -1660,6 +1663,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package keyfreq
   :ensure t
+  :hook ((after-init . keyfreq-mode)
+         (after-init . keyfreq-autosave-mode))
   :custom
   (keyfreq-file (concat user-emacs-directory "keyfreq"))
   :config
@@ -1669,9 +1674,7 @@ When called interactively without a prefix numeric argument, N is
                                     backward-char
                                     previous-line
                                     next-line
-                                    pixel-scroll-precision))
-  (keyfreq-mode 1)
-  (keyfreq-autosave-mode 1))
+                                    pixel-scroll-precision)))
 
 (use-package org-anki
   :ensure t
@@ -1917,6 +1920,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package hledger-mode
   :ensure t
+  :mode "\\.journal\\'"
   :custom
   (hledger-jfile (getenv "LEDGER_FILE"))
   (hledger-currency-string "$")
