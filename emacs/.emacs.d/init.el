@@ -1154,22 +1154,13 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package c-ts-mode
   :after (eglot embark)
-  :preface
-  (defun my/font-lock-add-keywords ()
-    (font-lock-add-keywords
-     nil
-     ;; C preprocessor constants.
-     '(("\\<\\([A-Z_][A-Z0-9_]*\\)\\>" 1 font-lock-constant-face prepend))))
-  :bind
-  (:map c-ts-mode-map
-        ("C-c o" . ff-find-other-file)
-        :map embark-identifier-map
-        ("m" . man))
+  :bind (:map c-ts-mode-map
+              ("C-c o" . ff-find-other-file)
+              :map embark-identifier-map
+              ("m" . man))
   :custom
   (c-ts-mode-indent-style 'linux)
-  (c-ts-mode-indent-offset 8)
-  :config
-  (add-hook 'c-ts-mode-hook 'my/font-lock-add-keywords))
+  (c-ts-mode-indent-offset 8))
 
 (use-package apheleia
   :ensure t
