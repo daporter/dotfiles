@@ -103,7 +103,7 @@
 ;;;;; Base
 
    `(border                ((t (:foreground ,bg+2 :background ,bg-1))))
-   `(cursor                ((t (:background ,orange))))
+   `(cursor                ((t (:background ,red))))
    `(default               ((t (:foreground ,fg :background ,bg))))
    `(error                 ((t (:foreground ,red))))
    `(escape-glyph          ((t (:foreground ,yellow))))
@@ -527,6 +527,12 @@
    `(markdown-pre-face                ((t (:inherit fixed-pitch :background ,bg+1 :extend t :family "Iosevka Slab"))))
    `(markdown-table-face              ((t (:inherit fixed-pitch))))
    `(markdown-url-face                ((t (:inherit (fixed-pitch shadow)))))
+
+;;;;; Meow
+
+   `(meow-beacon-cursor ((t (:background ,white))))
+   `(meow-insert-cursor ((t (:background ,green))))
+   `(meow-normal-cursor ((t (:background ,red))))
 
 ;;;;; Nerd Icons
 
