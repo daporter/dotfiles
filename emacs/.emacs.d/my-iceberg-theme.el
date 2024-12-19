@@ -383,8 +383,8 @@
 
 ;;;;; Show Paren
 
-   `(show-paren-match    ((t (:foreground ,fg :background ,green-bg+1))))
-   `(show-paren-mismatch ((t (:foreground ,fg :background ,red-bg+1))))
+   `(show-paren-match    ((t (:box (:line-width (-1 . -1) :color ,green-bg+1)))))
+   `(show-paren-mismatch ((t (:box (:line-width (-1 . -1) :color ,red)))))
 
 ;;;;; Terminal
 
