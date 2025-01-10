@@ -9,11 +9,10 @@ gitlint
 gnu-c-manual
 google-chrome
 i810-dri
+jbig2enc-git
 noto-color-emoji-fontconfig
-ocrmypdf
 openvpn-update-systemd-resolved
 otf-bitstream-charter
-otf-elstob
 otf-ibm-plex
 otf-xcharter
 paisa-bin
@@ -34,7 +33,6 @@ tree-sitter-make-git
 tree-sitter-regex-git
 tree-sitter-yaml-git
 ttf-adobe-source-serif-fonts
-ttf-elstob
 ttf-literata
 ttf-merriweather
 vale-git

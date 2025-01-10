@@ -52,6 +52,7 @@ pavucontrol
 pdftk
 perl-image-exiftool
 picom
+pngquant
 poppler-glib
 prettier
 qmk
