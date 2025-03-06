@@ -9,7 +9,6 @@ bc
 bottom
 calibre
 cmake
-dateutils
 djview
 duf
 dunst
@@ -20,7 +19,6 @@ fd
 feh
 firefox
 flatpak
-gendesk
 github-cli
 glab
 grub
@@ -31,6 +29,7 @@ htop
 inetutils
 isync
 iwd
+jdk8-openjdk
 libreoffice-still
 libvterm
 maim
@@ -41,7 +40,6 @@ moreutils
 msmtp
 mtr
 mupdf
-obsidian
 okular
 opendoas
 otf-fira-mono
@@ -52,7 +50,6 @@ pavucontrol
 pdftk
 perl-image-exiftool
 picom
-pngquant
 poppler-glib
 prettier
 qmk
@@ -94,7 +91,6 @@ ttf-roboto-mono
 ttf-sourcecodepro-nerd
 typescript-language-server
 udiskie
-unzip
 usbutils
 uthash
 valgrind
