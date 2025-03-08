@@ -18,6 +18,7 @@ otf-ibm-plex
 otf-xcharter
 paisa-bin
 paru-git
+pricehist
 python-alpha_vantage
 python-standardebooks
 python-yfinance
