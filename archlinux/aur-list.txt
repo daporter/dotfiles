@@ -3,6 +3,7 @@
 adwaita-qt6-git
 anki
 ansifilter
+brave-bin
 dropbox
 gitlint
 gnu-c-manual
