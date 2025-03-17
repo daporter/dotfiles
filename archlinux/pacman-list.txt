@@ -71,6 +71,7 @@ torbrowser-launcher
 tree
 tree-sitter-bash
 tree-sitter-c
+tree-sitter-cli
 tree-sitter-javascript
 tree-sitter-markdown
 tree-sitter-python
@@ -87,7 +88,6 @@ ttf-jetbrains-mono
 ttf-nerd-fonts-symbols
 ttf-nerd-fonts-symbols-mono
 ttf-noto-nerd
-ttf-roboto
 ttf-roboto-mono
 ttf-sourcecodepro-nerd
 typescript-language-server
