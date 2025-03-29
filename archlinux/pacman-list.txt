@@ -71,7 +71,6 @@ torbrowser-launcher
 tree
 tree-sitter-bash
 tree-sitter-c
-tree-sitter-cli
 tree-sitter-javascript
 tree-sitter-markdown
 tree-sitter-python
