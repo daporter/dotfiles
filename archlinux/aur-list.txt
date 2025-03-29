@@ -41,4 +41,4 @@ vale-git
 windscribe-v2-bin
 xbanish
 z-library-bin
-zotero
+zotero-bin
