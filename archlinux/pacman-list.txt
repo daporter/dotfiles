@@ -7,7 +7,6 @@ base
 bash-language-server
 bc
 bottom
-calibre
 cmake
 dateutils
 djview

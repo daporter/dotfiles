@@ -4,6 +4,7 @@ adwaita-qt6-git
 anki-bin
 ansifilter
 brave-bin
+calibre-bin
 dropbox
 gitlint
 gnu-c-manual
