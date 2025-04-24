@@ -22,7 +22,6 @@ flatpak
 github-cli
 glab
 grub
-gtk2
 gucharmap
 hledger
 htop
@@ -63,7 +62,6 @@ stow
 sxhkd
 sxiv
 texlive-binextra
-texlive-latexextra
 texlive-plaingeneric
 thunar
 torbrowser-launcher
