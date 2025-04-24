@@ -71,6 +71,7 @@ tree
 tree-sitter-bash
 tree-sitter-c
 tree-sitter-javascript
+tree-sitter-lua
 tree-sitter-markdown
 tree-sitter-python
 ttc-iosevka
