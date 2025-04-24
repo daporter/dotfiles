@@ -8,7 +8,7 @@ calibre-bin
 dropbox
 gitlint
 gnu-c-manual
-goldendict-ng-git
+goldendict-ng
 google-chrome
 hledger-flow-bin
 i810-dri
