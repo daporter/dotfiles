@@ -38,7 +38,6 @@ tree-sitter-yaml-git
 ttf-adobe-source-serif-fonts
 ttf-literata
 ttf-merriweather
-vale-git
 windscribe-v2-bin
 xbanish
 z-library-bin

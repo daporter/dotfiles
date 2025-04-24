@@ -92,6 +92,7 @@ typescript-language-server
 udiskie
 usbutils
 uthash
+vale
 valgrind
 vi
 vscode-css-languageserver
