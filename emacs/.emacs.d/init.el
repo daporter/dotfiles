@@ -1218,6 +1218,13 @@ When called interactively without a prefix numeric argument, N is
   (defun my/configure-whitespace-python-mode ()
     (setq-local whitespace-style
                 (remove 'indentation whitespace-style)))
+
+  (use-package lua-mode
+    :ensure t)
+
+  (use-package flymake-lua
+    :ensure t)
+
   :hook
   ((python-mode . my/configure-tab-width-python-mode)
    (python-mode . my/configure-whitespace-python-mode)))
