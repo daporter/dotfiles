@@ -30,6 +30,7 @@ isync
 iwd
 jdk8-openjdk
 libreoffice-still
+libvips
 libvterm
 maim
 man-pages
