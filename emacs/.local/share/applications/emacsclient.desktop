@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Emacs Client
+GenericName=Text Editor
+Comment=Edit files using emacsclient
+Exec=emacsclient -c %F
+Icon=emacs
+Type=Application
+Terminal=false
+Categories=Utility;TextEditor;
+MimeType=text/plain;
