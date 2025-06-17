@@ -41,9 +41,12 @@ moreutils
 msmtp
 mtr
 mupdf
+obsidian
 okular
 opendoas
 otf-fira-mono
+otf-latin-modern
+otf-latinmodern-math
 otf-libertinus
 pamixer
 pandoc-cli
@@ -51,13 +54,12 @@ pavucontrol
 pdftk
 perl-image-exiftool
 picom
-poppler-glib
 prettier
+python-fonttools
 qmk
 rebuild-detector
 redshift
 restic
-ripgrep
 sigil
 sqlitebrowser
 stow
