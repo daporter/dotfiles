@@ -12,7 +12,6 @@ goldendict-ng
 google-chrome
 hledger-flow-bin
 i810-dri
-joplin-desktop
 noto-color-emoji-fontconfig
 ocrmypdf
 openvpn-update-systemd-resolved
