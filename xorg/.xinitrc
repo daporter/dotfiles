@@ -15,6 +15,10 @@ xset b off                      # no bell
 xset r rate 200 100             # repeat after 200 ms, 100 char/s
 xsetroot -cursor_name left_ptr
 
+# Make my trackball pointer speed a bit slower than the default.
+# (Values range from -1 [slowest] to 1 [fastest]; 0 is default.)
+xinput set-prop "Kensington SlimBlade Pro Trackball(Wired) Kensington SlimBlade Pro Trackball(Wired)" "libinput Accel Speed" -0.9
+
 picom -b
 redshift &
 sxhkd &
