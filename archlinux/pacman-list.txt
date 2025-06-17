@@ -8,6 +8,7 @@ bash-language-server
 bc
 bottom
 cmake
+code
 dateutils
 djview
 duf
