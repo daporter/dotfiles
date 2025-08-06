@@ -2,23 +2,25 @@
 # https://vxlabs.com/2021/03/21/mbsync-copyarrivaldate-yes/
 CopyArrivalDate yes
 
-IMAPAccount migadu
-Host imap.migadu.com
-User david@daporter.net
-PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/Mail/migadu.gpg"
+IMAPAccount gmail
+Host imap.gmail.com
+Port 993
+User david.a.porter@gmail.com
+PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/Mail/gmail.gpg"
 TLSType IMAPS
 
-IMAPStore migadu
-Account migadu
+IMAPStore gmail-remote
+Account gmail
 
-MaildirStore local
-Path ~/Mail/
-Inbox ~/Mail/inbox
+MaildirStore gmail-local
+Path ~/Mail/gmail/
+Inbox ~/Mail/gmail/INBOX
 SubFolders Verbatim
 
-Channel primary
-Far :migadu:
-Near :local:
+Channel gmail
+Far :gmail-remote:
+Near :gmail-local:
 Patterns *
 Create Both
 SyncState *
+Expunge Both

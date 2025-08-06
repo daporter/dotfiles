@@ -8,56 +8,37 @@
 # For the configuration of `afew’, see ~/.config/afew/config
 afew --tag --new
 
+# First, remove inbox tag from all messages not in INBOX folder. This handles
+# messages archived in Mail.app.
+notmuch tag -inbox -- not folder:gmail/INBOX
+
+# Then add inbox tag to messages that ARE in INBOX folder. This handles messages
+# moved back to inbox in Mail.app.
+notmuch tag +inbox -- folder:gmail/INBOX
+
+# Tag Gmail folders appropriately
+notmuch tag +sent -inbox            -- folder:'"gmail/[Gmail]/Sent Mail"'
+notmuch tag +draft -inbox           -- folder:'"gmail/[Gmail]/Drafts"'
+notmuch tag +deleted -inbox -unread -- folder:'"gmail/[Gmail]/Bin"'
+notmuch tag +spam -inbox -unread    -- folder:'"gmail/[Gmail]/Spam"'
+notmuch tag +flagged                -- folder:'"gmail/[Gmail]/Starred"'
+
+# Remove inbox tag from All Mail to avoid duplicates in inbox view
+notmuch tag -inbox \
+		-- folder:'"gmail/[Gmail]/All Mail"' and not folder:gmail/INBOX
+
+# Handle mailing lists
+
 notmuch tag -inbox +lists +list/great-conversation \
-        -- to:great-conversation@googlegroups.com \
-           or to:GreatConversation@yahoogroups.com
+	-- to:great-conversation@googlegroups.com \
+	   or to:GreatConversation@yahoogroups.com
 
 notmuch tag -inbox +lists +list/emacs-humanities \
-        -- from:emacs-humanities@gnu.org or to:emacs-humanities@gnu.org
-
-notmuch tag -inbox +lists +list/notmuch \
-        -- from:notmuch@notmuchmail.org or to:notmuch@notmuchmail.org
+	-- from:emacs-humanities@gnu.org or to:emacs-humanities@gnu.org
 
 # Quoting is needed to ensure “~” is interpreted literally.
 notmuch tag -inbox +lists +list/emacs-paris \
-        -- 'from:"~bzg/emacsfr@lists.sr.ht"' \
-           or 'to:"~bzg/emacsfr@lists.sr.ht"'
-
-notmuch tag -inbox +lists +list/prot-dotfiles \
-        -- 'from:"~protesilaos/dotfiles@lists.sr.ht"' \
-           or 'to:"~protesilaos/dotfiles@lists.sr.ht"'
-
-notmuch tag -inbox +lists +list/denote \
-        -- 'from:"~protesilaos/denote@lists.sr.ht"' \
-           or 'to:"~protesilaos/denote@lists.sr.ht"'
-
-notmuch tag -inbox +lists +list/prot-general \
-        -- 'from:"~protesilaos/general-issues@lists.sr.ht"' \
-           or 'to:"~protesilaos/general-issues@lists.sr.ht"'
-
-notmuch tag -inbox +lists +list/cursory \
-        -- 'from:"~protesilaos/cursory@lists.sr.ht"' \
-           or 'to:"~protesilaos/cursory@lists.sr.ht"'
-
-notmuch tag -inbox +lists +list/modus-themes \
-        -- 'from:"~protesilaos/modus-themes@lists.sr.ht"' \
-           or 'to:"~protesilaos/modus-themes@lists.sr.ht"'
-
-notmuch tag -inbox +lists +list/lin \
-        -- 'from:"~protesilaos/lin@lists.sr.ht"' \
-           or 'to:"~protesilaos/lin@lists.sr.ht"'
-
-notmuch tag -inbox +lists +list/fontaine \
-        -- 'from:"~protesilaos/fontaine@lists.sr.ht"' \
-           or 'to:"~protesilaos/fontaine@lists.sr.ht"'
-
-notmuch tag -inbox +lists +list/pulsar \
-        -- 'from:"~protesilaos/pulsar@lists.sr.ht"' \
-           or 'to:"~protesilaos/pulsar@lists.sr.ht"'
-
-notmuch tag -inbox +lists +list/logos \
-        -- 'from:"~protesilaos/logos@lists.sr.ht"' \
-           or 'to:"~protesilaos/logos@lists.sr.ht"'
+	-- 'from:"~bzg/emacsfr@lists.sr.ht"' or 'to:"~bzg/emacsfr@lists.sr.ht"'
 
 # Signal the window manager status bar updater.
 kill -SIGRTMIN+1 "$(cat /tmp/mtstatus.pid)"

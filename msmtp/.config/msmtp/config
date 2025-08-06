@@ -5,12 +5,13 @@ tls_trust_file /etc/ssl/certs/ca-certificates.crt
 tls_starttls off
 syslog on
 
-account migadu
-host smtp.migadu.com
+account gmail
+host smtp.gmail.com
 port 465
+protocol smtp
 from david@daporter.net
-user david@daporter.net
-passwordeval gpg -q --for-your-eyes-only --no-tty -d ~/Mail/migadu.gpg
+user david.a.porter@gmail.com
+passwordeval "gpg --quiet --for-your-eyes-only --no-tty --decrypt ~/Mail/gmail.gpg"
 
-account default : migadu
+account default : gmail
 aliases /etc/aliases

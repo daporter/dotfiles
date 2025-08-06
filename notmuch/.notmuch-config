@@ -33,7 +33,7 @@ path=/home/david/Mail
 [user]
 name=David Porter
 primary_email=david@daporter.net
-other_email=david.a.porter@gmail.com;
+other_email=david.a.porter@gmail.com
 
 # Configuration for "notmuch new"
 #
@@ -51,7 +51,7 @@ other_email=david.a.porter@gmail.com;
 #
 
 [new]
-tags=new;
+tags=unread;inbox;
 ignore=.mbsyncstate;.uidvalidity;
 
 # Search configuration
@@ -65,7 +65,7 @@ ignore=.mbsyncstate;.uidvalidity;
 #
 
 [search]
-exclude_tags=deleted;spam;
+exclude_tags=deleted;spam;trash;
 
 # Maildir compatibility configuration
 #

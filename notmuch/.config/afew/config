@@ -1,13 +1,15 @@
 [MailMover]
-folders = inbox
+folders = gmail/INBOX
 
 # If using mbsync, this must be True.
 rename = True
 
-# 1. Move all messages in the inbox tagged “spam” to the folder Junk.
-# 2. Move all messages in the inbox tagged “deleted” to the folder Trash.
-# 3. Move all messages in the inbox tagged “archived” to the folder Archive.
-inbox = 'tag:spam':Junk 'tag:deleted':Trash 'tag:archived':Archive
+gmail/INBOX =
+    'tag:deleted':'gmail/[Gmail]/Bin'
+    'tag:draft':'gmail/[Gmail]/Drafts'
+    'tag:sent':'gmail/[Gmail]/Sent Mail'
+    'tag:spam':'gmail/[Gmail]/Spam'
+    'tag:flagged':'gmail/[Gmail]/Starred'
 
 # Add tag “spam” to all messages tha have the header “X-Spam-Flag”.
 [SpamFilter]
@@ -22,8 +24,24 @@ sent_tag = sent
 
 # For messages in certain folders, tag them according to the folder name
 [FolderNameFilter]
-folder_explicit_list = Drafts Trash Archive
-folder_transforms = Drafts:draft Trash:deleted Archive:archived
+folder_explicit_list =
+    gmail/[Gmail]/Bin
+    gmail/[Gmail]/Drafts
+    "gmail/[Gmail]/Sent Mail"
+    gmail/[Gmail]/Spam
+    gmail/[Gmail]/Starred
+    gmail/emacs-humanities
+    gmail/emacs-paris
+    gmail/great-conversation
+folder_transforms =
+    gmail/[Gmail]/Bin:deleted
+    gmail/[Gmail]/Drafts:draft
+    "gmail/[Gmail]/Sent Mail":sent
+    gmail/[Gmail]/Spam:spam
+    gmail/[Gmail]/Starred:flagged
+    gmail/emacs-humanities:emacs-humanities
+    gmail/emacs-paris:emacs-paris
+    gmail/great-conversation:great-conversation
 
 # Remove the “new” tag and add the “inbox” tag to any message that isn’t
 # spam.

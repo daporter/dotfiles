@@ -1407,33 +1407,31 @@ When called interactively without a prefix numeric argument, N is
   (notmuch-show-logo nil)
   (mail-user-agent #'notmuch-mua-new-mail)
   (notmuch-identities '("David Porter <david@daporter.net>"))
-  (notmuch-fcc-dirs "Sent")
   (notmuch-wash-wrap-lines-length 80)
   (notmuch-saved-searches
-   '((:name "Unread (Inbox)"     :query "tag:unread and tag:inbox"       :key "u")
-     (:name "Unread All"         :query "tag:unread not tag:archived"    :key "U")
+   '((:name "Unread inbox"       :query "tag:unread and tag:inbox"       :key "u")
+     (:name "Unread all"         :query "tag:unread"                     :key "U")
      (:name "Inbox"              :query "tag:inbox"                      :key "i")
      (:name "Drafts"             :query "tag:draft"                      :key "d")
-     (:name "denote"             :query "tag:list/denote"                :key "ld"  :count-query "tag:list/denote and tag:unread")
+     (:name "Sent"               :query "tag:sent"                       :key "s"   :sort-order newest-first)
+     (:name "Flagged"            :query "tag:flagged"                    :key "f")
+     (:name "All mail"           :query "*"                              :key "a"   :sort-order newest-first)
+     (:name "Deleted"            :query "tag:deleted"                    :key "D")
      (:name "emacs-humanities"   :query "tag:list/emacs-humanities"      :key "leh" :count-query "tag:list/emacs-humanities and tag:unread")
      (:name "emacs-paris"        :query "tag:list/emacs-paris"           :key "lep" :count-query "tag:list/emacs-paris and tag:unread")
-     (:name "great-conversation" :query "tag:list/great-conversation"    :key "lg"  :count-query "tag:list/great-conversation and tag:unread")
-     (:name "Flagged"            :query "tag:flagged"                    :key "f")
-     (:name "Reference"          :query "tag:reference not tag:archived" :key "r")
-     (:name "Sent"               :query "tag:sent"                       :key "s"   :sort-order newest-first)
-     (:name "Archived"           :query "tag:archived"                   :key "a"   :sort-order newest-first)
-     (:name "All Mail"           :query "*"                              :key "A")
-     (:name "Deleted"            :query "tag:deleted"                    :key "D")))
-  (notmuch-archive-tags '("-inbox" "-unread" "+archived"))
+     (:name "great-conversation" :query "tag:list/great-conversation"    :key "lg"  :count-query "tag:list/great-conversation and tag:unread")))
+  (notmuch-archive-tags '("-inbox"))
   (notmuch-draft-folder "Drafts")
   (notmuch-tagging-keys
    '(("r" notmuch-show-mark-read-tags "Mark read")
-     ("a" notmuch-archive-tags "Archive")
      ("f" ("+flagged") "Flag")
-     ("s" ("+spam" "-inbox") "Mark as spam")
-     ("d" ("+deleted" "-inbox") "Delete")))
-  (notmuch-tag-formats '(("flagged" tag))) ; Show the tag name, not an icon
+     ("a" notmuch-archive-tags "Archive")
+     ("d" ("+deleted" "-inbox" "-unread") "Delete")))
+  (notmuch-tag-formats '(("starred" tag))) ; Show the tag name, not an icon
   (notmuch-mua-user-agent-function #'notmuch-mua-user-agent-full)
+
+  (notmuch-fcc-dirs
+   '(("david@daporter.net" . "gmail/\"[Gmail]/Sent Mail\"")))
 
   ;; # After each tagging operation, signal the window manager status bar
   ;; # updater.
