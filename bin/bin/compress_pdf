@@ -1,55 +1,52 @@
 #!/bin/bash
-#
-# Convenience script for running PDFs through `ocrmypdf`. PDFs are only modified
-# if there is meaningful space savings or if the OCF seems suspiciously bad (in
-# which case a contemporary tesseract run will be useful).
+
+# compressPdf: convenience script for running PDFs through `ocrmypdf`. PDFs are only modified if there is meaningful space savings or if the OCF seems suspiciously bad (in which case a contemporary tesseract run will be useful).
 #
 # Author: Gwern Branwen
 # Date: 2021-01-01
-# When:  Time-stamp: "2023-03-13 23:04:02 gwern"
+# When:  Time-stamp: "2025-03-28 18:24:39 gwern"
 # License: CC-0
 
 set -e
 
-# Check for PDFs which could use `ocrmypdf` to save space: read in on stdin,
-# read smaller or original back out on stdout
-
+# 1. check PDFs for PDFs which could use `ocrmypdf` to save space: read in on stdin, read smaller or original back out on stdout
+## custom installation of JBIG2 & ocrmypdf
 PDF=$(mktemp /tmp/XXXXXX-original.pdf)
+cp "$1" "$PDF"
 TMP=$(mktemp /tmp/XXXXXX-small.pdf)
 
-cp "$1" "$PDF"
-ocrmypdf --skip-text --optimize 3 --jbig2-lossy --output-type pdf "$PDF" "$TMP"
+nice -n 20 timeout 10m ocrmypdf --skip-text --optimize 3 --jbig2-lossy "$PDF" "$TMP" &> /dev/null || true
 
-ORIGINAL=$(wc -c < "$PDF")
-SMALL=$(wc -c < "$TMP")
-RATIO=$(echo "$ORIGINAL / $SMALL" | bc -l)
+ORIGINAL=$(wc --bytes < "$PDF")
+SMALL=$(   wc --bytes < "$TMP")
+RATIO=$(echo "$ORIGINAL / $SMALL" | bc --mathlib)
 echo "$PDF : from $ORIGINAL to $SMALL ($RATIO)"
 
-if (( $(echo "$RATIO > 1.2" | bc -l) ));
-then
-	# Overwrite original with compressed.
-	#
-	# Copy all the metadata that ocrmypdf/Ghostscript erases by default:
-	# <https://ocrmypdf.readthedocs.io/en/latest/introduction.html#limitations>
-    exiftool -TagsFromFile "$PDF" "$TMP"
-    mv "$TMP" "$1"
-else
-    # Perhaps we didn't ocrmypdf because it didn't save space, but we may want
-    # to for OCR anyway.  Here, we *force* OCR on PDFs which have no or
-    # suspiciously little text (<50 words per page on average):
-    PAGES=$(exiftool -q -printFormat '$PageCount' -PageCount "$PDF")
-    WORDS=$(pdftotext "$PDF" - | wc --words)
-    TOOSMALL=$((WORDS / PAGES < 50))
-    if [[ $TOOSMALL == 1 ]]; then
-        echo "Forcing OCR: $1 : $WORDS · $PAGES · $((WORDS / PAGES)) · $TOOSMALL"
-        echo "----"
-        pdftotext "$TMP" - | head -5
-        echo "----"
-        ocrmypdf --force-ocr --optimize 3 --jbig2-lossy --output-type pdf "$PDF" "$TMP" &> /dev/null || true
-        exiftool -TagsFromFile "$PDF" "$TMP" || true
-        mv "$TMP" "$1"
-    fi
+if (( SMALL < 4096 )); then
+	echo "Error: Compressed PDF size is $SMALL!"
+	exit 1
 fi
 
-# Cleanup.
+if (( $(echo "$RATIO > 1.5" | bc --mathlib) ));
+then
+	# overwrite original with compressed
+	exiftool -TagsFromFile "$PDF" "$TMP" || true # copy over all the metadata that ocrmypdf/Ghostscript erases by default: <https://ocrmypdf.readthedocs.io/en/latest/introduction.html#limitations>
+	mv "$TMP" "$1"
+else
+	# Perhaps we didn't ocrmypdf because it didn't save space, but we may want to for OCR anyway.
+	# Here, we *force* OCR on PDFs which have no or suspiciously little text (<50 words per page on average):
+	PAGES=$(exiftool -quiet -printFormat '$PageCount' -PageCount "$PDF")
+	WORDS=$(pdftotext "$PDF" - | wc --words)
+	TOOSMALL=$((WORDS / PAGES < 50))
+	if [[ $TOOSMALL == 1 ]]; then
+		echo "Forcing OCR: $1 : $WORDS • $PAGES • $((WORDS / PAGES)) • $TOOSMALL"
+		echo "----"
+		pdftotext "$TMP" - | head
+		echo "----"
+		ocrmypdf --force-ocr --optimize 3 --jbig2-lossy "$PDF" "$TMP" &> /dev/null || true
+		exiftool -TagsFromFile "$PDF" "$TMP" || true
+		mv "$TMP" "$1"
+	fi
+fi
+# cleanup
 rm "$PDF" "$TMP" &> /dev/null || true
