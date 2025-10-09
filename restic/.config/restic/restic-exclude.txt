@@ -11,7 +11,6 @@ $HOME/.local/share/Trash
 $HOME/.mozilla
 $HOME/.npm
 $HOME/Downloads
-$HOME/Dropbox/.dropbox.cache
 $HOME/Mail/.notmuch/xapian
 $HOME/src
 $HOME/tmp
