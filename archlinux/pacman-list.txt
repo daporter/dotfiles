@@ -7,9 +7,9 @@ base
 bash-language-server
 bc
 bottom
-cmake
 code
 dateutils
+ddrescue
 djview
 duf
 dunst
@@ -22,9 +22,10 @@ firefox
 flatpak
 github-cli
 glab
+gparted
 grub
 gucharmap
-hledger
+hdparm
 htop
 inetutils
 isync
@@ -41,6 +42,7 @@ moreutils
 msmtp
 mtr
 mupdf
+nano
 obsidian
 okular
 opendoas
@@ -54,13 +56,16 @@ pavucontrol
 pdftk
 perl-image-exiftool
 picom
+polkit-gnome
 prettier
 python-fonttools
 qmk
 rebuild-detector
 redshift
 restic
+sdparm
 sigil
+smartmontools
 sqlitebrowser
 stow
 sxhkd
@@ -123,7 +128,6 @@ xorg-xdpyinfo
 xorg-xdriinfo
 xorg-xev
 xorg-xgamma
-xorg-xhost
 xorg-xinit
 xorg-xinput
 xorg-xkbevd

@@ -10,7 +10,7 @@ gitlint
 gnu-c-manual
 goldendict-ng
 google-chrome
-hledger-flow-bin
+hledger-bin
 i810-dri
 noto-color-emoji-fontconfig
 ocrmypdf
