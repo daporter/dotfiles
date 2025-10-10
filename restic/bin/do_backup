@@ -6,10 +6,17 @@ set -o errexit                  # abort on nonzero exitstatus
 set -o nounset                  # abort on unbound variable
 set -o pipefail                 # don't hide errors within pipes
 
+# Check if already mounted
+if ! mountpoint -q "$RESTIC_REPOSITORY"; then
+	echo "Mounting restic drive..."
+	sudo mount "$RESTIC_REPOSITORY"
+	sleep 5						# give the drive a few seconds to spin up
+fi
+
 if ! restic backup "$HOME"                                    \
-     --exclude-file="$HOME/.config/restic/restic-exclude.txt" \
-     --no-scan                                                \
-     --quiet ; then
+	 --exclude-file="$HOME/.config/restic/restic-exclude.txt" \
+	 --no-scan                                                \
+	 --quiet ; then
 	echo 'Unable to perform backup. Exiting.'
 	exit 1
 fi
@@ -19,13 +26,15 @@ fi
 # or 12 depends if the 5 weeklies cross a month). And finally 100
 # last-day-of-the-year snapshots. All other snapshots are removed.
 if ! restic forget      \
-     --keep-daily 7     \
-     --keep-weekly 5    \
-     --keep-monthly 12  \
-     --keep-yearly 100  \
-     --cleanup-cache    \
-     --prune            \
-     --quiet ; then
+	 --keep-daily 7     \
+	 --keep-weekly 5    \
+	 --keep-monthly 12  \
+	 --keep-yearly 100  \
+	 --cleanup-cache    \
+	 --prune            \
+	 --quiet ; then
 	echo 'Unable to remove old snapshots.'
 	exit 1
 fi
+
+echo "Backup complete."

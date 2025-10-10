@@ -1,6 +1,6 @@
 #!/bin/sh
 
-RESTIC_REPOSITORY=/mnt/backup
+RESTIC_REPOSITORY=/mnt/restic
 export RESTIC_REPOSITORY
 
 RESTIC_PASSWORD_COMMAND="gpg -q --for-your-eyes-only --no-tty -d $HOME/.config/restic/restic.gpg"
