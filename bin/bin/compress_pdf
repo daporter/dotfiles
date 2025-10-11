@@ -15,7 +15,7 @@ PDF=$(mktemp /tmp/XXXXXX-original.pdf)
 cp "$1" "$PDF"
 TMP=$(mktemp /tmp/XXXXXX-small.pdf)
 
-nice -n 20 timeout 10m ocrmypdf --skip-text --optimize 3 --jbig2-lossy "$PDF" "$TMP" &> /dev/null || true
+ocrmypdf --skip-text --optimize 3 --jbig2-lossy "$PDF" "$TMP" &> /dev/null || true
 
 ORIGINAL=$(wc --bytes < "$PDF")
 SMALL=$(   wc --bytes < "$TMP")
