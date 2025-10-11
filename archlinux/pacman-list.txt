@@ -39,7 +39,6 @@ man-pages
 markdownlint-cli
 marksman
 moreutils
-msmtp
 mtr
 mupdf
 nano

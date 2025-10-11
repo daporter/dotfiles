@@ -4,4 +4,4 @@ Documentation=man:restic-backup(1)
 
 [Service]
 Type=oneshot
-ExecStart=%h/bin/do_backup
+ExecStart=%h/bin/backup.sh daily
