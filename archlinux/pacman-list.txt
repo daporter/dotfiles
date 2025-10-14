@@ -71,7 +71,6 @@ sxhkd
 sxiv
 texlive-binextra
 texlive-plaingeneric
-thunar
 torbrowser-launcher
 tree
 tree-sitter-bash

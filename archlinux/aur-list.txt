@@ -28,6 +28,7 @@ scc
 seer-gdb
 stardict-bobotig-en
 stardict-bobotig-fr
+thunar-dropbox
 tree-sitter-cpp
 tree-sitter-css-git
 tree-sitter-html-git
