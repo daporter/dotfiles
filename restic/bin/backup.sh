@@ -20,6 +20,14 @@ OFFSITE_MOUNT="/mnt/restic_offsite"
 OFFSITE_LOG="$HOME/backup_offsite.log"
 OFFSITE_SOURCE=$DAILY_SOURCE
 
+# Decrypt Restic password to temporary file
+RESTIC_PASSWORD_FILE=$(mktemp)
+gpg --quiet --batch --decrypt "$HOME/.config/restic/restic.gpg" > "$RESTIC_PASSWORD_FILE"
+export RESTIC_PASSWORD_FILE
+
+# Ensure cleanup on exit
+trap 'rm -f "$RESTIC_PASSWORD_FILE"' EXIT
+
 # --- Functions ---
 TMP_LOG=$(mktemp)
 
@@ -48,8 +56,9 @@ human_readable() {
 }
 
 get_repo_stats() {
-	SNAPSHOTS=$(restic -r "$MOUNTPOINT" snapshots --quiet | wc -l)
-	SIZE=$(restic -r "$MOUNTPOINT" stats --mode raw-data --json | jq -r '.total_size')
+	local SNAPSHOTS=0 SIZE=0
+	SNAPSHOTS=$(restic -r "$MOUNTPOINT" snapshots --quiet 2>/dev/null | wc -l)
+	SIZE=$(restic -r "$MOUNTPOINT" stats --mode raw-data --json 2>/dev/null | jq -r '.total_size // 0')
 	echo "$SNAPSHOTS $SIZE"
 }
 
@@ -74,15 +83,6 @@ backup_drive() {
 
 	log "=== Starting backup on $MOUNTPOINT ==="
 
-	# Mount drive
-	doas mkdir -p "$MOUNTPOINT"
-	if ! doas mount "$MOUNTPOINT"; then
-		log_fail "Failed to mount $MOUNTPOINT"
-		STATUS="FAIL"
-		return 1
-	fi
-	log "Drive mounted successfully."
-
 	# Initialize repository if empty
 	if [ -z "$(ls -A "$MOUNTPOINT")" ]; then
 		log "Initializing restic repository..."
@@ -94,6 +94,8 @@ backup_drive() {
 
 	# Stats before backup
 	read -r SNAP_BEFORE SIZE_BEFORE <<< "$(get_repo_stats)"
+	SNAP_BEFORE=${SNAP_BEFORE:-0}
+	SIZE_BEFORE=${SIZE_BEFORE:-0}
 	log "Repository before backup: $SNAP_BEFORE snapshots, $(human_readable "$SIZE_BEFORE")"
 
 	# Run backup
@@ -118,6 +120,8 @@ backup_drive() {
 
 	# Stats after backup
 	read -r SNAP_AFTER SIZE_AFTER <<< "$(get_repo_stats)"
+	SNAP_AFTER=${SNAP_AFTER:-0}
+	SIZE_AFTER=${SIZE_AFTER:-0}
 	log "Repository after backup: $SNAP_AFTER snapshots, $(human_readable "$SIZE_AFTER")"
 
 	# Data added
@@ -132,10 +136,6 @@ backup_drive() {
 	else
 		log "Repository verification succeeded."
 	fi
-
-	# Unmount drive
-	log "Unmounting drive..."
-	doas umount "$MOUNTPOINT"
 
 	# Final summary
 	log "=== Final repository summary ==="
