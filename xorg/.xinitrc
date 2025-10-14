@@ -24,7 +24,6 @@ redshift &
 sxhkd &
 xbanish &
 1password --silent &
-dropbox start &
 
 /usr/bin/systemctl --user start mtstatus
 exec /usr/local/bin/dwm
