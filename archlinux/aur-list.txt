@@ -17,6 +17,8 @@ ocrmypdf
 openvpn-update-systemd-resolved
 otf-bitstream-charter
 otf-ibm-plex
+otf-spectral
+otf-spectralsc
 otf-xcharter
 paisa-bin
 paru-git
