@@ -7,7 +7,19 @@
  '(org-agenda-files
    '("~/Dropbox/63_programming/63.02_leetcode/63.02_journal.org"))
  '(package-selected-packages
-   '(dape modus-themes ef-themes kind-icon meow-tree-sitter popper hl-todo activities consult-denote csv-mode ledger-mode flymake-hledger hledger-mode 0blayout gptel vterm nov idlwave edit-indirect meow embrace apheleia auth-source-1password org-anki keyfreq expand-region ligature org-modern bind-key cl-generic cl-lib eglot eldoc erc external-completion faceup flymake jsonrpc let-alist map nadvice ntlm org python so-long soap-client svg tramp use-package verilog-mode xref page-break-lines pcmpl-args embark-consult embark avy nerd-icons-completion nerd-icons-ibuffer nerd-icons-dired pulsar which-key magit-todos rainbow-mode denote visual-fill-column sxhkdrc-mode editorconfig titlecase unfill org-noter pdf-tools olivetti lorem-ipsum flymake-markdownlint cape corfu yaml-mode marginalia orderless vertico adaptive-wrap magit python-mode smart-tabs-mode markdown-mode)))
+   '(0blayout activities adaptive-wrap apheleia avy cape cl-generic consult-denote
+              corfu csv-mode dape edit-indirect editorconfig ef-themes eglot
+              embark-consult embrace erc faceup flymake-hledger flymake-lua
+              flymake-markdownlint gptel hledger-mode idlwave keyfreq kind-icon
+              ledger-mode ligature lorem-ipsum lua-mode magit-todos map
+              marginalia markdown-mode meow-tree-sitter modus-themes
+              nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer nov ntlm
+              olivetti orderless org-anki org-modern org-noter page-break-lines
+              pcmpl-args pdf-tools peg popper pulsar python python-mode
+              rainbow-mode smart-tabs-mode so-long soap-client svg sxhkdrc-mode
+              titlecase tramp unfill use-package verilog-mode vertico
+              visual-fill-column vterm which-key window-tool-bar))
+ '(package-vc-selected-packages '((dape :url "https://github.com/svaante/dape.git"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

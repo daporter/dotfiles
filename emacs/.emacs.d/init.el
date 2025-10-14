@@ -1279,6 +1279,21 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :mode "\\.ya?ml\\'")
 
+(use-package tramp
+  :defer t
+  :custom
+  (tramp-default-method "sudo")
+  (tramp-verbose 1)
+  (tramp-connection-timeout 10)
+  (tramp-chunksize 2000)
+  (tramp-completion-reread-directory-timeout nil)
+  (auto-save-default nil)
+  (make-backup-files nil)
+  (backup-directory-alist
+   (append backup-directory-alist
+           '(("/sudo::" . (concat user-emacs-directory "tramp-backups")))))
+  (tramp-backup-directory-alist backup-directory-alist))
+
 (use-package activities
   :ensure t
   :init
@@ -1678,11 +1693,6 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (org-anki-model-fields '(("Basic" "Front" "Back" "Extra" "Source")
                            ("Cloze" "Text" "Extra" "Source"))))
-
-(use-package auth-source-1password
-  :ensure t
-  :config
-  (auth-source-1password-enable))
 
 (use-package gptel
   :ensure t
