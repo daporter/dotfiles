@@ -29,6 +29,7 @@ hdparm
 htop
 hypridle
 hyprland
+hyprpaper
 hyprpolkitagent
 hyprshot
 inetutils
