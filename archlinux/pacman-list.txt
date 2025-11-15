@@ -63,6 +63,7 @@ polkit-gnome
 prettier
 python-fonttools
 qmk
+qt6ct
 rebuild-detector
 redshift
 restic

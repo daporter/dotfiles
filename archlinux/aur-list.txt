@@ -12,6 +12,8 @@ goldendict-ng
 google-chrome
 hledger-bin
 i810-dri
+nordzy-cursors
+nordzy-hyprcursors
 noto-color-emoji-fontconfig
 ocrmypdf
 openvpn-update-systemd-resolved
