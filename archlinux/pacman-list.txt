@@ -29,6 +29,7 @@ hdparm
 htop
 hyprland
 hyprpolkitagent
+hyprshot
 inetutils
 inter-font
 isync
@@ -73,6 +74,7 @@ sigil
 smartmontools
 sqlitebrowser
 stow
+swaync
 sxhkd
 sxiv
 texlive-binextra
