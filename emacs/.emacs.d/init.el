@@ -1272,7 +1272,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package conf-mode
   :mode "\\.service\\'"
-  :hook (text-mode . my/set-cursor-type-bar)
+  :hook
+  (conf-mode . my/disable-indent-tabs-mode)
   :bind ("C-M-i" . completion-at-point))
 
 (use-package yaml-ts-mode
