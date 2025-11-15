@@ -6,7 +6,6 @@
 
 # --- Configuration ---
 
-# --- Email settings ---
 EMAIL_TO="david@daporter.net"
 EMAIL_SUBJECT="Restic Backup Summary - $(date '+%Y-%m-%d')"
 
@@ -20,15 +19,8 @@ OFFSITE_MOUNT="/mnt/restic_offsite"
 OFFSITE_LOG="$HOME/backup_offsite.log"
 OFFSITE_SOURCE=$DAILY_SOURCE
 
-# Decrypt Restic password to temporary file
-RESTIC_PASSWORD_FILE=$(mktemp)
-gpg --quiet --batch --decrypt "$HOME/.config/restic/restic.gpg" > "$RESTIC_PASSWORD_FILE"
-export RESTIC_PASSWORD_FILE
-
-# Ensure cleanup on exit
-trap 'rm -f "$RESTIC_PASSWORD_FILE"' EXIT
-
 # --- Functions ---
+
 TMP_LOG=$(mktemp)
 
 log() {

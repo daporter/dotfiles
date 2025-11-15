@@ -5,6 +5,7 @@ Documentation=man:restic-backup(1)
 [Timer]
 OnCalendar=daily
 Persistent=true
+WakeSystem=true
 Unit=backup.service
 
 [Install]
