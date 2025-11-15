@@ -109,6 +109,7 @@ vi
 vscode-css-languageserver
 vscode-html-languageserver
 vscode-json-languageserver
+waybar
 wofi
 xf86-video-intel
 xf86-video-vesa
