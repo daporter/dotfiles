@@ -75,6 +75,7 @@ sdparm
 sigil
 smartmontools
 sqlitebrowser
+starship
 stow
 swaync
 sxhkd
