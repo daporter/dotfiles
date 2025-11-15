@@ -63,6 +63,7 @@ qmk
 rebuild-detector
 redshift
 restic
+rofi-calc
 sdparm
 sigil
 smartmontools
