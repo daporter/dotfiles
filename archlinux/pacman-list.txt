@@ -27,6 +27,7 @@ grub
 gucharmap
 hdparm
 htop
+hypridle
 hyprland
 hyprpolkitagent
 hyprshot
