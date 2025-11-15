@@ -1270,6 +1270,13 @@ When called interactively without a prefix numeric argument, N is
   ((css-ts-mode . my/configure-tab-width-css-ts-mode)
    (css-ts-mode . my/configure-whitespace-css-ts-mode)))
 
+(use-package json-ts-mode
+  :preface
+  (defun my/configure-tab-width-json-ts-mode ()
+    (setq-local tab-width json-ts-mode-indent-offset))
+  :mode ("\\.jsonc\\'" . json-ts-mode)
+  :hook (json-ts-mode . my/configure-tab-width-json-ts-mode))
+
 (use-package conf-mode
   :mode "\\.service\\'"
   :hook
