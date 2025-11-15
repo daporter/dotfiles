@@ -27,11 +27,13 @@ grub
 gucharmap
 hdparm
 htop
+hyprland
 inetutils
 inter-font
 isync
 iwd
 jdk8-openjdk
+kitty
 libreoffice-still
 libvips
 libvterm
