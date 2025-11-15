@@ -28,6 +28,7 @@ gucharmap
 hdparm
 htop
 hyprland
+hyprpolkitagent
 inetutils
 inter-font
 isync
@@ -110,6 +111,7 @@ vscode-css-languageserver
 vscode-html-languageserver
 vscode-json-languageserver
 waybar
+wev
 wofi
 xf86-video-intel
 xf86-video-vesa
