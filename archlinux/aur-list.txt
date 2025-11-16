@@ -45,5 +45,6 @@ ttf-literata
 ttf-merriweather
 windscribe-v2-bin
 xbanish
+xdg-terminal-exec
 z-library-bin
 zotero-bin
