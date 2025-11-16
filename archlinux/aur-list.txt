@@ -6,6 +6,7 @@ ansifilter
 brave-bin
 calibre-bin
 dropbox
+elephant-all
 gitlint
 gnu-c-manual
 goldendict-ng
@@ -43,6 +44,7 @@ tree-sitter-yaml-git
 ttf-adobe-source-serif-fonts
 ttf-literata
 ttf-merriweather
+walker
 windscribe-v2-bin
 xbanish
 xdg-terminal-exec

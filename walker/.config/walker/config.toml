@@ -1,0 +1,25 @@
+force_keyboard_focus = true
+selection_wrap       = true
+
+[placeholders]
+"default" = { input = " Search...", list = "No results" }
+
+[keybinds]
+quick_activate = []
+
+[providers]
+default = [
+  "1password",
+  "archlinuxpkgs",
+  "bookmarks",
+  "calc",
+  "clipboard",
+  "desktopapplications",
+  "files",
+  "menus",
+  "runner",
+  "symbols",
+  "unicode",
+  "websearch",
+  "windows",
+]

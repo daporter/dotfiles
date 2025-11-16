@@ -17,7 +17,6 @@ dunst
 dust
 exfat-utils
 eza
-fd
 feh
 firefox
 flatpak
