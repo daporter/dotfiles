@@ -12,7 +12,7 @@
 		"network",
 		"cpu",
 		"memory",
-		"group/tray-expander"
+		"tray"
 	],
 	"hyprland/workspaces": {
 		"on-click": "activate",
@@ -100,18 +100,6 @@
 		"format": "{:%A %d %B %H:%M}",
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
 		"format-alt": "{:%Y-%m-%d}"
-	},
-	"group/tray-expander": {
-		"orientation": "inherit",
-		"drawer": {
-			"transition-duration": 600,
-			"children-class": "tray-group-item"
-		},
-		"modules": ["custom/expand-icon", "tray"]
-	},
-	"custom/expand-icon": {
-		"format": "",
-		"tooltip": false
 	},
 	"tray": {
 		"icon-size": 12,
