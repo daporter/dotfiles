@@ -361,10 +361,10 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package faces
   :config
-  (set-face-attribute 'default           nil :font "Iosevka-10")
-  (set-face-attribute 'fixed-pitch       nil :font "Iosevka-10")
-  (set-face-attribute 'fixed-pitch-serif nil :font "Iosevka Slab-10")
-  (set-face-attribute 'variable-pitch    nil :font "XCharter-10.5"))
+  (set-face-attribute 'default           nil :family "Iosevka"      :height 105)
+  (set-face-attribute 'fixed-pitch       nil :family "Iosevka"      :height 105)
+  (set-face-attribute 'fixed-pitch-serif nil :family "Iosevka Slab" :height 105)
+  (set-face-attribute 'variable-pitch    nil :family "XCharter"     :height 105))
 
 (use-package simple
   :preface
