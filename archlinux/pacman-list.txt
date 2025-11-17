@@ -55,7 +55,6 @@ opendoas
 otf-fira-mono
 otf-latin-modern
 otf-latinmodern-math
-otf-libertinus
 pamixer
 pandoc-cli
 pavucontrol
@@ -96,16 +95,9 @@ ttc-iosevka-etoile
 ttc-iosevka-slab
 ttf-fira-code
 ttf-gentium-plus
-ttf-hack
 ttf-inconsolata
-ttf-iosevka-nerd
 ttf-jetbrains-mono
-ttf-nerd-fonts-symbols
-ttf-nerd-fonts-symbols-mono
-ttf-noto-nerd
 ttf-roboto-mono
-ttf-sourcecodepro-nerd
-ttf-victor-mono-nerd
 typescript-language-server
 udiskie
 usbutils
