@@ -1260,8 +1260,8 @@ When called interactively without a prefix numeric argument, N is
   :after whitespace
   :preface
   (defun my/configure-tab-width-css-ts-mode ()
-    (setq css-indent-offset 2)
-    (setq tab-width css-indent-offset))
+    (setq-local css-indent-offset 2)
+    (setq-local tab-width css-indent-offset))
 
   (defun my/configure-whitespace-css-ts-mode ()
     (setq-local whitespace-style
