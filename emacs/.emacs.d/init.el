@@ -1339,6 +1339,11 @@ When called interactively without a prefix numeric argument, N is
   :bind (:map shell-mode-map
               ([remap display-local-help] . man)))
 
+(use-package hyprlang-ts-mode
+  :ensure t
+  :custom
+  (hyprlang-ts-mode-indent-offset 4))
+
 (use-package sxhkdrc-mode
   :ensure t
   :mode "sxhkdrc\\'")
