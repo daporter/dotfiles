@@ -8,10 +8,6 @@
   "Set the cursor type to bar in the current buffer."
   (setq-local cursor-type 'bar))
 
-(defun my/disable-indent-tabs-mode ()
-  "Turn off Indent-Tabs mode."
-  (setq-local indent-tabs-mode nil))
-
 ;;;; Package definitions
 
 (use-package package
@@ -380,7 +376,9 @@ When called interactively without a prefix numeric argument, N is
   :hook ((after-init . column-number-mode))
   :bind (("C-*" . undo-redo)            ; i.e., C-S-/ since undo is C-/
          :map my/toggle-map
-         ("v" . visual-line-mode)))
+         ("v" . visual-line-mode))
+  :custom
+  (indent-tabs-mode nil))
 
 (use-package newcomment
   :bind (:map my/comment-map
@@ -884,40 +882,22 @@ When called interactively without a prefix numeric argument, N is
   :commands vterm)
 
 (use-package whitespace
-  :bind (:map my/buffer-map
-              ("w" . whitespace-cleanup)
-              :map my/toggle-map
-              ("w" . whitespace-mode))
+  :bind
+  (:map my/buffer-map
+        ("w" . whitespace-cleanup)
+        :map my/toggle-map
+        ("w" . whitespace-mode))
   :custom
-  (whitespace-style '(face
-                      trailing
-                      tabs
-                      spaces
-                      lines-tail
-                      newline
-                      missing-newline-at-eof
-                      empty
-                      indentation
-                      space-before-tab
-                      space-mark
-                      tab-mark
-                      newline-mark))
   (whitespace-line-column nil)
-  (add-to-list 'write-file-functions #'delete-trailing-whitespace))
-
-(use-package smart-tabs-mode
-  :ensure t
-  ;; Currently getting eager macro-expansion failure, so disabling until fixed:
-  :disabled t
-  :commands smart-tabs-mode
-  :config
-  (smart-tabs-add-language-support sh sh-mode-hook
-    ((smie-indent-line . sh-basic-offset)))
-  (smart-tabs-add-language-support mhtml mhtml-mode-hook
-    ((mhtml-indent-line . sgml-basic-offset)))
-  (smart-tabs-add-language-support css css-mode-hook
-    ((smie-indent-line . css-indent-offset)))
-  (smart-tabs-insinuate 'sh 'mhtml 'nxml 'css))
+  (whitespace-style '(face space-before-tab tabs trailing empty
+                           missing-newline-at-eof))
+  :custom-face
+  ;; Some default faces aren’t visible on spaces or empty lines:
+  (whitespace-empty ((t (:inherit whitespace-trailing))))
+  (whitespace-space-before-tab ((t (:inherit whitespace-trailing))))
+  :hook
+  (((text-mode prog-mode) . whitespace-mode)
+   (before-save . delete-trailing-whitespace)))
 
 (use-package editorconfig
   :ensure t
@@ -1037,7 +1017,6 @@ When called interactively without a prefix numeric argument, N is
               ("v" . visual-line-mode))
   :hook
   (text-mode . my/set-cursor-type-bar)
-  (text-mode . my/disable-indent-tabs-mode)
   :config
   ;; For some reason the following doesn't work with :bind
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
@@ -1148,7 +1127,6 @@ When called interactively without a prefix numeric argument, N is
              lorem-ipsum-insert-sentences))
 
 (use-package elisp-mode
-  :hook (emacs-lisp-mode  . my/disable-indent-tabs-mode)
   :bind ("C-x x e" . eval-buffer))
 
 (use-package c-ts-mode
@@ -1190,96 +1168,28 @@ When called interactively without a prefix numeric argument, N is
   :hook (markdown-mode . flymake-markdownlint-setup))
 
 (use-package sh-script
-  :after whitespace
-  :preface
-  (defun my/configure-tab-width-sh-mode ()
-    (setq tab-width sh-basic-offset))
-
-  (defun my/configure-whitespace-sh-mode ()
-    (setq-local whitespace-style
-                (remove 'indentation whitespace-style)))
-  :hook
-  ((sh-mode . my/configure-tab-width-sh-mode)
-   (whitespace-mode . my/configure-whitespace-sh-mode))
-
   :init
   ;; Is there a more idiomatic way to do this?:
   (with-eval-after-load 'sh-script
     (define-key sh-mode-map [remap display-local-help] #'man)))
 
 (use-package python-mode
-  :ensure t
-  :after whitespace
-  :preface
-  (defun my/configure-tab-width-python-mode ()
-    (setq tab-width python-indent-offset))
+  :ensure t)
 
-  (defun my/configure-whitespace-python-mode ()
-    (setq-local whitespace-style
-                (remove 'indentation whitespace-style)))
+(use-package lua-mode
+  :ensure t)
 
-  (use-package lua-mode
-    :ensure t)
-
-  (use-package flymake-lua
-    :ensure t)
-
-  :hook
-  ((python-mode . my/configure-tab-width-python-mode)
-   (python-mode . my/configure-whitespace-python-mode)))
+(use-package flymake-lua
+  :ensure t)
 
 (use-package mhtml-mode
-  :mode "\\.html\\'"
-  :after whitespace
-  :preface
-  (defun my/configure-tab-width-mhtml-mode ()
-    (setq tab-width sgml-basic-offset))
-
-  (defun my/configure-whitespace-mhtml-mode ()
-    (setq-local whitespace-style
-                (remove 'indentation whitespace-style)))
-  :hook
-  ((mhtml-mode . my/configure-tab-width-mhtml-mode)
-   (mhtml-mode . my/configure-whitespace-mhtml-mode)))
-
-(use-package nxml-mode
-  :after whitespace
-  :preface
-  (defun my/configure-tab-width-nxml-mode ()
-    (setq tab-width nxml-child-indent))
-
-  (defun my/configure-whitespace-nxml-mode ()
-    (setq-local whitespace-style
-                (remove 'indentation whitespace-style)))
-  :hook
-  ((nxml-mode . my/configure-tab-width-nxml-mode)
-   (nxml-mode . my/configure-whitespace-nxml-mode)))
-
-(use-package css-mode
-  :after whitespace
-  :preface
-  (defun my/configure-tab-width-css-ts-mode ()
-    (setq-local css-indent-offset 2)
-    (setq-local tab-width css-indent-offset))
-
-  (defun my/configure-whitespace-css-ts-mode ()
-    (setq-local whitespace-style
-                (remove 'indentation whitespace-style)))
-  :hook
-  ((css-ts-mode . my/configure-tab-width-css-ts-mode)
-   (css-ts-mode . my/configure-whitespace-css-ts-mode)))
+  :mode "\\.html\\'")
 
 (use-package json-ts-mode
-  :preface
-  (defun my/configure-tab-width-json-ts-mode ()
-    (setq-local tab-width json-ts-mode-indent-offset))
-  :mode ("\\.jsonc\\'" . json-ts-mode)
-  :hook (json-ts-mode . my/configure-tab-width-json-ts-mode))
+  :mode "\\.jsonc\\'")
 
 (use-package conf-mode
   :mode "\\.service\\'"
-  :hook
-  (conf-mode . my/disable-indent-tabs-mode)
   :bind ("C-M-i" . completion-at-point))
 
 (use-package yaml-ts-mode
@@ -1340,9 +1250,7 @@ When called interactively without a prefix numeric argument, N is
               ([remap display-local-help] . man)))
 
 (use-package hyprlang-ts-mode
-  :ensure t
-  :custom
-  (hyprlang-ts-mode-indent-offset 4))
+  :ensure t)
 
 (use-package sxhkdrc-mode
   :ensure t
