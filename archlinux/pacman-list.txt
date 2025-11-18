@@ -100,6 +100,7 @@ redshift
 restic
 ripgrep
 rofi-calc
+rust
 sdparm
 shellcheck
 sigil
