@@ -354,17 +354,16 @@ When called interactively without a prefix numeric argument, N is
   ;; Need it set to `t` in order to display org-modern-indent faces properly
   :custom
   (use-default-font-for-symbols t)
-  (line-spacing 0.15)
   :config
   ;; Use symbola for proper symbol glyphs, but have some fallbacks
   (set-fontset-font t 'symbol "Symbola" nil))
 
 (use-package faces
   :config
-  (set-face-attribute 'default           nil :family "Iosevka"      :height 105)
-  (set-face-attribute 'fixed-pitch       nil :family "Iosevka"      :height 105)
-  (set-face-attribute 'fixed-pitch-serif nil :family "Iosevka Slab" :height 105)
-  (set-face-attribute 'variable-pitch    nil :family "XCharter"     :height 105))
+  (set-face-attribute 'default           nil :font "Jetbrains Mono-10.5")
+  (set-face-attribute 'fixed-pitch       nil :font "Jetbrains Mono-10.5")
+  (set-face-attribute 'fixed-pitch-serif nil :font "IBM Plex Mono-10.5")
+  (set-face-attribute 'variable-pitch    nil :font "XCharter-12"))
 
 (use-package simple
   :preface
@@ -1660,7 +1659,7 @@ When called interactively without a prefix numeric argument, N is
 (use-package ligature
   :ensure t
   :config
-  ;; Enable all Iosevka ligatures in programming modes
+  ;; Enable all ligatures in programming modes.
   (ligature-set-ligatures
    '(prog-mode text-mode)
    '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->"
