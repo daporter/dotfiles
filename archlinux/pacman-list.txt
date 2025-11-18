@@ -52,9 +52,11 @@ nano
 obsidian
 okular
 opendoas
+otf-cascadia-code
 otf-fira-mono
 otf-latin-modern
 otf-latinmodern-math
+otf-monaspace
 pamixer
 pandoc-cli
 pavucontrol
@@ -97,6 +99,8 @@ ttf-fira-code
 ttf-gentium-plus
 ttf-inconsolata
 ttf-jetbrains-mono
+ttf-monaspace-frozen
+ttf-monaspace-variable
 ttf-roboto-mono
 typescript-language-server
 udiskie
