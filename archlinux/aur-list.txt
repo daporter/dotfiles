@@ -13,11 +13,11 @@ goldendict-ng
 google-chrome
 hledger-bin
 i810-dri
+jbig2enc
 nordzy-cursors
 nordzy-hyprcursors
 noto-color-emoji-fontconfig
 ocrmypdf
-openvpn-update-systemd-resolved
 otf-bitstream-charter
 otf-ibm-plex
 otf-spectral
