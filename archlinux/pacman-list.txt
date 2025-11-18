@@ -10,13 +10,10 @@ bash-completion
 bash-language-server
 bat
 bc
-bottom
 btop
 cmake
 code
 dateutils
-ddrescue
-djview
 duf
 dunst
 dust
@@ -26,7 +23,6 @@ eza
 fd
 feh
 firefox
-flatpak
 gdb
 git
 github-cli
@@ -37,7 +33,6 @@ grub
 gucharmap
 gvfs
 hdparm
-htop
 hypridle
 hyprland
 hyprpaper
@@ -135,7 +130,6 @@ ttc-iosevka-etoile
 ttc-iosevka-slab
 ttf-cascadia-mono-nerd
 ttf-fira-code
-ttf-gentium-plus
 ttf-inconsolata
 ttf-iosevka-nerd
 ttf-jetbrains-mono
@@ -160,12 +154,9 @@ vscode-json-languageserver
 waybar
 wev
 wget
-wofi
 words
 xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
-xf86-video-intel
-xf86-video-vesa
 xorg-bdftopcf
 xorg-docs
 xorg-font-util
