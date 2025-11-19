@@ -1185,6 +1185,10 @@ When called interactively without a prefix numeric argument, N is
 (use-package mhtml-mode
   :mode "\\.html\\'")
 
+(use-package css-mode
+  :custom
+  (css-indent-offset 2))
+
 (use-package json-ts-mode
   :mode "\\.jsonc\\'")
 
