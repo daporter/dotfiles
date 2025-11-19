@@ -1254,7 +1254,9 @@ When called interactively without a prefix numeric argument, N is
               ([remap display-local-help] . man)))
 
 (use-package hyprlang-ts-mode
-  :ensure t)
+  :ensure t
+  :custom
+  (hyprlang-ts-mode-indent-offset 4))
 
 (use-package sxhkdrc-mode
   :ensure t
