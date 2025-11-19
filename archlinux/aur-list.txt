@@ -9,7 +9,7 @@ dropbox
 elephant-all
 gitlint
 gnu-c-manual
-goldendict-ng
+goldendict-ng-git
 google-chrome
 hledger-bin
 jbig2enc
