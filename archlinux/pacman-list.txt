@@ -15,7 +15,6 @@ cmake
 code
 dateutils
 duf
-dunst
 dust
 emacs-wayland
 exfat-utils
@@ -82,7 +81,6 @@ pandoc-cli
 pavucontrol
 pdftk
 perl-image-exiftool
-picom
 pipewire-alsa
 pipewire-pulse
 plocate
@@ -96,7 +94,6 @@ python-pyserial
 qmk
 qt6ct
 rebuild-detector
-redshift
 restic
 ripgrep
 rofi-calc
@@ -111,7 +108,6 @@ stow
 strace
 sudo
 swaync
-sxhkd
 sxiv
 texlive-binextra
 texlive-plaingeneric
