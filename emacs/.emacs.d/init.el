@@ -896,7 +896,7 @@ When called interactively without a prefix numeric argument, N is
   (whitespace-empty ((t (:inherit whitespace-trailing))))
   (whitespace-space-before-tab ((t (:inherit whitespace-trailing))))
   :hook
-  (((text-mode prog-mode) . whitespace-mode)
+  (((text-mode prog-mode conf-mode) . whitespace-mode)
    (before-save . delete-trailing-whitespace)))
 
 (use-package editorconfig
