@@ -1888,3 +1888,10 @@ When called interactively without a prefix numeric argument, N is
   :custom
   (ef-themes-mixed-fonts t)
   (ef-themes-variable-pitch-ui t))
+
+(use-package gptel
+  :ensure t
+  :config
+  (setq gptel-backend (gptel-make-gemini "Gemini"
+                        :stream t
+                        :key 'gptel-api-key)))
