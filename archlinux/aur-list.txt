@@ -40,5 +40,6 @@ tree-sitter-yaml-git
 ttf-adobe-source-serif-fonts
 walker
 windscribe-v2-bin
+xdg-terminal-exec
 z-library-bin
 zotero-bin
