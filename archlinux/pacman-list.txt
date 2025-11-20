@@ -67,6 +67,7 @@ nano
 net-tools
 noto-fonts
 noto-fonts-emoji
+nwg-look
 obsidian
 okular
 opendoas
