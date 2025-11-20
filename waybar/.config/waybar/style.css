@@ -8,12 +8,12 @@
 }
 
 window#waybar {
-  background-color: #1a1d21;
+  background-color: #22262b;
   color: #e0dcd4;
   transition-property: background-color;
   transition-duration: 0.5s;
   border-radius: 0px;
-  border-bottom: 1px solid #1a1d21;
+  border-bottom: 1px solid #22262b;
 }
 
 .modules-left {
@@ -32,7 +32,7 @@ button {
 
 button:hover {
   background-color: #282c34;
-  box-shadow: inset 0 -3px #b4bcc4;
+  box-shadow: inset 0 -3px #b4bec8;
 }
 
 #workspaces {
@@ -45,9 +45,9 @@ button:hover {
   all: initial;
   padding: 0 5px;
   margin: 0;
-  min-width: 20px;
+  min-width: 26px;
   background-color: transparent;
-  color: #e0dcd4;
+  color: #c0bdb8;
   transition: all 0.2s ease;
 }
 
@@ -58,13 +58,13 @@ button:hover {
 
 #workspaces button.active {
   background-color: #282c34;
-  box-shadow: inset 0 -3px #ccc4b4;
-  color: #ccc4b4;
+  box-shadow: inset 0 -3px #ccc4b0;
+  color: #ccc4b0;
   font-weight: bold;
 }
 
 #workspaces button.urgent {
-  background-color: #cdacac;
+  background-color: #c8beb8;
   color: #1a1d21;
 }
 
@@ -80,7 +80,7 @@ button:hover {
 
 #mode {
   background-color: #3d424a;
-  border-bottom: 3px solid #b4bcc4;
+  border-bottom: 3px solid #b4bec8;
   padding: 0 10px;
 }
 
@@ -99,9 +99,6 @@ button:hover {
   padding: 0 10px;
   background-color: transparent;
   color: #e0dcd4;
-  /*
-	 * border-left: 1px solid #282c34; /\* Subtle separator *\/
-	 */
 }
 
 #idle_inhibitor:hover,
@@ -143,14 +140,11 @@ tooltip {
 }
 
 #network.disconnected {
-  color: #cdacac;
+  color: #c8beb8;
 }
 
 #tray {
   background-color: transparent;
-  /*
-	 * border-left: none;
-	 */
 }
 
 #tray > .passive {
@@ -159,5 +153,5 @@ tooltip {
 
 #tray > .needs-attention {
   -gtk-icon-effect: highlight;
-  background-color: #cdacac;
+  background-color: #c8beb8;
 }
