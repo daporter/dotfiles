@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Log Out
+Comment=Log out of the session
+Exec=hyprctl dispatch exit
+Type=Application
+Icon=system-log-out
+Categories=System;
