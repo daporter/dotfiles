@@ -84,7 +84,8 @@
     "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
-    "spacing": 1
+    "spacing": 1,
+    "on-click": "xdg-terminal-exec btop"
   },
   "cpu": {
     "interval": 5,
@@ -92,7 +93,8 @@
     "on-click": "xdg-terminal-exec btop"
   },
   "memory": {
-    "format": "󰘚 {}%"
+    "format": "󰘚 {}%",
+    "on-click": "xdg-terminal-exec btop"
   },
   "clock": {
     "format": "{:%A %d %B %H:%M}",
