@@ -23,9 +23,6 @@
     "on-click": "activate",
     "sort-by-number": true,
     "all-outputs": true,
-    "persistent-workspaces": {
-      "*": 9
-    },
     "format-icons": {
       "1": "I",
       "2": "II",
