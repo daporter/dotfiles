@@ -1,0 +1,9 @@
+width           = 400
+height          = 400
+location        = center
+show            = drun
+allow_markup    = true
+allow_images    = true
+image_size      = 24
+insensitive     = true
+columns         = 1

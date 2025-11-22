@@ -131,6 +131,7 @@ ttf-fira-code
 ttf-inconsolata
 ttf-iosevka-nerd
 ttf-jetbrains-mono
+ttf-jetbrains-mono-nerd
 ttf-monaspace-frozen
 ttf-monaspace-variable
 ttf-nerd-fonts-symbols
@@ -152,6 +153,8 @@ vscode-json-languageserver
 waybar
 wev
 wget
+wlsunset
+wofi
 words
 xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland

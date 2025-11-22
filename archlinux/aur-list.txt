@@ -6,7 +6,6 @@ ansifilter
 brave-bin
 calibre-bin
 dropbox
-elephant-all
 gitlint
 gnu-c-manual
 goldendict-ng-git
@@ -39,8 +38,8 @@ tree-sitter-make-git
 tree-sitter-regex-git
 tree-sitter-yaml-git
 ttf-adobe-source-serif-fonts
-walker
 windscribe-v2-bin
 xdg-terminal-exec
 z-library-bin
+zathura-solarized-git
 zotero-bin

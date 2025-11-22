@@ -2,12 +2,6 @@
 
 ;;; Code:
 
-;;;; Utility functions
-
-(defun my/set-cursor-type-bar ()
-  "Set the cursor type to bar in the current buffer."
-  (setq-local cursor-type 'bar))
-
 ;;;; Package definitions
 
 (use-package package
@@ -121,8 +115,6 @@ If buffer-or-name is nil return current buffer's mode."
                      ((member "Noto Color Emoji" (font-family-list)) "Noto Color Emoji")
                      ((member "Noto Emoji" (font-family-list)) "Noto Emoji")
                      ((member "Symbola" (font-family-list)) "Symbola")))
-
-  (load-theme 'my-iceberg t)
 
   (defun my/insert-date-time (prefix)
     "Insert the current date and time.
@@ -356,10 +348,22 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package faces
   :config
-  (set-face-attribute 'default           nil :font "Jetbrains Mono-10.5")
-  (set-face-attribute 'fixed-pitch       nil :font "Jetbrains Mono-10.5")
-  (set-face-attribute 'fixed-pitch-serif nil :font "IBM Plex Mono-10.5")
-  (set-face-attribute 'variable-pitch    nil :font "XCharter-12"))
+  (set-face-attribute 'default nil
+                      :family "Jetbrains Mono"
+                      :height 110
+                      :weight 'medium)
+  (set-face-attribute 'fixed-pitch nil
+                      :family "Jetbrains Mono"
+                      :height 110
+                      :weight 'medium)
+  (set-face-attribute 'fixed-pitch-serif nil
+                      :family "Jetbrains Mono"
+                      :height 110
+                      :weight 'medium)
+  (set-face-attribute 'variable-pitch nil
+                      :family "Inter"
+                      :height 110
+                      :weight 'medium))
 
 (use-package simple
   :preface
@@ -944,7 +948,6 @@ When called interactively without a prefix numeric argument, N is
     (display-fill-column-indicator-mode 1))
 
   :hook
-  (prog-mode . my/set-cursor-type-bar)
   (prog-mode . my/set-fill-column)
   (prog-mode . turn-on-auto-fill))
 
@@ -1015,8 +1018,6 @@ When called interactively without a prefix numeric argument, N is
 (use-package text-mode
   :bind (:map my/toggle-map
               ("v" . visual-line-mode))
-  :hook
-  (text-mode . my/set-cursor-type-bar)
   :config
   ;; For some reason the following doesn't work with :bind
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
@@ -1877,21 +1878,14 @@ When called interactively without a prefix numeric argument, N is
 (use-package modus-themes
   :ensure t
   :custom
-  (modus-themes-italic-constructs t)
   (modus-themes-bold-constructs t)
+  (modus-themes-italic-constructs t)
   (modus-themes-mixed-fonts t)
-  (modus-themes-prompts '(bold))
   (modus-themes-variable-pitch-ui t))
 
 (use-package ef-themes
   :ensure t
-  :custom
-  (ef-themes-mixed-fonts t)
-  (ef-themes-variable-pitch-ui t))
-
-(use-package gptel
-  :ensure t
+  :init
+  (ef-themes-take-over-modus-themes-mode 1)
   :config
-  (setq gptel-backend (gptel-make-gemini "Gemini"
-                        :stream t
-                        :key 'gptel-api-key)))
+  (modus-themes-load-theme 'ef-melissa-light))
