@@ -376,7 +376,7 @@ When called interactively without a prefix numeric argument, N is
                       :weight 'medium)
   (set-face-attribute 'variable-pitch nil
                       :family "Inter"
-                      :height 110
+                      :height 120
                       :weight 'medium))
 
 (use-package simple
