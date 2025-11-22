@@ -875,16 +875,6 @@ When called interactively without a prefix numeric argument, N is
   :bind (:map my/toggle-map
               ("r" . rainbow-mode)))
 
-(use-package pulsar
-  :ensure t
-  :hook
-  ((next-error       . pulsar-pulse-line)
-   (minibuffer-setup . pulsar-pulse-line)
-   (imenu-after-jump . pulsar-recenter-top)
-   (imenu-after-jump . pulsar-reveal-entry))
-  :config
-  (pulsar-global-mode 1))
-
 (use-package which-key
   :ensure t
   :hook
@@ -1272,10 +1262,6 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :custom
   (hyprlang-ts-mode-indent-offset 4))
-
-(use-package sxhkdrc-mode
-  :ensure t
-  :mode "sxhkdrc\\'")
 
 (use-package magit
   :ensure t

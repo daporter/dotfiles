@@ -15,10 +15,10 @@
               magit-todos map marginalia markdown-mode meow-tree-sitter
               modus-themes nerd-icons-completion nerd-icons-dired
               nerd-icons-ibuffer nov ntlm olivetti orderless org-anki org-modern
-              org-noter page-break-lines pcmpl-args pdf-tools peg popper pulsar
-              python python-mode rainbow-mode so-long soap-client svg
-              sxhkdrc-mode titlecase tramp unfill use-package verilog-mode
-              vertico visual-fill-column vterm which-key window-tool-bar))
+              org-noter page-break-lines pcmpl-args pdf-tools peg popper python
+              python-mode rainbow-mode so-long soap-client svg titlecase tramp
+              unfill use-package verilog-mode vertico visual-fill-column vterm
+              which-key window-tool-bar))
  '(package-vc-selected-packages '((dape :url "https://github.com/svaante/dape.git"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
