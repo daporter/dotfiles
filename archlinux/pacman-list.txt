@@ -104,7 +104,6 @@ shellcheck
 sigil
 smartmontools
 sqlitebrowser
-starship
 stow
 strace
 sudo
