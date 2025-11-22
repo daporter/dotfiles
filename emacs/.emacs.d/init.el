@@ -54,6 +54,20 @@ If buffer-or-name is nil return current buffer's mode."
                             (get-buffer buffer-or-name)
                           (current-buffer))))
 
+  :hook
+  ;; Make internal-border-width half of the line-height.
+  ((after-init . (lambda ()
+                   (let ((line-height (frame-char-height)))
+                     (set-frame-parameter
+                      nil
+                      'internal-border-width (/ line-height 2)))))
+   (after-make-frame-functions . (lambda (frame)
+                                   (with-selected-frame frame
+                                     (let ((line-height (frame-char-height)))
+                                       (set-frame-parameter
+                                        frame
+                                        'internal-border-width (/ line-height 2)))))))
+
   :custom
   (cursor-type 'box)
   (initial-buffer-choice t)             ; always start with *scratch*
@@ -103,10 +117,10 @@ If buffer-or-name is nil return current buffer's mode."
   (load custom-file)
 
   (dolist (cmd '(upcase-region
-                 downcase-region
-                 narrow-to-region
-                 set-goal-column
-                 scroll-left))
+		 downcase-region
+		 narrow-to-region
+		 set-goal-column
+		 scroll-left))
     (put cmd 'disabled nil))
 
   ;; Specify the fonts to use for displaying emoji.
@@ -142,8 +156,8 @@ When called interactively without a prefix numeric argument, N is
             (goto-char (line-beginning-position))
             (dotimes (_ n) (insert "\n"))
             (forward-line (- n)))
-        (forward-line (- n))
-        (my/simple-new-line-below n))))
+	(forward-line (- n))
+	(my/simple-new-line-below n))))
   (global-set-key (kbd "<C-S-return>") #'my/simple-new-line-above)
 
   (defun my/simple-new-line-below (n)
