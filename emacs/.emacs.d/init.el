@@ -1875,6 +1875,14 @@ When called interactively without a prefix numeric argument, N is
   :config
   (add-hook 'csv-align-mode-hook #'toggle-truncate-lines))
 
+(use-package gptel
+  :ensure t
+  :config
+  (setq gptel-model 'gemini-pro-latest)
+  (setq gptel-backend (gptel-make-gemini "Gemini"
+                        :stream t
+                        :key 'gptel-api-key)))
+
 (use-package modus-themes
   :ensure t
   :custom
