@@ -542,7 +542,7 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package hippie-exp
   :bind
-  ("M-/" . hippie-expand)
+  ([remap dabbrev-expand] . hippie-expand)
   :custom
   (hippie-expand-try-functions-list '(try-expand-dabbrev-visible
                                       try-expand-dabbrev
