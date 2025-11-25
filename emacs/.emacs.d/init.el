@@ -1150,10 +1150,14 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package markdown-mode
   :ensure t
-  :init
+  :preface
+  (defun my/markdown-set-tab-width ()
+    (setq tab-width 4))
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode))
-  :hook (markdown-mode . variable-pitch-mode)
+  :hook
+  ((markdown-mode . my/markdown-set-tab-width)
+   (markdown-mode . variable-pitch-mode))
   :custom
   (markdown-command "pandoc")
   (markdown-asymmetric-header t)
