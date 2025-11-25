@@ -7,18 +7,18 @@
  '(org-agenda-files
    '("~/Dropbox/63_programming/63.02_leetcode/63.02_journal.org"))
  '(package-selected-packages
-   '(0blayout activities adaptive-wrap apheleia avy cape cl-generic consult-denote
-              corfu csv-mode dape edit-indirect editorconfig ef-themes eglot
-              embark-consult embrace erc faceup flymake-hledger flymake-lua
-              flymake-markdownlint gptel hledger-mode hyprlang-ts-mode idlwave
-              keyfreq kind-icon ledger-mode ligature lorem-ipsum lua-mode
-              magit-todos map marginalia markdown-mode meow-tree-sitter
-              modus-themes nerd-icons-completion nerd-icons-dired
-              nerd-icons-ibuffer nov ntlm olivetti orderless org-anki org-modern
-              org-noter page-break-lines pcmpl-args pdf-tools peg popper python
-              python-mode rainbow-mode so-long soap-client svg titlecase tramp
-              unfill use-package verilog-mode vertico visual-fill-column vterm
-              which-key window-tool-bar))
+   '(0blayout activities adaptive-wrap apheleia avy cape captain cl-generic
+              consult-denote corfu csv-mode dape edit-indirect editorconfig
+              ef-themes eglot embark-consult embrace erc faceup flymake-hledger
+              flymake-lua flymake-markdownlint gptel hledger-mode
+              hyprlang-ts-mode idlwave keyfreq kind-icon ledger-mode ligature
+              lorem-ipsum lua-mode magit-todos map marginalia markdown-mode
+              meow-tree-sitter modus-themes nerd-icons-completion
+              nerd-icons-dired nerd-icons-ibuffer nov ntlm olivetti orderless
+              org-anki org-modern org-noter page-break-lines pcmpl-args
+              pdf-tools peg popper python python-mode rainbow-mode so-long
+              soap-client svg titlecase tramp unfill use-package verilog-mode
+              vertico visual-fill-column vterm which-key window-tool-bar))
  '(package-vc-selected-packages '((dape :url "https://github.com/svaante/dape.git"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

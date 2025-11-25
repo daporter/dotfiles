@@ -1900,3 +1900,19 @@ When called interactively without a prefix numeric argument, N is
   (ef-themes-take-over-modus-themes-mode 1)
   :config
   (modus-themes-load-theme 'ef-melissa-light))
+
+(use-package captain
+  :ensure t
+  :preface
+  (defun my/captain-text-mode-setup ()
+    ;; In text-mode, work all the time.
+    (setq captain-predicate (lambda () t))
+    (captain-mode 1))
+  (defun my/captain-prog-mode-setup ()
+    ;; In prog-mode, work only in comments.
+    (setq captain-predicate (lambda ()
+                              (nth 8 (syntax-ppss (point)))))
+    (captain-mode 1))
+  :hook
+  (text-mode . my/captain-text-mode-setup)
+  (prog-mode . my/captain-prog-mode-setup))
