@@ -1174,7 +1174,7 @@ When called interactively without a prefix numeric argument, N is
   (css-indent-offset 2))
 
 (use-package json-ts-mode
-  :mode "\\.jsonc\\'")
+  :mode "\\.jsonc?\\'")
 
 (use-package conf-mode
   :mode "\\.service\\'")
