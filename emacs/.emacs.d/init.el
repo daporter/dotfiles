@@ -661,51 +661,24 @@ When called interactively without a prefix numeric argument, N is
 ;; the next CAPF, but in practice none do, since Emacs has some bugs related to
 ;; this.  To me it's strange to let the CAPFs themselves decide this; this
 ;; should be a user choice.  Cape makes that possible.
-
 (use-package cape
   :ensure t
   :preface
-  (defun my/cape-capf-setup-elisp ()
-    (setq-local completion-at-point-functions '(elisp-completion-at-point t)))
-
-  (defun my/cape-capf-setup-eglot ()
-    (setq-local completion-at-point-functions
-                (list (cape-capf-properties
-                       (cape-capf-inside-code
-                        (cape-capf-super #'eglot-completion-at-point
-                                         #'cape-keyword))
-                       :exclusive)
-                      t)))
-
-  (defun my/cape-capf-setup-org ()
-    (setq-local completion-at-point-functions
-                (list #'pcomplete-completions-at-point
-                      #'cape-elisp-block
-                      t)))
-
-  (defun my/cape-capf-setup-eshell ()
-    (setq-local completion-at-point-functions
-                (list (cape-capf-super #'pcomplete-completions-at-point
-                                       #'comint-completion-at-point
-                                       #'cape-history)
-                      t)))
-
-  (defun my/cape-capf-setup-sh ()
-    (setq-local completion-at-point-functions
-                (list #'sh-completion-at-point-function
-                      #'cape-file
-                      t)))
-
-  :hook ((emacs-lisp-mode    . my/cape-capf-setup-elisp)
-         (eglot-managed-mode . my/cape-capf-setup-eglot)
-         (org-mode           . my/cape-capf-setup-org)
-         (eshell-mode        . my/cape-capf-setup-eshell)
-         (sh-mode            . my/cape-capf-setup-sh))
-
-  :config
-  (add-to-list 'completion-at-point-functions #'cape-file t)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev t)
-  (add-to-list 'completion-at-point-functions #'cape-dict t))
+  (defun my/eshell-capf ()
+    (cape-capf-super #'pcomplete-completions-at-point
+                     #'comint-completion-at-point
+                     #'cape-history))
+  (defun my/eshell-add-completions ()
+    (add-hook 'completion-at-point-functions 'my/eshell-capf nil t))
+  :init
+  ;; Add to the global default value of `completion-at-point-functions', which
+  ;; is used by `completion-at-point'.  The order of the functions matters: the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  :hook
+  ((eshell-mode . my/eshell-add-completions)))
 
 (use-package consult
   :ensure t
@@ -988,15 +961,14 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package eglot
   :preface
-  (defun my/setup-eldoc-eglot ()
+  (defun my/eglot-setup-eldoc ()
     (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly))
-
   (defun my/eglot-disable-hints ()
     (eglot-inlay-hints-mode 0))
 
   :hook
   (((c-ts-mode css-ts-mode) . eglot-ensure)
-   (eglot-managed-mode      . my/setup-eldoc-eglot)
+   (eglot-managed-mode      . my/eglot-setup-eldoc)
    (eglot-managed-mode      . my/eglot-disable-hints))
 
   :bind
@@ -1153,10 +1125,14 @@ When called interactively without a prefix numeric argument, N is
   :preface
   (defun my/markdown-set-tab-width ()
     (setq tab-width 4))
+  (defun my/markdown-add-completions ()
+    (add-hook 'completion-at-point-functions
+              'cape-dict nil t))
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode))
   :hook
   ((markdown-mode . my/markdown-set-tab-width)
+   (markdown-mode . my/markdown-add-completions)
    (markdown-mode . variable-pitch-mode))
   :custom
   (markdown-command "pandoc")
@@ -1201,8 +1177,7 @@ When called interactively without a prefix numeric argument, N is
   :mode "\\.jsonc\\'")
 
 (use-package conf-mode
-  :mode "\\.service\\'"
-  :bind ("C-M-i" . completion-at-point))
+  :mode "\\.service\\'")
 
 (use-package yaml-ts-mode
   :ensure t
@@ -1245,7 +1220,6 @@ When called interactively without a prefix numeric argument, N is
   :config
   (with-eval-after-load 'esh-mode
     (define-key eshell-mode-map [remap display-local-help] #'man))
-
   (dolist (module '(eshell-smart eshell-tramp))
     (add-to-list 'eshell-modules-list module)))
 
