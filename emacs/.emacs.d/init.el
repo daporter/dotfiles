@@ -897,12 +897,11 @@ When called interactively without a prefix numeric argument, N is
         ("w" . whitespace-mode))
   :custom
   (whitespace-line-column nil)
-  (whitespace-style '(face space-before-tab tabs trailing empty
-                           missing-newline-at-eof))
+  (whitespace-style '(face tabs tab-mark trailing empty missing-newline-at-eof))
   :custom-face
   ;; Some default faces aren’t visible on spaces or empty lines:
   (whitespace-empty ((t (:inherit whitespace-trailing))))
-  (whitespace-space-before-tab ((t (:inherit whitespace-trailing))))
+  (whitespace-tab ((t (:inherit magit-diff-whitespace-warning))))
   :hook
   (((text-mode prog-mode conf-mode) . whitespace-mode)
    (before-save . delete-trailing-whitespace)))
