@@ -1858,7 +1858,9 @@ When called interactively without a prefix numeric argument, N is
   (setq gptel-model 'gemini-pro-latest)
   (setq gptel-backend (gptel-make-gemini "Gemini"
                         :stream t
-                        :key 'gptel-api-key)))
+                        :key 'gptel-api-key))
+  :hook
+  (gptel-mode . olivetti-mode))
 
 (use-package modus-themes
   :ensure t
