@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hyprland Keybindings Reference</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: #fdf6e3;
+        color: #657b83;
+        padding: 2rem;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: #268bd2;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        border-bottom: 2px solid #93a1a1;
+        padding-bottom: 0.5rem;
+      }
+
+      h2 {
+        color: #dc322f;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1.5rem;
+        background: #eee8d5;
+      }
+
+      th,
+      td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #93a1a1;
+      }
+
+      th {
+        background: #93a1a1;
+        color: #fdf6e3;
+        font-weight: 600;
+      }
+
+      tr:hover {
+        background: #fdf6e3;
+      }
+
+      code {
+        background: #eee8d5;
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+        font-family: "Courier New", Courier, monospace;
+        color: #859900;
+        font-size: 0.9rem;
+      }
+
+      ul {
+        list-style: none;
+        padding-left: 1rem;
+      }
+
+      li {
+        padding: 0.3rem 0;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        th,
+        td {
+          padding: 0.5rem;
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hyprland Keybindings Reference</h1>
+
+    <h2>Window Focus</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Super+A</code></td>
+          <td>Focus left</td>
+        </tr>
+        <tr>
+          <td><code>Super+E</code></td>
+          <td>Focus up</td>
+        </tr>
+        <tr>
+          <td><code>Super+I</code></td>
+          <td>Focus down</td>
+        </tr>
+        <tr>
+          <td><code>Super+H</code></td>
+          <td>Focus right</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Workspaces</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Super+1-9</code></td>
+          <td>Go to workspace 1-9</td>
+        </tr>
+        <tr>
+          <td><code>Super+K</code></td>
+          <td>Next workspace</td>
+        </tr>
+        <tr>
+          <td><code>Super+U</code></td>
+          <td>Previous workspace</td>
+        </tr>
+        <tr>
+          <td><code>Super+Tab</code></td>
+          <td>Previous workspace</td>
+        </tr>
+        <tr>
+          <td><code>Super+Scroll Up</code></td>
+          <td>Next workspace</td>
+        </tr>
+        <tr>
+          <td><code>Super+Scroll Down</code></td>
+          <td>Previous workspace</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Window Movement</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Super+Shift+A</code></td>
+          <td>Swap left</td>
+        </tr>
+        <tr>
+          <td><code>Super+Shift+E</code></td>
+          <td>Swap up</td>
+        </tr>
+        <tr>
+          <td><code>Super+Shift+I</code></td>
+          <td>Swap down</td>
+        </tr>
+        <tr>
+          <td><code>Super+Shift+H</code></td>
+          <td>Swap right</td>
+        </tr>
+        <tr>
+          <td><code>Super+LMB (drag)</code></td>
+          <td>Move window</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Move to Workspace</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Super+Shift+1-9</code></td>
+          <td>Move to workspace 1-9</td>
+        </tr>
+        <tr>
+          <td><code>Super+Shift+K</code></td>
+          <td>Move to next workspace</td>
+        </tr>
+        <tr>
+          <td><code>Super+Shift+U</code></td>
+          <td>Move to previous workspace</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Applications</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Super+Space</code></td>
+          <td>Launch wofi (app launcher)</td>
+        </tr>
+        <tr>
+          <td><code>Super+Return</code></td>
+          <td>Launch kitty (terminal)</td>
+        </tr>
+        <tr>
+          <td><code>Super+B</code></td>
+          <td>Launch Firefox</td>
+        </tr>
+        <tr>
+          <td><code>Super+Ctrl+D</code></td>
+          <td>GoldenDict lookup (clipboard)</td>
+        </tr>
+        <tr>
+          <td><code>Super+Ctrl+S</code></td>
+          <td>Screenshot window</td>
+        </tr>
+        <tr>
+          <td><code>Super+Ctrl+Shift+S</code></td>
+          <td>Screenshot region</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Window Resizing</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Super+Ctrl+A</code></td>
+          <td>Resize left (-20px)</td>
+        </tr>
+        <tr>
+          <td><code>Super+Ctrl+E</code></td>
+          <td>Resize up (-20px)</td>
+        </tr>
+        <tr>
+          <td><code>Super+Ctrl+I</code></td>
+          <td>Resize down (+20px)</td>
+        </tr>
+        <tr>
+          <td><code>Super+Ctrl+H</code></td>
+          <td>Resize right (+20px)</td>
+        </tr>
+        <tr>
+          <td><code>Super+RMB (drag)</code></td>
+          <td>Resize window</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Layout</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Super+F</code></td>
+          <td>Toggle fullscreen</td>
+        </tr>
+        <tr>
+          <td><code>Super+Shift+Space</code></td>
+          <td>Toggle floating</td>
+        </tr>
+        <tr>
+          <td><code>Super+Shift+LMB</code></td>
+          <td>Toggle floating</td>
+        </tr>
+        <tr>
+          <td><code>Super+W</code></td>
+          <td>Kill active window</td>
+        </tr>
+        <tr>
+          <td><code>Super+T</code></td>
+          <td>Toggle pseudotile</td>
+        </tr>
+        <tr>
+          <td><code>Super+V</code></td>
+          <td>Toggle split direction (vertical/horizontal)</td>
+        </tr>
+        <tr>
+          <td><code>Super+P</code></td>
+          <td>Pin window</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Scratchpad</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Super+S</code></td>
+          <td>Toggle scratchpad</td>
+        </tr>
+        <tr>
+          <td><code>Super+Ctrl+T</code></td>
+          <td>Launch scratchpad terminal</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Mouse Buttons</h2>
+    <ul>
+      <li>LMB = Left Mouse Button (272)</li>
+      <li>RMB = Right Mouse Button (273)</li>
+    </ul>
+  </body>
+</html>
