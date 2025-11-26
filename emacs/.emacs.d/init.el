@@ -991,6 +991,7 @@ When called interactively without a prefix numeric argument, N is
   (add-hook 'dape-compile-hook 'kill-buffer))
 
 (use-package text-mode
+  :hook (text-mode . abbrev-mode)
   :bind (:map my/toggle-map
               ("v" . visual-line-mode))
   :config
@@ -1865,3 +1866,7 @@ When called interactively without a prefix numeric argument, N is
   :hook
   (text-mode . my/captain-text-mode-setup)
   (prog-mode . my/captain-prog-mode-setup))
+
+(use-package abbrev
+  :custom
+  (abbrev-suggest t))
