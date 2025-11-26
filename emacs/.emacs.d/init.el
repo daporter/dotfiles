@@ -1273,40 +1273,13 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package denote
   :ensure t
-  :commands (denote denote-subdirectory denote-rename-file)
-  :bind (:map my/note-map
-              ("c"   . denote-region)   ; "contents" mnemonic
-              ("d"   . denote-subdirectory)
-              ("i"   . denote-link)     ; "insert" mnemonic
-              ("I"   . denote-add-links)
-              ("b"   . denote-backlinks)
-              ("f l" . denote-find-link)
-              ("f b" . denote-find-backlink)
-              ("r"   . denote-rename-file)
-              ("R"   . denote-rename-file-using-front-matter)
-              :map dired-mode-map
-              ("C-c C-d C-i" . denote-link-dired-marked-notes)
-              ("C-c C-d C-r" . denote-dired-rename-files)
-              ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
-              ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
-  :hook ((dired-mode . denote-dired-mode-in-directories)
-         (text-mode  . denote-fontify-links-mode-maybe))
+  :hook
+  (dired-mode . denote-dired-mode)
   :custom
-  (denote-directory "~/Dropbox/notes")
+  (denote-directory (expand-file-name "~/Dropbox/notes"))
   (denote-file-type 'markdown-yaml)
-  (denote-dired-directories (list denote-directory))
-  (denote-dired-directories-include-subdirectories t)
-  (denote-journal-extras-title-format nil)
   :config
-  (require 'denote-journal-extras))
-
-(use-package consult-denote
-  :ensure t
-  :bind (:map my/note-map
-              ("f f" . consult-denote-find)
-              ("f g" . consult-denote-grep))
-  :config
-  (consult-denote-mode 1))
+  (denote-rename-buffer-mode 1))
 
 ;; From the Notmuch documentation:
 ;;
