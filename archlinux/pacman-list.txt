@@ -1,5 +1,6 @@
 adobe-source-sans-fonts
 adobe-source-serif-fonts
+adw-gtk-theme
 afew
 aria2
 aspell-en

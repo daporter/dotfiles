@@ -12,9 +12,6 @@ goldendict-ng-git
 google-chrome
 hledger-bin
 jbig2enc
-nordzy-cursors
-nordzy-hyprcursors
-nordzy-icon-theme
 noto-color-emoji-fontconfig
 ocrmypdf
 otf-ibm-plex
