@@ -46,28 +46,6 @@
   (advice-add #'completing-read-multiple
               :filter-args #'crm-indicator)
 
-  (defun buffer-mode (&optional buffer-or-name)
-    "Returns the major mode associated with a buffer.
-If buffer-or-name is nil return current buffer's mode."
-    (buffer-local-value 'major-mode
-                        (if buffer-or-name
-                            (get-buffer buffer-or-name)
-                          (current-buffer))))
-
-  :hook
-  ;; Make internal-border-width half of the line-height.
-  ((after-init . (lambda ()
-                   (let ((line-height (frame-char-height)))
-                     (set-frame-parameter
-                      nil
-                      'internal-border-width (/ line-height 2)))))
-   (after-make-frame-functions . (lambda (frame)
-                                   (with-selected-frame frame
-                                     (let ((line-height (frame-char-height)))
-                                       (set-frame-parameter
-                                        frame
-                                        'internal-border-width (/ line-height 2)))))))
-
   :custom
   (cursor-type 'box)
   (initial-buffer-choice t)             ; always start with *scratch*
@@ -92,8 +70,8 @@ If buffer-or-name is nil return current buffer's mode."
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
 
-  (read-extended-command-predicate
-   #'command-completion-default-include-p)
+  ;; Hide commands in M-x which do not apply to the current mode.
+  (read-extended-command-predicate #'command-completion-default-include-p)
 
   (isearch-lazy-count t)
   (lazy-count-prefix-format "(%s/%s) ")
@@ -108,19 +86,18 @@ If buffer-or-name is nil return current buffer's mode."
   (user-full-name "David Porter")
   (mail-host-address "daporter.net")
 
-  ;; TAB first tries to indent the current line, and if the line was already
-  ;; indented, then tries to complete the thing at point.
-  (tab-always-indent 'complete)
+  (advice-add #'completing-read-multiple
+              :filter-args #'crm-indicator)
 
   :config
   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
   (load custom-file)
 
   (dolist (cmd '(upcase-region
-		 downcase-region
-		 narrow-to-region
-		 set-goal-column
-		 scroll-left))
+                 downcase-region
+                 narrow-to-region
+                 set-goal-column
+                 scroll-left))
     (put cmd 'disabled nil))
 
   ;; Specify the fonts to use for displaying emoji.
@@ -156,8 +133,8 @@ When called interactively without a prefix numeric argument, N is
             (goto-char (line-beginning-position))
             (dotimes (_ n) (insert "\n"))
             (forward-line (- n)))
-	(forward-line (- n))
-	(my/simple-new-line-below n))))
+        (forward-line (- n))
+        (my/simple-new-line-below n))))
   (global-set-key (kbd "<C-S-return>") #'my/simple-new-line-above)
 
   (defun my/simple-new-line-below (n)
@@ -585,8 +562,10 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :custom
   (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles partial-completion))))
   (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+  ;; partial-completion behaves like substring:
+  (completion-pcm-leading-wildcard t))
 
 (use-package vertico
   :ensure t
@@ -596,32 +575,20 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package corfu
   :ensure t
-  :preface
-  (defun my/corfu-enable-in-minibuffer ()
-    "Enable Corfu in the minibuffer."
-    (when (local-variable-p 'completion-at-point-functions)
-      (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
-                  corfu-popupinfo-delay nil)
-      (corfu-mode 1)))
-  :hook
-  ((window-setup     . global-corfu-mode)
-   (minibuffer-setup . my/corfu-enable-in-minibuffer)
-   (eshell-mode      . corfu-mode))
-  :bind (:map corfu-map
-              ("M-SPC"               . corfu-insert-separator)
-              ("<tab>"               . corfu-next)
-              ("<backtab>"           . corfu-previous)
-              ([remap next-line]     . nil)
-              ([remap previous-line] . nil)
-              ("M-h"                 . nil)
-              ("C-h"                 . corfu-info-documentation)
-              ("M-."                 . corfu-info-location))
   :custom
   (corfu-cycle t)
+  :custom-face
+  (corfu-popupinfo ((t (:inherit corfu-default :height 0.9))))
+  :hook
+  (window-setup . global-corfu-mode)
+  :bind
+  ;; Configure SPC for separator insertion (default is M-SPC).
+  (:map corfu-map ("SPC" . corfu-insert-separator))
   :config
+  (corfu-popupinfo-mode 1)
   (corfu-echo-mode 1)
   (corfu-history-mode 1)
-  (add-to-list 'savehist-additional-variables 'corfu-history))
+  (savehist-mode 1))
 
 (use-package kind-icon
   :ensure t
@@ -637,7 +604,7 @@ When called interactively without a prefix numeric argument, N is
 
 ;; Some notes on CAPFs.
 ;;
-;; (Taken from https://www.reddit.com/r/emacs/comments/td0nth/comment/i0i8hi7/?context=3&share_id=CfzOVcILIBvpQKfRmTanK)
+;; (See: https://www.reddit.com/r/emacs/comments/td0nth/comment/i0i8hi7/?context=3&share_id=CfzOVcILIBvpQKfRmTanK)
 ;;
 ;; You've always been able to add multiple CAPFs to the variable
 ;; `completion-at-point-functions'.  This isn't CAPE-specific (other than the
@@ -679,6 +646,14 @@ When called interactively without a prefix numeric argument, N is
   (add-hook 'completion-at-point-functions #'cape-file)
   :hook
   ((eshell-mode . my/eshell-add-completions)))
+
+(use-package corfu-candidate-overlay
+  :ensure t
+  :after corfu
+  :bind
+  ("C-<tab>" . corfu-candidate-overlay-complete-at-point)
+  :config
+  (corfu-candidate-overlay-mode 1))
 
 (use-package consult
   :ensure t
@@ -1002,10 +977,8 @@ When called interactively without a prefix numeric argument, N is
   ;; https://github.com/karthink/.emacs.d/blob/master/lisp/setup-folds.el
   :commands (hs-cycle
              hs-global-cycle)
-  :bind (:map prog-mode-map
-              ("C-<tab>" . hs-cycle)
-              ("<backtab>" . hs-global-cycle)
-              ("C-S-<iso-lefttab>" . hs-global-cycle))
+  :bind
+  (:map prog-mode-map ("C-S-<iso-lefttab>" . hs-global-cycle))
   :config
   (setq hs-hide-comments-when-hiding-all nil
         ;; Nicer code-folding overlays (with fringe indicators)
@@ -1501,6 +1474,8 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package dabbrev
   :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
