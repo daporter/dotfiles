@@ -1671,7 +1671,7 @@ When called interactively without a prefix numeric argument, N is
    '("j" . meow-join)
    ;;'("J" . ignore)
    '("g" . meow-grab)
-   ;;'("G" . ignore)
+   '("G" . meow-pop-grab)
    '("m" . meow-bounds-of-thing)
    '("M" . meow-beginning-of-thing)
    '("p" . meow-inner-of-thing)
