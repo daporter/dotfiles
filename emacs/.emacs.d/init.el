@@ -1869,3 +1869,16 @@ When called interactively without a prefix numeric argument, N is
 (use-package abbrev
   :custom
   (abbrev-suggest t))
+
+(use-package spacious-padding
+  :ensure t
+  :custom
+  (spacious-padding-widths
+   (list :internal-border-width 6
+         :header-line-width 4
+         :mode-line-width 1
+         :tab-width 4
+         :right-divider-width 12
+         :scroll-bar-width 8))
+  :config
+  (spacious-padding-mode 1))
