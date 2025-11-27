@@ -920,8 +920,7 @@ When called interactively without a prefix numeric argument, N is
 (use-package prog-mode
   :preface
   (defun my/set-fill-column ()
-    (setq-local fill-column 80)
-    (display-fill-column-indicator-mode 1))
+    (setq-local fill-column 80))
 
   :hook
   (prog-mode . my/set-fill-column)
