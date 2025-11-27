@@ -1122,7 +1122,10 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package flymake-markdownlint
   :ensure t
-  :hook (markdown-mode . flymake-markdownlint-setup))
+  :custom
+  (flymake-markdownlint-program "markdownlint-cli2")
+  :hook
+  (markdown-mode . flymake-markdownlint-setup))
 
 (use-package sh-script
   :init
