@@ -11,6 +11,7 @@ gnu-c-manual
 goldendict-ng-git
 google-chrome
 hledger-bin
+imv-git
 jbig2enc
 noto-color-emoji-fontconfig
 ocrmypdf
@@ -33,7 +34,7 @@ tree-sitter-html-git
 tree-sitter-json
 tree-sitter-make-git
 tree-sitter-regex-git
-tree-sitter-yaml-git
+tree-sitter-yaml
 ttf-adobe-source-serif-fonts
 windscribe-v2-bin
 xdg-terminal-exec

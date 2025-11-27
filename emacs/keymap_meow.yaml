@@ -1,10 +1,14 @@
+# Generate the SVG with:
+# $ keymap draw keymap_meow.yaml > keymap_meow.svg
+# See: https://github.com/caksoylar/keymap-drawer
+
 layout:
   qmk_keyboard: ferris/sweep
-  qmk_layout: LAYOUT_split_3x5_2
+  layout_name: LAYOUT_split_3x5_2
 layers:
   Meow:
     - [
-        { t: join, s: "" },
+        { t: "join", s: "" },
         { t: "grab", s: "pop-grab" },
         { t: "[thing]", s: ">thing" },
         { t: ">thing<", s: "thing<" },
@@ -13,36 +17,36 @@ layers:
         { t: "yank", s: "yank-pop" },
         { t: "copy", s: "" },
         { t: "kill", s: "" },
-        { t: "cancel-sel", s: "pop-sel" },
+        { t: "pop-sel", s: "" },
       ]
     - [
-        { t: line, s: "goto-line" },
+        { t: "line", s: "goto-line" },
         { t: "block", s: "(→block)" },
         { t: "[word]", s: "[sym]" },
         { t: "insert", s: "↑open" },
         { t: "append", s: "open↓" },
-        { t: undo, s: undo-in-sel },
+        { t: "undo", s: "undo-in-sel" },
         { t: "←", s: "←ex" },
         { t: "↑", s: "↑ex" },
         { t: "↓", s: "ex↓" },
         { t: "→", s: "ex→" },
       ]
     - [
-        { t: reverse, s: "" },
-        { t: sync-grab, s: "swap-grab" },
-        { t: till, s: "" },
-        { t: find, s: "" },
+        { t: "reverse", s: "" },
+        { t: "sync-grab", s: "swap-grab" },
+        { t: "till", s: "find" },
+        { t: "pop-to-mark", s: "unpop-to-mark" },
         { t: "repeat", s: "" },
         { t: "-", s: "" },
         { t: "word←", s: "sym←" },
-        { t: change, s: replace },
+        { t: "change", s: "replace" },
         { t: "delete", s: "" },
         { t: "→word", s: "→sym" },
       ]
-    - { t: ⌫ }
-    - { t: avy }
-    - { t: ␣ }
-    - { t: ⏎ }
+    - { t: "⌫" }
+    - { t: "leader" }
+    - { t: "␣" }
+    - { t: "⏎" }
 
 draw_config:
   key_w: 70

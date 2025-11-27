@@ -1181,7 +1181,12 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package yaml-ts-mode
   :ensure t
-  :mode "\\.ya?ml\\'")
+  :preface
+  (defun my/yaml-set-tab-width ()
+    (setq tab-width 2))
+  :mode "\\.ya?ml\\'"
+  :hook
+  (yaml-ts-mode . my/yaml-set-tab-width))
 
 (use-package tramp
   :defer t
