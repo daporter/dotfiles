@@ -1554,20 +1554,6 @@ When called interactively without a prefix numeric argument, N is
   (org-anki-model-fields '(("Basic" "Front" "Back" "Extra" "Source")
                            ("Cloze" "Text" "Extra" "Source"))))
 
-(use-package gptel
-  :ensure t
-  :commands (gptel gptel-send)
-  :config
-  (gptel-make-anthropic "Claude"
-    :stream t
-    :key #'gptel-api-key-from-auth-source)
-  (gptel-make-openai "Perplexity"
-    :host "api.perplexity.ai"
-    :key #'gptel-api-key-from-auth-source
-    :endpoint "/chat/completions"
-    :stream t
-    :models '("llama-3-sonar-large-32k-chat")))
-
 (use-package meow
   :ensure t
   :custom
@@ -1814,9 +1800,10 @@ When called interactively without a prefix numeric argument, N is
   (setq gptel-model 'gemini-pro-latest)
   (setq gptel-backend (gptel-make-gemini "Gemini"
                         :stream t
-                        :key 'gptel-api-key))
+                        :key #'gptel-api-key-from-auth-source))
   :hook
-  (gptel-mode . olivetti-mode))
+  ((gptel-mode . gptel-highlight-mode)
+   (gptel-mode . olivetti-mode)))
 
 (use-package modus-themes
   :ensure t
