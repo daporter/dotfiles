@@ -11,7 +11,7 @@
               corfu-candidate-overlay csv-mode dape edit-indirect editorconfig
               ef-themes eglot embark-consult embrace erc faceup flymake-hledger
               flymake-lua flymake-markdownlint gptel hledger-mode
-              hyprlang-ts-mode idlwave keyfreq kind-icon ledger-mode ligature
+              hyprlang-ts-mode idlwave kind-icon ledger-mode ligature
               lorem-ipsum lua-mode magit-todos map marginalia markdown-mode
               meow-tree-sitter modus-themes nerd-icons-completion
               nerd-icons-dired nerd-icons-ibuffer nov ntlm olivetti orderless

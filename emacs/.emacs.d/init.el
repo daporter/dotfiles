@@ -1532,21 +1532,6 @@ When called interactively without a prefix numeric argument, N is
   :bind ("C-\"" . er/expand-region)
   :custom (expand-region-contract-fast-key "/"))
 
-(use-package keyfreq
-  :ensure t
-  :hook ((after-init . keyfreq-mode)
-         (after-init . keyfreq-autosave-mode))
-  :custom
-  (keyfreq-file (concat user-emacs-directory "keyfreq"))
-  :config
-  (setq keyfreq-excluded-commands '(self-insert-command
-                                    org-self-insert-command
-                                    forward-char
-                                    backward-char
-                                    previous-line
-                                    next-line
-                                    pixel-scroll-precision)))
-
 (use-package org-anki
   :ensure t
   :commands (org-anki-sync-entry)
