@@ -1837,3 +1837,18 @@ When called interactively without a prefix numeric argument, N is
          :scroll-bar-width 8))
   :config
   (spacious-padding-mode 1))
+
+(use-package shannon-max
+  :load-path "custom"
+  :commands shannon-max-start-logger
+  :custom
+  (shannon-max-keylog-file-name
+   (expand-file-name
+    (concat user-emacs-directory "emacs-logged-keys")))
+  :hook
+  (after-init . shannon-max-start-logger)
+  :config
+  (setq shannon-max-jar-file
+        (expand-file-name
+         (concat user-emacs-directory
+                 "/custom/target/emacskeys-0.1.0-SNAPSHOT-standalone.jar"))))
