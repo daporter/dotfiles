@@ -24,8 +24,6 @@
   (use-package-compute-statistics nil))
 
 (use-package use-package
-  :bind (:map my/lint-map
-              ("u" . use-package-lint))
   :custom
   (use-package-verbose t)
   (use-package-minimum-reported-time 0)
@@ -180,96 +178,14 @@ When called interactively without a prefix numeric argument, N is
     (load-file user-init-file))
 
   :config
-  (keymap-set (current-global-map) "C-S-u" #'my/read-unicode-char)
-
-  (defvar-keymap my/buffer-map :doc "My prefix keymap for buffers."
-                 "E" #'erase-buffer
-                 "k" #'kill-this-buffer)
-  (keymap-set (current-global-map)
-              "C-c b"
-              (cons "Buffer" my/buffer-map))
-
-  (defvar-keymap my/comment-map :doc "My prefix keymap for comments.")
-  (keymap-set (current-global-map)
-              "C-c c"
-              (cons "Comment" my/comment-map))
-
-  (defvar-keymap my/config-map :doc "My prefix keymap for config actions."
-                 "d" #'my/goto-emacs-dir
-                 "l" #'my/load-config)
-  (keymap-set (current-global-map)
-              "C-c C"
-              (cons "Config" my/config-map))
-
-  (defvar-keymap my/file-map :doc "My prefix keymap for files.")
-  (keymap-set (current-global-map)
-              "C-c f"
-              (cons "File" my/file-map))
-
-  (defvar-keymap my/lint-map :doc "My prefix keymap for linting.")
-  (keymap-set (current-global-map)
-              "C-c l"
-              (cons "Linting" my/lint-map))
-
-  (defvar-keymap my/note-map :doc "My prefix keymap for notes.")
-  (keymap-set (current-global-map)
-              "C-c n"
-              (cons "Note" my/note-map))
-
-  (defvar-keymap my/compile-map :doc "My prefix keymap for compile actions.")
-  (keymap-set (current-global-map)
-              "C-c o"
-              (cons "Compile" my/compile-map))
-
-  (defvar-keymap my/quit-map :doc "My prefix keymap for quitting.")
-  (keymap-set (current-global-map)
-              "C-c q"
-              (cons "Quit" my/quit-map))
-
-  (defvar-keymap my/register-map :doc "My prefix keymap for registers.")
-  (keymap-set (current-global-map)
-              "C-c r"
-              (cons "Register" my/register-map))
-
-  (defvar-keymap my/search-map :doc "My prefix keymap for search.")
-  (keymap-set (current-global-map)
-              "C-c s"
-              (cons "Search" my/search-map))
-
-  (defvar-keymap my/spelling-map :doc "My prefix keymap for spelling.")
-  (keymap-set (current-global-map)
-              "C-c S"
-              (cons "Spelling" my/spelling-map))
-
-  (defvar-keymap my/toggle-map :doc "My prefix keymap for toggling settings.")
-  (keymap-set (current-global-map)
-              "C-c T"
-              (cons "Toggle" my/toggle-map))
-
-  (defvar-keymap my/vc-map :doc "My prefix keymap for version control.")
-  (keymap-set (current-global-map)
-              "C-c v"
-              (cons "VC" my/vc-map))
-
-  (defvar-keymap my/window-map :doc "My prefix keymap for windows.")
-  (keymap-set (current-global-map)
-              "C-c w"
-              (cons "Window" my/window-map)))
+  (keymap-set (current-global-map) "C-S-u" #'my/read-unicode-char))
 
 (use-package window
   :bind
   (("M-o"         . other-window)
    ("C-c <left>"  . previous-buffer)
    ("C-c <right>" . next-buffer)
-   ("C-c d"       . switch-to-buffer)
-   :map my/buffer-map
-   ("d" . kill-buffer-and-window)
-   :map my/window-map
-   ("a" . delete-window)
-   ("e" . delete-other-windows)
-   ("h" . split-window-right)
-   ("u" . split-window-below)
-   ("b" . balance-windows))
+   ("C-c b"       . switch-to-buffer))
 
   :custom
   ;; By default, interactively switched buffers are exempt from the rules set in
@@ -310,23 +226,6 @@ When called interactively without a prefix numeric argument, N is
   :config
   (popper-mode 1)
   (popper-echo-mode 1))
-
-(use-package menu-bar
-  :bind (:map my/toggle-map
-              ("m" . menu-bar-mode)))
-
-(use-package bindings
-  :bind (:map my/buffer-map
-              ("o" . mode-line-other-buffer)))
-
-(use-package files
-  :bind (:map my/buffer-map
-              ("r" . revert-buffer)
-              ("s" . save-buffer)
-              :map my/file-map
-              ("f" . find-file)
-              :map my/quit-map
-              ("r" . restart-emacs)))
 
 (use-package fontset
   ;; Set this to nil to set symbols entirely separately
@@ -369,16 +268,11 @@ When called interactively without a prefix numeric argument, N is
                #'pop-to-buffer))
       (funcall pgm)))
   :hook ((after-init . column-number-mode))
-  :bind (("C-*" . undo-redo)            ; i.e., C-S-/ since undo is C-/
-         :map my/toggle-map
-         ("v" . visual-line-mode))
+  :bind (("C-*" . undo-redo))            ; i.e., C-S-/ since undo is C-/
   :custom
   (indent-tabs-mode nil))
 
 (use-package newcomment
-  :bind (:map my/comment-map
-              ("c" . comment-dwim)
-              ("l" . comment-line))
   :custom
   (comment-style 'extra-line))
 
@@ -425,20 +319,9 @@ When called interactively without a prefix numeric argument, N is
   :bind ("C-c @" . embrace-commander)
   :hook (org-mode . embrace-org-mode-hook))
 
-(use-package display-line-numbers
-  :bind (:map my/toggle-map
-              ("n" . display-line-numbers-mode)))
-
-(use-package ibuffer
-  :bind (:map my/buffer-map ("a" . ibuffer)))
-
 (use-package compile
-  :bind (:map my/compile-map
-              ("e" . compile-goto-error)
-              ("K" . kill-compilation)
-              ("c" . compile)
-              ("r" . recompile))
-  :hook (compilation-filter . ansi-color-compilation-filter)
+  :hook
+  (compilation-filter . ansi-color-compilation-filter)
   :custom
   (compilation-auto-jump-to-first-error 'if-location-known))
 
@@ -511,11 +394,8 @@ When called interactively without a prefix numeric argument, N is
   (apropos-sort-by-scores t))
 
 (use-package ispell
-  :bind (:map my/spelling-map
-              ("b" . ispell-buffer)
-              ("r" . ispell-region)
-              ("w" . ispell-word))
-  :custom (ispell-dictionary "australian-w_accents"))
+  :custom
+  (ispell-dictionary "australian-w_accents"))
 
 (use-package hippie-exp
   :bind
@@ -663,30 +543,7 @@ When called interactively without a prefix numeric argument, N is
          ([remap project-switch-to-buffer]      . consult-project-buffer)
          ([remap yank-pop]                      . consult-yank-pop)
          ([remap imenu]                         . consult-imenu)
-         ([remap Info-search]                   . consult-info)
-         :map my/buffer-map
-         ("b" . consult-buffer)
-         ("B" . consult-buffer-other-window)
-         ("i" . consult-imenu)
-         ("m" . consult-mark)
-         ("o" . consult-outline)
-         ("p" . consult-project-buffer)
-         :map my/file-map
-         ("b" . consult-bookmark)
-         ("l" . consult-locate)
-         ("r" . consult-recent-file)
-         :map my/lint-map
-         ("c" . consult-flymake)
-         :map my/register-map
-         ("l" . consult-register-load)
-         ("r" . consult-register)
-         ("s" . consult-register-store)
-         :map my/search-map
-         ("b" . consult-multi-occur)
-         ("h" . consult-org-heading)
-         ("k" . consult-yank-pop)
-         ("l" . consult-line)
-         ("d" . consult-ripgrep)))
+         ([remap Info-search]                   . consult-info)))
 
 (use-package embark
   :ensure t
@@ -819,10 +676,6 @@ When called interactively without a prefix numeric argument, N is
     (activate-mark)
     (goto-char pt)))
 
-(use-package rainbow-mode
-  :bind (:map my/toggle-map
-              ("r" . rainbow-mode)))
-
 (use-package which-key
   :ensure t
   :hook
@@ -838,11 +691,6 @@ When called interactively without a prefix numeric argument, N is
   :commands vterm)
 
 (use-package whitespace
-  :bind
-  (:map my/buffer-map
-        ("w" . whitespace-cleanup)
-        :map my/toggle-map
-        ("w" . whitespace-mode))
   :custom
   (whitespace-line-column nil)
   (whitespace-style '(face tabs tab-mark trailing empty missing-newline-at-eof))
@@ -874,13 +722,6 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package flymake
   :hook (prog-mode text-mode)
-  :bind (:map my/lint-map
-              ("<right>" . flymake-goto-next-error)
-              ("<left>"  . flymake-goto-prev-error)
-              ("d"       . flymake-show-buffer-diagnostics)
-              ("p"       . flymake-show-project-diagnostics)
-              :map my/toggle-map
-              ("f"       . flymake-mode))
   :custom (flymake-fringe-indicator-position nil)
   :config
   (add-to-list 'display-buffer-alist
@@ -966,8 +807,6 @@ When called interactively without a prefix numeric argument, N is
 
 (use-package text-mode
   :hook (text-mode . abbrev-mode)
-  :bind (:map my/toggle-map
-              ("v" . visual-line-mode))
   :config
   ;; For some reason the following doesn't work with :bind
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
@@ -1231,12 +1070,7 @@ When called interactively without a prefix numeric argument, N is
   :after project
   :commands magit-status
   :bind (:map project-prefix-map
-              ("m" . magit-project-status)
-              :map my/vc-map
-              ("f" . magit-file-dispatch)
-              ("l" . magit-log)
-              ("L" . magit-log-buffer-file)
-              ("s" . magit-status))
+              ("m" . magit-project-status))
   :custom
   (magit-display-buffer-function
    'magit-display-buffer-same-window-except-diff-v1)
@@ -1373,8 +1207,6 @@ When called interactively without a prefix numeric argument, N is
   (org-noter-auto-save-last-location t))
 
 (use-package org-agenda
-  :bind (:map my/search-map
-              ("t" . org-todo-list))
   :custom
   (org-agenda-window-setup 'current-window)
   (org-agenda-todo-ignore-scheduled 'future)
@@ -1439,9 +1271,6 @@ When called interactively without a prefix numeric argument, N is
   (youtube-dl-directory "~/Downloads"))
 
 (use-package winner
-  :bind (:map my/window-map
-              ("<left>"  . winner-undo)
-              ("<right>" . winner-redo))
   :hook (after-init))
 
 (use-package elec-pair
@@ -1496,9 +1325,6 @@ When called interactively without a prefix numeric argument, N is
   :ensure t
   :hook (after-init . global-page-break-lines-mode))
 
-(use-package hl-line
-  :bind (:map my/toggle-map ("h" . hl-line-mode)))
-
 (use-package face-remap
   :preface
   (defun my/variable-pitch-set-line-spacing ()
@@ -1528,9 +1354,7 @@ When called interactively without a prefix numeric argument, N is
   (global-ligature-mode t))
 
 (use-package olivetti
-  :ensure t
-  :bind (:map my/toggle-map
-              ("o" . olivetti-mode)))
+  :ensure t)
 
 (use-package expand-region
   :ensure t
@@ -1624,14 +1448,6 @@ When called interactively without a prefix numeric argument, N is
   (add-to-list 'meow-mode-state-list '(notmuch-search-mode . motion))
   (add-to-list 'meow-mode-state-list '(notmuch-show-mode . motion))
 
-  ;; Use the ‘t’ key as another leader key.  This map will be available only in
-  ;; normal mode, this keymap should contain keys we want to use only while
-  ;; we’re in normal mode.  This probably means we only want text-editing
-  ;; commands; operations that are more widely relevant, such as window
-  ;; operations, probably belong on Meow’s leader key (SPC).
-  (defvar-keymap my/meow-leader-t-map
-    :doc "My meow keymap for the ‘t’ leader key.")
-
   (meow-normal-define-key
    ;; Expansion.
    '("0" . meow-expand-0)
@@ -1717,8 +1533,19 @@ When called interactively without a prefix numeric argument, N is
    '("k" . meow-next-word)
    '("K" . meow-next-symbol)
 
-   ;; ‘t’ leader key mappings.
-   (cons "t" my/meow-leader-t-map)
+   ;; Thumbs:
+
+   ;; ’("DEL" . ignore)
+
+   ;; Use ‘t’ as another leader key.  Perhaps a good design is to use the t
+   ;; leader key for text-editing commands, and use Meow’s default leader key
+   ;; (SPC) for widely-relevant operations such as window manipulation.
+   '("t" . my/transient-prefix-leader-t)
+
+   ;; "SPC" enters keypad state.
+   ;; ’("RET" . ignore)
+
+   ;; Other bindings:
 
    '("{" . backward-paragraph)
    '("}" . forward-paragraph)
@@ -1729,8 +1556,8 @@ When called interactively without a prefix numeric argument, N is
    '("@"        . embrace-commander))
 
   (meow-leader-define-key
-   ;; Remember, can’t use x, h, c, m, or g. SPC isn’t a good idea either, since
-   ;; SPC SPC is used in the Motion state.
+   ;; Remember, we can’t use x, h, c, m, or g. SPC isn’t a good idea either,
+   ;; since SPC SPC is used in the Motion state.
    '("u" . meow-universal-argument)
    '("1" . meow-digit-argument)
    '("2" . meow-digit-argument)
@@ -1857,3 +1684,19 @@ When called interactively without a prefix numeric argument, N is
         (expand-file-name
          (concat user-emacs-directory
                  "/custom/target/emacskeys-0.1.0-SNAPSHOT-standalone.jar"))))
+
+(use-package transient
+  :config
+  (transient-define-prefix my/transient-prefix-leader-t ()
+    "My transient prefix command for the t leader key."
+    ["Whitespace"
+     ("w" "Cleanup whitespace" whitespace-cleanup)]
+    ["Comment"
+     :if-non-nil comment-start
+     ("c" "Comment DWIM" comment-dwim)
+     ("l" "Comment line" comment-line)]
+    ["Markup"
+     :if-derived markdown-mode
+     ("b" "Insert bold markup" markdown-insert-bold)
+     ("i" "Insert italic markup" markdown-insert-italic)
+     ("c" "Insert code markup" markdown-insert-code)]))
