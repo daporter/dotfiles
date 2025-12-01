@@ -1131,7 +1131,12 @@ When called interactively without a prefix numeric argument, N is
   :init
   ;; Is there a more idiomatic way to do this?:
   (with-eval-after-load 'sh-script
-    (define-key sh-mode-map [remap display-local-help] #'man)))
+    (define-key sh-mode-map [remap display-local-help] #'man))
+  :mode
+  (("\\.sh\\'" . bash-ts-mode)
+   ("\\.bash\\'" . bash-ts-mode))
+  :config
+  (add-to-list 'interpreter-mode-alist '("bash" . bash-ts-mode)))
 
 (use-package python-mode
   :ensure t)
