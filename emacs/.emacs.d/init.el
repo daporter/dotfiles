@@ -784,15 +784,7 @@ When called interactively without a prefix numeric argument, N is
   :hook
   (((c-ts-mode css-ts-mode) . eglot-ensure)
    (eglot-managed-mode      . my/eglot-setup-eldoc)
-   (eglot-managed-mode      . my/eglot-disable-hints))
-
-  :bind
-  (:map eglot-mode-map
-        ("C-c g f" . eglot-format)
-        ("C-c g h" . eldoc)
-        ("C-c g o" . eglot-code-action-organize-imports)
-        ("C-c g r" . eglot-rename)
-        ("C-c g q" . eglot-code-action-quickfix)))
+   (eglot-managed-mode      . my/eglot-disable-hints)))
 
 (use-package dape
   :vc (:url "https://github.com/svaante/dape.git" :rev :newest)
@@ -1538,8 +1530,9 @@ When called interactively without a prefix numeric argument, N is
    ;; ’("DEL" . ignore)
 
    ;; Use ‘t’ as another leader key.  Perhaps a good design is to use the t
-   ;; leader key for text-editing commands, and use Meow’s default leader key
-   ;; (SPC) for widely-relevant operations such as window manipulation.
+   ;; leader key for commands local to the current mode, and use Meow’s
+   ;; default leader key (SPC) for universal operations such as window
+   ;; manipulation.
    '("t" . my/transient-prefix-leader-t)
 
    ;; "SPC" enters keypad state.
@@ -1688,15 +1681,24 @@ When called interactively without a prefix numeric argument, N is
 (use-package transient
   :config
   (transient-define-prefix my/transient-prefix-leader-t ()
-    "My transient prefix command for the t leader key."
+    "My menu for the t leader key."
+    ["Eglot"
+     :if-non-nil eglot--managed-mode
+     ("e f" "Format region (or buffer)"      eglot-format)
+     ("e o" "Organise imports"               eglot-code-action-organize-imports)
+     ("e r" "Rename symbol"                  eglot-rename)
+     ("e q" "Quickfix code actions"          eglot-code-action-quickfix)
+     ("e a" "Execute code actionⁿ"           eglot-code-actions)
+     ("e d" "Documention for thing at point" eldoc)
+     ("e s" "Restart server"                 eglot-reconnect)]
     ["Whitespace"
-     ("w" "Cleanup whitespace" whitespace-cleanup)]
+     ("w"   "Cleanup whitespace"             whitespace-cleanup)]
     ["Comment"
      :if-non-nil comment-start
-     ("c" "Comment DWIM" comment-dwim)
-     ("l" "Comment line" comment-line)]
+     ("c c" "Comment DWIM"                   comment-dwim)
+     ("c l" "Comment line"                   comment-line)]
     ["Markup"
      :if-derived markdown-mode
-     ("b" "Insert bold markup" markdown-insert-bold)
-     ("i" "Insert italic markup" markdown-insert-italic)
-     ("c" "Insert code markup" markdown-insert-code)]))
+     ("m b" "Insert bold markup"             markdown-insert-bold)
+     ("m i" "Insert italic markup"           markdown-insert-italic)
+     ("m c" "Insert code markup"             markdown-insert-code)]))
