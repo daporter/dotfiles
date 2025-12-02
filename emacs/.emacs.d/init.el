@@ -312,9 +312,7 @@
   :commands (project-find-file
              project-switch-to-buffer
              project-switch-project
-             project-switch-project-open-file)
-  :config
-  (keymap-set global-map "C-c p" (cons "Project" project-prefix-map)))
+             project-switch-project-open-file))
 
 (use-package autorevert
   :custom
@@ -1771,3 +1769,7 @@
    ("C-o" . casual-re-builder-tmenu)
    :map reb-mode-map
    ("C-o" . casual-re-builder-tmenu)))
+
+(use-package disproject
+  :ensure t
+  :bind ("C-c p" . disproject-dispatch))
