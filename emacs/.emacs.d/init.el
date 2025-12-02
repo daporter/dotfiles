@@ -112,8 +112,7 @@
     (let ((format (if (equal prefix '(4))
                       "%Y%m%d%H%M%S"
                     "%Y-%m-%d %H:%M:%S")))
-      (insert (format-time-string format))))
-  (global-set-key (kbd "C-c d") #'my/insert-date-time))
+      (insert (format-time-string format)))))
 
 (use-package custom
   :custom
@@ -146,10 +145,7 @@
 
 (use-package window
   :bind
-  (("M-o"         . other-window)
-   ("C-c <left>"  . previous-buffer)
-   ("C-c <right>" . next-buffer)
-   ("C-c b"       . switch-to-buffer))
+  (("M-o" . other-window))
 
   :custom
   ;; By default, interactively switched buffers are exempt from the rules set in
@@ -280,7 +276,6 @@
 
 (use-package embrace
   :ensure t
-  :bind ("C-c @" . embrace-commander)
   :hook (org-mode . embrace-org-mode-hook))
 
 (use-package compile
@@ -763,8 +758,7 @@
   :hook (text-mode . abbrev-mode)
   :config
   ;; For some reason the following doesn't work with :bind
-  (define-key text-mode-map (kbd "C-M-i") #'completion-at-point)
-  (define-key text-mode-map (kbd "C-c P") #'repunctuate-sentences))
+  (define-key text-mode-map (kbd "C-M-i") #'completion-at-point))
 
 (use-package hideshow
   ;; https://github.com/karthink/.emacs.d/blob/master/lisp/setup-folds.el
@@ -858,9 +852,7 @@
 
 (use-package unfill
   :ensure t
-  :commands (unfill-region unfill-paragraph)
-  :bind (:map text-mode-map
-              ("C-c q" . unfill-paragraph)))
+  :commands (unfill-region unfill-paragraph))
 
 (use-package lorem-ipsum
   :ensure t
@@ -1507,8 +1499,7 @@
    '("%" . meow-query-replace)
    '("C-%" . meow-query-replace-regexp)
 
-   '("<escape>" . meow-cancel-selection)
-   '("@"        . embrace-commander))
+   '("<escape>" . meow-cancel-selection))
 
   (meow-leader-define-key
    ;; Remember, we can’t use x, h, c, m, or g. SPC isn’t a good idea either,
@@ -1526,7 +1517,9 @@
    '("0" . meow-digit-argument)
    '("t" . meow-M-x)
    '("/" . meow-keypad-describe-key)
-   '("," . comment-dwim))
+   '("r" . previous-buffer)
+   '("d" . next-buffer)
+   '("b" . switch-to-buffer))
 
   (meow-setup-indicator)
   (meow-global-mode 1))
