@@ -7,13 +7,13 @@
  '(org-agenda-files
    '("~/Dropbox/63_programming/63.02_leetcode/63.02_journal.org"))
  '(package-selected-packages
-   '(0blayout activities adaptive-wrap apheleia avy cape captain cl-generic corfu
-              corfu-candidate-overlay csv-mode dape edit-indirect editorconfig
-              ef-themes eglot embark-consult embrace erc faceup flymake-hledger
-              flymake-lua flymake-markdownlint gptel hledger-mode
-              hyprlang-ts-mode idlwave kind-icon ledger-mode ligature
-              lorem-ipsum lua-mode magit-todos map marginalia markdown-mode
-              meow-tree-sitter modus-themes nerd-icons-completion
+   '(0blayout activities adaptive-wrap apheleia avy cape captain casual-suite
+              cl-generic corfu corfu-candidate-overlay csv-mode dape
+              edit-indirect editorconfig ef-themes eglot embark-consult embrace
+              erc faceup flymake-hledger flymake-lua flymake-markdownlint gptel
+              hledger-mode hyprlang-ts-mode idlwave kind-icon ledger-mode
+              ligature lorem-ipsum lua-mode magit-todos map marginalia
+              markdown-mode meow-tree-sitter modus-themes nerd-icons-completion
               nerd-icons-dired nerd-icons-ibuffer nov ntlm olivetti orderless
               org org-anki org-modern org-noter page-break-lines pcmpl-args
               pdf-tools peg popper python python-mode rainbow-mode so-long

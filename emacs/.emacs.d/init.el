@@ -1666,3 +1666,90 @@
      ("m b" "Insert bold markup"             markdown-insert-bold)
      ("m i" "Insert italic markup"           markdown-insert-italic)
      ("m c" "Insert code markup"             markdown-insert-code)]))
+
+(use-package casual-suite
+  :ensure t
+  :bind
+  (("C-M-," . casual-avy-tmenu)
+   :map bookmark-bmenu-mode-map
+   ("C-o" . casual-bookmarks-tmenu)
+   :map calc-mode-map
+   ("C-o" . casual-calc-tmenu)
+   :map calc-alg-map
+   ("C-o" . casual-calc-tmenu)
+   :map compilation-mode-map
+   ("C-o" . casual-compile-tmenu)
+   ;; The following keybindings are recommended to support consistent behavior
+   ;; between `compilation-mode-map' and `casual-compile-tmenu'.
+   ("k" . compilation-previous-error)
+   ("j" . compilation-next-error)
+   ("o" . compilation-display-error)
+   ("[" . compilation-previous-file)
+   ("]" . compilation-next-file)
+   :map dired-mode-map
+   ("C-o" . casual-dired-tmenu)
+   ("s" . casual-dired-sort-by-tmenu)
+   ("/" . casual-dired-search-replace-tmenu)
+   :map eshell-mode-map
+   ("C-o" . casual-eshell-tmenu)
+   :map grep-mode-map
+   ("C-o" . casual-compile-tmenu)
+   ;; The following keybindings are recommended to support consistent behavior
+   ;; between `grep-mode-map' and `casual-compile-tmenu'.
+   ("k" . compilation-previous-error)
+   ("j" . compilation-next-error)
+   ("o" . compilation-display-error)
+   ("[" . compilation-previous-file)
+   ("]" . compilation-next-file)
+   :map help-mode-map
+   ("C-o" . casual-help-tmenu)
+   ;; The following keybindings are recommended to support consistent behavior
+   ;; between `help-mode' and `casual-help-tmenu'.
+   ("M-[" . help-go-back)
+   ("M-]" . help-go-forward)
+   ("p" . casual-lib-browse-backward-paragraph)
+   ("n" . casual-lib-browse-forward-paragraph)
+   ("P" . help-goto-previous-page)
+   ("N" . help-goto-next-page)
+   ("j" . forward-button)
+   ("k" . backward-button)
+   :map ibuffer-mode-map
+   ("C-o" . casual-ibuffer-tmenu)
+   ("F" . casual-ibuffer-filter-tmenu)
+   ("s" . casual-ibuffer-sortby-tmenu)
+   ("{" . ibuffer-backwards-next-marked)
+   ("}" . ibuffer-forward-next-marked)
+   ("[" . ibuffer-backward-filter-group)
+   ("]" . ibuffer-forward-filter-group)
+   ("$" . ibuffer-toggle-filter-group)
+   :map Info-mode-map
+   ("C-o" . casual-info-tmenu)
+   ("M-[" . Info-history-back)
+   ("M-]" . Info-history-forward)
+   ("p" . casual-info-browse-backward-paragraph)
+   ("n" . casual-info-browse-forward-paragraph)
+   ("h" . Info-prev)
+   ("j" . Info-next-reference)
+   ("k" . Info-prev-reference)
+   ("l" . Info-next)
+   ("/" . Info-search)
+   ("B" . bookmark-set)
+   :map makefile-mode-map
+   ("C-o" . casual-make-tmenu)
+   :map Man-mode-map ("C-o" . casual-man-tmenu)
+   ;; The following keybindings are recommended to support consistent behavior
+   ;; between `Man-mode' and `casual-man-tmenu'.
+   ("n" . casual-lib-browse-forward-paragraph)
+   ("p" . casual-lib-browse-backward-paragraph)
+   ("[" . Man-previous-section)
+   ("]" . Man-next-section)
+   ("j" . next-line)
+   ("k" . previous-line)
+   ("K" . Man-kill)
+   ("o" . casual-man-occur-options)
+   :map isearch-mode-map
+   ("C-o" . casual-isearch-tmenu)
+   :map reb-lisp-mode-map
+   ("C-o" . casual-re-builder-tmenu)
+   :map reb-mode-map
+   ("C-o" . casual-re-builder-tmenu)))
