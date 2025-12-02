@@ -113,43 +113,7 @@
                       "%Y%m%d%H%M%S"
                     "%Y-%m-%d %H:%M:%S")))
       (insert (format-time-string format))))
-  (global-set-key (kbd "C-c d") #'my/insert-date-time)
-
-  ;; The following functions were copied from
-  ;; https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/prot-lisp/prot-simple.el
-
-  (defun my/simple-new-line-above (n)
-    "Create N empty lines above the current one.
-When called interactively without a prefix numeric argument, N is
-1."
-    (interactive "p")
-    (let ((point-min (point-min)))
-      (if (or (bobp)
-              (eq (point) point-min)
-              (eq (line-number-at-pos point-min) 1))
-          (progn
-            (goto-char (line-beginning-position))
-            (dotimes (_ n) (insert "\n"))
-            (forward-line (- n)))
-        (forward-line (- n))
-        (my/simple-new-line-below n))))
-  (global-set-key (kbd "<C-S-return>") #'my/simple-new-line-above)
-
-  (defun my/simple-new-line-below (n)
-    "Create N empty lines below the current one.
-When called interactively without a prefix numeric argument, N is
-1."
-    (interactive "p")
-    (goto-char (line-end-position))
-    (dotimes (_ n) (insert "\n")))
-  (global-set-key (kbd "<C-return>") #'my/simple-new-line-below)
-
-  (defun my/open-line-and-indent ()
-    "Like `newline-and-indent', but do not move the point."
-    (interactive)
-    (save-excursion
-      (newline-and-indent)))
-  (global-set-key (kbd "C-o") #'my/open-line-and-indent))
+  (global-set-key (kbd "C-c d") #'my/insert-date-time))
 
 (use-package custom
   :custom
