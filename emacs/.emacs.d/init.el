@@ -1646,26 +1646,44 @@
   :config
   (transient-define-prefix my/transient-prefix-leader-t ()
     "My menu for the t leader key."
-    ["Eglot"
-     :if-non-nil eglot--managed-mode
-     ("e f" "Format region (or buffer)"      eglot-format)
-     ("e o" "Organise imports"               eglot-code-action-organize-imports)
-     ("e r" "Rename symbol"                  eglot-rename)
-     ("e q" "Quickfix code actions"          eglot-code-action-quickfix)
-     ("e a" "Execute code actionⁿ"           eglot-code-actions)
-     ("e d" "Documention for thing at point" eldoc)
-     ("e s" "Restart server"                 eglot-reconnect)]
+    ["Search this buffer"
+     ("s l" "Consult line"                     consult-line)
+     ("s i" "Consult imenu"                    consult-imenu)
+     ("s o" "Consult outline"                  consult-outline)]
     ["Whitespace"
-     ("w"   "Cleanup whitespace"             whitespace-cleanup)]
-    ["Comment"
-     :if-non-nil comment-start
-     ("c c" "Comment DWIM"                   comment-dwim)
-     ("c l" "Comment line"                   comment-line)]
-    ["Markup"
-     :if-derived markdown-mode
-     ("m b" "Insert bold markup"             markdown-insert-bold)
-     ("m i" "Insert italic markup"           markdown-insert-italic)
-     ("m c" "Insert code markup"             markdown-insert-code)]))
+     ("w"   "Cleanup whitespace"               whitespace-cleanup)]
+    ["Comment" :if-non-nil comment-start
+     ("c c" "Comment DWIM"                     comment-dwim)
+     ("c l" "Comment line"                     comment-line)]
+    ["Flymake" :if-non-nil flymake-mode
+     ("f f" "Consult Flymake"                  consult-flymake)
+     ("f h" "Go to next error"                 flymake-goto-next-error)
+     ("f a" "Go to previous error"             flymake-goto-prev-error)
+     ("f d" "Show diagnostics for buffer"      flymake-show-buffer-diagnostics)
+     ("f p" "Show diagnostics for project"     flymake-show-project-diagnostics)]
+    ["Spellcheck" :if-derived (text-mode prog-mode conf-mode)
+     ("p s" "Spellcheck word"                  ispell-word)
+     ("p p" "Spellcheck region"                ispell-region)
+     ("p b" "Spellcheck buffer"                ispell-buffer               :if-derived text-mode)
+     ("p c" "Spellcheck comments and strings"  ispell-comments-and-strings :if-derived (prog-mode conf-mode))
+     ("p m" "Spellcheck mail message"          ispell-message              :if-derived message-mode)]
+    ["Eglot" :if-non-nil eglot--managed-mode
+     ("e e" "Format region (or buffer)"        eglot-format)
+     ("e o" "Organise imports"                 eglot-code-action-organize-imports)
+     ("e r" "Rename symbol"                    eglot-rename)
+     ("e q" "Quickfix code actions"            eglot-code-action-quickfix)
+     ("e a" "Execute code actionⁿ"             eglot-code-actions)
+     ("e d" "Documentation for thing at point" eldoc)
+     ("e s" "Restart server"                   eglot-reconnect)]
+    ["Markup" :if-derived markdown-mode
+     ("m b" "Insert bold markup"               markdown-insert-bold)
+     ("m i" "Insert italic markup"             markdown-insert-italic)
+     ("m c" "Insert code markup"               markdown-insert-code)]
+    ["Toggle"
+     ("t h" "Highlight current line"           hl-line-mode)
+     ("t n" "Line numbers"                     display-line-numbers-mode)
+     ("t o" "Olivetti"                         olivetti-mode)
+     ("t f" "Flymake"                          flymake-mode)]))
 
 (use-package casual-suite
   :ensure t
