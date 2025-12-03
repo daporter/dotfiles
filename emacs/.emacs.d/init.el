@@ -274,10 +274,6 @@
   :custom
   (show-paren-context-when-offscreen 'overlay))
 
-(use-package embrace
-  :ensure t
-  :hook (org-mode . embrace-org-mode-hook))
-
 (use-package compile
   :hook
   (compilation-filter . ansi-color-compilation-filter)

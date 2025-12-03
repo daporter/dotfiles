@@ -9,8 +9,8 @@
  '(package-selected-packages
    '(0blayout activities adaptive-wrap apheleia avy cape captain casual-suite
               cl-generic corfu corfu-candidate-overlay csv-mode dape disproject
-              edit-indirect editorconfig ef-themes eglot embark-consult embrace
-              erc faceup flymake-hledger flymake-lua flymake-markdownlint gptel
+              edit-indirect editorconfig ef-themes eglot embark-consult erc
+              faceup flymake-hledger flymake-lua flymake-markdownlint gptel
               hledger-mode hyprlang-ts-mode idlwave kind-icon ledger-mode
               ligature lorem-ipsum lua-mode magit-todos map marginalia
               markdown-mode meow-tree-sitter modus-themes nerd-icons-completion
