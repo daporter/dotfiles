@@ -56,7 +56,7 @@ linux-firmware
 lsof
 maim
 man-pages
-markdownlint-cli2
+markdownlint-cli
 moreutils
 mpv
 msmtp

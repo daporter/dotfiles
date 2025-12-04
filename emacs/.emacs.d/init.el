@@ -903,8 +903,6 @@
 
 (use-package flymake-markdownlint
   :ensure t
-  :custom
-  (flymake-markdownlint-program "markdownlint-cli2")
   :hook
   (markdown-mode . flymake-markdownlint-setup))
 
