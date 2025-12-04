@@ -632,12 +632,7 @@
 (use-package which-key
   :ensure t
   :hook
-  (after-init)
-  :custom
-  (which-key-show-early-on-C-h t)
-  (which-key-idle-delay .75)
-  (which-key-idle-secondary-delay 0.05)
-  (which-key-side-window-max-height 0.5))
+  (after-init))
 
 (use-package vterm
   :ensure t
