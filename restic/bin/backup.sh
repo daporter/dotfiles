@@ -1,8 +1,13 @@
 #!/bin/bash
+#
 # Wrapper script for daily and offsite restic backups
 # Usage: ./backup_wrapper.sh daily
 #        ./backup_wrapper.sh offsite
 #        ./backup_wrapper.sh all
+
+set -o errexit
+set -o nounset
+set -o pipefail
 
 # --- Configuration ---
 
@@ -25,13 +30,15 @@ TMP_LOG=$(mktemp)
 
 log() {
     local MSG="$*"
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $MSG" | tee -a "$LOGFILE" "$TMP_LOG"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $MSG" | \
+        tee -a "$LOGFILE" "$TMP_LOG"
 }
 
 log_fail() {
     local MSG="$*"
     # Use red ANSI colour for failures
-    echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] \e[31m[FAIL] $MSG\e[0m" | tee -a "$LOGFILE" "$TMP_LOG"
+    echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] \e[31m[FAIL] $MSG\e[0m" | \
+        tee -a "$LOGFILE" "$TMP_LOG"
 }
 
 fail() {
@@ -94,8 +101,9 @@ backup_drive() {
     # Initialize repository if empty
     if [ -z "$(ls -A "$MOUNTPOINT")" ]; then
         log "Initializing restic repository..."
-        if ! restic -r "$MOUNTPOINT" init 2>&1 | tee -a "$LOGFILE" "$TMP_LOG"; then
-            fail "Repository initialization failed"
+        if ! restic -r "$MOUNTPOINT" init 2>&1 | \
+                tee -a "$LOGFILE" "$TMP_LOG"; then
+            fail "Repository initialization failed; aborting."
         fi
     fi
 
@@ -109,8 +117,9 @@ backup_drive() {
     log "Running backup..."
     if ! restic -r "$MOUNTPOINT" backup \
          --exclude-file="$HOME/.config/restic/restic-exclude.txt"  \
-         "$SOURCE" 2>&1 | tee -a "$LOGFILE"; then
-        fail "Backup failed"
+         "$SOURCE" 2>&1 | \
+            tee -a "$LOGFILE"; then
+        fail "Backup failed; aborting."
     else
         log "Backup completed successfully."
     fi
@@ -118,10 +127,14 @@ backup_drive() {
     # Prune old snapshots if policy provided
     if [ -n "$PRUNE_ARGS" ]; then
         log "Pruning old snapshots..."
-        # Deliberately use $PRUNE_ARGS unquoted because word splitting is
-        # necessary for the value to be treated as separate arguments.
-        if ! restic -r "$MOUNTPOINT" forget $PRUNE_ARGS --prune 2>&1 | tee -a "$LOGFILE" "$TMP_LOG"; then
-            fail "Prune failed"
+        # Deliberately use $PRUNE_ARGS unquoted since it holds separate
+        # arguments.
+        # shellcheck disable=SC2086
+        if ! restic -r "$MOUNTPOINT" forget $PRUNE_ARGS --prune 2>&1 | \
+                tee -a "$LOGFILE" "$TMP_LOG"; then
+            log_fail "Prune failed"
+        else
+            log "Prune completed successfully."
         fi
     fi
 
@@ -137,8 +150,9 @@ backup_drive() {
 
     # Verify repository
     log "Verifying repository..."
-    if ! restic -r "$MOUNTPOINT" check --read-data-subset=1% 2>&1 | tee -a "$LOGFILE" "$TMP_LOG"; then
-        fail "Repository verification failed"
+    if ! restic -r "$MOUNTPOINT" check --read-data-subset=1% 2>&1 | \
+            tee -a "$LOGFILE" "$TMP_LOG"; then
+        log_fail "Repository verification failed."
     else
         log "Repository verification succeeded."
     fi
@@ -166,7 +180,7 @@ unmount_repo() {
     if mountpoint -q "$MOUNTPOINT"; then
         log "Unmounting $MOUNTPOINT…"
         if ! umount "$MOUNTPOINT"; then
-            fail "ERROR: Failed to unmount $MOUNTPOINT"
+            log_fail "ERROR: Failed to unmount $MOUNTPOINT"
         fi
         log "Unmounted successfully."
     else
