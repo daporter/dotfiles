@@ -1630,6 +1630,10 @@
                  "/custom/target/emacskeys-0.1.0-SNAPSHOT-standalone.jar"))))
 
 (use-package transient
+  :preface
+  (defun my/eglot-active-p ()
+    (and (boundp 'eglot--managed-mode)
+         eglot--managed-mode))
   :config
   (transient-define-prefix my/transient-prefix-leader-t ()
     "My menu for the t leader key."
@@ -1659,7 +1663,7 @@
       ("p b" "Buffer"                ispell-buffer               :if-derived text-mode)
       ("p c" "Comments & strings"    ispell-comments-and-strings :if-derived (prog-mode conf-mode))
       ("p m" "Message"               ispell-message              :if-derived message-mode)]
-     ["Eglot" :if-non-nil eglot--managed-mode
+     ["Eglot" :if my/eglot-active-p
       ("e e" "Format region"         eglot-format)
       ("e o" "Organise imports"      eglot-code-action-organize-imports)
       ("e r" "Rename symbol"         eglot-rename)
