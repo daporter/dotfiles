@@ -1774,3 +1774,10 @@
                                    missing-newline-at-eof)))
   :hook
   (makefile-mode . my/makefile-whitespace-setup))
+
+(use-package sudo-edit
+  :ensure t
+  :after embark
+  :bind
+  ((:map embark-file-map               ("R" . sudo-edit-find-file))
+   (:map embark-become-file+buffer-map ("R" . sudo-edit-find-file))))
