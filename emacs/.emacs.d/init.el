@@ -646,6 +646,8 @@
   ;; Some default faces aren’t visible on spaces or empty lines:
   (whitespace-empty ((t (:inherit whitespace-trailing))))
   (whitespace-tab ((t (:inherit magit-diff-whitespace-warning))))
+  (whitespace-indentation ((t (:inherit diff-removed))))
+  (whitespace-space-after-tab ((t (:inherit whitespace-trailing))))
   :hook
   (((text-mode prog-mode conf-mode) . whitespace-mode)
    (before-save . delete-trailing-whitespace)))
@@ -1759,3 +1761,16 @@
 (use-package disproject
   :ensure t
   :bind ("C-c p" . disproject-dispatch))
+
+(use-package make-mode
+  :preface
+  (defun my/makefile-whitespace-setup ()
+    (setq-local whitespace-style '(face
+                                   indentation::space
+                                   space-after-tab::tab
+                                   space-before-tab::space
+                                   trailing
+                                   empty
+                                   missing-newline-at-eof)))
+  :hook
+  (makefile-mode . my/makefile-whitespace-setup))
