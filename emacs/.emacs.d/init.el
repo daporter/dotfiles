@@ -1546,9 +1546,16 @@
 
 (use-package csv-mode
   :ensure t
-  :mode (("\\.csv\\'" . csv-align-mode))
-  :config
-  (add-hook 'csv-align-mode-hook #'toggle-truncate-lines))
+  :preface
+  (defun my/csv-mode-setup ()
+    (progn
+      (visual-line-mode -1)
+      (toggle-truncate-lines 1)))
+  :mode "\\.csv\\'"
+  :hook
+  ((csv-mode . my/csv-mode-setup)
+   (csv-mode . csv-guess-set-separator)
+   (csv-mode . csv-align-mode)))
 
 (use-package gptel
   :ensure t
