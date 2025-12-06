@@ -1660,8 +1660,8 @@
       ("c c" "Comment DWIM"          comment-dwim)
       ("c l" "Comment line"          comment-line)]
      ["Spellcheck" :if-derived (text-mode prog-mode conf-mode)
-      ("p s" "Word"                  ispell-word)
       ("p p" "Region"                ispell-region)
+      ("p s" "Word"                  ispell-word)
       ("p b" "Buffer"                ispell-buffer               :if-derived text-mode)
       ("p c" "Comments & strings"    ispell-comments-and-strings :if-derived (prog-mode conf-mode))
       ("p m" "Message"               ispell-message              :if-derived message-mode)]
@@ -1763,7 +1763,9 @@
    :map reb-lisp-mode-map
    ("C-o" . casual-re-builder-tmenu)
    :map reb-mode-map
-   ("C-o" . casual-re-builder-tmenu)))
+   ("C-o" . casual-re-builder-tmenu)
+   :map csv-mode-map
+   ("C-o" . casual-csv-tmenu)))
 
 (use-package disproject
   :ensure t
