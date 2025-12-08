@@ -1790,3 +1790,9 @@
   :bind
   ((:map embark-file-map               ("R" . sudo-edit-find-file))
    (:map embark-become-file+buffer-map ("R" . sudo-edit-find-file))))
+
+(use-package flymake-yamllint
+  :ensure t
+  :after yaml-ts-mode
+  :hook
+  (yaml-ts-mode . flymake-yamllint-setup))

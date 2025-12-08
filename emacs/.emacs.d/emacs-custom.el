@@ -10,16 +10,17 @@
    '(0blayout activities adaptive-wrap apheleia avy cape captain casual-suite
               cl-generic corfu corfu-candidate-overlay csv-mode dape disproject
               edit-indirect editorconfig ef-themes eglot embark-consult erc
-              faceup flymake-hledger flymake-lua flymake-markdownlint gptel
-              hledger-mode hyprlang-ts-mode idlwave kind-icon ledger-mode
-              ligature lorem-ipsum lua-mode magit-todos map marginalia
-              markdown-mode meow-tree-sitter modus-themes nerd-icons-completion
-              nerd-icons-dired nerd-icons-ibuffer nov ntlm olivetti orderless
-              org org-anki org-modern org-noter page-break-lines pcmpl-args
-              pdf-tools peg popper python python-mode rainbow-mode so-long
-              soap-client spacious-padding sudo-edit svg titlecase track-changes
-              tramp transient unfill use-package verilog-mode vertico
-              visual-fill-column vterm which-key window-tool-bar))
+              faceup flymake-hledger flymake-lua flymake-markdownlint
+              flymake-yamllint gptel hledger-mode hyprlang-ts-mode idlwave
+              kind-icon ledger-mode ligature lorem-ipsum lua-mode magit-todos
+              map marginalia markdown-mode meow-tree-sitter modus-themes
+              nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer nov ntlm
+              olivetti orderless org org-anki org-modern org-noter
+              page-break-lines pcmpl-args pdf-tools peg popper python
+              python-mode rainbow-mode so-long soap-client spacious-padding
+              sudo-edit svg titlecase track-changes tramp transient unfill
+              use-package verilog-mode vertico visual-fill-column vterm
+              which-key window-tool-bar))
  '(package-vc-selected-packages '((dape :url "https://github.com/svaante/dape.git"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

@@ -189,6 +189,8 @@ xorg-xvinfo
 xorg-xwd
 xorg-xwud
 yaml-language-server
+yamlfmt
+yamllint
 yt-dlp
 zathura
 zathura-pdf-mupdf
