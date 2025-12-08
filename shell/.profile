@@ -7,8 +7,8 @@
 
 # Future interactive shell invocations will process any file pointed to by $ENV.
 if [ -r "$HOME"/.kshrc ]; then
-	ENV=$HOME/.kshrc
-	export ENV
+    ENV=$HOME/.kshrc
+    export ENV
 fi
 
 LANG=en_AU.UTF-8
@@ -59,12 +59,12 @@ PARINIT='78 rTbgqR B=.,?_A_a Q=_s>|'
 export PARINIT
 
 if [ -d "$HOME"/.profile.d ]; then
-	for sh in "$HOME"/.profile.d/*.sh; do
-		if [ -r "$sh" ]; then
-			. "$sh"
-		fi
-	done
-	unset sh
+    for sh in "$HOME"/.profile.d/*.sh; do
+        if [ -r "$sh" ]; then
+            . "$sh"
+        fi
+    done
+    unset sh
 fi
 
 # Systemd doesn't inherit environment variables, so we must make them available

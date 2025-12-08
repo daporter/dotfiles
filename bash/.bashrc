@@ -14,7 +14,7 @@
 #   For almost every purpose, shell functions are preferred over aliases.
 
 # Correct small errors in directory names given to the `cd` builtin
-shopt -s cdspell        
+shopt -s cdspell
 
 # Correct spelling errors during tab-completion
 shopt -s dirspell 2> /dev/null
@@ -42,7 +42,7 @@ bind "set completion-ignore-case on"
 bind "set mark-symlinked-directories on"
 
 # Append history to $HISTFILE rather than overwriting it
-shopt -s histappend     
+shopt -s histappend
 
 # Save multi-line commands as one command
 shopt -s cmdhist
@@ -56,7 +56,7 @@ HISTCONTROL="erasedups:ignoreboth"
 # Don't record uninteresting commands
 export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
 
-alias ls="ls -ah --color=auto"
+alias ls=eza
 
 for sh in "$HOME"/.rc.d/*.sh ; do
     # shellcheck source=/dev/null
