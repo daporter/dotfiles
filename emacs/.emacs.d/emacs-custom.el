@@ -17,10 +17,10 @@
               nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer nov ntlm
               olivetti orderless org org-anki org-modern org-noter
               page-break-lines pcmpl-args pdf-tools peg popper python
-              python-mode rainbow-mode so-long soap-client spacious-padding
-              sudo-edit svg titlecase track-changes tramp transient unfill
-              use-package verilog-mode vertico visual-fill-column vterm
-              which-key window-tool-bar))
+              python-mode rainbow-mode reformatter so-long soap-client
+              spacious-padding sudo-edit svg titlecase track-changes tramp
+              transient unfill use-package verilog-mode vertico
+              visual-fill-column vterm which-key window-tool-bar))
  '(package-vc-selected-packages '((dape :url "https://github.com/svaante/dape.git"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

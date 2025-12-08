@@ -936,14 +936,24 @@
 (use-package conf-mode
   :mode "\\.service\\'")
 
+(use-package reformatter
+  :ensure t)
+
 (use-package yaml-ts-mode
-  :ensure t
+  :after reformatter
   :preface
   (defun my/yaml-set-tab-width ()
     (setq tab-width 2))
   :mode "\\.ya?ml\\'"
   :hook
-  (yaml-ts-mode . my/yaml-set-tab-width))
+  ((yaml-ts-mode . my/yaml-set-tab-width)
+   (yaml-ts-mode . yamlfmt-on-save-mode))
+  :config
+  (reformatter-define yamlfmt
+    :program "yamlfmt"
+    :args '("-in" "-")
+    :stdin t
+    :stdout t))
 
 (use-package tramp
   :defer t
