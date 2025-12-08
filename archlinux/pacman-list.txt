@@ -27,7 +27,6 @@ firefox
 gdb
 git
 github-cli
-glab
 gnome-keyring
 gparted
 grub
@@ -49,7 +48,6 @@ jq
 kitty
 ledger
 libgccjit
-libreoffice-still
 libvips
 libvterm
 linux
