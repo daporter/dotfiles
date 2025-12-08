@@ -20,6 +20,7 @@ dust
 emacs-wayland
 exfat-utils
 eza
+fastfetch
 fd
 feh
 firefox
