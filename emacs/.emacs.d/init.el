@@ -199,15 +199,15 @@
 (use-package faces
   :config
   (set-face-attribute 'default nil
-                      :family "Jetbrains Mono"
+                      :family "JetBrainsMono Nerd Font Mono"
                       :height 110
                       :weight 'medium)
   (set-face-attribute 'fixed-pitch nil
-                      :family "Jetbrains Mono"
+                      :family "JetBrainsMono Nerd Font Mono"
                       :height 110
                       :weight 'medium)
   (set-face-attribute 'fixed-pitch-serif nil
-                      :family "Jetbrains Mono"
+                      :family "JetBrainsMono Nerd Font Mono"
                       :height 110
                       :weight 'medium)
   (set-face-attribute 'variable-pitch nil
