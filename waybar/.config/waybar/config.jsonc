@@ -71,7 +71,7 @@
   },
 
   "pulseaudio": {
-    "format": "{icon}   {volume}%",
+    "format": "{icon} {volume}%",
     "format-muted": "",
     "format-icons": {
       "default": ["", "", ""]
@@ -84,7 +84,7 @@
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
     "format": "{icon}",
     "format-wifi": " {essid} ({signalStrength}%)",
-    "format-ethernet": "󰛳  {ipaddr}",
+    "format-ethernet": "󰛳 {ipaddr}",
     "format-linked": " {ifname} (No IP)",
     "format-disconnected": "󰤮",
     "format-alt": "{ifname}: {ipaddr}/{cidr}",
@@ -96,14 +96,14 @@
   },
 
   "cpu": {
-    "format": "󰍛  {usage}%",
+    "format": "󰍛 {usage}%",
     "tooltip": true,
     "on-click": "xdg-terminal-exec btop",
     "interval": 2
   },
 
   "memory": {
-    "format": "󰘚  {}%",
+    "format": "󰘚 {}%",
     "tooltip-format": "{used:0.1f}G / {total:0.1f}G used",
     "on-click": "xdg-terminal-exec btop"
   },
