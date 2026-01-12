@@ -23,30 +23,30 @@ RATIO=$(echo "$ORIGINAL / $SMALL" | bc --mathlib)
 echo "$PDF : from $ORIGINAL to $SMALL ($RATIO)"
 
 if (( SMALL < 4096 )); then
-	echo "Error: Compressed PDF size is $SMALL!"
-	exit 1
+    echo "Error: Compressed PDF size is $SMALL!"
+    exit 1
 fi
 
 if (( $(echo "$RATIO > 1.5" | bc --mathlib) ));
 then
-	# overwrite original with compressed
-	exiftool -TagsFromFile "$PDF" "$TMP" || true # copy over all the metadata that ocrmypdf/Ghostscript erases by default: <https://ocrmypdf.readthedocs.io/en/latest/introduction.html#limitations>
-	mv "$TMP" "$1"
+    # overwrite original with compressed
+    exiftool -TagsFromFile "$PDF" "$TMP" || true # copy over all the metadata that ocrmypdf/Ghostscript erases by default: <https://ocrmypdf.readthedocs.io/en/latest/introduction.html#limitations>
+    mv "$TMP" "$1"
 else
-	# Perhaps we didn't ocrmypdf because it didn't save space, but we may want to for OCR anyway.
-	# Here, we *force* OCR on PDFs which have no or suspiciously little text (<50 words per page on average):
-	PAGES=$(exiftool -quiet -printFormat '$PageCount' -PageCount "$PDF")
-	WORDS=$(pdftotext "$PDF" - | wc --words)
-	TOOSMALL=$((WORDS / PAGES < 50))
-	if [[ $TOOSMALL == 1 ]]; then
-		echo "Forcing OCR: $1 : $WORDS • $PAGES • $((WORDS / PAGES)) • $TOOSMALL"
-		echo "----"
-		pdftotext "$TMP" - | head
-		echo "----"
-		ocrmypdf --force-ocr --optimize 3 --jbig2-lossy "$PDF" "$TMP" &> /dev/null || true
-		exiftool -TagsFromFile "$PDF" "$TMP" || true
-		mv "$TMP" "$1"
-	fi
+    # Perhaps we didn't ocrmypdf because it didn't save space, but we may want to for OCR anyway.
+    # Here, we *force* OCR on PDFs which have no or suspiciously little text (<50 words per page on average):
+    PAGES=$(exiftool -quiet -printFormat '$PageCount' -PageCount "$PDF")
+    WORDS=$(pdftotext "$PDF" - | wc --words)
+    TOOSMALL=$((WORDS / PAGES < 50))
+    if [[ $TOOSMALL == 1 ]]; then
+        echo "Forcing OCR: $1 : $WORDS • $PAGES • $((WORDS / PAGES)) • $TOOSMALL"
+        echo "----"
+        pdftotext "$TMP" - | head
+        echo "----"
+        ocrmypdf --force-ocr --optimize 3 --jbig2-lossy "$PDF" "$TMP" &> /dev/null || true
+        exiftool -TagsFromFile "$PDF" "$TMP" || true
+        mv "$TMP" "$1"
+    fi
 fi
 # cleanup
 rm "$PDF" "$TMP" &> /dev/null || true
