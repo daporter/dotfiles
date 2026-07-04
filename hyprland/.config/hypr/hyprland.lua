@@ -70,7 +70,6 @@ hl.config({
         repeat_delay   = 300,
 
         sensitivity    = -0.25,
-        scroll_factor  = 0.25,
         natural_scroll = true
     },
 
