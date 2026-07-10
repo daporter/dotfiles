@@ -52,7 +52,10 @@ automatically once stowed. Prefer this over editing `bash/.bashrc` directly.
 ## Package manifests
 
 `archlinux/.NO-STOW/pacman-list.txt` (official repos) and
-`archlinux/.NO-STOW/aur-list.txt` (AUR) are hand-maintained records of installed
-packages — they are not applied automatically and must be regenerated manually
-when the system changes. They live under `.NO-STOW/` so `stow archlinux` never
+`archlinux/.NO-STOW/aur-list.txt` (AUR) record the explicitly-installed
+packages. They are regenerated automatically after every `pacman` install/remove
+by PostTransaction hooks in `/etc/pacman.d/hooks/` (`pacman-list.hook`,
+`aur-list.hook`), which write `pacman -Qqen` / `pacman -Qqem` into these files;
+no manual step is needed. They are records only — never applied back to the
+system automatically. They live under `.NO-STOW/` so `stow archlinux` never
 symlinks them into `$HOME`.
