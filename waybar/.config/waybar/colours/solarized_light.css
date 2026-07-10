@@ -1,0 +1,15 @@
+@define-color fg1     #586e75; /* optional emphasised content */
+@define-color fg2     #657b83; /* primary content */
+@define-color fg3     #93a1a1; /* secondary content */
+
+@define-color bg1     #eee8d5; /* background highlights */
+@define-color bg2     #fdf6e3; /* background */
+
+@define-color yellow  #b58900;
+@define-color orange  #cb4b16;
+@define-color red     #dc322f;
+@define-color magenta #d33682;
+@define-color violet  #6c71c4;
+@define-color blue    #268bd2;
+@define-color cyan    #2aa198;
+@define-color green   #859900;

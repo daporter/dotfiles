@@ -1,122 +1,133 @@
-@define-color base_color #fdf6e3;
-@define-color bg_color #fdf6e3;
+@import "colours/solarized_light.css";
 
 * {
-  all: unset;
-}
-
-* {
+  border-radius: 0;
+  border: none;
   font-family: "JetBrainsMono Nerd Font Propo", Inter, sans-serif;
   font-size: 13px;
   font-weight: 500;
-  border: none;
-  border-radius: 0;
+  margin: 0;
   min-height: 0;
+  padding: 0;
 }
 
 window#waybar {
-  background-color: #fdf6e3;
-  border-bottom: 2px solid #93a1a1;
+  background-color: transparent;
+  color: @fg1;
 }
 
-#workspaces,
-#clock,
-#cpu,
-#memory,
-#network,
-#pulseaudio,
-#tray,
-#idle_inhibitor,
-#keyboard-state,
-#custom-power {
-  background-color: transparent;
-  padding: 2px 12px;
-  margin: 0px 0px;
-  border-radius: 0px;
-  color: #586e75;
+.modules-left {
+  background-color: @bg2;
+  border-radius: 40px;
+  border: 1px solid @fg3;
+  margin-left: 6px;
+  margin-right: 6px;
+  padding: 0 12px;
+}
+
+.modules-center {
+  background-color: @bg2;
+  border-radius: 40px;
+  border: 1px solid @fg3;
+  padding: 0 12px;
+}
+
+.modules-right {
+  background-color: @bg2;
+  border-radius: 40px;
+  border: 1px solid @fg3;
+  margin-right: 6px;
+  padding: 0 12px;
+}
+
+tooltip {
+  background-color: @bg2;
+  border-radius: 12px;
+  border: 1px solid @fg3;
+}
+
+tooltip label {
+  padding: 6px;
+  font-family: "JetBrainsMono Nerd Font Propo", Inter, sans-serif;
+  font-size: 13px;
 }
 
 #workspaces {
-  padding: 0px 4px;
+  background-color: @bg2;
+  color: @fg3;
 }
 
 #workspaces button {
-  padding: 4px 10px;
-  border-radius: 0px;
-  color: #93a1a1;
-  background-color: #fdf6e3;
-  border-bottom: 2px solid transparent;
-}
-
-#workspaces button.persistent {
-  color: #93a1a1;
-}
-
-#workspaces button.empty {
-  color: #93a1a1;
-}
-
-#workspaces button:not(.empty) {
-  color: #586e75;
-  font-weight: 600;
-  background-color: #eee8d5;
-  border-bottom: 2px solid #93a1a1;
+  background-color: @bg2;
+  box-shadow: inset 0 -2px @blue;
+  color: @fg1;
+  font-weight: bold;
+  padding: 4px 12px;
+  transition: all 0.3s ease-in-out;
 }
 
 #workspaces button.active {
-  color: #268bd2;
-  background-color: #e8dfc5;
-  font-weight: 600;
-  border-bottom: 3px solid #268bd2;
+  background-color: @blue;
+  color: @bg2;
+  transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.empty {
+  box-shadow: none;
+  color: @fg3;
 }
 
 #workspaces button:hover {
-  background-color: #eee8d5;
-  color: #268bd2;
+  background-color: @violet;
+  background-size: 400% 400%;
+  box-shadow: none;
+  color: @bg2;
+}
+
+#workspaces button.urgent {
+  background-color: @red;
+  background-size: 400% 400%;
+  box-shadow: none;
+  color: @bg2;
+  transition: all 0.3s ease-in-out;
+}
+
+#clock,
+#keyboard-state,
+#idle_inhibitor,
+#pulseaudio,
+#network,
+#cpu,
+#memory,
+#tray,
+#custom-power {
+  background-color: @bg2;
+  color: @fg1;
+  padding: 2px 12px;
 }
 
 #keyboard-state {
-  color: #cb4b16;
-  font-weight: 600;
-  min-width: 16px;
+  color: @fg3;
 }
 
-#keyboard-state > label.locked {
-  background-color: #eee8d5;
-  color: #cb4b16;
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1px solid #93a1a1;
-  box-shadow: 0 2px 0 0 #93a1a1;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-}
-
-#temperature.critical {
-  color: #dc322f;
-  font-weight: 600;
-}
-
-#network.disconnected {
-  color: #dc322f;
-}
-
-#pulseaudio.muted {
-  color: #93a1a1;
+#keyboard-state label.locked {
+  color: @red;
 }
 
 #idle_inhibitor {
-  color: #93a1a1;
+  color: @fg3;
 }
 
 #idle_inhibitor.activated {
-  color: #859900;
+  color: @green;
 }
 
-#tray {
-  padding: 4px 8px;
-  margin-top: -2px;
+#pulseaudio.muted {
+  color: @bg1;
+}
+
+#network.disconnected {
+  color: @red;
 }
 
 #tray > .passive {
@@ -128,21 +139,12 @@ window#waybar {
 }
 
 #custom-power {
-  color: #dc322f;
+  color: @red;
   padding: 4px 10px;
 }
 
 #custom-power:hover {
-  background-color: #dc322f;
-  color: #fdf6e3;
+  background-color: @red;
+  color: @bg2;
 }
 
-tooltip {
-  background-color: #fdf6e3;
-  border: 2px solid #93a1a1;
-  color: #586e75;
-}
-
-tooltip label {
-  color: #586e75;
-}
