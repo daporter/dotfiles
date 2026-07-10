@@ -114,6 +114,40 @@
                     "%Y-%m-%d %H:%M:%S")))
       (insert (format-time-string format)))))
 
+;; `package-autoremove' deletes every installed package that is neither
+;; named here nor a dependency of one that is.  package.el records a
+;; package here only when it installs it, and `use-package' :ensure
+;; installs only when the package is missing, so the list drifts out of
+;; step with this file and autoremove starts offering to delete things
+;; that are in use.  Declare it by hand instead.  Must run after
+;; `custom-file' is loaded, which also sets this variable.
+;;
+;; `setq' would not survive: `custom-file' records the value in the
+;; `user' theme, and every `load-theme' below runs `enable-theme', which
+;; recalculates themed variables and would restore the stored value.
+;; Going through Custom overrides that entry instead.
+;;
+;; eglot, flymake, project, tramp and use-package are here because they
+;; are ELPA upgrades of built-ins (see `package-install-upgrade-built-in'
+;; above); dropping them would delete the upgrade and silently fall back
+;; to the bundled version.
+(custom-set-variables
+ '(package-selected-packages
+   '(activities adaptive-wrap apheleia avy cape captain
+     casual-suite consult corfu corfu-candidate-overlay csv-mode
+     dape denote disproject editorconfig ef-themes eglot embark
+     embark-consult expand-region flymake flymake-hledger
+     flymake-lua flymake-markdownlint flymake-yamllint gptel
+     hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
+     ligature lorem-ipsum lua-mode magit magit-todos marginalia
+     markdown-mode meow meow-tree-sitter modus-themes nerd-icons
+     nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
+     nov olivetti orderless org-anki org-modern org-noter
+     page-break-lines pcmpl-args pdf-tools popper project
+     python-mode reformatter spacious-padding sudo-edit titlecase
+     tramp unfill use-package vertico visual-fill-column vterm
+     which-key)))
+
 (use-package custom
   :custom
   (custom-safe-themes t))
