@@ -159,10 +159,10 @@ hl.bind("SUPER+SLASH", hl.dsp.exec_cmd("firefox --new-window ~/.config/hypr/keyb
 hl.bind("SUPER+CTRL+SLASH", hl.dsp.exec_cmd("imv -s full -w 'Meow Keybindings' ~/dotfiles/emacs/keymap_meow.svg"))
 
 -- Window resizing
-hl.bind("SUPER+CTRL+A", hl.dsp.window.resize({ x = -20, y = 0 }))
-hl.bind("SUPER+CTRL+E", hl.dsp.window.resize({ x = 0, y = -20 }))
-hl.bind("SUPER+CTRL+I", hl.dsp.window.resize({ x = 0, y = 20 }))
-hl.bind("SUPER+CTRL+H", hl.dsp.window.resize({ x = 20, y = 0 }))
+hl.bind("SUPER+CTRL+A", hl.dsp.window.resize({ x = -20, y = 0, relative = true }))
+hl.bind("SUPER+CTRL+E", hl.dsp.window.resize({ x = 0, y = -20, relative = true }))
+hl.bind("SUPER+CTRL+I", hl.dsp.window.resize({ x = 0, y = 20, relative = true }))
+hl.bind("SUPER+CTRL+H", hl.dsp.window.resize({ x = 20, y = 0, relative = true }))
 hl.bind("SUPER+mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Layout (Dwindle)
