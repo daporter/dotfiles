@@ -200,15 +200,15 @@
   :config
   (set-face-attribute 'default nil
                       :family "JetBrainsMono Nerd Font Mono"
-                      :height 110
+                      :height 100
                       :weight 'medium)
   (set-face-attribute 'fixed-pitch nil
                       :family "JetBrainsMono Nerd Font Mono"
-                      :height 110
+                      :height 100
                       :weight 'medium)
   (set-face-attribute 'fixed-pitch-serif nil
                       :family "JetBrainsMono Nerd Font Mono"
-                      :height 110
+                      :height 100
                       :weight 'medium)
   (set-face-attribute 'variable-pitch nil
                       :family "Inter"
