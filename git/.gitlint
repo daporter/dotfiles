@@ -1,5 +1,9 @@
 # All these sections are optional, edit this file as you like.
-# [general]
+[general]
+# Don't require a commit body: single-line commits are fine and are the norm
+# here. B5 = body-min-length, B6 = body-is-missing.
+ignore=B5,B6
+
 # Ignore certain rules, you can reference them by their id or by their full name
 # ignore=title-trailing-punctuation, T3
 

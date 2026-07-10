@@ -3,6 +3,7 @@
 	email = david@daporter.net
 [core]
         excludesfile = ~/.gitignore
+        hooksPath = ~/.config/git/hooks
 [color]
         diff = auto
         status = auto

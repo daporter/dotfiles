@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#
+# commit-msg hook: lint the commit message with gitlint.
+#
+# Wired globally via core.hooksPath in ~/.config/git/config, so this runs for
+# every repository. Skips silently when gitlint isn't installed. Uses the
+# repository's own .gitlint if it has one, otherwise the global ~/.gitlint.
+
+command -v gitlint >/dev/null 2>&1 || exit 0
+
+config=()
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+if [[ -n $repo_root && -f $repo_root/.gitlint ]]; then
+    config=(-C "$repo_root/.gitlint")
+elif [[ -f $HOME/.gitlint ]]; then
+    config=(-C "$HOME/.gitlint")
+fi
+
+exec gitlint "${config[@]}" --msg-filename "$1"
