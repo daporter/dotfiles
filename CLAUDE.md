@@ -7,8 +7,8 @@ Personal dotfiles for an Arch Linux / Hyprland (Wayland) desktop, managed with G
 ## Stow layout and workflow
 
 Each top-level directory is a **Stow package**. Its contents mirror the target
-tree relative to `$HOME` — e.g. `ghostty/.config/ghostty/config` deploys to
-`~/.config/ghostty/config`, and `bash/.bashrc` deploys to `~/.bashrc`.
+tree relative to `$HOME` — e.g. `ghostty/.config/ghostty/config.ghostty` deploys
+to `~/.config/ghostty/config.ghostty`, and `bash/.bashrc` deploys to `~/.bashrc`.
 
 `.stowrc` pins `--target=$HOME` and `--ignore='\.NO-STOW'`, so run Stow from the
 repo root:
