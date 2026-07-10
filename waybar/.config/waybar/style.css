@@ -100,7 +100,7 @@ tooltip label {
 #cpu,
 #memory,
 #tray,
-#custom-power {
+#custom-notification {
   background-color: @bg2;
   color: @fg1;
   padding: 2px 12px;
@@ -138,13 +138,6 @@ tooltip label {
   -gtk-icon-effect: highlight;
 }
 
-#custom-power {
-  color: @red;
-  padding: 4px 10px;
+#custom-notification {
+  font-size: 16px;
 }
-
-#custom-power:hover {
-  background-color: @red;
-  color: @bg2;
-}
-
