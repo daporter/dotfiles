@@ -2,4 +2,4 @@
 
 # QMK tab completion.
 
-source ~/src/qmk_firmware/util/qmk_tab_complete.sh
+source ~/code/qmk_firmware/util/qmk_tab_complete.sh
