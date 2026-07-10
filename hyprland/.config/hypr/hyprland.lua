@@ -69,7 +69,6 @@ hl.config({
         repeat_rate    = 90,
         repeat_delay   = 300,
 
-        sensitivity    = -0.25,
         natural_scroll = true
     },
 
@@ -87,6 +86,18 @@ hl.config({
     dwindle = {
         force_split = 2 -- to the right or below
     }
+})
+
+-- Kensington SlimBlade Pro trackball: use adaptive acceleration so fast
+-- movement (crossing the screen) and slow movement (grabbing a scrollbar)
+-- both feel comfortable, rather than one fixed sensitivity for both.
+-- The trackball exposes a second HID interface for buttons
+-- (...-keyboard-1), but `libinput list-devices` shows it has no motion
+-- capability (Accel profiles: n/a), so only this interface needs it.
+hl.device({
+    name = "kensington-slimblade-pro-trackball(wired)-kensington-slimblade-pro-trackball(wired)",
+    sensitivity = -0.7,
+    accel_profile = "adaptive",
 })
 
 --

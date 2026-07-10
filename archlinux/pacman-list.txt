@@ -18,6 +18,7 @@ dateutils
 duf
 dust
 emacs-wayland
+evtest
 exfat-utils
 eza
 fastfetch
@@ -49,6 +50,7 @@ jq
 kitty
 ledger
 libgccjit
+libinput-tools
 libvips
 libvterm
 linux
