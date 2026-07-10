@@ -1690,6 +1690,8 @@
 
 (use-package casual-suite
   :ensure t
+  :custom
+  (casual-lib-use-unicode t)
   :bind
   (("C-M-," . casual-avy-tmenu)
    :map bookmark-bmenu-mode-map
