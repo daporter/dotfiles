@@ -1,30 +1,30 @@
 hl.monitor({
-    output = "DP-1",
-    mode = "2560x1440@120Hz",
-    position = "0x0",
-    scale = 1,
+	output = "DP-1",
+	mode = "2560x1440@120Hz",
+	position = "0x0",
+	scale = 1,
 })
 
 hl.on("hyprland.start", function()
-    hl.exec_cmd("hyprctl setcursor Adwaita 24")
-    hl.exec_cmd("hyprpaper")
-    hl.exec_cmd("waybar")
-    hl.exec_cmd("hypridle")
-    hl.exec_cmd("wlsunset -l -35.3 -L 149.1 -t 3700 -T 5500")
-    hl.exec_cmd("swaync")
-    hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
-    hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=Hyprland")
+	hl.exec_cmd("hyprctl setcursor Adwaita 24")
+	hl.exec_cmd("hyprpaper")
+	hl.exec_cmd("waybar")
+	hl.exec_cmd("hypridle")
+	hl.exec_cmd("wlsunset -l -35.3 -L 149.1 -t 3700 -T 5500")
+	hl.exec_cmd("swaync")
+	hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=Hyprland")
 
-    -- From instructions at https://wiki.hypr.land/Hypr-Ecosystem/hyprpolkitagent/
-    hl.exec_cmd("systemctl --user start hyprpolkitagent")
+	-- From instructions at https://wiki.hypr.land/Hypr-Ecosystem/hyprpolkitagent/
+	hl.exec_cmd("systemctl --user start hyprpolkitagent")
 
-    hl.exec_cmd("1password --silent")
-    hl.exec_cmd("emacs --daemon")
-    hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
-    hl.exec_cmd("goldendict --group-name Main --popup-group-name Popup")
+	hl.exec_cmd("1password --silent")
+	hl.exec_cmd("emacs --daemon")
+	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
+	hl.exec_cmd("goldendict --group-name Main --popup-group-name Popup")
 
-    -- Launch a terminal on the scratchpad.
-    hl.exec_cmd("kitty --title scratchpad")
+	-- Launch a terminal on the scratchpad.
+	hl.exec_cmd("kitty --title scratchpad")
 end)
 
 hl.env("SSH_AUTH_SOCK", "$XDG_RUNTIME_DIR/gcr/ssh")
@@ -52,40 +52,40 @@ hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
 hl.env("QT_SCALE_FACTOR", "1")
 
 hl.config({
-    general = {
-        gaps_in          = 3,
-        gaps_out         = 6,
-        border_size      = 2,
-        resize_on_border = true,
-        col              = {
-            active_border   = "rgba(93a1a1ff)",
-            inactive_border = "rgba(eee8d5ff)",
-        },
-        layout           = "dwindle"
-    },
+	general = {
+		gaps_in = 3,
+		gaps_out = 6,
+		border_size = 2,
+		resize_on_border = true,
+		col = {
+			active_border = "rgba(93a1a1ff)",
+			inactive_border = "rgba(eee8d5ff)",
+		},
+		layout = "dwindle",
+	},
 
-    input = {
-        kb_options     = "compose:menu",
-        repeat_rate    = 90,
-        repeat_delay   = 300,
+	input = {
+		kb_options = "compose:menu",
+		repeat_rate = 90,
+		repeat_delay = 300,
 
-        natural_scroll = true
-    },
+		natural_scroll = true,
+	},
 
-    misc = {
-        force_default_wallpaper      = 0,
-        animate_manual_resizes       = true,
-        animate_mouse_windowdragging = true,
-        focus_on_activate            = true
-    },
+	misc = {
+		force_default_wallpaper = 0,
+		animate_manual_resizes = true,
+		animate_mouse_windowdragging = true,
+		focus_on_activate = true,
+	},
 
-    cursor = {
-        hide_on_key_press = true
-    },
+	cursor = {
+		hide_on_key_press = true,
+	},
 
-    dwindle = {
-        force_split = 2 -- to the right or below
-    }
+	dwindle = {
+		force_split = 2, -- to the right or below
+	},
 })
 
 -- Kensington SlimBlade Pro trackball: use adaptive acceleration so fast
@@ -95,9 +95,9 @@ hl.config({
 -- (...-keyboard-1), but `libinput list-devices` shows it has no motion
 -- capability (Accel profiles: n/a), so only this interface needs it.
 hl.device({
-    name = "kensington-slimblade-pro-trackball(wired)-kensington-slimblade-pro-trackball(wired)",
-    sensitivity = -0.7,
-    accel_profile = "adaptive",
+	name = "kensington-slimblade-pro-trackball(wired)-kensington-slimblade-pro-trackball(wired)",
+	sensitivity = -0.7,
+	accel_profile = "adaptive",
 })
 
 --
@@ -197,7 +197,10 @@ hl.window_rule({ match = { class = ".*goldendict_ng$", title = ".* - GoldenDict-
 -- "magic" tag corresponds to the keybinding above.
 hl.window_rule({ match = { class = "^(kitty)$", title = "^(scratchpad)$" }, workspace = "special:magic" })
 hl.window_rule({ match = { class = "^(kitty)$", title = "^(scratchpad)$" }, float = true })
-hl.window_rule({ match = { class = "^(kitty)$", title = "^(scratchpad)$" }, size = { "monitor_w * 0.5", "monitor_h * 0.5" } })
+hl.window_rule({
+	match = { class = "^(kitty)$", title = "^(scratchpad)$" },
+	size = { "monitor_w * 0.5", "monitor_h * 0.5" },
+})
 hl.window_rule({ match = { class = "^(kitty)$", title = "^(scratchpad)$" }, center = true })
 
 -- Popup window with the Hyprland keybindings cheatsheet.
@@ -205,10 +208,16 @@ hl.window_rule({ match = { class = "^(kitty)$", title = "^(scratchpad)$" }, cent
 -- this is due to how Firefox sets the window title. Nevertheless, I’ll leave the
 -- rules here in case it happens to start working one day.
 hl.window_rule({ match = { class = "^(firefox)$", title = "^(Hyprland Keybindings Reference)$" }, float = true })
-hl.window_rule({ match = { class = "^(firefox)$", title = "^(Hyprland Keybindings Reference)$" }, size = { "monitor_w * 0.6", "monitor_h * 0.8" } })
+hl.window_rule({
+	match = { class = "^(firefox)$", title = "^(Hyprland Keybindings Reference)$" },
+	size = { "monitor_w * 0.6", "monitor_h * 0.8" },
+})
 hl.window_rule({ match = { class = "^(firefox)$", title = "^(Hyprland Keybindings Reference)$" }, center = true })
 
 -- Popup window with the Meow keybindings cheatsheet.
 hl.window_rule({ match = { class = "^(imv)$", title = "^(Meow Keybindings)$" }, float = true })
-hl.window_rule({ match = { class = "^(imv)$", title = "^(Meow Keybindings)$" }, size = { "monitor_w * 0.4", "monitor_h * 0.4" } })
+hl.window_rule({
+	match = { class = "^(imv)$", title = "^(Meow Keybindings)$" },
+	size = { "monitor_w * 0.4", "monitor_h * 0.4" },
+})
 hl.window_rule({ match = { class = "^(imv)$", title = "^(Meow Keybindings)$" }, center = true })

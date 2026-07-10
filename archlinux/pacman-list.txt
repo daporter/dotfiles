@@ -108,6 +108,7 @@ smartmontools
 sqlitebrowser
 stow
 strace
+stylua
 sudo
 swaync
 sxiv
