@@ -24,7 +24,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("goldendict --group-name Main --popup-group-name Popup")
 
 	-- Launch a terminal on the scratchpad.
-	hl.exec_cmd("kitty --title scratchpad")
+	hl.exec_cmd("ghostty --title=scratchpad")
 end)
 
 hl.env("SSH_AUTH_SOCK", "$XDG_RUNTIME_DIR/gcr/ssh")
@@ -149,7 +149,7 @@ hl.bind("SUPER+SHIFT+U", hl.dsp.window.move({ workspace = "-1" }))
 -- Applications
 hl.bind("SUPER+SPACE", hl.dsp.exec_cmd("wofi --show drun"))
 hl.bind("SUPER+CTRL+SPACE", hl.dsp.exec_cmd("1password --quick-access"))
-hl.bind("SUPER+RETURN", hl.dsp.exec_cmd("kitty"))
+hl.bind("SUPER+RETURN", hl.dsp.exec_cmd("ghostty"))
 hl.bind("SUPER+B", hl.dsp.exec_cmd("firefox --new-window"))
 hl.bind("SUPER+CTRL+D", hl.dsp.exec_cmd("goldendict --popup $(wl-paste --primary --no-newline)"))
 hl.bind("SUPER+M", hl.dsp.exec_cmd("emacsclient --create-frame --no-wait --alternate-editor='' --quiet"))
@@ -175,7 +175,7 @@ hl.bind("SUPER+P", hl.dsp.window.pin())
 
 -- Scratchpad
 hl.bind("SUPER+S", hl.dsp.workspace.toggle_special("magic"))
-hl.bind("SUPER+CTRL+T", hl.dsp.exec_cmd("kitty --title scratchpad"))
+hl.bind("SUPER+CTRL+T", hl.dsp.exec_cmd("ghostty --title=scratchpad"))
 
 -- Quit Hyprland
 hl.bind("SUPER+SHIFT+ESCAPE", hl.dsp.exec_cmd("hyprshutdown"))
@@ -195,13 +195,16 @@ hl.window_rule({ match = { class = ".*goldendict_ng$", title = ".* - GoldenDict-
 
 -- Move a terminal with the class "scratchpad" to the special workspace. The
 -- "magic" tag corresponds to the keybinding above.
-hl.window_rule({ match = { class = "^(kitty)$", title = "^(scratchpad)$" }, workspace = "special:magic" })
-hl.window_rule({ match = { class = "^(kitty)$", title = "^(scratchpad)$" }, float = true })
 hl.window_rule({
-	match = { class = "^(kitty)$", title = "^(scratchpad)$" },
+	match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(scratchpad)$" },
+	workspace = "special:magic",
+})
+hl.window_rule({ match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(scratchpad)$" }, float = true })
+hl.window_rule({
+	match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(scratchpad)$" },
 	size = { "monitor_w * 0.5", "monitor_h * 0.5" },
 })
-hl.window_rule({ match = { class = "^(kitty)$", title = "^(scratchpad)$" }, center = true })
+hl.window_rule({ match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(scratchpad)$" }, center = true })
 
 -- Popup window with the Hyprland keybindings cheatsheet.
 -- Note that these rules to make the window float don’t currently work. AIUI,

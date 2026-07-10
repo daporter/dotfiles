@@ -49,7 +49,6 @@ inter-font
 isync
 jdk8-openjdk
 jq
-kitty
 ledger
 libgccjit
 libinput-tools
