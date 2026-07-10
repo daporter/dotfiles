@@ -858,7 +858,7 @@
            '((t))))))
 
 (use-package flymake-vale
-  :load-path "lisp/flymake-vale"
+  :vc (:url "https://github.com/tpeacock19/flymake-vale" :rev :newest)
   :hook (text-mode . flymake-vale-load))
 
 (use-package adaptive-wrap
@@ -1243,13 +1243,6 @@
   (mail-specify-envelope-from t)
   (message-sendmail-envelope-from 'header)
   (mail-envelope-from 'header))
-
-(use-package youtube-dl
-  :load-path "lisp/youtube-dl-emacs"
-  :commands (youtube-dl youtube-dl-list)
-  :custom
-  (youtube-dl-program "yt-dlp")
-  (youtube-dl-directory "~/Downloads"))
 
 (use-package winner
   :hook (after-init))
