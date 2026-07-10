@@ -147,9 +147,6 @@ uthash
 vale
 valgrind
 vi
-vscode-css-languageserver
-vscode-html-languageserver
-vscode-json-languageserver
 waybar
 wev
 wget

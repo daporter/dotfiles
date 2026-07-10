@@ -732,7 +732,7 @@
     (eglot-inlay-hints-mode 0))
 
   :hook
-  (((c-ts-mode css-ts-mode) . eglot-ensure)
+  (((c-ts-mode css-ts-mode json-ts-mode) . eglot-ensure)
    (eglot-managed-mode      . my/eglot-setup-eldoc)
    (eglot-managed-mode      . my/eglot-disable-hints)))
 
