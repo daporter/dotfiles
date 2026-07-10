@@ -5,6 +5,8 @@ anki-bin
 ansifilter
 brave-bin
 calibre-bin
+claude-code
+claude-desktop
 dropbox
 gitlint
 gnu-c-manual
@@ -12,10 +14,10 @@ goldendict-ng-git
 google-chrome
 hledger-bin
 imv-git
-jbig2enc
+jbig2enc-git
+nodejs-jsonlint
 noto-color-emoji-fontconfig
 ocrmypdf
-otf-ibm-plex
 otf-spectral
 otf-spectralsc
 otf-xcharter
@@ -23,7 +25,6 @@ paisa-bin
 paru
 pricehist
 python-alpha_vantage
-python-standardebooks
 python-yfinance
 stardict-bobotig-en
 stardict-bobotig-fr

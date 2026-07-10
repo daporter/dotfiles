@@ -19,6 +19,7 @@ duf
 dust
 emacs-wayland
 evtest
+ex-vi-compat
 exfat-utils
 eza
 fastfetch
@@ -40,6 +41,7 @@ hyprland
 hyprpaper
 hyprpolkitagent
 hyprshot
+hyprshutdown
 hyprutils
 imagemagick
 inetutils
@@ -95,14 +97,13 @@ python-pipx
 python-pyserial
 qmk
 qt6ct
+readest
 rebuild-detector
 restic
 ripgrep
 rofi-calc
-rust
 sdparm
 shellcheck
-sigil
 smartmontools
 sqlitebrowser
 stow
@@ -146,7 +147,6 @@ usbutils
 uthash
 vale
 valgrind
-vi
 waybar
 wev
 wget
