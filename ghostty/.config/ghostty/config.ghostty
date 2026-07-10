@@ -1,0 +1,14 @@
+theme = Atom One Light
+
+font-size = 10
+
+scrollback-limit = 50000000
+
+window-inherit-working-directory = true
+
+copy-on-select = clipboard
+
+cursor-style = block
+cursor-style-blink = false
+
+shell-integration-features = cursor,sudo,title

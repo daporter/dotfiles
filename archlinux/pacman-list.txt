@@ -25,6 +25,7 @@ fd
 feh
 firefox
 gdb
+ghostty
 git
 github-cli
 gnome-keyring
