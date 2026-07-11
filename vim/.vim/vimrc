@@ -120,6 +120,8 @@ let test#strategy = 'make'
 
 syntax on
 
-source ~/.vim/current_scheme
+if filereadable(expand('~/.vim/current_scheme'))
+  source ~/.vim/current_scheme
+endif
 
 highlight Comment cterm=italic
