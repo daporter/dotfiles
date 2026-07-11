@@ -19,7 +19,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("systemctl --user start hyprpolkitagent")
 
 	hl.exec_cmd("1password --silent")
-	hl.exec_cmd("emacs --daemon")
+	hl.exec_cmd("systemctl --user start emacs.service")
 	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
 	hl.exec_cmd("goldendict --group-name Main --popup-group-name Popup")
 
