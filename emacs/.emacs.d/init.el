@@ -1126,12 +1126,6 @@
   (notmuch-fcc-dirs
    '(("david@daporter.net" . "gmail/\"[Gmail]/Sent Mail\"")))
 
-  ;; # After each tagging operation, signal the window manager status bar
-  ;; # updater.
-  (notmuch-after-tag-hook
-   (lambda ()
-     (shell-command-to-string "kill -SIGRTMIN+1 $(cat /tmp/mtstatus.pid)")))
-
   :config
   (add-hook 'notmuch-message-mode-hook #'turn-off-auto-fill)
   (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check)
