@@ -1,52 +1,101 @@
 #!/bin/bash
 
-# compressPdf: convenience script for running PDFs through `ocrmypdf`. PDFs are only modified if there is meaningful space savings or if the OCF seems suspiciously bad (in which case a contemporary tesseract run will be useful).
+# compress_pdf: run PDFs through `ocrmypdf`, rewriting each in place. A PDF is
+# only modified if there is meaningful space savings, or if its text layer looks
+# missing or bad (in which case a contemporary tesseract run will be useful).
 #
-# Author: Gwern Branwen
-# Date: 2021-01-01
-# When:  Time-stamp: "2025-03-28 18:24:39 gwern"
-# License: CC-0
+# A file is only ever replaced by output that ocrmypdf reported success on and
+# that still parses as a PDF.
 
-set -e
+set -euo pipefail
 
-# 1. check PDFs for PDFs which could use `ocrmypdf` to save space: read in on stdin, read smaller or original back out on stdout
-## custom installation of JBIG2 & ocrmypdf
-PDF=$(mktemp /tmp/XXXXXX-original.pdf)
-cp "$1" "$PDF"
-TMP=$(mktemp /tmp/XXXXXX-small.pdf)
+MIN_RATIO=${COMPRESS_PDF_MIN_RATIO:-1.5}   # replace the PDF only if optimizing shrinks it by at least this factor
+MIN_WORDS=${COMPRESS_PDF_MIN_WORDS:-50}    # fewer words per page than this means the text layer is missing or bad
+MIN_BYTES=${COMPRESS_PDF_MIN_BYTES:-4096}  # output smaller than this is a failed ocrmypdf run, not a small PDF
 
-ocrmypdf --skip-text --optimize 3 --jbig2-lossy "$PDF" "$TMP" &> /dev/null || true
+PDF='' TMP='' LOG=''
+cleanup() { rm -f "$PDF" "$TMP" "$LOG"; }
+trap cleanup EXIT
 
-ORIGINAL=$(wc --bytes < "$PDF")
-SMALL=$(   wc --bytes < "$TMP")
-RATIO=$(echo "$ORIGINAL / $SMALL" | bc --mathlib)
-echo "$PDF : from $ORIGINAL to $SMALL ($RATIO)"
+warn() { echo "${0##*/}: $*" >&2; }
+die() { warn "$*"; exit 1; }
 
-if (( SMALL < 4096 )); then
-    echo "Error: Compressed PDF size is $SMALL!"
-    exit 1
-fi
-
-if (( $(echo "$RATIO > 1.5" | bc --mathlib) ));
-then
-    # overwrite original with compressed
-    exiftool -TagsFromFile "$PDF" "$TMP" || true # copy over all the metadata that ocrmypdf/Ghostscript erases by default: <https://ocrmypdf.readthedocs.io/en/latest/introduction.html#limitations>
-    mv "$TMP" "$1"
-else
-    # Perhaps we didn't ocrmypdf because it didn't save space, but we may want to for OCR anyway.
-    # Here, we *force* OCR on PDFs which have no or suspiciously little text (<50 words per page on average):
-    PAGES=$(exiftool -quiet -printFormat '$PageCount' -PageCount "$PDF")
-    WORDS=$(pdftotext "$PDF" - | wc --words)
-    TOOSMALL=$((WORDS / PAGES < 50))
-    if [[ $TOOSMALL == 1 ]]; then
-        echo "Forcing OCR: $1 : $WORDS • $PAGES • $((WORDS / PAGES)) • $TOOSMALL"
-        echo "----"
-        pdftotext "$TMP" - | head
-        echo "----"
-        ocrmypdf --force-ocr --optimize 3 --jbig2-lossy "$PDF" "$TMP" &> /dev/null || true
-        exiftool -TagsFromFile "$PDF" "$TMP" || true
-        mv "$TMP" "$1"
+# Run ocrmypdf quietly, but surface its diagnostics when it fails.
+ocr() {
+    if ! ocrmypdf "$@" &>"$LOG"; then
+        warn "ocrmypdf failed:"
+        cat "$LOG" >&2
+        return 1
     fi
-fi
-# cleanup
-rm "$PDF" "$TMP" &> /dev/null || true
+}
+
+# Did ocrmypdf leave us a real PDF, rather than a truncated or empty file?
+usable() {
+    local bytes
+    bytes=$(stat --format=%s "$1")
+    (( bytes >= MIN_BYTES )) && pdftotext "$1" - &>/dev/null
+}
+
+# Replace $2 with $1, first copying over all the metadata that ocrmypdf/Ghostscript
+# erase by default: <https://ocrmypdf.readthedocs.io/en/latest/introduction.html#limitations>.
+# Written *through* the destination so its permissions and inode survive.
+replace() {
+    exiftool -quiet -overwrite_original -TagsFromFile "$PDF" "$1" || warn "could not restore metadata on $2"
+    cat "$1" >"$2"
+}
+
+compress() {
+    local file=$1 original small ratio pages words
+
+    PDF=$(mktemp /tmp/XXXXXX-original.pdf)
+    TMP=$(mktemp /tmp/XXXXXX-small.pdf)
+    LOG=$(mktemp /tmp/XXXXXX-ocrmypdf.log)
+    cp "$file" "$PDF"
+
+    # 1. Look for PDFs which could use `ocrmypdf` to save space, leaving any
+    #    existing text layer alone.
+    ocr --skip-text --optimize 3 --jbig2-lossy "$PDF" "$TMP" || { warn "skipping $file"; return; }
+    usable "$TMP" || { warn "optimized output is not a usable PDF; skipping $file"; return; }
+
+    original=$(stat --format=%s "$PDF")
+    small=$(stat --format=%s "$TMP")
+    ratio=$(echo "$original / $small" | bc --mathlib)
+    echo "$file : from $original to $small ($ratio)"
+
+    if (( $(echo "$ratio > $MIN_RATIO" | bc --mathlib) )); then
+        replace "$TMP" "$file"
+        return
+    fi
+
+    # 2. Perhaps we didn't ocrmypdf because it didn't save space, but we may want
+    #    to for OCR anyway. Here, we *force* OCR on PDFs which have no or
+    #    suspiciously little text. (This rasterizes the page and discards any
+    #    existing text layer; `--redo-ocr` is the gentler alternative.)
+    # shellcheck disable=SC2016  # $PageCount is exiftool's format syntax, not a shell variable
+    pages=$(exiftool -quiet -printFormat '$PageCount' -PageCount "$PDF" || true)
+    if ! [[ $pages =~ ^[0-9]+$ ]] || (( pages == 0 )); then
+        warn "no page count for $file; leaving it alone"
+        return
+    fi
+    words=$(pdftotext "$PDF" - | wc --words) || { warn "cannot extract text from $file; leaving it alone"; return; }
+
+    (( words < MIN_WORDS * pages )) || return
+
+    echo "Forcing OCR: $file : $words words • $pages pages"
+    ocr --force-ocr --optimize 3 --jbig2-lossy "$PDF" "$TMP" || { warn "leaving $file unchanged"; return; }
+    usable "$TMP" || { warn "forced-OCR output is not a usable PDF; leaving $file unchanged"; return; }
+    replace "$TMP" "$file"
+}
+
+(( $# > 0 )) || die "usage: ${0##*/} FILE.pdf [FILE.pdf ...]"
+for cmd in ocrmypdf exiftool pdftotext bc; do
+    command -v "$cmd" &>/dev/null || die "missing dependency: $cmd"
+done
+for file in "$@"; do
+    [[ -f $file ]] || die "not a file: $file"
+done
+
+for file in "$@"; do
+    compress "$file"
+    cleanup
+done
