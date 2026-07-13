@@ -1,17 +1,20 @@
 #!/bin/bash
 
-# compress_pdf: run PDFs through `ocrmypdf`, rewriting each in place. A PDF is
-# only modified if there is meaningful space savings, or if its text layer looks
-# missing or bad (in which case a contemporary tesseract run will be useful).
+# compress_pdf: run PDFs through `ocrmypdf`, writing the result alongside each
+# input as `<name>-compressed.pdf`. Output is only written if there is meaningful
+# space savings, or if the input's text layer looks missing or bad (in which case
+# a contemporary tesseract run will be useful).
 #
-# A file is only ever replaced by output that ocrmypdf reported success on and
-# that still parses as a PDF.
+# The input file is never modified, and an existing output file is never
+# overwritten. Output is only written if ocrmypdf reported success on it and it
+# still parses as a PDF.
 
 set -euo pipefail
 
-MIN_RATIO=${COMPRESS_PDF_MIN_RATIO:-1.5}   # replace the PDF only if optimizing shrinks it by at least this factor
-MIN_WORDS=${COMPRESS_PDF_MIN_WORDS:-50}    # fewer words per page than this means the text layer is missing or bad
-MIN_BYTES=${COMPRESS_PDF_MIN_BYTES:-4096}  # output smaller than this is a failed ocrmypdf run, not a small PDF
+MIN_RATIO=${COMPRESS_PDF_MIN_RATIO:-1.5}       # write the output only if it is at least this many times smaller
+MIN_WORDS=${COMPRESS_PDF_MIN_WORDS:-50}        # fewer words per page than this means the text layer is missing or bad
+MIN_BYTES=${COMPRESS_PDF_MIN_BYTES:-4096}      # output smaller than this is a failed ocrmypdf run, not a small PDF
+SUFFIX=${COMPRESS_PDF_SUFFIX:--compressed}     # `foo.pdf` becomes `foo-compressed.pdf`
 
 # `--optimize 3` still does lossless JBIG2. Do not add `--jbig2-lossy`: ocrmypdf
 # ignores it as of v17, having removed lossy JBIG2 for substituting matching
@@ -19,15 +22,15 @@ MIN_BYTES=${COMPRESS_PDF_MIN_BYTES:-4096}  # output smaller than this is a faile
 OCR_OPTS=(--optimize 3)
 
 # Working files for the PDF being processed. Global so the EXIT trap can reach
-# them; compress() gives each file a fresh set.
-original_pdf=''   # untouched copy of the user's file, and our metadata source
-candidate_pdf=''  # ocrmypdf's output, installed only once it has earned its place
+# them; compress() gives each file a fresh set. There is no temporary copy of the
+# input: ocrmypdf does not modify what it reads.
+candidate_pdf=''  # ocrmypdf's output, kept only once it has earned its place
 ocr_log=''
 
 # Tallied by compress(), reported by main().
-replaced=0 unchanged=0 failed=0
+written=0 unchanged=0 failed=0
 
-cleanup() { rm -f "$original_pdf" "$candidate_pdf" "$ocr_log"; }
+cleanup() { rm -f "$candidate_pdf" "$ocr_log"; }
 trap cleanup EXIT
 
 # Progress goes to stderr, so that it stays visible when stdout is redirected and
@@ -42,6 +45,12 @@ human_size() { numfmt --to=iec "$1"; }
 word_count() { pdftotext "$1" - | wc --words; }
 # shellcheck disable=SC2016  # $PageCount is exiftool's format syntax, not a shell variable
 page_count() { exiftool -quiet -printFormat '$PageCount' -PageCount "$1"; }
+
+# Where the compressed version of $1 belongs: `a/b/foo.pdf` -> `a/b/foo-compressed.pdf`.
+output_path() {
+    local without_extension=${1%.[Pp][Dd][Ff]}
+    printf '%s%s.pdf\n' "$without_extension" "$SUFFIX"
+}
 
 # Floating-point `>`, which bash arithmetic cannot do.
 greater_than() { (( $(echo "$1 > $2" | bc --mathlib) )); }
@@ -60,49 +69,47 @@ is_valid_pdf() {
     (( $(file_size "$1") >= MIN_BYTES )) && pdftotext "$1" - &>/dev/null
 }
 
-# Overwrite DEST with NEW, restoring from OLD the metadata that ocrmypdf and
+# Publish NEW as DEST, restoring from SOURCE the metadata that ocrmypdf and
 # Ghostscript erase by default:
 # <https://ocrmypdf.readthedocs.io/en/latest/introduction.html#limitations>
-# NEW is written *through* DEST, so DEST's permissions and inode survive.
-install_pdf() {
-    local old=$1 new=$2 dest=$3
-    exiftool -quiet -overwrite_original -TagsFromFile "$old" "$new" || warn "could not restore metadata on $dest"
+# DEST inherits SOURCE's permissions rather than mktemp's restrictive 0600.
+write_output() {
+    local source=$1 new=$2 dest=$3
+    exiftool -quiet -overwrite_original -TagsFromFile "$source" "$new" || warn "could not restore metadata"
     cat "$new" >"$dest"
+    chmod --reference="$source" "$dest"
 }
 
-# Give up on this file, leaving it as we found it.
-skip() {
+# Give up on this file, having written nothing.
+give_up() {
     warn "$*"
-    step "leaving it unchanged"
+    step "writing no output"
     failed=$((failed + 1))
 }
 
 compress() {
-    local file=$1 before after ratio pages words started
+    local file=$1 dest=$2 before after ratio pages words started
 
-    original_pdf=$(mktemp /tmp/XXXXXX-original.pdf)
     candidate_pdf=$(mktemp /tmp/XXXXXX-candidate.pdf)
     ocr_log=$(mktemp /tmp/XXXXXX-ocrmypdf.log)
-    cp "$file" "$original_pdf"
 
     # 1. Optimize, leaving any existing text layer alone.
     step "optimizing (this can take a while)..."
     started=$SECONDS
-    run_ocrmypdf --skip-text "${OCR_OPTS[@]}" "$original_pdf" "$candidate_pdf" \
-        || { skip "ocrmypdf could not optimize it"; return; }
+    run_ocrmypdf --skip-text "${OCR_OPTS[@]}" "$file" "$candidate_pdf" \
+        || { give_up "ocrmypdf could not optimize it"; return; }
     is_valid_pdf "$candidate_pdf" \
-        || { skip "the optimized output is not a usable PDF"; return; }
+        || { give_up "the optimized output is not a usable PDF"; return; }
 
-    before=$(file_size "$original_pdf")
+    before=$(file_size "$file")
     after=$(file_size "$candidate_pdf")
     ratio=$(printf '%.2f' "$(echo "$before / $after" | bc --mathlib)")
     step "$(human_size "$before") → $(human_size "$after") (${ratio}x) in $((SECONDS - started))s"
 
     if greater_than "$ratio" "$MIN_RATIO"; then
-        step "worth keeping: replacing the original"
-        install_pdf "$original_pdf" "$candidate_pdf" "$file"
-        step "replaced, saving $(human_size $((before - after)))"
-        replaced=$((replaced + 1))
+        write_output "$file" "$candidate_pdf" "$dest"
+        step "wrote $dest, saving $(human_size $((before - after)))"
+        written=$((written + 1))
         return
     fi
 
@@ -111,35 +118,35 @@ compress() {
     #    rasterizes the page and discards any text already there; `--redo-ocr` is
     #    the gentler alternative.)
     step "under the ${MIN_RATIO}x threshold: checking the text layer instead"
-    pages=$(page_count "$original_pdf" || true)
+    pages=$(page_count "$file" || true)
     if ! [[ $pages =~ ^[0-9]+$ ]] || (( pages == 0 )); then
-        skip "cannot read a page count"
+        give_up "cannot read a page count"
         return
     fi
-    words=$(word_count "$original_pdf") || { skip "cannot extract any text"; return; }
+    words=$(word_count "$file") || { give_up "cannot extract any text"; return; }
     step "$words words across $pages pages"
 
     if (( words >= MIN_WORDS * pages )); then
-        step "text layer looks healthy: leaving it unchanged"
+        step "nothing to gain: writing nothing"
         unchanged=$((unchanged + 1))
         return
     fi
 
     step "under $MIN_WORDS words/page: forcing OCR (this can take a while)..."
     started=$SECONDS
-    run_ocrmypdf --force-ocr "${OCR_OPTS[@]}" "$original_pdf" "$candidate_pdf" \
-        || { skip "ocrmypdf could not OCR it"; return; }
+    run_ocrmypdf --force-ocr "${OCR_OPTS[@]}" "$file" "$candidate_pdf" \
+        || { give_up "ocrmypdf could not OCR it"; return; }
     is_valid_pdf "$candidate_pdf" \
-        || { skip "the forced-OCR output is not a usable PDF"; return; }
+        || { give_up "the forced-OCR output is not a usable PDF"; return; }
 
-    step "OCR'd in $((SECONDS - started))s: replacing the original"
-    install_pdf "$original_pdf" "$candidate_pdf" "$file"
-    step "replaced, now $(human_size "$(file_size "$file")")"
-    replaced=$((replaced + 1))
+    step "OCR'd in $((SECONDS - started))s"
+    write_output "$file" "$candidate_pdf" "$dest"
+    step "wrote $dest ($(human_size "$(file_size "$dest")"))"
+    written=$((written + 1))
 }
 
 main() {
-    local cmd file n=0
+    local cmd file dest n=0
 
     (( $# > 0 )) || die "usage: ${0##*/} FILE.pdf [FILE.pdf ...]"
     for cmd in ocrmypdf exiftool pdftotext bc numfmt; do
@@ -147,16 +154,25 @@ main() {
     done
     for file in "$@"; do
         [[ -f $file ]] || die "not a file: $file"
+        [[ $(output_path "$file") != "$file" ]] || die "empty suffix would overwrite $file"
     done
 
     for file in "$@"; do
         n=$((n + 1))
+        dest=$(output_path "$file")
         heading "[$n/$#] $file ($(human_size "$(file_size "$file")"))"
-        compress "$file"
+
+        if [[ -e $dest ]]; then
+            warn "$dest already exists; remove it to re-run"
+            failed=$((failed + 1))
+            continue
+        fi
+
+        compress "$file" "$dest"
         cleanup
     done
 
-    heading "$# file(s): $replaced replaced, $unchanged unchanged, $failed failed"
+    heading "$# file(s): $written written, $unchanged unchanged, $failed failed"
     (( failed == 0 ))
 }
 
