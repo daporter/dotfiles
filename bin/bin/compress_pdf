@@ -13,89 +13,117 @@ MIN_RATIO=${COMPRESS_PDF_MIN_RATIO:-1.5}   # replace the PDF only if optimizing 
 MIN_WORDS=${COMPRESS_PDF_MIN_WORDS:-50}    # fewer words per page than this means the text layer is missing or bad
 MIN_BYTES=${COMPRESS_PDF_MIN_BYTES:-4096}  # output smaller than this is a failed ocrmypdf run, not a small PDF
 
-PDF='' TMP='' LOG=''
-cleanup() { rm -f "$PDF" "$TMP" "$LOG"; }
+# `--jbig2-lossy` compresses scans hard by substituting matching glyphs, which can
+# silently swap similar-looking characters. Drop it where the digits matter.
+OCR_OPTS=(--optimize 3 --jbig2-lossy)
+
+# Working files for the PDF being processed. Global so the EXIT trap can reach
+# them; compress() gives each file a fresh set.
+original_pdf=''   # untouched copy of the user's file, and our metadata source
+candidate_pdf=''  # ocrmypdf's output, installed only once it has earned its place
+ocr_log=''
+
+cleanup() { rm -f "$original_pdf" "$candidate_pdf" "$ocr_log"; }
 trap cleanup EXIT
 
 warn() { echo "${0##*/}: $*" >&2; }
 die() { warn "$*"; exit 1; }
 
+file_size() { stat --format=%s "$1"; }
+word_count() { pdftotext "$1" - | wc --words; }
+# shellcheck disable=SC2016  # $PageCount is exiftool's format syntax, not a shell variable
+page_count() { exiftool -quiet -printFormat '$PageCount' -PageCount "$1"; }
+
+# Floating-point `>`, which bash arithmetic cannot do.
+greater_than() { (( $(echo "$1 > $2" | bc --mathlib) )); }
+
 # Run ocrmypdf quietly, but surface its diagnostics when it fails.
-ocr() {
-    if ! ocrmypdf "$@" &>"$LOG"; then
+run_ocrmypdf() {
+    if ! ocrmypdf "$@" &>"$ocr_log"; then
         warn "ocrmypdf failed:"
-        cat "$LOG" >&2
+        cat "$ocr_log" >&2
         return 1
     fi
 }
 
 # Did ocrmypdf leave us a real PDF, rather than a truncated or empty file?
-usable() {
-    local bytes
-    bytes=$(stat --format=%s "$1")
-    (( bytes >= MIN_BYTES )) && pdftotext "$1" - &>/dev/null
+is_valid_pdf() {
+    (( $(file_size "$1") >= MIN_BYTES )) && pdftotext "$1" - &>/dev/null
 }
 
-# Replace $2 with $1, first copying over all the metadata that ocrmypdf/Ghostscript
-# erase by default: <https://ocrmypdf.readthedocs.io/en/latest/introduction.html#limitations>.
-# Written *through* the destination so its permissions and inode survive.
-replace() {
-    exiftool -quiet -overwrite_original -TagsFromFile "$PDF" "$1" || warn "could not restore metadata on $2"
-    cat "$1" >"$2"
+# Overwrite DEST with NEW, restoring from OLD the metadata that ocrmypdf and
+# Ghostscript erase by default:
+# <https://ocrmypdf.readthedocs.io/en/latest/introduction.html#limitations>
+# NEW is written *through* DEST, so DEST's permissions and inode survive.
+install_pdf() {
+    local old=$1 new=$2 dest=$3
+    exiftool -quiet -overwrite_original -TagsFromFile "$old" "$new" || warn "could not restore metadata on $dest"
+    cat "$new" >"$dest"
 }
 
 compress() {
-    local file=$1 original small ratio pages words
+    local file=$1 before after ratio pages words
 
-    PDF=$(mktemp /tmp/XXXXXX-original.pdf)
-    TMP=$(mktemp /tmp/XXXXXX-small.pdf)
-    LOG=$(mktemp /tmp/XXXXXX-ocrmypdf.log)
-    cp "$file" "$PDF"
+    original_pdf=$(mktemp /tmp/XXXXXX-original.pdf)
+    candidate_pdf=$(mktemp /tmp/XXXXXX-candidate.pdf)
+    ocr_log=$(mktemp /tmp/XXXXXX-ocrmypdf.log)
+    cp "$file" "$original_pdf"
 
-    # 1. Look for PDFs which could use `ocrmypdf` to save space, leaving any
-    #    existing text layer alone.
-    ocr --skip-text --optimize 3 --jbig2-lossy "$PDF" "$TMP" || { warn "skipping $file"; return; }
-    usable "$TMP" || { warn "optimized output is not a usable PDF; skipping $file"; return; }
+    # 1. Optimize, leaving any existing text layer alone.
+    run_ocrmypdf --skip-text "${OCR_OPTS[@]}" "$original_pdf" "$candidate_pdf" \
+        || { warn "leaving $file unchanged"; return; }
+    is_valid_pdf "$candidate_pdf" \
+        || { warn "optimized output is not a usable PDF; leaving $file unchanged"; return; }
 
-    original=$(stat --format=%s "$PDF")
-    small=$(stat --format=%s "$TMP")
-    ratio=$(echo "$original / $small" | bc --mathlib)
-    echo "$file : from $original to $small ($ratio)"
+    before=$(file_size "$original_pdf")
+    after=$(file_size "$candidate_pdf")
+    ratio=$(printf '%.2f' "$(echo "$before / $after" | bc --mathlib)")
+    printf '%s: %s → %s (%sx)\n' \
+        "$file" "$(numfmt --to=iec "$before")" "$(numfmt --to=iec "$after")" "$ratio"
 
-    if (( $(echo "$ratio > $MIN_RATIO" | bc --mathlib) )); then
-        replace "$TMP" "$file"
+    if greater_than "$ratio" "$MIN_RATIO"; then
+        install_pdf "$original_pdf" "$candidate_pdf" "$file"
         return
     fi
 
-    # 2. Perhaps we didn't ocrmypdf because it didn't save space, but we may want
-    #    to for OCR anyway. Here, we *force* OCR on PDFs which have no or
-    #    suspiciously little text. (This rasterizes the page and discards any
-    #    existing text layer; `--redo-ocr` is the gentler alternative.)
-    # shellcheck disable=SC2016  # $PageCount is exiftool's format syntax, not a shell variable
-    pages=$(exiftool -quiet -printFormat '$PageCount' -PageCount "$PDF" || true)
+    # 2. Optimizing did not pay off, but the PDF may still want OCR: force it on
+    #    PDFs with no text layer, or a suspiciously thin one. (`--force-ocr`
+    #    rasterizes the page and discards any text already there; `--redo-ocr` is
+    #    the gentler alternative.)
+    pages=$(page_count "$original_pdf" || true)
     if ! [[ $pages =~ ^[0-9]+$ ]] || (( pages == 0 )); then
-        warn "no page count for $file; leaving it alone"
+        warn "no page count for $file; leaving it unchanged"
         return
     fi
-    words=$(pdftotext "$PDF" - | wc --words) || { warn "cannot extract text from $file; leaving it alone"; return; }
+    words=$(word_count "$original_pdf") \
+        || { warn "cannot extract text from $file; leaving it unchanged"; return; }
+    if (( words >= MIN_WORDS * pages )); then
+        return  # the text layer looks healthy; nothing left to do
+    fi
 
-    (( words < MIN_WORDS * pages )) || return
-
-    echo "Forcing OCR: $file : $words words • $pages pages"
-    ocr --force-ocr --optimize 3 --jbig2-lossy "$PDF" "$TMP" || { warn "leaving $file unchanged"; return; }
-    usable "$TMP" || { warn "forced-OCR output is not a usable PDF; leaving $file unchanged"; return; }
-    replace "$TMP" "$file"
+    printf 'forcing OCR on %s (%s words across %s pages)\n' "$file" "$words" "$pages"
+    run_ocrmypdf --force-ocr "${OCR_OPTS[@]}" "$original_pdf" "$candidate_pdf" \
+        || { warn "leaving $file unchanged"; return; }
+    is_valid_pdf "$candidate_pdf" \
+        || { warn "forced-OCR output is not a usable PDF; leaving $file unchanged"; return; }
+    install_pdf "$original_pdf" "$candidate_pdf" "$file"
 }
 
-(( $# > 0 )) || die "usage: ${0##*/} FILE.pdf [FILE.pdf ...]"
-for cmd in ocrmypdf exiftool pdftotext bc; do
-    command -v "$cmd" &>/dev/null || die "missing dependency: $cmd"
-done
-for file in "$@"; do
-    [[ -f $file ]] || die "not a file: $file"
-done
+main() {
+    local cmd file
 
-for file in "$@"; do
-    compress "$file"
-    cleanup
-done
+    (( $# > 0 )) || die "usage: ${0##*/} FILE.pdf [FILE.pdf ...]"
+    for cmd in ocrmypdf exiftool pdftotext bc numfmt; do
+        command -v "$cmd" &>/dev/null || die "missing dependency: $cmd"
+    done
+    for file in "$@"; do
+        [[ -f $file ]] || die "not a file: $file"
+    done
+
+    for file in "$@"; do
+        compress "$file"
+        cleanup
+    done
+}
+
+main "$@"
