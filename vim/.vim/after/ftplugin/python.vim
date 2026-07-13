@@ -15,17 +15,15 @@ setlocal path=.,,
 " useful to make it match class declarations.
 let &l:define='^\s*class\s\+'
 
-if executable('pyformatter')
-    let &l:formatprg='pyformatter'
+if executable('ruff')
+    let &l:formatprg='ruff format -'
 endif
 
 command! -buffer Check update | compiler py_compile | silent make % | redraw!
-command! -buffer Lint update | compiler pylinter | silent make % | redraw!
-command! -buffer Pyre update | compiler pyre | silent make | redraw!
+command! -buffer Lint update | compiler ruff | silent make % | redraw!
 
 nnoremap <buffer> <leader>c :Check<CR>
 nnoremap <buffer> <leader>l :Lint<CR>
-nnoremap <buffer> <leader>p :Pyre<CR>
 
 nnoremap <buffer> <leader>tl :update \| TestLast<CR>
 nnoremap <buffer> <leader>tn :update \| TestNearest<CR>

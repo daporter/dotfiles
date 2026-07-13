@@ -1,0 +1,26 @@
+# User-level ruff config: applies to any Python file outside a project that
+# brings its own. <https://docs.astral.sh/ruff/configuration/>
+#
+# ruff replaces the isort/docformatter/black/pylint/flake8/darglint chain this
+# repo used to carry: `ruff format` for formatting, `ruff check` for linting.
+
+line-length = 88
+
+[lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "SIM", # flake8-simplify
+    "D",   # pydocstyle
+]
+
+# Docstrings are worth checking when they exist, but a small script should not
+# need one on every function.
+ignore = ["D1"]
+
+[lint.pydocstyle]
+convention = "google"

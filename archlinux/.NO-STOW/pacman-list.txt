@@ -101,6 +101,7 @@ rebuild-detector
 restic
 ripgrep
 rofi-calc
+ruff
 sdparm
 shellcheck
 smartmontools
