@@ -13,9 +13,10 @@ MIN_RATIO=${COMPRESS_PDF_MIN_RATIO:-1.5}   # replace the PDF only if optimizing 
 MIN_WORDS=${COMPRESS_PDF_MIN_WORDS:-50}    # fewer words per page than this means the text layer is missing or bad
 MIN_BYTES=${COMPRESS_PDF_MIN_BYTES:-4096}  # output smaller than this is a failed ocrmypdf run, not a small PDF
 
-# `--jbig2-lossy` compresses scans hard by substituting matching glyphs, which can
-# silently swap similar-looking characters. Drop it where the digits matter.
-OCR_OPTS=(--optimize 3 --jbig2-lossy)
+# `--optimize 3` still does lossless JBIG2. Do not add `--jbig2-lossy`: ocrmypdf
+# ignores it as of v17, having removed lossy JBIG2 for substituting matching
+# glyphs and thereby silently swapping similar-looking characters.
+OCR_OPTS=(--optimize 3)
 
 # Working files for the PDF being processed. Global so the EXIT trap can reach
 # them; compress() gives each file a fresh set.
@@ -23,13 +24,21 @@ original_pdf=''   # untouched copy of the user's file, and our metadata source
 candidate_pdf=''  # ocrmypdf's output, installed only once it has earned its place
 ocr_log=''
 
+# Tallied by compress(), reported by main().
+replaced=0 unchanged=0 failed=0
+
 cleanup() { rm -f "$original_pdf" "$candidate_pdf" "$ocr_log"; }
 trap cleanup EXIT
 
-warn() { echo "${0##*/}: $*" >&2; }
-die() { warn "$*"; exit 1; }
+# Progress goes to stderr, so that it stays visible when stdout is redirected and
+# never gets mistaken for output. Steps are indented under the file they concern.
+heading() { printf '\n%s\n' "$*" >&2; }
+step() { printf '  %s\n' "$*" >&2; }
+warn() { printf '  ! %s\n' "$*" >&2; }
+die() { printf '%s: %s\n' "${0##*/}" "$*" >&2; exit 1; }
 
 file_size() { stat --format=%s "$1"; }
+human_size() { numfmt --to=iec "$1"; }
 word_count() { pdftotext "$1" - | wc --words; }
 # shellcheck disable=SC2016  # $PageCount is exiftool's format syntax, not a shell variable
 page_count() { exiftool -quiet -printFormat '$PageCount' -PageCount "$1"; }
@@ -41,7 +50,7 @@ greater_than() { (( $(echo "$1 > $2" | bc --mathlib) )); }
 run_ocrmypdf() {
     if ! ocrmypdf "$@" &>"$ocr_log"; then
         warn "ocrmypdf failed:"
-        cat "$ocr_log" >&2
+        sed 's/^/    /' "$ocr_log" >&2
         return 1
     fi
 }
@@ -61,8 +70,15 @@ install_pdf() {
     cat "$new" >"$dest"
 }
 
+# Give up on this file, leaving it as we found it.
+skip() {
+    warn "$*"
+    step "leaving it unchanged"
+    failed=$((failed + 1))
+}
+
 compress() {
-    local file=$1 before after ratio pages words
+    local file=$1 before after ratio pages words started
 
     original_pdf=$(mktemp /tmp/XXXXXX-original.pdf)
     candidate_pdf=$(mktemp /tmp/XXXXXX-candidate.pdf)
@@ -70,19 +86,23 @@ compress() {
     cp "$file" "$original_pdf"
 
     # 1. Optimize, leaving any existing text layer alone.
+    step "optimizing (this can take a while)..."
+    started=$SECONDS
     run_ocrmypdf --skip-text "${OCR_OPTS[@]}" "$original_pdf" "$candidate_pdf" \
-        || { warn "leaving $file unchanged"; return; }
+        || { skip "ocrmypdf could not optimize it"; return; }
     is_valid_pdf "$candidate_pdf" \
-        || { warn "optimized output is not a usable PDF; leaving $file unchanged"; return; }
+        || { skip "the optimized output is not a usable PDF"; return; }
 
     before=$(file_size "$original_pdf")
     after=$(file_size "$candidate_pdf")
     ratio=$(printf '%.2f' "$(echo "$before / $after" | bc --mathlib)")
-    printf '%s: %s → %s (%sx)\n' \
-        "$file" "$(numfmt --to=iec "$before")" "$(numfmt --to=iec "$after")" "$ratio"
+    step "$(human_size "$before") → $(human_size "$after") (${ratio}x) in $((SECONDS - started))s"
 
     if greater_than "$ratio" "$MIN_RATIO"; then
+        step "worth keeping: replacing the original"
         install_pdf "$original_pdf" "$candidate_pdf" "$file"
+        step "replaced, saving $(human_size $((before - after)))"
+        replaced=$((replaced + 1))
         return
     fi
 
@@ -90,27 +110,36 @@ compress() {
     #    PDFs with no text layer, or a suspiciously thin one. (`--force-ocr`
     #    rasterizes the page and discards any text already there; `--redo-ocr` is
     #    the gentler alternative.)
+    step "under the ${MIN_RATIO}x threshold: checking the text layer instead"
     pages=$(page_count "$original_pdf" || true)
     if ! [[ $pages =~ ^[0-9]+$ ]] || (( pages == 0 )); then
-        warn "no page count for $file; leaving it unchanged"
+        skip "cannot read a page count"
         return
     fi
-    words=$(word_count "$original_pdf") \
-        || { warn "cannot extract text from $file; leaving it unchanged"; return; }
+    words=$(word_count "$original_pdf") || { skip "cannot extract any text"; return; }
+    step "$words words across $pages pages"
+
     if (( words >= MIN_WORDS * pages )); then
-        return  # the text layer looks healthy; nothing left to do
+        step "text layer looks healthy: leaving it unchanged"
+        unchanged=$((unchanged + 1))
+        return
     fi
 
-    printf 'forcing OCR on %s (%s words across %s pages)\n' "$file" "$words" "$pages"
+    step "under $MIN_WORDS words/page: forcing OCR (this can take a while)..."
+    started=$SECONDS
     run_ocrmypdf --force-ocr "${OCR_OPTS[@]}" "$original_pdf" "$candidate_pdf" \
-        || { warn "leaving $file unchanged"; return; }
+        || { skip "ocrmypdf could not OCR it"; return; }
     is_valid_pdf "$candidate_pdf" \
-        || { warn "forced-OCR output is not a usable PDF; leaving $file unchanged"; return; }
+        || { skip "the forced-OCR output is not a usable PDF"; return; }
+
+    step "OCR'd in $((SECONDS - started))s: replacing the original"
     install_pdf "$original_pdf" "$candidate_pdf" "$file"
+    step "replaced, now $(human_size "$(file_size "$file")")"
+    replaced=$((replaced + 1))
 }
 
 main() {
-    local cmd file
+    local cmd file n=0
 
     (( $# > 0 )) || die "usage: ${0##*/} FILE.pdf [FILE.pdf ...]"
     for cmd in ocrmypdf exiftool pdftotext bc numfmt; do
@@ -121,9 +150,14 @@ main() {
     done
 
     for file in "$@"; do
+        n=$((n + 1))
+        heading "[$n/$#] $file ($(human_size "$(file_size "$file")"))"
         compress "$file"
         cleanup
     done
+
+    heading "$# file(s): $replaced replaced, $unchanged unchanged, $failed failed"
+    (( failed == 0 ))
 }
 
 main "$@"
