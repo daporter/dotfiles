@@ -27,7 +27,6 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("ghostty --title=scratchpad")
 end)
 
-hl.env("SSH_AUTH_SOCK", "$XDG_RUNTIME_DIR/gcr/ssh")
 hl.env("GOLDENDICT_FORCE_WAYLAND", "1")
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 
