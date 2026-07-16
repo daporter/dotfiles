@@ -38,6 +38,7 @@ tree-sitter-regex-git
 tree-sitter-typescript
 tree-sitter-yaml
 ttf-adobe-source-serif-fonts
+ttf-ia-writer
 vscode-langservers-extracted
 windscribe-v2-bin
 xdg-terminal-exec
