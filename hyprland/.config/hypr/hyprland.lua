@@ -130,7 +130,7 @@ hl.bind("SUPER+SHIFT+A", hl.dsp.window.swap({ direction = "l" }))
 hl.bind("SUPER+SHIFT+E", hl.dsp.window.swap({ direction = "u" }))
 hl.bind("SUPER+SHIFT+I", hl.dsp.window.swap({ direction = "d" }))
 hl.bind("SUPER+SHIFT+H", hl.dsp.window.swap({ direction = "r" }))
-hl.bind("SUPER+mouse:272", hl.dsp.window.drag(), { mouse = true, drag = true })
+hl.bind("SUPER+mouse:272", hl.dsp.window.drag(), { mouse = true })
 
 -- Move to workspace
 hl.bind("SUPER+SHIFT+1", hl.dsp.window.move({ workspace = "1" }))
