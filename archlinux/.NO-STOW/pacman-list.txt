@@ -32,6 +32,7 @@ gdb
 ghostty
 git
 github-cli
+glow
 gnome-disk-utility
 gnome-keyring
 gparted
