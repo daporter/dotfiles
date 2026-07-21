@@ -197,6 +197,7 @@ xorg-xsetroot
 xorg-xvinfo
 xorg-xwd
 xorg-xwud
+xreader
 yaml-language-server
 yamlfmt
 yamllint
