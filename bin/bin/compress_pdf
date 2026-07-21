@@ -3,7 +3,9 @@
 # compress_pdf: run PDFs through `ocrmypdf`, writing the result alongside each
 # input as `<name>-compressed.pdf`. Output is only written if there is meaningful
 # space savings, or if the input's text layer looks missing or bad (in which case
-# a contemporary tesseract run will be useful).
+# a contemporary tesseract run will be useful). If that OCR pass fails, any
+# smaller optimized version is still written, so a failed OCR never costs
+# compression.
 #
 # The input file is never modified, and an existing output file is never
 # overwritten. Output is only written if ocrmypdf reported success on it and it
@@ -25,12 +27,13 @@ OCR_OPTS=(--optimize 3)
 # them; compress() gives each file a fresh set. There is no temporary copy of the
 # input: ocrmypdf does not modify what it reads.
 candidate_pdf=''  # ocrmypdf's output, kept only once it has earned its place
+optimized_pdf=''  # the --skip-text optimization, kept as a fallback if OCR fails
 ocr_log=''
 
 # Tallied by compress(), reported by main().
 written=0 unchanged=0 failed=0
 
-cleanup() { rm -f "$candidate_pdf" "$ocr_log"; }
+cleanup() { rm -f "$candidate_pdf" "$optimized_pdf" "$ocr_log"; }
 trap cleanup EXIT
 
 # Progress goes to stderr, so that it stays visible when stdout is redirected and
@@ -92,6 +95,7 @@ compress() {
 
     candidate_pdf=$(mktemp /tmp/XXXXXX-candidate.pdf)
     ocr_log=$(mktemp /tmp/XXXXXX-ocrmypdf.log)
+    optimized_pdf=''
 
     # 1. Optimize, leaving any existing text layer alone.
     step "optimizing (this can take a while)..."
@@ -133,16 +137,31 @@ compress() {
     fi
 
     step "under $MIN_WORDS words/page: forcing OCR (this can take a while)..."
-    started=$SECONDS
-    run_ocrmypdf --force-ocr "${OCR_OPTS[@]}" "$file" "$candidate_pdf" \
-        || { give_up "ocrmypdf could not OCR it"; return; }
-    is_valid_pdf "$candidate_pdf" \
-        || { give_up "the forced-OCR output is not a usable PDF"; return; }
+    # A failed or truncated --force-ocr run clobbers candidate_pdf, so stash the
+    # optimization aside first: if OCR falls through, it becomes our output.
+    optimized_pdf=$(mktemp /tmp/XXXXXX-optimized.pdf)
+    cp "$candidate_pdf" "$optimized_pdf"
 
-    step "OCR'd in $((SECONDS - started))s"
-    write_output "$file" "$candidate_pdf" "$dest"
-    step "wrote $dest ($(human_size "$(file_size "$dest")"))"
-    written=$((written + 1))
+    started=$SECONDS
+    if run_ocrmypdf --force-ocr "${OCR_OPTS[@]}" "$file" "$candidate_pdf" \
+        && is_valid_pdf "$candidate_pdf"; then
+        step "OCR'd in $((SECONDS - started))s"
+        write_output "$file" "$candidate_pdf" "$dest"
+        step "wrote $dest ($(human_size "$(file_size "$dest")"))"
+        written=$((written + 1))
+        return
+    fi
+
+    # OCR failed. Ship the optimized-but-un-OCR'd version rather than nothing —
+    # but only when it actually beat the input; otherwise there is no win to keep.
+    warn "OCR failed"
+    if (( after < before )); then
+        write_output "$file" "$optimized_pdf" "$dest"
+        step "wrote $dest without OCR, saving $(human_size $((before - after)))"
+        written=$((written + 1))
+    else
+        give_up "optimizing gained nothing either"
+    fi
 }
 
 main() {
