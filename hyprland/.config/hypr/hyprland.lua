@@ -159,6 +159,11 @@ hl.bind("SUPER+SHIFT+U", hl.dsp.window.move({ workspace = "-1" }))
 
 -- Applications
 hl.bind("SUPER+SPACE", hl.dsp.exec_cmd("wofi --show drun"))
+-- Shell command prompt. Piping into `sh -c` rather than using wofi's own run
+-- mode is what makes pipes, redirects and globs work. The `printf '\n'` is
+-- required: given genuinely empty stdin wofi exits immediately instead of
+-- opening, so it needs one blank line to type over.
+hl.bind("SUPER+R", hl.dsp.exec_cmd([[sh -c "$(printf '\n' | wofi --dmenu --prompt 'Run:')"]]))
 hl.bind("SUPER+CTRL+SPACE", hl.dsp.exec_cmd("1password --quick-access"))
 hl.bind("SUPER+V", hl.dsp.exec_cmd("sh -c 'cliphist list | wofi --dmenu | cliphist decode | wl-copy'"))
 hl.bind("SUPER+RETURN", hl.dsp.exec_cmd("ghostty"))
