@@ -17,7 +17,8 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
 ## Packages
 
 - `samba/` — `/etc/samba/smb.conf` (standalone file server, private `[Photos]`
-  LAN share) and the `smb.service` drop-in requiring the `/mnt/media` mount.
+  and `[Music]` LAN shares) and the `smb.service` drop-in requiring the
+  `/mnt/media` mount.
 - `archlinux/` — the `PostTransaction` pacman hooks
   (`/etc/pacman.d/hooks/{pacman-list,aur-list}.hook`) that regenerate the
   package manifests under `archlinux/.NO-STOW/`.
