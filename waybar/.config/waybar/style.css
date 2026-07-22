@@ -44,12 +44,16 @@ tooltip {
   background-color: @bg2;
   border-radius: 12px;
   border: 1px solid @fg3;
+  color: @fg1;
+  /* adw-gtk3 sets `text-shadow: 0 1px black` for its dark default tooltip;
+     against our light background it just smears the text. */
+  text-shadow: none;
 }
 
 tooltip label {
+  color: @fg1;
   padding: 6px;
-  font-family: "JetBrainsMono Nerd Font Propo", Inter, sans-serif;
-  font-size: 13px;
+  text-shadow: none;
 }
 
 #workspaces {
