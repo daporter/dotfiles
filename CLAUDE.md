@@ -25,6 +25,23 @@ stow -R <package>    # restow (after adding/removing/renaming files)
 - A file or directory named `.NO-STOW` is ignored by Stow (per `.stowrc`); use
   it to keep repo-only files out of `$HOME`.
 
+### System-level (`/etc`) files
+
+Root-owned config that lives outside `$HOME` (e.g. `/etc/samba/smb.conf`) can't
+use the repo-wide `--target=$HOME`. Such packages live under the top-level
+`system/` **stow directory**, mirror the system root (`/`), and are deployed
+explicitly as root:
+
+```sh
+doas stow --dir=system --target=/ <package>       # symlink into /etc, ...
+doas stow --dir=system --target=/ -R <package>    # restow after file changes
+```
+
+Keeping them under `system/` prevents a bare `stow <package>` from symlinking
+them into `~/etc/...`. See `system/README.md` for details and the per-package
+deploy steps. (Only safe because `/home` is on the root filesystem, so the
+symlink targets are available at early boot.)
+
 ## Modular shell configuration
 
 Shell config is assembled from fragments contributed by many packages, rather
@@ -59,3 +76,6 @@ by PostTransaction hooks in `/etc/pacman.d/hooks/` (`pacman-list.hook`,
 no manual step is needed. They are records only — never applied back to the
 system automatically. They live under `.NO-STOW/` so `stow archlinux` never
 symlinks them into `$HOME`.
+
+The hooks themselves are version-controlled as the `system/archlinux/` package
+(deployed with `--target=/`; see the System-level files note above).
