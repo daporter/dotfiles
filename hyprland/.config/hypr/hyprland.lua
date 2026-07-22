@@ -22,9 +22,9 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("systemctl --user start emacs.service")
 
 	-- Dropbox only registers its tray icon if waybar's StatusNotifierWatcher
-	-- already exists, and never retries. Started here rather than enabled on
-	-- default.target, which would race ahead of waybar.
-	hl.exec_cmd("systemctl --user start dropbox")
+	-- already exists, and never retries. Wait for the bus name rather than
+	-- relying on waybar having been exec'd first.
+	hl.exec_cmd("sh -c 'gdbus wait --session org.kde.StatusNotifierWatcher && systemctl --user start dropbox'")
 
 	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
 	hl.exec_cmd("goldendict --group-name Main --popup-group-name Popup")
