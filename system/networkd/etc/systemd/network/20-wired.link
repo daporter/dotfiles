@@ -1,3 +1,7 @@
+# NOTE: a matching .link file replaces 99-default.link entirely. Because this
+# file sets no NamePolicy=, udev does not rename the NIC, so it keeps the
+# kernel name eth0 instead of its predictable name eno1. Nothing should match
+# this interface by name — see the comment in 20-wired.network.
 [Match]
 Driver=r8169
 

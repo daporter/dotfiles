@@ -1,5 +1,8 @@
+# Match on the driver, not the interface name: 20-wired.link suppresses
+# udev's NamePolicy, so this NIC's name is the kernel fallback (eth0) rather
+# than its predictable name (eno1), and has changed once already.
 [Match]
-Name=eth0
+Driver=r8169
 
 [Network]
 DHCP=yes

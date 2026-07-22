@@ -72,6 +72,14 @@ in the repo, re-run the `cp` above and `restart systemd-networkd` (or
 `udevadm trigger` for the `.link`) to redeploy. `networkctl status eth0` should
 show a `Network File:` set and state `routable (configured)`.
 
+> `eth0` above is this NIC's *current* name, not a stable one. Because
+> `20-wired.link` matches it and sets no `NamePolicy=`, it replaces
+> `99-default.link` and udev never renames the device, so it keeps the kernel
+> fallback `eth0` rather than its predictable name `eno1`. Config files
+> therefore match it by **driver** (`20-wired.network`) or **subnet**
+> (Samba's `interfaces=`) — never by name. Check the live name with
+> `networkctl list` before using it in an ad-hoc command.
+
 ---
 
 The stowed packages differ: edits to a file's *contents* take effect
