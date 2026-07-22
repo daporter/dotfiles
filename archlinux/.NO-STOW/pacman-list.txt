@@ -18,6 +18,7 @@ dateutils
 duf
 dust
 emacs-wayland
+ethtool
 evtest
 ex-vi-compat
 exfat-utils
