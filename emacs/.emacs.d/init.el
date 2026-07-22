@@ -247,7 +247,7 @@
                       :weight 'regular)
   (set-face-attribute 'variable-pitch nil
                       :family "Inter"
-                      :height 120
+                      :height 100
                       :weight 'regular))
 
 (use-package simple
@@ -1617,7 +1617,18 @@
   :init
   (ef-themes-take-over-modus-themes-mode 1)
   :config
-  (modus-themes-load-theme 'ef-melissa-light))
+  (modus-themes-load-theme 'ef-melissa-light)
+  ;; `modus-themes-variable-pitch-ui' makes the mode-line inherit
+  ;; `variable-pitch', which (re)loading the theme reasserts, clobbering any
+  ;; :height set beforehand.  Override afterwards instead.  The selected
+  ;; window's mode-line is drawn with `mode-line-active', not `mode-line'
+  ;; (which is only a fallback base face since Emacs 29).
+  (set-face-attribute 'mode-line-active nil
+                      :family "Inter"
+                      :height 110)
+  (set-face-attribute 'mode-line-inactive nil
+                      :family "Inter"
+                      :height 110))
 
 (use-package captain
   :ensure t
