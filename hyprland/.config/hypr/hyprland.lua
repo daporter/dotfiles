@@ -20,6 +20,12 @@ hl.on("hyprland.start", function()
 
 	hl.exec_cmd("1password --silent")
 	hl.exec_cmd("systemctl --user start emacs.service")
+
+	-- Dropbox only registers its tray icon if waybar's StatusNotifierWatcher
+	-- already exists, and never retries. Started here rather than enabled on
+	-- default.target, which would race ahead of waybar.
+	hl.exec_cmd("systemctl --user start dropbox")
+
 	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
 	hl.exec_cmd("goldendict --group-name Main --popup-group-name Popup")
 
