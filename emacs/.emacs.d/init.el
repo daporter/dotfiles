@@ -933,7 +933,7 @@
     "/.*/Dropbox/reference/.*\\.md\\'"
     '(nil "---" n
           "title: " (capitalize (file-name-base buffer-file-name)) n
-          "uid: " (format-time-string "%Y%m%d%H%M%S") n
+          "id: " (format-time-string "%Y%m%d%H%M") n
           "created: " (format-time-string "%Y-%m-%d %H:%M:%S") n
           "---\n\n")))
 
@@ -1266,10 +1266,6 @@
 (use-package delsel
   :config
   (delete-selection-mode 1))
-
-(use-package fringe
-  :config
-  (fringe-mode 10))
 
 (use-package autoinsert
   :config
@@ -1621,18 +1617,7 @@
   (modus-themes-mixed-fonts t)
   (modus-themes-variable-pitch-ui t)
   :config
-  (modus-themes-load-theme 'modus-operandi)
-  ;; `modus-themes-variable-pitch-ui' makes the mode-line inherit
-  ;; `variable-pitch', which (re)loading the theme reasserts, clobbering any
-  ;; :height set beforehand.  Override afterwards instead.  The selected
-  ;; window's mode-line is drawn with `mode-line-active', not `mode-line'
-  ;; (which is only a fallback base face since Emacs 29).
-  (set-face-attribute 'mode-line-active nil
-                      :family "Inter"
-                      :height 110)
-  (set-face-attribute 'mode-line-inactive nil
-                      :family "Inter"
-                      :height 110))
+  (modus-themes-load-theme 'modus-operandi))
 
 (use-package captain
   :ensure t
@@ -1662,10 +1647,49 @@
          :header-line-width 4
          :mode-line-width 1
          :tab-width 4
-         :right-divider-width 12
+         ;; Thin divider so it reads as a line, not a solid bar;
+         ;; `my/spacious-padding-tweaks' colours it and sizes the fringes
+         ;; that pad it.  (No :fringe-width here -- the fringes are set
+         ;; dynamically to half the line height in that function, since
+         ;; spacious-padding otherwise forces them, overriding
+         ;; `fringe-mode'.)
+         :right-divider-width 1
          :scroll-bar-width 8))
   :config
-  (spacious-padding-mode 1))
+  (spacious-padding-mode 1)
+  ;; `spacious-padding' re-applies its own face specs through
+  ;; `spacious-padding-set-faces' -- on mode enable, on every theme load
+  ;; (`enable-theme-functions'), and on every new frame
+  ;; (`server-after-make-frame-hook', `after-make-frame-functions').
+  ;; Each pass clobbers plain `set-face-attribute' overrides, so
+  ;; re-assert ours *after* it by advising that one function, which
+  ;; every path funnels through.
+  (defun my/spacious-padding-tweaks (&rest _)
+    ;; Mode line: `modus-themes-variable-pitch-ui' makes it inherit
+    ;; `variable-pitch' (height 100); give it its own larger size.  The
+    ;; selected window is drawn with `mode-line-active', not `mode-line'
+    ;; (only a fallback base face since Emacs 29).
+    (set-face-attribute 'mode-line-active nil :family "Inter" :height 110)
+    (set-face-attribute 'mode-line-inactive nil :family "Inter" :height 110)
+    ;; Window divider: spacious-padding paints it in the background
+    ;; colour to hide it; make it a visible line in Modus's `border'
+    ;; colour instead.  The fringes on either side supply the padding
+    ;; (the divider itself is a thin solid bar).
+    (when-let ((color (ignore-errors (modus-themes-get-color-value 'border))))
+      (dolist (face '(window-divider
+                      window-divider-first-pixel
+                      window-divider-last-pixel))
+        (set-face-attribute face nil :foreground color :background color)))
+    ;; Fringes pad the divider: keep them at half the line height so the
+    ;; padding tracks the font size.  spacious-padding just forced them
+    ;; to its own :fringe-width, so re-set them here per graphical frame.
+    (dolist (frame (frame-list))
+      (when (display-graphic-p frame)
+        (let ((width (max 1 (/ (frame-char-height frame) 2))))
+          (set-frame-parameter frame 'left-fringe width)
+          (set-frame-parameter frame 'right-fringe width)))))
+  (advice-add 'spacious-padding-set-faces :after #'my/spacious-padding-tweaks)
+  (my/spacious-padding-tweaks))
 
 (use-package shannon-max
   :load-path "custom"
