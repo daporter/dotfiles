@@ -22,6 +22,9 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
 - `archlinux/` — the `PostTransaction` pacman hooks
   (`/etc/pacman.d/hooks/{pacman-list,aur-list}.hook`) that regenerate the
   package manifests under `archlinux/.NO-STOW/`.
+- `networkd/` — the `systemd-networkd` config in `/etc/systemd/network/`: the
+  wired (`20-wired.network`) and wireless (`25-wireless.network`) DHCP setups,
+  plus `20-wired.link`, which arms magic-packet Wake-on-LAN on the `r8169` NIC.
 
 ## Deploy
 
@@ -38,6 +41,19 @@ doas systemctl reload smb.service            # apply smb.conf
 
 # After renaming/adding/removing files in a package, restow:
 doas stow --dir=system --target=/ -R samba
+```
+
+For `networkd/`, remove the existing real files first, then stow and reload:
+
+```sh
+doas rm -f /etc/systemd/network/20-wired.network \
+           /etc/systemd/network/25-wireless.network
+
+doas stow --dir=system --target=/ networkd   # symlinks all three files in
+doas systemctl restart systemd-networkd      # apply the .network changes
+
+# Arm WoL now without a reboot (the .link is applied by udev on device add):
+doas udevadm trigger --action=add /sys/class/net/eno1
 ```
 
 Edits to a file's *contents* take effect immediately (symlinks) — just
