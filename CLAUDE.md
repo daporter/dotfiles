@@ -42,6 +42,14 @@ them into `~/etc/...`. See `system/README.md` for details and the per-package
 deploy steps. (Only safe because `/home` is on the root filesystem, so the
 symlink targets are available at early boot.)
 
+**Caveat — sandboxed services can't read symlinks into `/home`.** A service
+started with `ProtectHome=yes` (e.g. `systemd-networkd`, which also runs as an
+unprivileged user) has `/home` masked from its mount namespace, so it cannot
+follow a stow symlink into `/home/david/dotfiles` — it fails with `Failed to
+chase '…': Permission denied`. Such packages must be **copied** into place, not
+stowed; the `networkd/` package is deployed this way. Check a service's
+`ProtectHome`/`User` before assuming the symlink pattern will work for it.
+
 ## Modular shell configuration
 
 Shell config is assembled from fragments contributed by many packages, rather
