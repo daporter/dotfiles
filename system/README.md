@@ -23,8 +23,8 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
   (`/etc/pacman.d/hooks/{pacman-list,aur-list}.hook`) that regenerate the
   package manifests under `archlinux/.NO-STOW/`.
 - `networkd/` — the `systemd-networkd` config in `/etc/systemd/network/`: the
-  wired (`20-wired.network`) and wireless (`25-wireless.network`) DHCP setups,
-  plus `20-wired.link`, which arms magic-packet Wake-on-LAN on the `r8169` NIC.
+  wired DHCP setup (`20-wired.network`) plus `20-wired.link`, which arms
+  magic-packet Wake-on-LAN on the `r8169` NIC. This host is wired-only.
   **Deployed by copying, not stowing** — see below.
 
 ## Deploy
@@ -60,7 +60,6 @@ cd ~/dotfiles
 
 doas cp system/networkd/etc/systemd/network/20-wired.link \
         system/networkd/etc/systemd/network/20-wired.network \
-        system/networkd/etc/systemd/network/25-wireless.network \
         /etc/systemd/network/
 doas systemctl restart systemd-networkd      # apply the .network changes
 
