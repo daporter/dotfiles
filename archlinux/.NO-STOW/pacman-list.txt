@@ -12,6 +12,7 @@ bash-language-server
 bat
 bc
 btop
+cliphist
 cmake
 code
 dateutils

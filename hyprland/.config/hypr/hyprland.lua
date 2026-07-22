@@ -29,6 +29,12 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
 	hl.exec_cmd("goldendict --group-name Main --popup-group-name Popup")
 
+	-- Clipboard history. Watch text and images separately per cliphist's own
+	-- recommendation, rather than one `wl-paste --watch`, since a single
+	-- watcher gets confused switching between mime types.
+	hl.exec_cmd("wl-paste --type text --watch cliphist store")
+	hl.exec_cmd("wl-paste --type image --watch cliphist store")
+
 	-- Launch a terminal on the scratchpad.
 	hl.exec_cmd("ghostty --title=scratchpad")
 end)
@@ -154,6 +160,7 @@ hl.bind("SUPER+SHIFT+U", hl.dsp.window.move({ workspace = "-1" }))
 -- Applications
 hl.bind("SUPER+SPACE", hl.dsp.exec_cmd("wofi --show drun"))
 hl.bind("SUPER+CTRL+SPACE", hl.dsp.exec_cmd("1password --quick-access"))
+hl.bind("SUPER+V", hl.dsp.exec_cmd("sh -c 'cliphist list | wofi --dmenu | cliphist decode | wl-copy'"))
 hl.bind("SUPER+RETURN", hl.dsp.exec_cmd("ghostty"))
 hl.bind("SUPER+B", hl.dsp.exec_cmd("firefox --new-window"))
 hl.bind("SUPER+CTRL+D", hl.dsp.exec_cmd("goldendict --popup $(wl-paste --primary --no-newline)"))
