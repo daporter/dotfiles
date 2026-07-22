@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# Clipboard history picker: choose an entry with wofi and put it on the
+# clipboard.
+#
+# `cliphist list` emits "<id>\t<preview>" and `cliphist decode` needs that id to
+# find the entry, so piping the list straight into wofi leaks the ids into the
+# menu. wofi's --pre-display-cmd looks like the fix, but it interpolates the
+# entry text into a shell command line: an apostrophe in the clipboard breaks
+# the menu outright ("unexpected EOF"), and text crafted to close the quote runs
+# arbitrary commands just from opening the picker. Clipboard content is
+# untrusted -- it comes from whatever you last copied -- so instead we show a
+# stripped list and map the choice back to its id here, using only parameter
+# expansion.
+
+set -eu
+
+tab=$(printf '\t')
+
+# The wofi config enables markup and images, which suits drun but not arbitrary
+# clipboard text: "<b>x</b>" would render as bold with the tags silently
+# dropped, and an "img:" prefix would load a file from disk, so the menu would
+# show something other than what is about to be pasted. Force both off here.
+sel=$(cliphist list | cut -f2- |
+	wofi --dmenu -D allow_markup=false -D allow_images=false) || exit 0
+[ -n "$sel" ] || exit 0
+
+# Find the first entry whose preview matches. Previews are truncated, so two
+# very long entries can collide; first match wins, which is the most recent.
+line=$(
+	cliphist list | while IFS= read -r l; do
+		if [ "${l#*"$tab"}" = "$sel" ]; then
+			printf '%s' "$l"
+			break
+		fi
+	done
+)
+
+[ -n "$line" ] || exit 0
+
+printf '%s' "$line" | cliphist decode | wl-copy

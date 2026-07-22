@@ -94,7 +94,7 @@
     "format": "󰅍",
     "tooltip": true,
     "tooltip-format": "Clipboard history (SUPER+V)",
-    "on-click": "cliphist list | wofi --dmenu | cliphist decode | wl-copy"
+    "on-click": "cliphist-pick"
   },
 
   "tray": {

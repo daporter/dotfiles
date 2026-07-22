@@ -165,7 +165,7 @@ hl.bind("SUPER+SPACE", hl.dsp.exec_cmd("wofi --show drun"))
 -- opening, so it needs one blank line to type over.
 hl.bind("SUPER+R", hl.dsp.exec_cmd([[sh -c "$(printf '\n' | wofi --dmenu --prompt 'Run:')"]]))
 hl.bind("SUPER+CTRL+SPACE", hl.dsp.exec_cmd("1password --quick-access"))
-hl.bind("SUPER+V", hl.dsp.exec_cmd("sh -c 'cliphist list | wofi --dmenu | cliphist decode | wl-copy'"))
+hl.bind("SUPER+V", hl.dsp.exec_cmd("cliphist-pick"))
 hl.bind("SUPER+RETURN", hl.dsp.exec_cmd("ghostty"))
 hl.bind("SUPER+B", hl.dsp.exec_cmd("firefox --new-window"))
 hl.bind("SUPER+CTRL+D", hl.dsp.exec_cmd("goldendict --popup $(wl-paste --primary --no-newline)"))
