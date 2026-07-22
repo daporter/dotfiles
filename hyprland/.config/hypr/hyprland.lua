@@ -28,6 +28,7 @@ hl.on("hyprland.start", function()
 
 	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
 	hl.exec_cmd("goldendict --group-name Main --popup-group-name Popup")
+	hl.exec_cmd("pomotroid")
 
 	-- Clipboard history. Watch text and images separately per cliphist's own
 	-- recommendation, rather than one `wl-paste --watch`, since a single

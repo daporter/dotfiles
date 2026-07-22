@@ -23,6 +23,7 @@ otf-spectralsc
 otf-xcharter
 paisa-bin
 paru
+pomotroid-bin
 pricehist
 python-alpha_vantage
 python-yfinance
