@@ -144,8 +144,9 @@
      nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
      nov olivetti orderless org-anki org-modern org-noter
      page-break-lines pcmpl-args pdf-tools popper project
-     python-mode reformatter spacious-padding sudo-edit titlecase
-     tramp unfill use-package vertico visual-fill-column vterm
+     python-mode reformatter spacious-padding string-inflection
+     sudo-edit titlecase tramp unfill use-package vertico
+     visual-fill-column vterm
      which-key)))
 
 (use-package custom
@@ -703,6 +704,10 @@
               :map embark-heading-map
               ("T" . titlecase-region))
   :custom (titlecase-style 'chicago))
+
+(use-package string-inflection
+  :ensure t
+  :commands (string-inflection-kebab-case))
 
 (use-package flymake
   :hook (prog-mode text-mode)
@@ -1676,6 +1681,8 @@
       ("s o" "Consult outline"       consult-outline)]
      ["Whitespace"
       ("w"   "Cleanup"               whitespace-cleanup)]
+     ["Case"
+      ("k"   "Kebab-case"            string-inflection-kebab-case)]
      ["Toggle"
       ("t h" "Highlight line"        hl-line-mode)
       ("t n" "Line numbers"          display-line-numbers-mode)
