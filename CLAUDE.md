@@ -25,6 +25,15 @@ stow -R <package>    # restow (after adding/removing/renaming files)
 - A file or directory named `.NO-STOW` is ignored by Stow (per `.stowrc`); use
   it to keep repo-only files out of `$HOME`.
 
+**Caveat — systemd drop-in directories need `--no-folding`.** When a package
+owns a whole directory, Stow "folds" it into a single directory symlink. systemd
+does not follow a symlinked `*.service.d/` drop-in directory, so the override is
+silently ignored (`systemctl --user show <unit> -p DropInPaths` comes back
+empty). Stow such packages with `stow --no-folding <package>`, which creates a
+real directory and symlinks the files inside it. The `dropbox/` package is
+deployed this way — a plain `stow -R dropbox` will refold it and break the
+override.
+
 ### System-level (`/etc`) files
 
 Root-owned config that lives outside `$HOME` (e.g. `/etc/samba/smb.conf`) can't
