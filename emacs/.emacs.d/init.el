@@ -134,20 +134,20 @@
 (custom-set-variables
  '(package-selected-packages
    '(activities adaptive-wrap apheleia avy cape captain
-     casual-suite consult corfu corfu-candidate-overlay csv-mode
-     dape denote disproject editorconfig ef-themes eglot embark
-     embark-consult expand-region flymake flymake-hledger
-     flymake-lua flymake-markdownlint flymake-yamllint gptel
-     hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
-     ligature lorem-ipsum lua-mode magit magit-todos marginalia
-     markdown-mode meow meow-tree-sitter modus-themes nerd-icons
-     nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
-     nov olivetti orderless org-anki org-modern org-noter
-     page-break-lines pcmpl-args pdf-tools popper project
-     python-mode reformatter spacious-padding string-inflection
-     sudo-edit titlecase tramp unfill use-package vertico
-     visual-fill-column vterm
-     which-key)))
+                casual-suite consult corfu corfu-candidate-overlay csv-mode
+                dape denote disproject editorconfig eglot embark
+                embark-consult expand-region flymake flymake-hledger
+                flymake-lua flymake-markdownlint flymake-yamllint gptel
+                hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
+                ligature lorem-ipsum lua-mode magit magit-todos marginalia
+                markdown-mode meow meow-tree-sitter nerd-icons
+                nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
+                nov olivetti orderless org-anki org-modern org-noter
+                page-break-lines pcmpl-args pdf-tools popper project
+                python-mode reformatter spacious-padding string-inflection
+                sudo-edit titlecase tramp unfill use-package vertico
+                visual-fill-column vterm
+                which-key)))
 
 (use-package custom
   :custom
@@ -930,7 +930,7 @@
   (markdown-fontify-code-blocks-natively t)
   :config
   (define-auto-insert
-    "/.*/Dropbox/Reference/.*\\.md\\'"
+    "/.*/Dropbox/reference/.*\\.md\\'"
     '(nil "---" n
           "title: " (capitalize (file-name-base buffer-file-name)) n
           "uid: " (format-time-string "%Y%m%d%H%M%S") n
@@ -1605,19 +1605,23 @@
    (gptel-mode . olivetti-mode)))
 
 (use-package modus-themes
-  :ensure t
+  ;; The themes ship with Emacs but live in `etc/themes' (on
+  ;; `custom-theme-load-path', not `load-path'), so there is no
+  ;; `modus-themes' library on `load-path' to require normally.  Per the
+  ;; manual, load it with `require-theme' and skip use-package's implicit
+  ;; require.  Options must be set before the theme is loaded (`:custom'
+  ;; runs before `:config'), and `modus-themes-load-theme' is preferred
+  ;; over `load-theme' -- it disables conflicting themes and runs hooks.
+  :no-require t
+  :init
+  (require-theme 'modus-themes)
   :custom
   (modus-themes-bold-constructs t)
   (modus-themes-italic-constructs t)
   (modus-themes-mixed-fonts t)
-  (modus-themes-variable-pitch-ui t))
-
-(use-package ef-themes
-  :ensure t
-  :init
-  (ef-themes-take-over-modus-themes-mode 1)
+  (modus-themes-variable-pitch-ui t)
   :config
-  (modus-themes-load-theme 'ef-melissa-light)
+  (modus-themes-load-theme 'modus-operandi)
   ;; `modus-themes-variable-pitch-ui' makes the mode-line inherit
   ;; `variable-pitch', which (re)loading the theme reasserts, clobbering any
   ;; :height set beforehand.  Override afterwards instead.  The selected
