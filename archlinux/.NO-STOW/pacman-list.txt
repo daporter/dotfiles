@@ -111,6 +111,7 @@ restic
 ripgrep
 rofi-calc
 ruff
+samba
 sdparm
 shellcheck
 smartmontools
