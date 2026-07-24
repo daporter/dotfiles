@@ -14,8 +14,8 @@
                 flymake-lua flymake-markdownlint flymake-yamllint
                 gptel hl-todo hledger-mode hyprlang-ts-mode kind-icon
                 ledger-mode ligature lorem-ipsum lua-mode magit
-                magit-todos marginalia markdown-mode meow
-                meow-tree-sitter nerd-icons nerd-icons-completion
+                magit-todos marginalia markdown-mode
+                nerd-icons nerd-icons-completion
                 nerd-icons-dired nerd-icons-ibuffer nov olivetti
                 orderless org-anki org-modern org-noter
                 page-break-lines pcmpl-args pdf-tools popper project

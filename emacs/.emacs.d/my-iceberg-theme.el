@@ -528,12 +528,6 @@
    `(markdown-table-face              ((t (:inherit fixed-pitch))))
    `(markdown-url-face                ((t (:inherit (fixed-pitch shadow)))))
 
-;;;;; Meow
-
-   `(meow-beacon-cursor ((t (:background ,white))))
-   `(meow-insert-cursor ((t (:background ,green))))
-   `(meow-normal-cursor ((t (:background ,red))))
-
 ;;;;; Nerd Icons
 
    `(nerd-icons-red        ((t (:foreground ,red))))

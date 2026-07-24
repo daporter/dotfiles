@@ -174,7 +174,6 @@ hl.bind("SUPER+M", hl.dsp.exec_cmd("emacsclient --create-frame --no-wait --alter
 hl.bind("SUPER+CTRL+S", hl.dsp.exec_cmd("hyprshot -m window"))
 hl.bind("SUPER+CTRL+SHIFT+S", hl.dsp.exec_cmd("hyprshot -m region"))
 hl.bind("SUPER+SLASH", hl.dsp.exec_cmd("firefox --new-window ~/.config/hypr/keybindings.html"))
-hl.bind("SUPER+CTRL+SLASH", hl.dsp.exec_cmd("imv -s full -w 'Meow Keybindings' ~/dotfiles/emacs/keymap_meow.svg"))
 
 -- Window resizing
 hl.bind("SUPER+CTRL+A", hl.dsp.window.resize({ x = -20, y = 0, relative = true }))
@@ -234,11 +233,3 @@ hl.window_rule({
 	size = { "monitor_w * 0.6", "monitor_h * 0.8" },
 })
 hl.window_rule({ match = { class = "^(firefox)$", title = "^(Hyprland Keybindings Reference)$" }, center = true })
-
--- Popup window with the Meow keybindings cheatsheet.
-hl.window_rule({ match = { class = "^(imv)$", title = "^(Meow Keybindings)$" }, float = true })
-hl.window_rule({
-	match = { class = "^(imv)$", title = "^(Meow Keybindings)$" },
-	size = { "monitor_w * 0.4", "monitor_h * 0.4" },
-})
-hl.window_rule({ match = { class = "^(imv)$", title = "^(Meow Keybindings)$" }, center = true })
