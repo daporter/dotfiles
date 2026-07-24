@@ -248,7 +248,7 @@
                       :weight 'regular)
   (set-face-attribute 'variable-pitch nil
                       :family "Inter"
-                      :height 100
+                      :height 105
                       :weight 'regular))
 
 (use-package simple
@@ -1610,8 +1610,8 @@
   (modus-themes-italic-constructs t)
   (modus-themes-mixed-fonts t)
   (modus-themes-variable-pitch-ui t))
-  ;; Not the active theme -- see `nano-theme' below.  Switch back with
-  ;; `(modus-themes-load-theme 'modus-operandi)'.
+;; Not the active theme -- see `nano-theme' below.  Switch back with
+;; `(modus-themes-load-theme 'modus-operandi)'.
 
 (use-package nano-theme
   :ensure t
