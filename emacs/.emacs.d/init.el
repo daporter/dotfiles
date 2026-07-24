@@ -933,8 +933,8 @@
     "/.*/Dropbox/reference/.*\\.md\\'"
     '(nil "---" n
           "title: " (capitalize (file-name-base buffer-file-name)) n
-          "id: " (format-time-string "%Y%m%d%H%M") n
-          "created: " (format-time-string "%Y-%m-%d %H:%M:%S") n
+          "id: " (format "\"%s\"" (format-time-string "%Y%m%d%H%M")) n
+          "created: " (format-time-string "%Y-%m-%d %H:%M") n
           "---\n\n")))
 
 (use-package flymake-markdownlint
