@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Readest
+Terminal=false
+NoDisplay=true
+MimeType=x-scheme-handler/com.googleusercontent.apps.209390247301-ctpmep68ppfa56r1b8tr35e4qi4p60kq;x-scheme-handler/readest-onedrive;x-scheme-handler/readest
+Exec="/usr/bin/readest" %u
