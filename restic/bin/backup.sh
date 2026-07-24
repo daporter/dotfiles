@@ -1,8 +1,9 @@
 #!/bin/bash
 #
-# Wrapper script for daily and offsite restic backups
+# Wrapper script for daily, offsite and media restic backups
 # Usage: ./backup_wrapper.sh daily
 #        ./backup_wrapper.sh offsite
+#        ./backup_wrapper.sh media
 #        ./backup_wrapper.sh all
 
 set -o errexit
@@ -23,6 +24,11 @@ DAILY_SOURCE=$HOME
 OFFSITE_MOUNT="/mnt/restic_offsite"
 OFFSITE_LOG="$HOME/backup_offsite.log"
 OFFSITE_SOURCE=$DAILY_SOURCE
+
+# Media backup (music and photos; drive rotated off-site, run monthly by hand)
+MEDIA_MOUNT="/mnt/media-backup"
+MEDIA_LOG="$HOME/backup_media.log"
+MEDIA_SOURCE="/mnt/media"
 
 # --- Functions ---
 
@@ -197,6 +203,11 @@ backup_offsite() {
     unmount_repo
 }
 
+backup_media() {
+    backup_drive "$MEDIA_MOUNT" "$MEDIA_SOURCE" "$MEDIA_LOG" "--keep-monthly 24 --keep-yearly 100"
+    unmount_repo
+}
+
 # --- Main ---
 
 case "$1" in
@@ -206,12 +217,15 @@ case "$1" in
     offsite)
         backup_offsite
         ;;
+    media)
+        backup_media
+        ;;
     all)
         backup_daily
         backup_offsite
         ;;
     *)
-        echo "Usage: $0 {daily|offsite|all}"
+        echo "Usage: $0 {daily|offsite|media|all}"
         exit 1
         ;;
 esac
