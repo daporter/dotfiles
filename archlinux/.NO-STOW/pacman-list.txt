@@ -112,6 +112,7 @@ rebuild-detector
 restic
 ripgrep
 rofi-calc
+rsync
 ruff
 samba
 sdparm
