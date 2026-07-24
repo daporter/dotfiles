@@ -1,0 +1,12 @@
+[Unit]
+Description=Ingest new phone photos from inboxes into the archive
+After=mnt-media.mount
+Wants=mnt-media.mount
+ConditionPathIsMountPoint=/mnt/media
+
+[Service]
+Type=oneshot
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+ExecStart=%h/bin/photo-ingest.sh
