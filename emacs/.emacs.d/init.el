@@ -53,7 +53,8 @@
   ;; Improve the spacing of underlines.
   (x-use-underline-position-properties nil)
 
-  ;; Necessary for visual-fill-column-mode:
+  ;; Right-align mode-line content to the fringe, not the window edge,
+  ;; so it isn't cut off by margin-setting modes like `olivetti-mode'.
   (mode-line-right-align-edge 'right-fringe)
 
   (backup-directory-alist
@@ -874,14 +875,6 @@
     (adaptive-wrap-prefix-mode (if visual-line-mode 1 -1)))
   :hook (visual-line-mode . my/toggle-adaptive-wrap-prefix-mode))
 
-(use-package visual-fill-column
-  :ensure t
-  :preface
-  (defun my/toggle-visual-fill-column-mode ()
-    "Enable/disable visual-fill-column-mode based on visual-line-mode status."
-    (visual-fill-column-mode (if visual-line-mode 1 -1)))
-  :hook (visual-line-mode . my/toggle-visual-fill-column-mode))
-
 (use-package unfill
   :ensure t
   :commands (unfill-region unfill-paragraph))
@@ -1323,7 +1316,8 @@
   (global-ligature-mode t))
 
 (use-package olivetti
-  :ensure t)
+  :ensure t
+  :hook (text-mode . olivetti-mode))
 
 (use-package expand-region
   :ensure t
