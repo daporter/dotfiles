@@ -22,6 +22,10 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
 - `archlinux/` — the `PostTransaction` pacman hooks
   (`/etc/pacman.d/hooks/{pacman-list,aur-list}.hook`) that regenerate the
   package manifests under `archlinux/.NO-STOW/`.
+- `openssh/` — `/etc/ssh/sshd_config.d/10-local.conf`, the local `sshd` policy:
+  public-key logins for `david` only, and only from the `192.168.178.0/24` home
+  LAN. The authorized keys themselves are *not* here — they are stowed from the
+  `$HOME`-side `ssh/` package as `~/.ssh/authorized_keys`.
 - `networkd/` — the `systemd-networkd` config in `/etc/systemd/network/`: the
   wired DHCP setup (`20-wired.network`) plus `20-wired.link`, which arms
   magic-packet Wake-on-LAN on the `r8169` NIC. This host is wired-only.
@@ -43,6 +47,42 @@ doas systemctl reload smb.service            # apply smb.conf
 # After renaming/adding/removing files in a package, restow:
 doas stow --dir=system --target=/ -R samba
 ```
+
+### `openssh/`
+
+`/etc/ssh/sshd_config.d/` already holds Arch's `99-archlinux.conf`, so Stow
+cannot fold the directory and will symlink just the one file into it:
+
+```sh
+cd ~/dotfiles
+
+stow -R ssh                                    # ~/.ssh/authorized_keys
+doas stow --dir=system --target=/ openssh      # /etc/ssh/sshd_config.d/
+doas ssh-keygen -A                             # host keys, if none yet
+doas sshd -t                                   # validate before enabling
+doas systemctl enable --now sshd
+```
+
+The `ssh-keygen -A` step is only needed the first time. `sshd.service` pulls in
+`sshdgenkeys.service` (which runs the same command) via `Wants=`, so starting
+the daemon would generate the keys by itself — but `sshd -t` is a bare binary
+invocation that bypasses systemd, and it exits with `no hostkeys available`
+*before* checking the config, so validation is useless until they exist.
+
+Arch no longer ships an `sshd.socket`, so this is the plain `sshd.service`.
+After editing `10-local.conf`, `doas systemctl reload sshd` — existing sessions
+survive a reload, so a mistake that locks you out is still recoverable from the
+session you already have open. Confirm the policy took with:
+
+```sh
+sshd -G | grep -iE 'allowusers|addressfamily|passwordauthentication'
+```
+
+Use `-G`, not `-T`: both dump the effective config, but `-T` also runs the `-t`
+key sanity check, so it needs root *and* pre-existing host keys. `-G` skips
+that and runs fine as an ordinary user. Keep the `grep -i` — OpenSSH 10 prints
+keywords in canonical CamelCase (`AllowUsers`), not the all-lowercase form
+older versions emitted, so a lowercase pattern silently matches nothing.
 
 ### `networkd/` — copy, do **not** stow
 
