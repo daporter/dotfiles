@@ -1615,9 +1615,14 @@
   (modus-themes-bold-constructs t)
   (modus-themes-italic-constructs t)
   (modus-themes-mixed-fonts t)
-  (modus-themes-variable-pitch-ui t)
+  (modus-themes-variable-pitch-ui t))
+  ;; Not the active theme -- see `nano-theme' below.  Switch back with
+  ;; `(modus-themes-load-theme 'modus-operandi)'.
+
+(use-package nano-theme
+  :ensure t
   :config
-  (modus-themes-load-theme 'modus-operandi))
+  (load-theme 'nano-light t))
 
 (use-package captain
   :ensure t
