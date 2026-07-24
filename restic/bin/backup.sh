@@ -34,6 +34,20 @@ MEDIA_SOURCE="/mnt/media"
 
 TMP_LOG=$(mktemp)
 
+# Whether the current repo drive should be unmounted when the script exits.
+# Set only for the rotated off-site drives, not the permanent daily repo.
+UNMOUNT_ON_EXIT=0
+
+# Runs on every exit — success, failure, or errexit — so a run that aborts
+# part-way still unmounts a rotated drive and never leaks the temp log.
+cleanup() {
+    if [ "$UNMOUNT_ON_EXIT" -eq 1 ]; then
+        unmount_repo
+    fi
+    rm -f "$TMP_LOG"
+}
+trap cleanup EXIT
+
 log() {
     local MSG="$*"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $MSG" | \
@@ -176,9 +190,6 @@ backup_drive() {
         # Strip ANSI escape codes for email
         sed 's/\x1b\[[0-9;]*m//g' "$TMP_LOG" | mail -s "$SUBJECT" "$EMAIL_TO"
     fi
-
-    # Clean up temporary log
-    rm -f "$TMP_LOG"
 }
 
 unmount_repo() {
@@ -199,13 +210,13 @@ backup_daily() {
 }
 
 backup_offsite() {
+    UNMOUNT_ON_EXIT=1
     backup_drive "$OFFSITE_MOUNT" "$OFFSITE_SOURCE" "$OFFSITE_LOG" "--keep-monthly 12 --keep-yearly 100"
-    unmount_repo
 }
 
 backup_media() {
+    UNMOUNT_ON_EXIT=1
     backup_drive "$MEDIA_MOUNT" "$MEDIA_SOURCE" "$MEDIA_LOG" "--keep-monthly 24 --keep-yearly 100"
-    unmount_repo
 }
 
 # --- Main ---
