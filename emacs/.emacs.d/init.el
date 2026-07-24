@@ -248,6 +248,14 @@
   (set-face-attribute 'variable-pitch nil
                       :family "Inter"
                       :height 105
+                      :weight 'regular)
+  (set-face-attribute 'mode-line nil
+                      :family "Inter"
+                      :height 105
+                      :weight 'regular)
+  (set-face-attribute 'mode-line-inactive nil
+                      :family "Inter"
+                      :height 105
                       :weight 'regular))
 
 (use-package simple
