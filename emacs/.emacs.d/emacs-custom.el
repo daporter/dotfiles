@@ -7,21 +7,21 @@
  '(org-agenda-files
    '("~/Dropbox/63_programming/63.02_leetcode/63.02_journal.org"))
  '(package-selected-packages
-   '(0blayout activities adaptive-wrap apheleia avy cape captain casual-suite
-              cl-generic corfu corfu-candidate-overlay csv-mode dape disproject
-              edit-indirect editorconfig ef-themes eglot embark-consult erc
-              faceup flymake-hledger flymake-lua flymake-markdownlint
-              flymake-yamllint gptel hledger-mode hyprlang-ts-mode idlwave
-              kind-icon ledger-mode ligature lorem-ipsum lua-mode magit-todos
-              map marginalia markdown-mode meow-tree-sitter modus-themes
-              nano-theme nerd-icons-completion nerd-icons-dired
-              nerd-icons-ibuffer nov ntlm
-              olivetti orderless org org-anki org-modern org-noter
-              page-break-lines pcmpl-args pdf-tools peg popper python
-              python-mode rainbow-mode reformatter so-long soap-client
-              spacious-padding sudo-edit svg titlecase track-changes tramp
-              transient unfill use-package verilog-mode vertico vterm
-              which-key window-tool-bar))
+   '(activities adaptive-wrap apheleia avy cape captain casual-suite
+                consult corfu corfu-candidate-overlay csv-mode dape
+                denote disproject editorconfig eglot embark
+                embark-consult expand-region flymake flymake-hledger
+                flymake-lua flymake-markdownlint flymake-yamllint
+                gptel hl-todo hledger-mode hyprlang-ts-mode kind-icon
+                ledger-mode ligature lorem-ipsum lua-mode magit
+                magit-todos marginalia markdown-mode meow
+                meow-tree-sitter nerd-icons nerd-icons-completion
+                nerd-icons-dired nerd-icons-ibuffer nov olivetti
+                orderless org-anki org-modern org-noter
+                page-break-lines pcmpl-args pdf-tools popper project
+                python-mode reformatter string-inflection sudo-edit
+                titlecase tramp unfill use-package vertico vterm
+                which-key))
  '(package-vc-selected-packages '((dape :url "https://github.com/svaante/dape.git"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
