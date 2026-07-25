@@ -20,7 +20,7 @@ set -o pipefail
 MEDIA="/mnt/media"
 ARCHIVE="$MEDIA/photos"
 INBOX="$ARCHIVE/inbox"
-LOG="$MEDIA/photo-ingest.log"
+LOG="$ARCHIVE/photo-ingest.log"
 
 log() { printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" >>"$LOG"; }
 
