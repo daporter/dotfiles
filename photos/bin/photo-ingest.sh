@@ -7,8 +7,9 @@
 # whole camera roll each time only ever adds genuinely new files, and recycled
 # iPhone names (IMG_0001 coming round again) never collide destructively.
 #
-# Layout:
-#   /mnt/media/inbox/<person>/   <- Image Capture imports land here (via Samba)
+# Layout (inbox lives under photos/ so it is reachable via the [Photos] Samba
+# share — that share is the only network-writable path into the media tree):
+#   /mnt/media/photos/inbox/<person>/   <- Image Capture imports land here (via Samba)
 #   /mnt/media/photos/<person>/YYYY/YYYY-MM/   <- sorted archive
 #   /mnt/media/photos/.<person>.sha256         <- known-hash manifest
 #
@@ -17,8 +18,8 @@ set -o nounset
 set -o pipefail
 
 MEDIA="/mnt/media"
-INBOX="$MEDIA/inbox"
 ARCHIVE="$MEDIA/photos"
+INBOX="$ARCHIVE/inbox"
 LOG="$MEDIA/photo-ingest.log"
 
 log() { printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" >>"$LOG"; }
