@@ -97,7 +97,7 @@ human_readable() {
 
 get_repo_stats() {
     local SNAPSHOTS=0 SIZE=0
-    SNAPSHOTS=$(restic -r "$MOUNTPOINT" snapshots --quiet 2>/dev/null | wc -l)
+    SNAPSHOTS=$(restic -r "$MOUNTPOINT" snapshots --json 2>/dev/null | jq 'length')
     SIZE=$(restic -r "$MOUNTPOINT" stats --mode raw-data --json 2>/dev/null | jq -r '.total_size // 0')
     echo "$SNAPSHOTS $SIZE"
 }
