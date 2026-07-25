@@ -16,6 +16,6 @@ $HOME/src
 $HOME/tmp
 # media backup: skip the photo-ingest staging inbox and its log
 /mnt/media/photos/inbox
-/mnt/media/photo-ingest.log
+/mnt/media/photos/photo-ingest.log
 *.o
 *.core
