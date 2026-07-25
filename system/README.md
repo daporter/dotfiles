@@ -30,6 +30,11 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
   wired DHCP setup (`20-wired.network`) plus `20-wired.link`, which arms
   magic-packet Wake-on-LAN on the `r8169` NIC. This host is wired-only.
   **Deployed by copying, not stowing** — see below.
+- `doas/` — `/etc/doas.conf`, the `doas` (opendoas) privilege rules. Includes a
+  scoped `permit nopass david cmd /usr/bin/smbstatus` grant so the hypridle
+  suspend guard (`~/.config/hypr/suspend-unless-active.sh`) can read Samba's
+  root-only session state non-interactively. **Deployed by copying, not
+  stowing** — see below.
 
 ## Deploy
 
@@ -119,6 +124,29 @@ show a `Network File:` set and state `routable (configured)`.
 > therefore match it by **driver** (`20-wired.network`) or **subnet**
 > (Samba's `interfaces=`) — never by name. Check the live name with
 > `networkctl list` before using it in an ad-hoc command.
+
+### `doas/` — copy, do **not** stow
+
+opendoas refuses to use a `doas.conf` that isn't a **regular file owned by
+root** and not writable by group/other — a Stow symlink into
+`/home/david/dotfiles` (owned by `david`) fails that check, and a bad or
+rejected `doas.conf` breaks privilege escalation entirely. So this package is
+deployed by **copying** a real, root-owned `0400` file into place, and is
+**validated before being relied on**:
+
+```sh
+cd ~/dotfiles
+
+doas install -o root -g root -m 0400 \
+     system/doas/etc/doas.conf /etc/doas.conf
+doas -C /etc/doas.conf && echo "doas.conf OK"   # must print OK
+```
+
+Keep a **second root shell open** while replacing `doas.conf`, so a syntax error
+that `doas -C` rejects is still fixable. Edits here are **not** live: after
+changing the repo copy, re-run the `install` above. The `nopass` grant is
+limited to the read-only `smbstatus` binary; confirm it works without a prompt
+with `doas -n /usr/bin/smbstatus --json`.
 
 ---
 
