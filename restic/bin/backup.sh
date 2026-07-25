@@ -64,8 +64,10 @@ log_fail() {
 fail() {
     local MSG="$*"
     log_fail "$MSG"
-    SUBJECT="$EMAIL_SUBJECT - $MOUNTPOINT (FAIL)"
-    sed 's/\x1b\[[0-9;]*m//g' "$TMP_LOG" | mail -s "$SUBJECT" "$EMAIL_TO"
+    if command -v mail >/dev/null 2>&1; then
+        SUBJECT="$EMAIL_SUBJECT - $MOUNTPOINT (FAIL)"
+        sed 's/\x1b\[[0-9;]*m//g' "$TMP_LOG" | mail -s "$SUBJECT" "$EMAIL_TO"
+    fi
     exit 1
 }
 
@@ -196,10 +198,11 @@ unmount_repo() {
     # Only unmount if it's actually mounted.
     if mountpoint -q "$MOUNTPOINT"; then
         log "Unmounting $MOUNTPOINT…"
-        if ! umount "$MOUNTPOINT"; then
+        if umount "$MOUNTPOINT"; then
+            log "Unmounted successfully."
+        else
             log_fail "ERROR: Failed to unmount $MOUNTPOINT"
         fi
-        log "Unmounted successfully."
     else
         log "Note: $MOUNTPOINT not mounted; skipping unmount."
     fi
