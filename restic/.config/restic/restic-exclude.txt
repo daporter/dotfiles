@@ -15,7 +15,7 @@ $HOME/Mail/.notmuch/xapian
 $HOME/src
 $HOME/tmp
 # media backup: skip the photo-ingest staging inbox and its log
-/mnt/media/inbox
+/mnt/media/photos/inbox
 /mnt/media/photo-ingest.log
 *.o
 *.core
