@@ -21,7 +21,7 @@ DAILY_LOG="$HOME/backup_daily.log"
 DAILY_SOURCE=$HOME
 
 # Offsite backup
-OFFSITE_MOUNT="/mnt/restic_offsite"
+OFFSITE_MOUNT="/mnt/restic-offsite"
 OFFSITE_LOG="$HOME/backup_offsite.log"
 OFFSITE_SOURCE=$DAILY_SOURCE
 
