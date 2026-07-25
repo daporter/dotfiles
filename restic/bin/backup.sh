@@ -61,13 +61,24 @@ log_fail() {
         tee -a "$LOGFILE" "$TMP_LOG"
 }
 
+# Email the accumulated run log via the system MTA (msmtp provides sendmail).
+# ANSI colour codes are stripped so the message is plain text.
+send_report() {
+    local SUBJECT="$1"
+    command -v sendmail >/dev/null 2>&1 || return 0
+    {
+        printf 'To: %s\n' "$EMAIL_TO"
+        printf 'Subject: %s\n' "$SUBJECT"
+        printf 'Content-Type: text/plain; charset=UTF-8\n'
+        printf '\n'
+        sed 's/\x1b\[[0-9;]*m//g' "$TMP_LOG"
+    } | sendmail -t
+}
+
 fail() {
     local MSG="$*"
     log_fail "$MSG"
-    if command -v mail >/dev/null 2>&1; then
-        SUBJECT="$EMAIL_SUBJECT - $MOUNTPOINT (FAIL)"
-        sed 's/\x1b\[[0-9;]*m//g' "$TMP_LOG" | mail -s "$SUBJECT" "$EMAIL_TO"
-    fi
+    send_report "$EMAIL_SUBJECT - $MOUNTPOINT (FAIL)"
     exit 1
 }
 
@@ -186,12 +197,8 @@ backup_drive() {
     log "Backup status: $STATUS"
     log "====================================="
 
-    # Send email without ANSI color codes
-    if command -v mail >/dev/null 2>&1; then
-        SUBJECT="$EMAIL_SUBJECT - $MOUNTPOINT ($STATUS)"
-        # Strip ANSI escape codes for email
-        sed 's/\x1b\[[0-9;]*m//g' "$TMP_LOG" | mail -s "$SUBJECT" "$EMAIL_TO"
-    fi
+    # Email the run summary.
+    send_report "$EMAIL_SUBJECT - $MOUNTPOINT ($STATUS)"
 }
 
 unmount_repo() {
