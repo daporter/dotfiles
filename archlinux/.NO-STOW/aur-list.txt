@@ -5,6 +5,7 @@ anki-bin
 ansifilter
 brave-bin
 calibre-bin
+claude-agent-acp
 claude-code
 claude-desktop
 dropbox

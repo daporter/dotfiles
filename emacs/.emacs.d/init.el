@@ -134,7 +134,7 @@
 ;; to the bundled version.
 (custom-set-variables
  '(package-selected-packages
-   '(activities adaptive-wrap apheleia avy cape captain
+   '(activities adaptive-wrap agent-shell apheleia avy cape captain
                 casual-suite consult corfu corfu-candidate-overlay csv-mode
                 dape denote disproject editorconfig eglot embark
                 embark-consult expand-region flymake flymake-hledger
@@ -252,11 +252,11 @@
   (set-face-attribute 'mode-line nil
                       :family "Inter"
                       :height 105
-                      :weight 'regular)
+                      :weight 'semibold)
   (set-face-attribute 'mode-line-inactive nil
                       :family "Inter"
                       :height 105
-                      :weight 'regular))
+                      :weight 'semibold))
 
 (use-package simple
   :preface
@@ -1386,6 +1386,10 @@
   ((gptel-mode . gptel-highlight-mode)
    (gptel-mode . olivetti-mode)))
 
+(use-package agent-shell
+  :ensure t
+  :commands (agent-shell agent-shell-anthropic-start-claude-code))
+
 (use-package modus-themes
   ;; The themes ship with Emacs but live in `etc/themes' (on
   ;; `custom-theme-load-path', not `load-path'), so there is no
@@ -1418,8 +1422,8 @@
   :config
   (window-divider-mode 1)
   (dolist (face '(window-divider
-                   window-divider-first-pixel
-                   window-divider-last-pixel))
+                  window-divider-first-pixel
+                  window-divider-last-pixel))
     (set-face-attribute face nil :foreground nano-light-faded)))
 
 (use-package captain
