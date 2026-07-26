@@ -17,7 +17,8 @@
 # the archive arrived via Samba, so their mtimes reflect import time rather
 # than anything stable on the phone.
 #
-# Usage: photo-import.sh <person>       (DRY_RUN=1 to print decisions only)
+# Usage: photo-import.sh <person> [udid]   (DRY_RUN=1 to print decisions only)
+#        The UDID is only needed when more than one device is connected.
 #
 set -o errexit
 set -o nounset
@@ -39,13 +40,29 @@ fi
 dest="$INBOX/$person"
 archive_dir="$ARCHIVE/$person"
 
-if ! idevice_id -l 2>/dev/null | grep -q .; then
+udids=$(idevice_id -l 2>/dev/null || true)
+if [ -z "$udids" ]; then
     echo "No iPhone detected. Plug it in and unlock it." >&2
     exit 1
 fi
 
-if ! idevicepair validate >/dev/null 2>&1; then
-    echo "iPhone not paired. Unlock it, then run: idevicepair pair" >&2
+# There is more than one iPhone in this house, and mounting whichever device
+# ifuse picks by default would happily file one person's camera roll into the
+# other's archive. Refuse to guess.
+udid=${2:-}
+if [ -z "$udid" ]; then
+    if [ "$(printf '%s\n' "$udids" | wc -l)" -gt 1 ]; then
+        echo "More than one device connected; pass its UDID as the 2nd argument:" >&2
+        while read -r u; do
+            printf '  %s  %s\n' "$u" "$(ideviceinfo -u "$u" -k DeviceName 2>/dev/null)" >&2
+        done <<<"$udids"
+        exit 1
+    fi
+    udid=$udids
+fi
+
+if ! idevicepair -u "$udid" validate >/dev/null 2>&1; then
+    echo "Not paired. Unlock the phone, then run: idevicepair -u $udid pair" >&2
     exit 1
 fi
 
@@ -63,7 +80,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-ifuse "$MOUNT"
+ifuse -u "$udid" "$MOUNT"
 mounted=1
 
 # Index what we already have, by name and size. Derived fresh from the archive
