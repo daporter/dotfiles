@@ -1471,8 +1471,8 @@
     (and (boundp 'eglot--managed-mode)
          eglot--managed-mode))
   :config
-  (transient-define-prefix my/transient-prefix-leader-t ()
-    "My menu for the t leader key."
+  (transient-define-prefix my/dispatch-menu ()
+    "My dispatch menu of context-sensitive editing commands."
     [["Search"
       ("s l" "Consult line"          consult-line)
       ("s i" "Consult imenu"         consult-imenu)
@@ -1512,7 +1512,10 @@
      ["Markup" :if-derived markdown-mode
       ("m b" "Bold"                  markdown-insert-bold)
       ("m i" "Italic"                markdown-insert-italic)
-      ("m c" "Code"                  markdown-insert-code)]]))
+      ("m c" "Code"                  markdown-insert-code)]])
+
+  ;; `C-c <letter>' is reserved for users, so no mode will shadow this.
+  (keymap-set (current-global-map) "C-c t" #'my/dispatch-menu))
 
 (use-package casual-suite
   :ensure t
