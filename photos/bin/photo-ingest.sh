@@ -107,5 +107,12 @@ for person_dir in "$INBOX"/*/; do
 
     # Tidy empty subdirectories left in the inbox.
     find "$person_dir" -mindepth 1 -type d -empty -delete 2>/dev/null || true
-    log "$person: added=$added duplicates=$dupes undated=$undated empty=$empty"
+
+    # Only log runs that did something. The timer fires every 15 minutes and
+    # almost always finds an empty inbox, which would bury the real entries.
+    # systemd's journal is the heartbeat: it records every invocation and its
+    # exit status, including failures too early for this script to log.
+    if [ $((added + dupes + undated + empty)) -gt 0 ]; then
+        log "$person: added=$added duplicates=$dupes undated=$undated empty=$empty"
+    fi
 done
