@@ -51,11 +51,19 @@ for person_dir in "$INBOX"/*/; do
             | sed "s#  $MEDIA/#  #" >"$manifest"
     fi
 
-    added=0 dupes=0 undated=0
+    added=0 dupes=0 undated=0 empty=0
     while IFS= read -r -d '' f; do
         base=$(basename "$f")
         # Drop macOS metadata cruft that Samba copies produce.
         case "$base" in .DS_Store|._*) rm -f "$f"; continue ;; esac
+
+        # A zero-byte file is a truncated copy with nothing to archive, and
+        # exiftool errors on it, which used to abort the entire run.
+        if [ ! -s "$f" ]; then
+            rm -f "$f"
+            empty=$((empty + 1))
+            continue
+        fi
 
         hash=$(sha256sum "$f" | cut -d' ' -f1)
         if grep -q "^$hash " "$manifest"; then
@@ -67,10 +75,14 @@ for person_dir in "$INBOX"/*/; do
         # Destination folder from capture date. exiftool prints the first of
         # these tags that exists, so ordering gives the fallback chain:
         # DateTimeOriginal (photos) -> CreateDate (videos) -> file mtime.
+        # `|| true` because exiftool exits non-zero on files it dislikes, and
+        # under errexit+pipefail that would kill the run mid-inbox.
         sub=$(exiftool -m -d '%Y/%Y-%m' -s3 \
                 -DateTimeOriginal -CreateDate -FileModifyDate "$f" 2>/dev/null \
-                | head -n1)
-        if [ -z "$sub" ]; then
+                | head -n1) || true
+        # Anything that is not YYYY/YYYY-MM is unusable: a zeroed EXIF date
+        # otherwise becomes a literal "0000:00:00 00:00:00" directory.
+        if ! [[ $sub =~ ^[0-9]{4}/[0-9]{4}-[0-9]{2}$ ]]; then
             sub="undated"
             undated=$((undated + 1))
         fi
@@ -95,5 +107,5 @@ for person_dir in "$INBOX"/*/; do
 
     # Tidy empty subdirectories left in the inbox.
     find "$person_dir" -mindepth 1 -type d -empty -delete 2>/dev/null || true
-    log "$person: added=$added duplicates=$dupes undated=$undated"
+    log "$person: added=$added duplicates=$dupes undated=$undated empty=$empty"
 done
