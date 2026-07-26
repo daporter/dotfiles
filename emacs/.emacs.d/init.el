@@ -1388,6 +1388,8 @@
 
 (use-package agent-shell
   :ensure t
+  :custom
+  (agent-shell-preferred-agent-config 'claude-code)
   :commands (agent-shell agent-shell-anthropic-start-claude-code))
 
 (use-package modus-themes
