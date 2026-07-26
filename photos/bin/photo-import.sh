@@ -84,6 +84,18 @@ if [ ${#index_dirs[@]} -gt 0 ]; then
         fi
     done < <(find "${index_dirs[@]}" -type f -printf '%f\t%s\n' 2>/dev/null)
 fi
+
+# The archive alone is not enough. photo-ingest.sh deletes content-duplicates
+# that arrived under a different name — IMG_0544.JPG already archived as
+# AFGK3894.JPG — leaving no name+size trace, so they would be re-copied and
+# re-deleted on every single run. Record what we sent, keyed phone-side.
+# Delete a line here (or the whole file) to force a re-import.
+imported="$ARCHIVE/.${person}.imported"
+touch "$imported"
+while IFS=$'\t' read -r name size; do
+    [ -n "$name" ] && known["$name/$size"]=1
+done < "$imported"
+
 log "$person: indexed ${#known[@]} known files; scanning phone…"
 
 copied=0 skipped=0
@@ -114,6 +126,7 @@ while IFS= read -r -d '' f; do
         partial="$target"
         cp -p "$f" "$target"
         partial=""
+        printf '%s\t%s\n' "$base" "$size" >>"$imported"
         # Index it so a recycled name later in this same run does not collide.
         known["$base/$size"]=1
     fi
