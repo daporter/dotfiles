@@ -102,16 +102,38 @@ if [ ${#index_dirs[@]} -gt 0 ]; then
     done < <(find "${index_dirs[@]}" -type f -printf '%f\t%s\n' 2>/dev/null)
 fi
 
-# The archive alone is not enough. photo-ingest.sh deletes content-duplicates
-# that arrived under a different name — IMG_0544.JPG already archived as
-# AFGK3894.JPG — leaving no name+size trace, so they would be re-copied and
-# re-deleted on every single run. Record what we sent, keyed phone-side.
-# Delete a line here (or the whole file) to force a re-import.
+# Phone-side record of every file we have accounted for, whether we copied it
+# or skipped it. Deriving from the archive alone is not enough, twice over:
+#
+#   1. photo-ingest.sh deletes content-duplicates that arrived under a
+#      different name (IMG_0544.JPG already archived as AFGK3894.JPG), leaving
+#      no name+size trace, so they would be re-copied and re-deleted forever.
+#   2. Curating the archive by hand would not stick — deleting a photo from
+#      the archive while it is still on the phone would just re-import it.
+#
+# So deleting from the archive is the supported way to cull a photo, and this
+# record makes it permanent. Delete a line here (or the whole file) to force a
+# re-import. Note this deliberately does NOT mirror phone-side deletions: the
+# phone is a rolling window holding a fraction of the archive, so treating it
+# as the source of truth would destroy nearly everything.
 imported="$ARCHIVE/.${person}.imported"
 touch "$imported"
+declare -A recorded
 while IFS=$'\t' read -r name size; do
-    [ -n "$name" ] && known["$name/$size"]=1
+    if [ -n "$name" ]; then
+        known["$name/$size"]=1
+        recorded["$name/$size"]=1
+    fi
 done < "$imported"
+
+# Append a phone-side key to the record, once.
+remember() {
+    [ -n "${DRY_RUN:-}" ] && return 0
+    [ -n "${recorded["$1/$2"]:-}" ] && return 0
+    printf '%s\t%s\n' "$1" "$2" >>"$imported"
+    recorded["$1/$2"]=1
+    return 0
+}
 
 log "$person: indexed ${#known[@]} known files; scanning phone…"
 
@@ -123,6 +145,7 @@ while IFS= read -r -d '' f; do
     size=$(stat -c '%s' "$f" 2>/dev/null) || continue
     if [ -n "${known["$base/$size"]:-}" ]; then
         skipped=$((skipped + 1))
+        remember "$base" "$size"
         continue
     fi
 
@@ -143,7 +166,7 @@ while IFS= read -r -d '' f; do
         partial="$target"
         cp -p "$f" "$target"
         partial=""
-        printf '%s\t%s\n' "$base" "$size" >>"$imported"
+        remember "$base" "$size"
         # Index it so a recycled name later in this same run does not collide.
         known["$base/$size"]=1
     fi
