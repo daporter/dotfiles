@@ -52,6 +52,7 @@ hyprpolkitagent
 hyprshot
 hyprshutdown
 hyprutils
+ifuse
 imagemagick
 inetutils
 inter-font
