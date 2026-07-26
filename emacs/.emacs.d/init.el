@@ -1390,7 +1390,9 @@
   :ensure t
   :custom
   (agent-shell-preferred-agent-config 'claude-code)
-  :commands (agent-shell agent-shell-anthropic-start-claude-code))
+  :commands (agent-shell agent-shell-anthropic-start-claude-code)
+  :bind (:map agent-shell-mode-map
+              ("C-o" . agent-shell-help-menu)))
 
 (use-package modus-themes
   ;; The themes ship with Emacs but live in `etc/themes' (on
