@@ -252,11 +252,11 @@
   (set-face-attribute 'mode-line nil
                       :family "Inter"
                       :height 105
-                      :weight 'semibold)
+                      :weight 'regular)
   (set-face-attribute 'mode-line-inactive nil
                       :family "Inter"
                       :height 105
-                      :weight 'semibold))
+                      :weight 'regular))
 
 (use-package simple
   :preface
