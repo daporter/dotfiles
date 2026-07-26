@@ -16,9 +16,10 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
 
 ## Packages
 
-- `samba/` — `/etc/samba/smb.conf` (standalone file server, private `[Photos]`
-  and `[Music]` LAN shares) and the `smb.service` drop-in requiring the
-  `/mnt/media` mount.
+- `samba/` — `/etc/samba/smb.conf` (standalone file server, private `[Photos]`,
+  `[Music]` and `[Inbox]` LAN shares) and the `smb.service` drop-in requiring
+  the `/mnt/media` mount. `[Inbox]` is the staging area phone sync apps write
+  to; see *Samba accounts* below for the user setup it needs.
 - `archlinux/` — the `PostTransaction` pacman hooks
   (`/etc/pacman.d/hooks/{pacman-list,aur-list}.hook`) that regenerate the
   package manifests under `archlinux/.NO-STOW/`.
@@ -52,6 +53,22 @@ doas systemctl reload smb.service            # apply smb.conf
 # After renaming/adding/removing files in a package, restow:
 doas stow --dir=system --target=/ -R samba
 ```
+
+### Samba accounts
+
+Not stowable — this is system state, so it must be recreated by hand on a
+rebuild. `security = user` with `passdb backend = tdbsam` maps each Samba
+login onto a Unix account, so one has to exist even for people who never log
+in. Deciana's phone uploads to `[Inbox]`, and nothing else:
+
+```sh
+doas useradd --system --no-create-home --shell /usr/bin/nologin deciana
+doas smbpasswd -a deciana                    # Samba password only
+```
+
+`[Inbox]` sets `force user = david`, so her uploads land owned by `david` and
+the `photo-ingest.service` user unit can file them. Her account has no shell,
+no home directory, and no access to `[Photos]` or `[Music]`.
 
 ### `openssh/`
 
