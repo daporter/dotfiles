@@ -75,7 +75,7 @@ automatically once stowed. Prefer this over editing `bash/.bashrc` directly.
 ## Conventions
 
 - **Commit messages**: `<package>: <imperative summary>` (e.g.
-  `btop: sort processes by CPU usage`). Enforced by `git/.gitlint`: title ≤ 50
+  `btop: sort processes by CPU usage`). Enforced by `git/.gitlint`: title ≤ 72
   chars, body lines ≤ 72 chars.
 - **Lua files** (notably `hyprland/.config/hypr/hyprland.lua`): run `stylua` on
   any Lua file you edit before committing. No `stylua.toml` exists, so it uses

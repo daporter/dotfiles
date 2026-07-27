@@ -26,8 +26,8 @@ ignore=B5,B6
 # See http://jorisroovers.github.io/gitlint/user_defined_rules for details
 # extra-path=examples/
 
-[title-max-length]
-line-length=50
+# [title-max-length]
+# line-length=72
 
 # [title-must-not-contain-word]
 # Comma-separated list of words that should not occur in the title. Matching is case
