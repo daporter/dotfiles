@@ -145,7 +145,7 @@
                 nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
                 nov olivetti orderless org-anki org-modern org-noter
                 page-break-lines pcmpl-args pdf-tools popper project
-                python-mode reformatter string-inflection sudo-edit
+                python-mode string-inflection sudo-edit
                 titlecase tramp unfill use-package vertico vterm
                 which-key)))
 
@@ -974,24 +974,12 @@
 (use-package conf-mode
   :mode "\\.service\\'")
 
-(use-package reformatter
-  :ensure t)
-
 (use-package yaml-ts-mode
-  :after reformatter
   :preface
   (defun my/yaml-set-tab-width ()
     (setq tab-width 2))
   :mode "\\.ya?ml\\'"
-  :hook
-  ((yaml-ts-mode . my/yaml-set-tab-width)
-   (yaml-ts-mode . yamlfmt-on-save-mode))
-  :config
-  (reformatter-define yamlfmt
-    :program "yamlfmt"
-    :args '("-in" "-")
-    :stdin t
-    :stdout t))
+  :hook (yaml-ts-mode . my/yaml-set-tab-width))
 
 (use-package tramp
   :defer t
