@@ -1313,6 +1313,10 @@
   :ensure t
   :hook (text-mode . olivetti-mode))
 
+(use-package visual-fill-column
+  :ensure t
+  :commands visual-fill-column-mode)
+
 (use-package expand-region
   :ensure t
   :bind ("C-\"" . er/expand-region)
@@ -1381,6 +1385,10 @@
     (whitespace-mode -1)
     (apheleia-mode -1)
     (flymake-mode -1))
+  (defun my/agent-shell-viewport-wrap ()
+    (setq-local fill-column 100)
+    (visual-line-mode 1)
+    (visual-fill-column-mode 1))
   :custom
   (agent-shell-preferred-agent-config 'claude-code)
   (agent-shell-prefer-viewport-interaction t)
@@ -1391,7 +1399,9 @@
   ;; from `text-mode', so they'd otherwise pick up all of `text-mode's
   ;; hooks: `olivetti-mode', `whitespace-mode', `apheleia-mode', `flymake'.
   :hook ((agent-shell-viewport-edit-mode . my/agent-shell-viewport-disable-text-mode-extras)
-         (agent-shell-viewport-view-mode . my/agent-shell-viewport-disable-text-mode-extras)))
+         (agent-shell-viewport-view-mode . my/agent-shell-viewport-disable-text-mode-extras)
+         (agent-shell-viewport-edit-mode . my/agent-shell-viewport-wrap)
+         (agent-shell-viewport-view-mode . my/agent-shell-viewport-wrap)))
 
 (use-package modus-themes
   ;; The themes ship with Emacs but live in `etc/themes' (on
