@@ -1383,6 +1383,7 @@
     (flymake-mode -1))
   :custom
   (agent-shell-preferred-agent-config 'claude-code)
+  (agent-shell-prefer-viewport-interaction t)
   :commands (agent-shell agent-shell-anthropic-start-claude-code)
   :bind (:map agent-shell-mode-map
               ("C-o" . agent-shell-help-menu))
