@@ -146,8 +146,8 @@
                 nov olivetti orderless org-anki org-modern org-noter
                 page-break-lines pcmpl-args pdf-tools popper project
                 python-mode string-inflection sudo-edit
-                titlecase tramp unfill use-package vertico vterm
-                which-key)))
+                titlecase tramp unfill use-package vertico
+                visual-fill-column vterm which-key)))
 
 (use-package custom
   :custom
