@@ -1424,26 +1424,42 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (modus-themes-bold-constructs t)
   (modus-themes-italic-constructs t)
   (modus-themes-mixed-fonts t)
-  (modus-themes-variable-pitch-ui t))
-;; Not the active theme -- see `nano-theme' below.  Switch back with
-;; `(modus-themes-load-theme 'modus-operandi)'.
+  (modus-themes-variable-pitch-ui t)
+  (modus-themes-headings
+   '((1 . (variable-pitch 1.3))
+     (2 . (variable-pitch 1.15))
+     (3 . (1.05))
+     (agenda-date . (1.2))
+     (agenda-structure . (variable-pitch light 1.3))
+     (t . (1.0))))
+  (modus-themes-completions
+   '((matches . (extrabold underline))
+     (selection . (semibold))))
+  (modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
+  :config
+  (modus-themes-load-theme 'modus-operandi))
 
 (use-package nano-theme
-  :ensure t
-  :config
-  (load-theme 'nano-light t))
+  :ensure t)
+;; Not the active theme -- see `modus-themes' above.  Switch back with
+;; `(load-theme 'nano-light t)', which also requires restoring the
+;; `window-divider' fix below (modus-themes sets that face itself, but
+;; `nano-theme' does not).
 
 (use-package frame
-  ;; `nano-theme' doesn't set a foreground for `window-divider', so the
-  ;; divider is otherwise invisible (it defaults to the frame background).
   :custom
   (window-divider-default-right-width 1)
   :config
   (window-divider-mode 1)
-  (dolist (face '(window-divider
-                  window-divider-first-pixel
-                  window-divider-last-pixel))
-    (set-face-attribute face nil :foreground nano-light-faded)))
+  ;; `nano-theme' doesn't set a foreground for `window-divider', so the
+  ;; divider is otherwise invisible (it defaults to the frame background).
+  ;; Only needed when `nano-theme' is the active theme -- modus-themes
+  ;; themes this face itself. Restore if switching back to nano-theme:
+  ;; (dolist (face '(window-divider
+  ;;                 window-divider-first-pixel
+  ;;                 window-divider-last-pixel))
+  ;;   (set-face-attribute face nil :foreground nano-light-faded))
+  )
 
 (use-package captain
   :ensure t
