@@ -907,8 +907,7 @@
 
 (use-package apheleia
   :ensure t
-  :config
-  (apheleia-global-mode 1))
+  :hook ((prog-mode text-mode conf-mode) . apheleia-mode))
 
 (use-package markdown-mode
   :ensure t
