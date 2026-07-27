@@ -9,6 +9,20 @@ window {
   border-radius: 3px;
 }
 
+#outer-box {
+  margin: 0px;
+  padding: 0px;
+  background-color: #fdf6e3;
+  border: 2px solid #586e75;
+  border-radius: 3px;
+}
+
+#inner-box {
+  margin: 4px;
+  padding: 4px;
+  background-color: #fdf6e3;
+}
+
 #input {
   margin: 4px;
   padding: 3px 12px;
@@ -23,36 +37,17 @@ window {
   outline: none;
 }
 
-#inner-box {
-  margin: 4px;
-  padding: 4px;
-  background-color: #fdf6e3;
-}
-
-#outer-box {
-  margin: 0px;
-  padding: 0px;
-  background-color: #fdf6e3;
-  border: 2px solid #586e75;
-  border-radius: 3px;
-}
-
 #scroll {
   margin: 0px;
   padding: 0px;
 }
 
-#text {
-  margin: 4px;
-  padding: 4px;
-  color: #586e75;
-}
-
 #entry {
-  padding: 3px 12px;
+  padding: 1px 12px;
   margin: 0px 4px;
   background-color: #fdf6e3;
   border-radius: 2px;
+  border-bottom: 1px solid #eee8d5;
 }
 
 #entry:selected {
@@ -63,6 +58,12 @@ window {
 
 #entry:hover {
   background-color: #eee8d5;
+}
+
+#text {
+  margin: 2px 4px;
+  padding: 2px 4px;
+  color: #586e75;
 }
 
 #text:selected {
