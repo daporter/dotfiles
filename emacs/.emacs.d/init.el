@@ -1375,11 +1375,22 @@
 
 (use-package agent-shell
   :ensure t
+  :preface
+  (defun my/agent-shell-viewport-disable-text-mode-extras ()
+    (olivetti-mode -1)
+    (whitespace-mode -1)
+    (apheleia-mode -1)
+    (flymake-mode -1))
   :custom
   (agent-shell-preferred-agent-config 'claude-code)
   :commands (agent-shell agent-shell-anthropic-start-claude-code)
   :bind (:map agent-shell-mode-map
-              ("C-o" . agent-shell-help-menu)))
+              ("C-o" . agent-shell-help-menu))
+  ;; The viewport buffers (`agent-shell-prefer-viewport-interaction') derive
+  ;; from `text-mode', so they'd otherwise pick up all of `text-mode's
+  ;; hooks: `olivetti-mode', `whitespace-mode', `apheleia-mode', `flymake'.
+  :hook ((agent-shell-viewport-edit-mode . my/agent-shell-viewport-disable-text-mode-extras)
+         (agent-shell-viewport-view-mode . my/agent-shell-viewport-disable-text-mode-extras)))
 
 (use-package modus-themes
   ;; The themes ship with Emacs but live in `etc/themes' (on
