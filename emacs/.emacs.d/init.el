@@ -874,13 +874,19 @@
   :vc (:url "https://github.com/tpeacock19/flymake-vale" :rev :newest)
   :hook (text-mode . flymake-vale-load))
 
-(use-package adaptive-wrap
-  :ensure t
+(use-package visual-wrap-prefix-mode
   :preface
-  (defun my/toggle-adaptive-wrap-prefix-mode ()
-    "Enable/disable adaptive-wrap-prefix-mode based on visual-line-mode status."
-    (adaptive-wrap-prefix-mode (if visual-line-mode 1 -1)))
-  :hook (visual-line-mode . my/toggle-adaptive-wrap-prefix-mode))
+  (defun my/toggle-visual-wrap-prefix-mode ()
+    "Enable/disable `visual-wrap-prefix-mode' based on `visual-line-mode' status.
+Skipped in agent-shell viewport buffers: their indentation is a
+`line-prefix'/`wrap-prefix' text property agent-shell sets itself, and
+this mode's own `fill-context-prefix' computation (based on literal
+leading whitespace) overwrites it with an empty prefix — and disabling
+the mode later would wipe every `wrap-prefix' in the buffer outright."
+    (unless (derived-mode-p 'agent-shell-viewport-edit-mode
+                             'agent-shell-viewport-view-mode)
+      (visual-wrap-prefix-mode (if visual-line-mode 1 -1))))
+  :hook (visual-line-mode . my/toggle-visual-wrap-prefix-mode))
 
 (use-package unfill
   :ensure t
