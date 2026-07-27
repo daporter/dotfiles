@@ -235,27 +235,27 @@
   :config
   (set-face-attribute 'default nil
                       :family "JetBrainsMono Nerd Font Mono"
-                      :height 100
+                      :height 110
                       :weight 'regular)
   (set-face-attribute 'fixed-pitch nil
                       :family "JetBrainsMono Nerd Font Mono"
-                      :height 100
+                      :height 110
                       :weight 'regular)
   (set-face-attribute 'fixed-pitch-serif nil
                       :family "JetBrainsMono Nerd Font Mono"
-                      :height 100
+                      :height 110
                       :weight 'regular)
   (set-face-attribute 'variable-pitch nil
                       :family "Inter"
-                      :height 105
+                      :height 120
                       :weight 'regular)
   (set-face-attribute 'mode-line nil
                       :family "Inter"
-                      :height 105
+                      :height 120
                       :weight 'regular)
   (set-face-attribute 'mode-line-inactive nil
                       :family "Inter"
-                      :height 105
+                      :height 120
                       :weight 'regular))
 
 (use-package simple
