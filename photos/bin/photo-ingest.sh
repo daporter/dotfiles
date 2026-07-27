@@ -74,11 +74,19 @@ for person_dir in "$INBOX"/*/; do
 
         # Destination folder from capture date. exiftool prints the first of
         # these tags that exists, so ordering gives the fallback chain:
-        # DateTimeOriginal (photos) -> CreateDate (videos) -> file mtime.
+        # DateTimeOriginal (photos) -> CreateDate (videos) -> atime -> mtime.
+        #
+        # atime sits ahead of mtime because Image Capture rewrites mtime to the
+        # import time, which would file every EXIF-less photo under the month it
+        # was copied. Samba preserves the original date in atime instead, and
+        # /mnt/media is mounted noatime so it stays put. EXIF still wins
+        # wherever it exists, so this only affects files that would otherwise
+        # fall through to a meaningless timestamp.
+        #
         # `|| true` because exiftool exits non-zero on files it dislikes, and
         # under errexit+pipefail that would kill the run mid-inbox.
         sub=$(exiftool -m -d '%Y/%Y-%m' -s3 \
-                -DateTimeOriginal -CreateDate -FileModifyDate "$f" 2>/dev/null \
+                -DateTimeOriginal -CreateDate -FileAccessDate -FileModifyDate "$f" 2>/dev/null \
                 | head -n1) || true
         # Anything that is not YYYY/YYYY-MM is unusable: a zeroed EXIF date
         # otherwise becomes a literal "0000:00:00 00:00:00" directory.
