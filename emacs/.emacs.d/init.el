@@ -1380,12 +1380,14 @@
 (use-package agent-shell
   :ensure t
   :preface
-  (defun my/agent-shell-viewport-disable-text-mode-extras ()
+  (defun my/agent-shell-viewport-setup ()
     (olivetti-mode -1)
     (whitespace-mode -1)
     (apheleia-mode -1)
-    (flymake-mode -1))
-  (defun my/agent-shell-viewport-wrap ()
+    (flymake-mode -1)
+    ;; Must come after `olivetti-mode' is disabled above: exiting olivetti
+    ;; restores whatever `visual-line-mode' state it recorded on entry,
+    ;; which would otherwise clobber the wrapping enabled here.
     (setq-local fill-column 100)
     (visual-line-mode 1)
     (visual-fill-column-mode 1))
@@ -1398,10 +1400,8 @@
   ;; The viewport buffers (`agent-shell-prefer-viewport-interaction') derive
   ;; from `text-mode', so they'd otherwise pick up all of `text-mode's
   ;; hooks: `olivetti-mode', `whitespace-mode', `apheleia-mode', `flymake'.
-  :hook ((agent-shell-viewport-edit-mode . my/agent-shell-viewport-disable-text-mode-extras)
-         (agent-shell-viewport-view-mode . my/agent-shell-viewport-disable-text-mode-extras)
-         (agent-shell-viewport-edit-mode . my/agent-shell-viewport-wrap)
-         (agent-shell-viewport-view-mode . my/agent-shell-viewport-wrap)))
+  :hook ((agent-shell-viewport-edit-mode . my/agent-shell-viewport-setup)
+         (agent-shell-viewport-view-mode . my/agent-shell-viewport-setup)))
 
 (use-package modus-themes
   ;; The themes ship with Emacs but live in `etc/themes' (on
