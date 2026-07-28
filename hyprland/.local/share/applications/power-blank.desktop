@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Blank Screen
+Comment=Turn off the display without suspending
+Exec=blank-screen
+Type=Application
+Icon=video-display
+Categories=System;

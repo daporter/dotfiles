@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# Turn the display off (DPMS) without suspending, and restore it on the next
+# key press or mouse movement.
+#
+# A bare `dpms off` has no wake path. hypridle only runs a listener's
+# `on-resume` if that same listener has already fired its `on-timeout`, and a
+# manual blank never trips one -- so the display stays dark until the main
+# hypridle's 300s listener happens to time out on its own.
+#
+# Instead run a private, one-shot hypridle whose sole rule blanks after a second
+# of inactivity and, on the next input, restores the display and exits. This is
+# independent of the session hypridle, which keeps its own 5min/30min rules.
+
+set -eu
+
+runtime="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+conf="$runtime/blank-screen.conf"
+pidfile="$runtime/blank-screen.pid"
+
+# Already blanking? Leave the existing instance alone rather than stacking a
+# second watcher on the same display.
+if [ -r "$pidfile" ] && kill -0 "$(cat "$pidfile")" 2>/dev/null; then
+	exit 0
+fi
+
+cat > "$conf" <<EOF
+listener {
+    timeout    = 1
+    on-timeout = hyprctl dispatch 'hl.dsp.dpms({ state = "off" })'
+    on-resume  = hyprctl dispatch 'hl.dsp.dpms({ state = "on" })'; kill \$(cat $pidfile)
+}
+EOF
+
+hypridle -c "$conf" &
+echo $! > "$pidfile"
+
+# Wait for the watcher to be killed by its own on-resume, then tidy up.
+wait $! 2>/dev/null || true
+rm -f "$conf" "$pidfile"
