@@ -1386,7 +1386,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 (use-package agent-shell
   :ensure t
   :preface
-  (defun my/agent-shell-viewport-setup ()
+  (defun my/agent-shell-setup ()
     (olivetti-mode -1)
     (whitespace-mode -1)
     (apheleia-mode -1)
@@ -1408,8 +1408,12 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   ;; The viewport buffers (`agent-shell-prefer-viewport-interaction') derive
   ;; from `text-mode', so they'd otherwise pick up all of `text-mode's
   ;; hooks: `olivetti-mode', `whitespace-mode', `apheleia-mode', `flymake'.
-  :hook ((agent-shell-viewport-edit-mode . my/agent-shell-viewport-setup)
-         (agent-shell-viewport-view-mode . my/agent-shell-viewport-setup)))
+  ;; `agent-shell-mode' itself doesn't derive from `text-mode' (so those
+  ;; disables are no-ops there), but gets the same hook for consistent
+  ;; wrapping in the main chat buffer.
+  :hook ((agent-shell-viewport-edit-mode . my/agent-shell-setup)
+         (agent-shell-viewport-view-mode . my/agent-shell-setup)
+         (agent-shell-mode . my/agent-shell-setup)))
 
 (use-package modus-themes
   ;; The themes ship with Emacs but live in `etc/themes' (on
