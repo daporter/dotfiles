@@ -1412,54 +1412,55 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 (use-package modus-themes
   ;; The themes ship with Emacs but live in `etc/themes' (on
   ;; `custom-theme-load-path', not `load-path'), so there is no
-  ;; `modus-themes' library on `load-path' to require normally.  Per the
-  ;; manual, load it with `require-theme' and skip use-package's implicit
-  ;; require.  Options must be set before the theme is loaded (`:custom'
-  ;; runs before `:config'), and `modus-themes-load-theme' is preferred
-  ;; over `load-theme' -- it disables conflicting themes and runs hooks.
-  :no-require t
-  :init
+  ;; `modus-themes' library on `load-path' to require normally -- load it
+  ;; with `require-theme' instead, and skip use-package's implicit
+  ;; require.  This must happen in `:preface', not `:init': use-package's
+  ;; canonical keyword order runs `:init' after `:preface', and `:config'
+  ;; (which sets the options below) needs the library already loaded.
+  ;; `:preface' forms are wrapped in `eval-and-compile' and run before
+  ;; everything else, so this also works when evaluating this form in
+  ;; isolation (e.g. `C-M-x'), not just on a full file load.
+  :preface
   (require-theme 'modus-themes)
-  :custom
-  (modus-themes-bold-constructs t)
-  (modus-themes-italic-constructs t)
-  (modus-themes-mixed-fonts t)
-  (modus-themes-variable-pitch-ui t)
-  (modus-themes-headings
-   '((1 . (variable-pitch 1.3))
-     (2 . (variable-pitch 1.15))
-     (3 . (1.05))
-     (agenda-date . (1.2))
-     (agenda-structure . (variable-pitch light 1.3))
-     (t . (1.0))))
-  (modus-themes-completions
-   '((matches . (extrabold underline))
-     (selection . (semibold))))
-  (modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
+  :no-require t
+  ;; Set options with plain `setq' in `:config', not use-package's
+  ;; `:custom': `:custom' registers values under an internal
+  ;; `use-package' custom theme (see `custom-known-themes'), and Custom
+  ;; replays a theme's *raw, unevaluated* value forms via `eval' whenever
+  ;; it reprocesses a variable (e.g. when `enable-theme' runs during a
+  ;; later `modus-themes-load-theme' call, or when this library is
+  ;; reloaded).  For `modus-themes-common-palette-overrides' below, whose
+  ;; value is a bare reference to `modus-themes-preset-overrides-faint',
+  ;; that replay can land *before* modus-themes.el has (re)defined the
+  ;; preset variable, raising a void-variable error.  `setq' never
+  ;; touches the Custom/theme system, so it doesn't have this hazard --
+  ;; this matches the setup shown in the modus-themes manual.  Options
+  ;; must be set before the theme is loaded, and `modus-themes-load-theme'
+  ;; is preferred over `load-theme' -- it disables conflicting themes and
+  ;; runs hooks.
   :config
+  (setq modus-themes-bold-constructs t)
+  (setq modus-themes-italic-constructs t)
+  (setq modus-themes-mixed-fonts t)
+  (setq modus-themes-variable-pitch-ui t)
+  (setq modus-themes-headings
+        '((1 . (variable-pitch 1.3))
+          (2 . (variable-pitch 1.15))
+          (3 . (1.05))
+          (agenda-date . (1.2))
+          (agenda-structure . (variable-pitch light 1.3))
+          (t . (1.0))))
+  (setq modus-themes-completions
+        '((matches . (extrabold underline))
+          (selection . (semibold))))
+  (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
   (modus-themes-load-theme 'modus-operandi))
-
-(use-package nano-theme
-  :ensure t)
-;; Not the active theme -- see `modus-themes' above.  Switch back with
-;; `(load-theme 'nano-light t)', which also requires restoring the
-;; `window-divider' fix below (modus-themes sets that face itself, but
-;; `nano-theme' does not).
 
 (use-package frame
   :custom
   (window-divider-default-right-width 1)
   :config
-  (window-divider-mode 1)
-  ;; `nano-theme' doesn't set a foreground for `window-divider', so the
-  ;; divider is otherwise invisible (it defaults to the frame background).
-  ;; Only needed when `nano-theme' is the active theme -- modus-themes
-  ;; themes this face itself. Restore if switching back to nano-theme:
-  ;; (dolist (face '(window-divider
-  ;;                 window-divider-first-pixel
-  ;;                 window-divider-last-pixel))
-  ;;   (set-face-attribute face nil :foreground nano-light-faded))
-  )
+  (window-divider-mode 1))
 
 (use-package captain
   :ensure t
