@@ -923,11 +923,15 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (defun my/markdown-add-completions ()
     (add-hook 'completion-at-point-functions
               'cape-dict nil t))
+  (defun my/markdown-time-stamp-updated-field ()
+    (setq-local time-stamp-pattern "20/^updated: %Y-%m-%d %H:%M$")
+    (add-hook 'before-save-hook #'time-stamp nil t))
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode))
   :hook
   ((markdown-mode . my/markdown-set-tab-width)
    (markdown-mode . my/markdown-add-completions)
+   (markdown-mode . my/markdown-time-stamp-updated-field)
    (markdown-mode . variable-pitch-mode))
   :custom
   (markdown-command "pandoc")
