@@ -1453,8 +1453,14 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (setq modus-themes-completions
         '((matches . (extrabold underline))
           (selection . (semibold))))
-  (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
-  (modus-themes-load-theme 'modus-operandi))
+  (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint))
+
+(use-package doric-themes
+  :ensure t
+  :demand t
+  :config
+  (setq doric-themes-to-rotate '(doric-light doric-marble doric-earth))
+  (doric-themes-select 'doric-light))
 
 (use-package frame
   :custom
