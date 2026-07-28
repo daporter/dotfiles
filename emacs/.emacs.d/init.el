@@ -884,7 +884,7 @@ this mode's own `fill-context-prefix' computation (based on literal
 leading whitespace) overwrites it with an empty prefix — and disabling
 the mode later would wipe every `wrap-prefix' in the buffer outright."
     (unless (derived-mode-p 'agent-shell-viewport-edit-mode
-                             'agent-shell-viewport-view-mode)
+                            'agent-shell-viewport-view-mode)
       (visual-wrap-prefix-mode (if visual-line-mode 1 -1))))
   :hook (visual-line-mode . my/toggle-visual-wrap-prefix-mode))
 
@@ -1399,6 +1399,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
     (visual-fill-column-mode 1))
   :custom
   (agent-shell-preferred-agent-config 'claude-code)
+  (agent-shell-anthropic-default-model-id "Default")
+  (agent-shell-show-usage-at-turn-end t)
   (agent-shell-prefer-viewport-interaction t)
   :commands (agent-shell agent-shell-anthropic-start-claude-code)
   :bind (:map agent-shell-mode-map
