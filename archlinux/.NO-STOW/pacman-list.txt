@@ -1,3 +1,4 @@
+adobe-source-code-pro-fonts
 adobe-source-sans-fonts
 adobe-source-serif-fonts
 adw-gtk-theme
