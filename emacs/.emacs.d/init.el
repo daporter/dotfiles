@@ -778,10 +778,26 @@
   (defun my/eglot-disable-hints ()
     (eglot-inlay-hints-mode 0))
 
+  ;; Some servers (e.g. vscode-json-language-server's "Sort JSON object
+  ;; keys") advertise code actions backed by commands they never
+  ;; implement server-side, so `workspace/executeCommand' comes back as
+  ;; method-not-found instead of running the action.  Report that as a
+  ;; message instead of a raw jsonrpc-error backtrace.
+  (defun my/eglot-execute-ignore-unhandled-method (orig-fun server action)
+    (condition-case err
+        (funcall orig-fun server action)
+      (jsonrpc-error
+       (if (eql (alist-get 'jsonrpc-error-code (cdr err)) -32601)
+           (eglot--message "Server does not support this code action")
+         (signal (car err) (cdr err))))))
+
   :hook
   (((c-ts-mode css-ts-mode json-ts-mode) . eglot-ensure)
    (eglot-managed-mode      . my/eglot-setup-eldoc)
-   (eglot-managed-mode      . my/eglot-disable-hints)))
+   (eglot-managed-mode      . my/eglot-disable-hints))
+
+  :config
+  (advice-add 'eglot-execute :around #'my/eglot-execute-ignore-unhandled-method))
 
 (use-package dape
   :vc (:url "https://github.com/svaante/dape.git" :rev :newest)
