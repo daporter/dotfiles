@@ -119,6 +119,7 @@ ruff
 samba
 sdparm
 shellcheck
+shfmt
 smartmontools
 sqlitebrowser
 stow
