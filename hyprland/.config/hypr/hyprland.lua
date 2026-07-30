@@ -111,7 +111,7 @@ hl.config({
 -- capability (Accel profiles: n/a), so only this interface needs it.
 hl.device({
 	name = "kensington-slimblade-pro-trackball(wired)-kensington-slimblade-pro-trackball(wired)",
-	sensitivity = -0.7,
+	sensitivity = -1,
 	accel_profile = "adaptive",
 })
 
