@@ -38,6 +38,7 @@ github-cli
 glow
 gnome-disk-utility
 gnome-keyring
+gopls
 gparted
 grub
 gucharmap
@@ -68,6 +69,7 @@ libvterm
 linux
 linux-firmware
 lsof
+lua-language-server
 luacheck
 maim
 man-pages
@@ -104,6 +106,7 @@ plocate
 polkit-gnome
 poppler-glib
 prettier
+pyright
 python-fonttools
 python-gpgme
 python-pipx
@@ -117,6 +120,7 @@ ripgrep
 rofi-calc
 rsync
 ruff
+rust-analyzer
 samba
 sdparm
 shellcheck
