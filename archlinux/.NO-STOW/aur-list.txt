@@ -14,6 +14,7 @@ gnu-c-manual
 goldendict-ng-git
 google-chrome
 hledger-bin
+hledger-flow-bin
 imv-git
 jbig2enc-git
 nodejs-jsonlint
