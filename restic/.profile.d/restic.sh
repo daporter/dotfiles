@@ -3,10 +3,9 @@
 RESTIC_REPOSITORY=/mnt/restic
 export RESTIC_REPOSITORY
 
-RESTIC_PASSWORD_FILE=$HOME/.config/restic/password
-export RESTIC_PASSWORD_FILE
-
+RESTIC_PASSWORD_COMMAND="gpg -q --for-your-eyes-only --no-tty -d $HOME/.config/restic/password.gpg"
+export RESTIC_PASSWORD_COMMAND
 
 # Systemd doesn’t inherit environment variables, so we must make them available
 # explicitly.
-systemctl --user import-environment RESTIC_REPOSITORY RESTIC_PASSWORD_FILE
+systemctl --user import-environment RESTIC_REPOSITORY RESTIC_PASSWORD_COMMAND

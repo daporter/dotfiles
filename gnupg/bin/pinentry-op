@@ -1,0 +1,54 @@
+#!/bin/sh
+# pinentry-program replacement: answers GETPIN from 1Password so gpg-agent
+# cache misses don't require manually copying the passphrase out of the
+# 1Password app. Falls back to the real pinentry-gtk untouched whenever `op`
+# can't supply a value (app not running/unlocked), so callers see the same
+# behavior as before this wrapper existed -- never a hard failure.
+#
+# Protocol commands handled here were captured from a real gpg-agent 2.4.9
+# session; every command not explicitly listed just needs a bare "OK", which
+# is what pinentry-gtk itself returns for most SET*/OPTION calls.
+
+REAL_PINENTRY=/usr/bin/pinentry-gtk
+OP_ITEM='op://Private/GPG passphrase/password'
+
+PIN=$(timeout 5 op read --no-newline "$OP_ITEM" 2>/dev/null)
+
+if [ -z "$PIN" ]; then
+	exec "$REAL_PINENTRY" "$@"
+fi
+
+# Percent-encode every byte per the Assuan D-line inline-data format.
+encode_pin() {
+	printf '%s' "$1" | od -An -v -tx1 | tr -d ' \n' | sed 's/\(..\)/%\1/g'
+}
+
+printf 'OK Pleased to meet you\n'
+
+while IFS= read -r line; do
+	case "$line" in
+	GETPIN*)
+		printf 'D %s\n' "$(encode_pin "$PIN")"
+		printf 'OK\n'
+		;;
+	BYE*)
+		printf 'OK closing connection\n'
+		exit 0
+		;;
+	'GETINFO flavor'*)
+		printf 'D op-wrapper\n'
+		printf 'OK\n'
+		;;
+	'GETINFO version'*)
+		printf 'D 1.0.0\n'
+		printf 'OK\n'
+		;;
+	'GETINFO pid'*)
+		printf 'D %s\n' "$$"
+		printf 'OK\n'
+		;;
+	*)
+		printf 'OK\n'
+		;;
+	esac
+done
