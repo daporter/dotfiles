@@ -1,0 +1,56 @@
+{
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "enabledPlugins": {
+    "emacs-skills@xenodium-emacs-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "xenodium-emacs-skills": {
+      "source": {
+        "source": "github",
+        "repo": "xenodium/emacs-skills"
+      }
+    }
+  },
+  "theme": "light",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; case \"$f\" in *.md) prettier --write \"$f\" >/dev/null 2>&1; markdownlint \"$f\";; esac; }",
+            "statusMessage": "Formatting & linting markdown..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; case \"$f\" in *.json) prettier --write \"$f\" >/dev/null 2>&1; jsonlint \"$f\";; esac; }",
+            "statusMessage": "Formatting & linting JSON..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; case \"$f\" in *.sh) shfmt -w \"$f\" >/dev/null 2>&1; shellcheck \"$f\";; esac; }",
+            "statusMessage": "Formatting & linting shell..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; case \"$f\" in *.py) ruff format \"$f\" >/dev/null 2>&1; ruff check \"$f\";; esac; }",
+            "statusMessage": "Formatting & linting Python..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; case \"$f\" in *.yaml|*.yml) prettier --write \"$f\" >/dev/null 2>&1; yamllint \"$f\";; esac; }",
+            "statusMessage": "Formatting & linting YAML..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; case \"$f\" in *.el) out=$(emacsclient --eval \"(with-temp-buffer (insert-file-contents \\\"$f\\\") (emacs-lisp-mode) (check-parens))\" 2>&1); ec=$?; if [ \"$ec\" -ne 0 ]; then echo \"$out\"; fi; exit \"$ec\";; esac; }",
+            "statusMessage": "Checking elisp parens..."
+          }
+        ]
+      }
+    ]
+  }
+}
