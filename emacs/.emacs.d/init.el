@@ -1419,9 +1419,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
     (visual-fill-column-mode 1))
   :custom
   (agent-shell-preferred-agent-config 'claude-code)
-  (agent-shell-anthropic-default-model-id "Default")
   (agent-shell-show-usage-at-turn-end t)
-  (agent-shell-prefer-viewport-interaction t)
   :commands (agent-shell agent-shell-anthropic-start-claude-code)
   :bind (:map agent-shell-mode-map
               ("C-o" . agent-shell-help-menu))
