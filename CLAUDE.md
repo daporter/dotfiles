@@ -77,11 +77,10 @@ automatically once stowed. Prefer this over editing `bash/.bashrc` directly.
 - **Commit messages**: `<package>: <imperative summary>` (e.g.
   `btop: sort processes by CPU usage`). Enforced by `git/.gitlint`: title ≤ 72
   chars, body lines ≤ 72 chars.
-- **Lua files** (notably `hyprland/.config/hypr/hyprland.lua`): run `stylua` on
-  any Lua file you edit before committing. No `stylua.toml` exists, so it uses
-  stylua defaults.
-- Hyprland is configured in **Lua** (`hyprland.lua`), not the conventional
-  `hyprland.conf`.
+- **Package-specific conventions** (formatting/lint tools, language quirks, etc.) belong in a `CLAUDE.md` at the top of that package's
+  directory (e.g.  `hyprland/CLAUDE.md`), not here. Check for one
+  before editing a package's files; add one when a package gains a
+  convention that doesn't apply repo-wide.
 
 ## Package manifests
 
