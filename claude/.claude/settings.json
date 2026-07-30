@@ -1,9 +1,13 @@
 {
-  "permissions": {
-    "defaultMode": "auto"
-  },
   "enabledPlugins": {
     "emacs-skills@xenodium-emacs-skills": true
+  },
+  "skillOverrides": {
+    "emacs-skills:xcode-build-device": "off",
+    "emacs-skills:xcode-run-device": "off",
+    "emacs-skills:xcode-build-simulator": "off",
+    "emacs-skills:xcode-run-simulator": "off",
+    "emacs-skills:swiftui-preview": "off"
   },
   "extraKnownMarketplaces": {
     "xenodium-emacs-skills": {
