@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /home/david/dotfiles status:*)",
+
+      "Bash(btop --version)",
+      "Bash(emacs --version)",
+      "Bash(ghostty --version)",
+      "Bash(ghostty +show-config)",
+
+      "Bash(pacman -Qm)",
+      "Bash(shellcheck:*)",
+      "Bash(smbstatus:*)",
+      "Bash(systemctl show:*)",
+      "Bash(systemd-inhibit --list)",
+
+      "Read(//etc/systemd/**)",
+      "Read(//usr/share/doc/**)",
+      "Read(//usr/share/themes/**)"
+    ]
+  }
+}
