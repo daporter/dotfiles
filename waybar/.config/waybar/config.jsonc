@@ -75,20 +75,20 @@
     "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
-    "on-click": "xdg-terminal-exec btop"
+    "on-click": "ghostty --title=btop -e btop"
   },
 
   "cpu": {
     "format": "󰍛 {usage:02d}%",
     "tooltip": true,
-    "on-click": "xdg-terminal-exec btop",
+    "on-click": "ghostty --title=btop -e btop",
     "interval": 2
   },
 
   "memory": {
     "format": "󰘚 {percentage:2d}%",
     "tooltip-format": "{used:0.1f}G / {total:0.1f}G used",
-    "on-click": "xdg-terminal-exec btop"
+    "on-click": "ghostty --title=btop -e btop"
   },
 
   "custom/clipboard": {
