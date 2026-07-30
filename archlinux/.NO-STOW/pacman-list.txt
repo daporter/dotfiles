@@ -68,6 +68,7 @@ libvterm
 linux
 linux-firmware
 lsof
+luacheck
 maim
 man-pages
 markdownlint-cli

@@ -1,3 +1,5 @@
 --target=$HOME
 --ignore='\.NO-STOW'
+--ignore='^CLAUDE\.md$'
+--ignore='^\.luacheckrc$'
 --verbose

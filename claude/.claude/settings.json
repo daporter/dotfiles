@@ -48,6 +48,11 @@
             "type": "command",
             "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; case \"$f\" in *.el) out=$(emacsclient --eval \"(with-temp-buffer (insert-file-contents \\\"$f\\\") (emacs-lisp-mode) (check-parens))\" 2>&1); ec=$?; if [ \"$ec\" -ne 0 ]; then echo \"$out\"; fi; exit \"$ec\";; esac; }",
             "statusMessage": "Checking elisp parens..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; case \"$f\" in *.lua) stylua \"$f\" >/dev/null 2>&1; (cd \"$(dirname \"$f\")\" && luacheck \"$(basename \"$f\")\");; esac; }",
+            "statusMessage": "Formatting & linting Lua..."
           }
         ]
       }
