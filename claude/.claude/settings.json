@@ -22,6 +22,93 @@
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
   },
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(echo:*)",
+      "Bash(command:*)",
+      "Bash(col:*)",
+
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+
+      "Bash(gitlint:*)",
+
+      "Bash(pwd:*)",
+      "Bash(which:*)",
+      "Bash(whoami:*)",
+      "Bash(date:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(find:*)",
+      "Bash(diff:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote:*)",
+      "Bash(git check-ignore:*)",
+
+      "Bash(journalctl:*)",
+      "Bash(systemctl status:*)",
+      "Bash(systemctl --user status:*)",
+      "Bash(systemctl is-active:*)",
+      "Bash(loginctl show-session:*)",
+      "Bash(loginctl show-seat:*)",
+      "Bash(loginctl list-sessions:*)",
+
+      "Bash(pacman -Qi:*)",
+      "Bash(pacman -Q:*)",
+      "Bash(pacman -Qq:*)",
+      "Bash(pacman -Qo:*)",
+      "Bash(pacman -Si:*)",
+
+      "Bash(hyprctl monitors:*)",
+      "Bash(hyprctl binds:*)",
+
+      "Bash(luacheck:*)",
+      "Bash(cliphist list:*)",
+      "Bash(findmnt:*)",
+      "Bash(zcat:*)",
+
+      "mcp__claude_ai_Gmail__search_threads",
+
+      "Read",
+      "Glob",
+      "Grep"
+    ],
+    "deny": [
+      "Bash(npm install *)",
+      "Bash(npm i *)",
+      "Bash(npm uninstall *)",
+      "Bash(npm un *)",
+      "Bash(npm rm *)",
+      "Bash(yarn add *)",
+      "Bash(yarn install *)",
+      "Bash(yarn remove *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm i *)",
+      "Bash(pnpm remove *)",
+      "Bash(pnpm rm *)",
+      "Bash(pnpm uninstall *)",
+      "Bash(pip install *)",
+      "Bash(pip3 install *)",
+
+      "Bash(rm *)",
+      "Bash(rmdir *)",
+
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(ssh *)",
+      "Bash(scp *)"
+    ]
+  },
   "hooks": {
     "PostToolUse": [
       {
