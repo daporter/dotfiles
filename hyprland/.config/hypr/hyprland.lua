@@ -226,6 +226,11 @@ hl.window_rule({
 })
 hl.window_rule({ match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(scratchpad)$" }, center = true })
 
+-- btop terminal launched from waybar (CPU/memory/network modules): float it.
+hl.window_rule({ match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(btop)$" }, float = true })
+hl.window_rule({ match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(btop)$" }, size = { 1600, 900 } })
+hl.window_rule({ match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(btop)$" }, center = true })
+
 -- Popup window with the Hyprland keybindings cheatsheet.
 -- Note that these rules to make the window float don’t currently work. AIUI,
 -- this is due to how Firefox sets the window title. Nevertheless, I’ll leave the
