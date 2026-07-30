@@ -33,6 +33,22 @@ format_duration() {
 	fi
 }
 
+# Format seconds-until as a countdown, e.g. "3d5h", "2h15m", "45m".
+format_remaining() {
+	local total_s=$1
+	[ "$total_s" -lt 0 ] && total_s=0
+	local d=$((total_s / 86400))
+	local h=$(((total_s % 86400) / 3600))
+	local m=$(((total_s % 3600) / 60))
+	if [ "$d" -gt 0 ]; then
+		printf '%dd%dh' "$d" "$h"
+	elif [ "$h" -gt 0 ]; then
+		printf '%dh%02dm' "$h" "$m"
+	else
+		printf '%dm' "$m"
+	fi
+}
+
 model=$(printf '%s' "$input" | jq -r '.model.display_name // "unknown"')
 effort=$(printf '%s' "$input" | jq -r '.effort.level // empty')
 used=$(printf '%s' "$input" | jq -r '.context_window.used_percentage // empty')
@@ -80,18 +96,19 @@ fi
 
 if [ -n "$five_hour" ] || [ -n "$seven_day" ]; then
 	segment=""
+	now=$(date +%s)
 	if [ -n "$five_hour" ]; then
 		pct5=$(printf '%.0f' "$five_hour")
 		color5=$(color_for_pct "$pct5")
 		reset5=""
-		[ -n "$five_hour_resets" ] && reset5=" ($(date -d "@$five_hour_resets" +%H:%M))"
+		[ -n "$five_hour_resets" ] && reset5=" (in $(format_remaining $((five_hour_resets - now))))"
 		segment+=$(printf '\033[%sm5h %d%%%s\033[0m' "$color5" "$pct5" "$reset5")
 	fi
 	if [ -n "$seven_day" ]; then
 		pct7=$(printf '%.0f' "$seven_day")
 		color7=$(color_for_pct "$pct7")
 		reset7=""
-		[ -n "$seven_day_resets" ] && reset7=" ($(date -d "@$seven_day_resets" '+%b %d'))"
+		[ -n "$seven_day_resets" ] && reset7=" (in $(format_remaining $((seven_day_resets - now))))"
 		[ -n "$segment" ] && segment+=" "
 		segment+=$(printf '\033[%sm7d %d%%%s\033[0m' "$color7" "$pct7" "$reset7")
 	fi
