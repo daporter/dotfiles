@@ -138,8 +138,8 @@
                 casual-suite consult corfu corfu-candidate-overlay csv-mode
                 dape denote disproject editorconfig eglot embark
                 embark-consult expand-region flymake flymake-hledger
-                flymake-lua flymake-markdownlint flymake-yamllint gptel
-                hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
+                flymake-lua flymake-markdownlint flymake-yamllint fontaine
+                gptel hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
                 ligature lorem-ipsum lua-mode magit magit-todos marginalia
                 markdown-mode nerd-icons
                 nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
@@ -231,32 +231,28 @@
   ;; Use symbola for proper symbol glyphs, but have some fallbacks
   (set-fontset-font t 'symbol "Symbola" nil))
 
-(use-package faces
+(use-package fontaine
+  :ensure t
+  :hook (after-init . fontaine-mode)
+  :init
+  (setq fontaine-presets
+        '((regular)
+          (large
+           :default-height 110)
+          (t
+           :default-family "JetBrainsMono Nerd Font Mono"
+           :default-height 100
+
+           :variable-pitch-family "Inter"
+           :variable-pitch-height 1.05
+
+           :mode-line-active-family "Inter"
+           :mode-line-active-height 1.05
+
+           :mode-line-inactive-family "Inter"
+           :mode-line-inactive-height 1.05)))
   :config
-  (set-face-attribute 'default nil
-                      :family "JetBrainsMono Nerd Font Mono"
-                      :height 110
-                      :weight 'regular)
-  (set-face-attribute 'fixed-pitch nil
-                      :family "JetBrainsMono Nerd Font Mono"
-                      :height 110
-                      :weight 'regular)
-  (set-face-attribute 'fixed-pitch-serif nil
-                      :family "JetBrainsMono Nerd Font Mono"
-                      :height 110
-                      :weight 'regular)
-  (set-face-attribute 'variable-pitch nil
-                      :family "Inter"
-                      :height 120
-                      :weight 'regular)
-  (set-face-attribute 'mode-line nil
-                      :family "Inter"
-                      :height 120
-                      :weight 'regular)
-  (set-face-attribute 'mode-line-inactive nil
-                      :family "Inter"
-                      :height 120
-                      :weight 'regular))
+  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))
 
 (use-package simple
   :preface
