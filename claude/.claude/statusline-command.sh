@@ -49,6 +49,7 @@ format_remaining() {
 	fi
 }
 
+cwd=$(printf '%s' "$input" | jq -r '.cwd // empty')
 model=$(printf '%s' "$input" | jq -r '.model.display_name // "unknown"')
 effort=$(printf '%s' "$input" | jq -r '.effort.level // empty')
 used=$(printf '%s' "$input" | jq -r '.context_window.used_percentage // empty')
@@ -61,6 +62,18 @@ seven_day_resets=$(printf '%s' "$input" | jq -r '.rate_limits.seven_day.resets_a
 
 out="\033[36m${model}\033[0m"
 [ -n "$effort" ] && out+=" ${dim}(${effort})${reset}"
+
+if [ -n "$cwd" ] && git --no-optional-locks -C "$cwd" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+	repo_root=$(git --no-optional-locks -C "$cwd" rev-parse --show-toplevel 2>/dev/null)
+	repo_name=$(basename "$repo_root")
+	branch=$(git --no-optional-locks -C "$cwd" branch --show-current 2>/dev/null)
+	[ -z "$branch" ] && branch=$(git --no-optional-locks -C "$cwd" rev-parse --short HEAD 2>/dev/null)
+
+	git_info="\033[35m${repo_name}\033[0m"
+	[ -n "$branch" ] && git_info+=" ${dim}${branch}${reset}"
+
+	out+="${sep}${git_info}"
+fi
 
 width=10
 if [ -n "$used" ]; then
