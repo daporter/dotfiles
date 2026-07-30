@@ -9,6 +9,7 @@
       "Bash(ghostty +show-config)",
 
       "Bash(pacman -Qm)",
+      "Bash(pacman -Qqen)",
       "Bash(shellcheck:*)",
       "Bash(smbstatus:*)",
       "Bash(systemctl show:*)",
