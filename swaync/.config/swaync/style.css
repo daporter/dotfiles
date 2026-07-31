@@ -1,0 +1,38 @@
+/* Overrides for the packaged /etc/xdg/swaync/style.css defaults, loaded
+ * alongside it ("cssPriority": "user" in config.json makes this win). Uses
+ * the desktop's solarized-dark variant (see
+ * waybar/.config/waybar/colours/solarized_dark.css) rather than the
+ * solarized-light palette used elsewhere (waybar, wofi) so notifications
+ * stand out against the light desktop instead of blending in. Also shrinks
+ * a few hardcoded sizes that don't come from the variables below. */
+
+:root {
+  --cc-bg: rgb(0, 43, 54);
+  --noti-border-color: #586e75;
+  --noti-bg: 0, 43, 54;
+  --noti-bg-alpha: 1;
+  --noti-bg-darker: #073642;
+  --noti-bg-hover: #073642;
+  --noti-bg-focus: #073642;
+  --noti-close-bg: #073642;
+  --noti-close-bg-hover: #586e75;
+  --text-color: #eee8d5;
+  --text-color-disabled: #93a1a1;
+  --bg-selected: #268bd2;
+  --notification-icon-size: 40px;
+  --font-size-body: 13px;
+  --font-size-summary: 14px;
+}
+
+* {
+  font-family: Inter, sans-serif;
+}
+
+.notification-row .notification-background {
+  padding: 4px 8px;
+}
+
+.widget {
+  margin: 4px;
+  padding: 6px;
+}
