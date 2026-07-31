@@ -125,6 +125,14 @@ hl.bind("SUPER+E", hl.dsp.focus({ direction = "u" }))
 hl.bind("SUPER+I", hl.dsp.focus({ direction = "d" }))
 hl.bind("SUPER+H", hl.dsp.focus({ direction = "r" }))
 
+-- Window cycling. Not MRU-ordered: Hyprland's Lua dispatcher API has no
+-- focus-history option (the old hyprland.conf `cyclenext, hist` string
+-- dispatcher no longer exists), so this steps through windows on the
+-- current workspace in a fixed list order rather than jumping to the last
+-- focused one.
+hl.bind("SUPER+Tab", hl.dsp.window.cycle_next())
+hl.bind("SUPER+SHIFT+Tab", hl.dsp.window.cycle_next({ next = false }))
+
 -- Workspaces
 hl.bind("SUPER+1", hl.dsp.focus({ workspace = "1" }))
 hl.bind("SUPER+2", hl.dsp.focus({ workspace = "2" }))
@@ -137,7 +145,7 @@ hl.bind("SUPER+8", hl.dsp.focus({ workspace = "8" }))
 hl.bind("SUPER+9", hl.dsp.focus({ workspace = "9" }))
 hl.bind("SUPER+K", hl.dsp.focus({ workspace = "+1" }))
 hl.bind("SUPER+U", hl.dsp.focus({ workspace = "-1" }))
-hl.bind("SUPER+Tab", hl.dsp.focus({ workspace = "previous" }))
+hl.bind("SUPER+O", hl.dsp.focus({ workspace = "previous" }))
 hl.bind("SUPER+mouse_up", hl.dsp.focus({ workspace = "+1" }))
 hl.bind("SUPER+mouse_down", hl.dsp.focus({ workspace = "-1" }))
 
