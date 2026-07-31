@@ -8,9 +8,9 @@
  '(org-agenda-files
    '("~/Dropbox/63_programming/63.02_leetcode/63.02_journal.org"))
  '(package-selected-packages
-   '(activities agent-shell apheleia avy cape captain casual-suite
+   '(agent-shell apheleia avy cape captain casual-suite
                 consult corfu corfu-candidate-overlay csv-mode dape
-                denote disproject editorconfig eglot embark
+                denote disproject eglot embark
                 embark-consult expand-region flymake flymake-hledger
                 flymake-lua flymake-markdownlint flymake-yamllint
                 fontaine gptel hl-todo hledger-mode hyprlang-ts-mode
@@ -19,10 +19,11 @@
                 nerd-icons-completion nerd-icons-dired
                 nerd-icons-ibuffer nov olivetti orderless org-anki
                 org-modern org-noter page-break-lines pcmpl-args
-                pdf-tools popper project python-mode string-inflection
-                sudo-edit titlecase tramp unfill use-package vertico
-                visual-fill-column vterm which-key))
- '(package-vc-selected-packages '((dape :url "https://github.com/svaante/dape.git"))))
+                pdf-tools popper project python-mode shannon-max string-inflection
+                titlecase tramp unfill use-package vertico
+                visual-fill-column vterm))
+ '(package-vc-selected-packages '((dape :url "https://github.com/svaante/dape.git")
+                                   (shannon-max :url "https://github.com/sstraust/shannonmax"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

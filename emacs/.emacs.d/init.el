@@ -134,9 +134,9 @@
 ;; to the bundled version.
 (custom-set-variables
  '(package-selected-packages
-   '(activities agent-shell apheleia avy cape captain
+   '(agent-shell apheleia avy cape captain
                 casual-suite consult corfu corfu-candidate-overlay csv-mode
-                dape denote disproject editorconfig eglot embark
+                dape denote disproject eglot embark
                 embark-consult expand-region flymake flymake-hledger
                 flymake-lua flymake-markdownlint flymake-yamllint fontaine
                 gptel hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
@@ -145,9 +145,9 @@
                 nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
                 nov olivetti orderless org-anki org-modern org-noter
                 page-break-lines pcmpl-args pdf-tools popper project
-                python-mode string-inflection sudo-edit
+                python-mode shannon-max string-inflection
                 titlecase tramp unfill use-package vertico
-                visual-fill-column vterm which-key)))
+                visual-fill-column vterm)))
 
 (use-package custom
   :custom
@@ -669,7 +669,6 @@
     (goto-char pt)))
 
 (use-package which-key
-  :ensure t
   :hook
   (after-init))
 
@@ -692,7 +691,6 @@
    (before-save . delete-trailing-whitespace)))
 
 (use-package editorconfig
-  :ensure t
   :hook
   (after-init))
 
@@ -1017,23 +1015,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
    (append backup-directory-alist
            '(("/sudo::" . (concat user-emacs-directory "tramp-backups")))))
   (tramp-backup-directory-alist backup-directory-alist))
-
-(use-package activities
-  :ensure t
-  :init
-  (activities-mode)
-  ;; Prevent `edebug' default bindings from interfering.
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-  :bind
-  (("C-x C-a C-n" . activities-new)
-   ("C-x C-a C-d" . activities-define)
-   ("C-x C-a C-a" . activities-resume)
-   ("C-x C-a C-s" . activities-suspend)
-   ("C-x C-a C-k" . activities-kill)
-   ("C-x C-a RET" . activities-switch)
-   ("C-x C-a b"   . activities-switch-buffer)
-   ("C-x C-a g"   . activities-revert)
-   ("C-x C-a l"   . activities-list)))
 
 (use-package eshell
   :commands (eshell)
@@ -1509,19 +1490,15 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (abbrev-suggest t))
 
 (use-package shannon-max
-  :load-path "custom"
+  :vc (:url "https://github.com/sstraust/shannonmax" :rev :newest)
+  :ensure t
   :commands shannon-max-start-logger
-  :custom
-  (shannon-max-keylog-file-name
-   (expand-file-name
-    (concat user-emacs-directory "emacs-logged-keys")))
-  :hook
-  (after-init . shannon-max-start-logger)
-  :config
-  (setq shannon-max-jar-file
+  :init
+  (setq shannon-max-keylog-file-name
         (expand-file-name
-         (concat user-emacs-directory
-                 "/custom/target/emacskeys-0.1.0-SNAPSHOT-standalone.jar"))))
+         (concat user-emacs-directory "emacs-logged-keys")))
+  :hook
+  (after-init . shannon-max-start-logger))
 
 (use-package transient
   :preface
@@ -1682,13 +1659,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                                    missing-newline-at-eof)))
   :hook
   (makefile-mode . my/makefile-whitespace-setup))
-
-(use-package sudo-edit
-  :ensure t
-  :after embark
-  :bind
-  ((:map embark-file-map               ("R" . sudo-edit-find-file))
-   (:map embark-become-file+buffer-map ("R" . sudo-edit-find-file))))
 
 (use-package flymake-yamllint
   :ensure t
