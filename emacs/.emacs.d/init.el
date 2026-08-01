@@ -595,7 +595,13 @@
   :ensure t
   :after embark
   :bind (:map embark-identifier-map
-              ("k" . string-inflection-kebab-case)))
+              ("k" . string-inflection-kebab-case)
+              :map embark-region-map
+              ("k" . string-inflection-kebab-case))
+  ;; Default region behavior just replaces spaces with underscores instead
+  ;; of running the inflection function -- useless for "kebab-case this
+  ;; selection", so switch to applying it symbol-by-symbol.
+  :custom (string-inflection-region-selection-behavior 'apply-to-each-symbols))
 
 (use-package flymake
   :hook (prog-mode text-mode)
