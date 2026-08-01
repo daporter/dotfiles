@@ -173,10 +173,7 @@
   (defun my/load-config ()
     "Load config"
     (interactive)
-    (load-file user-init-file))
-
-  :config
-  (keymap-set (current-global-map) "C-S-u" #'my/read-unicode-char))
+    (load-file user-init-file)))
 
 (use-package window
   :bind
@@ -1516,6 +1513,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
       ("w"   "Cleanup"               whitespace-cleanup)]
      ["Case"
       ("k"   "Kebab-case"            string-inflection-kebab-case)]
+     ["Insert"
+      ("u"   "Unicode char"          my/read-unicode-char)]
      ["Toggle"
       ("t h" "Highlight line"        hl-line-mode)
       ("t n" "Line numbers"          display-line-numbers-mode)
@@ -1543,11 +1542,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
       ("e q" "Quickfix actions"      eglot-code-action-quickfix)
       ("e a" "Code actionsⁿ"         eglot-code-actions)
       ("e d" "Symbol documentation"  eldoc)
-      ("e s" "Restart server"        eglot-reconnect)]
-     ["Markup" :if-derived markdown-mode
-      ("m b" "Bold"                  markdown-insert-bold)
-      ("m i" "Italic"                markdown-insert-italic)
-      ("m c" "Code"                  markdown-insert-code)]])
+      ("e s" "Restart server"        eglot-reconnect)]])
 
   ;; `C-c <letter>' is reserved for users, so no mode will shadow this.
   (keymap-set (current-global-map) "C-c t" #'my/dispatch-menu))
