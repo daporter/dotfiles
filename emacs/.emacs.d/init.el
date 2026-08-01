@@ -1426,8 +1426,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
       ("e d" "Symbol documentation"  eldoc)
       ("e s" "Restart server"        eglot-reconnect)]])
 
-  ;; `C-c <letter>' is reserved for users, so no mode will shadow this.
-  (keymap-set (current-global-map) "C-c t" #'my/dispatch-menu))
+  ;; `org-agenda' unsets `C-,' in `org-mode-map' to keep this chord clear.
+  (keymap-set (current-global-map) "C-," #'my/dispatch-menu))
 
 (use-package casual-suite
   :ensure t
