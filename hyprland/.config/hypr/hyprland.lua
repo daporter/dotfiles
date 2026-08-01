@@ -193,7 +193,7 @@ hl.bind(
 hl.bind(
 	"SUPER+Q",
 	hl.dsp.exec_cmd(
-		[[swayimg -e "swayimg.viewer.set_default_scale(0.8); swayimg.viewer.set_image_background(0xffffffff); swayimg.viewer.set_text('topleft', {}); swayimg.viewer.set_text('topright', {}); swayimg.viewer.set_text('bottomleft', {}); swayimg.viewer.set_text('bottomright', {})" ~/code/qmk_userspace/keymap.svg]]
+		[[swayimg -e "swayimg.viewer.set_default_scale('real'); swayimg.viewer.set_image_background(0xffffffff); swayimg.viewer.set_text('topleft', {}); swayimg.viewer.set_text('topright', {}); swayimg.viewer.set_text('bottomleft', {}); swayimg.viewer.set_text('bottomright', {})" ~/code/qmk_userspace/keymap.svg]]
 	)
 )
 
@@ -268,9 +268,9 @@ hl.window_rule({ match = { class = "^(org\\.qutebrowser\\.qutebrowser)$" }, cent
 
 -- Popup window with the QMK keymap reference image. Height matches a normal
 -- tiled window's full height (1394px: monitor height minus the waybar and
--- gaps). Width is derived from the SVG's own 852x2002 aspect ratio at the
--- 80% scale set in the SUPER+Q bind above; at that scale the image is
+-- gaps). Width matches the SVG's own native 852px width, since the SUPER+Q
+-- bind above displays it at "real" (100%) scale; at that size the image is
 -- taller than the window, so it's scrolled rather than fully visible.
 hl.window_rule({ match = { class = "^(swayimg)$" }, float = true })
-hl.window_rule({ match = { class = "^(swayimg)$" }, size = { 682, 1394 } })
+hl.window_rule({ match = { class = "^(swayimg)$" }, size = { 852, 1394 } })
 hl.window_rule({ match = { class = "^(swayimg)$" }, center = true })
