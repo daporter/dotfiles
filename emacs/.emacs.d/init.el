@@ -134,20 +134,20 @@
 ;; to the bundled version.
 (custom-set-variables
  '(package-selected-packages
-   '(agent-shell apheleia avy cape captain
-                casual-suite consult corfu corfu-candidate-overlay csv-mode
-                dape denote disproject eglot embark
-                embark-consult expand-region flymake flymake-hledger
-                flymake-lua flymake-markdownlint flymake-yamllint fontaine
-                gptel hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
-                ligature lorem-ipsum lua-mode magit magit-todos marginalia
-                markdown-mode nerd-icons
-                nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
-                nov olivetti orderless org-anki org-modern org-noter
-                page-break-lines pcmpl-args pdf-tools popper project
-                python-mode shannon-max string-inflection
-                titlecase tramp unfill use-package vertico
-                visual-fill-column vterm)))
+   '(agent-shell apheleia cape captain
+                 casual-suite consult corfu corfu-candidate-overlay csv-mode
+                 dape denote disproject eglot embark
+                 embark-consult flymake flymake-hledger
+                 flymake-lua flymake-markdownlint flymake-yamllint fontaine
+                 gptel hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
+                 ligature lorem-ipsum lua-mode magit magit-todos marginalia
+                 markdown-mode nerd-icons
+                 nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
+                 nov olivetti orderless org-anki org-modern org-noter
+                 page-break-lines pcmpl-args pdf-tools popper project
+                 python-mode shannon-max string-inflection
+                 titlecase tramp unfill use-package vertico
+                 visual-fill-column vterm)))
 
 (use-package custom
   :custom
@@ -551,119 +551,6 @@
   :ensure t
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
-
-(use-package avy
-  :ensure t
-  :bind   (("C-," . avy-goto-char-timer)
-           :map isearch-mode-map
-           ("C-," . avy-isearch))
-  :custom
-  (avy-keys '(?d ?a ?n ?e ?s ?i ?r ?h ?c ?u))
-  (avy-background t)
-  (avy-dispatch-alist '((?. . avy-action-embark)
-                        (?m . avy-action-mark)
-                        (?l . avy-action-mark-to-char)
-                        (?z . avy-action-zap-to-char)
-                        (?I . avy-action-ispell)
-                        (?x . avy-action-exchange)
-                        (?w . avy-action-easy-copy)
-                        (?W . avy-action-copy-whole-line)
-                        (?k . avy-action-kill-stay)
-                        (11 . avy-action-kill-line)
-                        (?K . avy-action-kill-whole-line)
-                        (?y . avy-action-yank)
-                        (25 . avy-action-yank-line)
-                        (?Y . avy-action-yank-whole-line)
-                        (?t . avy-action-teleport)
-                        (?T . avy-action-teleport-whole-line)))
-
-  :config
-  (defun avy-action-easy-copy (pt)
-    (unless (require 'easy-kill nil t)
-      (user-error "Easy Kill not found, please install."))
-    (goto-char pt)
-    (cl-letf (((symbol-function 'easy-kill-activate-keymap)
-               (lambda ()
-                 (let ((map (easy-kill-map)))
-                   (set-transient-map
-                    map
-                    (lambda ()
-                      ;; Prevent any error from activating the keymap forever.
-                      (condition-case err
-                          (or (and (not (easy-kill-exit-p this-command))
-                                   (or (eq this-command
-                                           (lookup-key map (this-single-command-keys)))
-                                       (let ((cmd (key-binding
-                                                   (this-single-command-keys) nil t)))
-                                         (command-remapping cmd nil (list map)))))
-                              (ignore
-                               (easy-kill-destroy-candidate)
-                               (unless (or (easy-kill-get mark) (easy-kill-exit-p this-command))
-                                 (easy-kill-save-candidate))))
-                        (error (message "%s:%s" this-command (error-message-string err))
-                               nil)))
-                    (lambda ()
-                      (let ((dat (ring-ref avy-ring 0)))
-                        (select-frame-set-input-focus
-                         (window-frame (cdr dat)))
-                        (select-window (cdr dat))
-                        (goto-char (car dat)))))))))
-      (easy-kill)))
-
-  (defun avy-action-exchange (pt)
-    "Exchange sexp at PT with the one at point."
-    (set-mark pt)
-    (transpose-sexps 0))
-
-  (defun avy-action-embark (pt)
-    (unwind-protect
-        (save-excursion
-          (goto-char pt)
-          (embark-act))
-      (select-window
-       (cdr (ring-ref avy-ring 0))))
-    t)
-
-  (defun avy-action-kill-line (pt)
-    (save-excursion
-      (goto-char pt)
-      (kill-line))
-    (select-window
-     (cdr (ring-ref avy-ring 0)))
-    t)
-
-  (defun avy-action-copy-whole-line (pt)
-    (save-excursion
-      (goto-char pt)
-      (cl-destructuring-bind (start . end)
-          (bounds-of-thing-at-point 'line)
-        (copy-region-as-kill start end)))
-    (select-window
-     (cdr
-      (ring-ref avy-ring 0)))
-    t)
-
-  (defun avy-action-kill-whole-line (pt)
-    (save-excursion
-      (goto-char pt)
-      (kill-whole-line))
-    (select-window
-     (cdr
-      (ring-ref avy-ring 0)))
-    t)
-
-  (defun avy-action-yank-whole-line (pt)
-    (avy-action-copy-whole-line pt)
-    (save-excursion (yank))
-    t)
-
-  (defun avy-action-teleport-whole-line (pt)
-    (avy-action-kill-whole-line pt)
-    (save-excursion (yank)) t)
-
-  (defun avy-action-mark-to-char (pt)
-    (activate-mark)
-    (goto-char pt)))
 
 (use-package which-key
   :hook
@@ -1317,11 +1204,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :ensure t
   :commands visual-fill-column-mode)
 
-(use-package expand-region
-  :ensure t
-  :bind ("C-\"" . er/expand-region)
-  :custom (expand-region-contract-fast-key "/"))
-
 (use-package org-anki
   :ensure t
   :commands (org-anki-sync-entry)
@@ -1552,91 +1434,90 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :custom
   (casual-lib-use-unicode t)
   :bind
-  (("C-M-," . casual-avy-tmenu)
-   :map bookmark-bmenu-mode-map
-   ("C-o" . casual-bookmarks-tmenu)
-   :map calc-mode-map
-   ("C-o" . casual-calc-tmenu)
-   :map calc-alg-map
-   ("C-o" . casual-calc-tmenu)
-   :map compilation-mode-map
-   ("C-o" . casual-compile-tmenu)
-   ;; The following keybindings are recommended to support consistent behavior
-   ;; between `compilation-mode-map' and `casual-compile-tmenu'.
-   ("k" . compilation-previous-error)
-   ("j" . compilation-next-error)
-   ("o" . compilation-display-error)
-   ("[" . compilation-previous-file)
-   ("]" . compilation-next-file)
-   :map dired-mode-map
-   ("C-o" . casual-dired-tmenu)
-   ("s" . casual-dired-sort-by-tmenu)
-   ("/" . casual-dired-search-replace-tmenu)
-   :map eshell-mode-map
-   ("C-o" . casual-eshell-tmenu)
-   :map grep-mode-map
-   ("C-o" . casual-compile-tmenu)
-   ;; The following keybindings are recommended to support consistent behavior
-   ;; between `grep-mode-map' and `casual-compile-tmenu'.
-   ("k" . compilation-previous-error)
-   ("j" . compilation-next-error)
-   ("o" . compilation-display-error)
-   ("[" . compilation-previous-file)
-   ("]" . compilation-next-file)
-   :map help-mode-map
-   ("C-o" . casual-help-tmenu)
-   ;; The following keybindings are recommended to support consistent behavior
-   ;; between `help-mode' and `casual-help-tmenu'.
-   ("M-[" . help-go-back)
-   ("M-]" . help-go-forward)
-   ("p" . casual-lib-browse-backward-paragraph)
-   ("n" . casual-lib-browse-forward-paragraph)
-   ("P" . help-goto-previous-page)
-   ("N" . help-goto-next-page)
-   ("j" . forward-button)
-   ("k" . backward-button)
-   :map ibuffer-mode-map
-   ("C-o" . casual-ibuffer-tmenu)
-   ("F" . casual-ibuffer-filter-tmenu)
-   ("s" . casual-ibuffer-sortby-tmenu)
-   ("{" . ibuffer-backwards-next-marked)
-   ("}" . ibuffer-forward-next-marked)
-   ("[" . ibuffer-backward-filter-group)
-   ("]" . ibuffer-forward-filter-group)
-   ("$" . ibuffer-toggle-filter-group)
-   :map Info-mode-map
-   ("C-o" . casual-info-tmenu)
-   ("M-[" . Info-history-back)
-   ("M-]" . Info-history-forward)
-   ("p" . casual-info-browse-backward-paragraph)
-   ("n" . casual-info-browse-forward-paragraph)
-   ("h" . Info-prev)
-   ("j" . Info-next-reference)
-   ("k" . Info-prev-reference)
-   ("l" . Info-next)
-   ("/" . Info-search)
-   ("B" . bookmark-set)
-   :map makefile-mode-map
-   ("C-o" . casual-make-tmenu)
-   :map Man-mode-map ("C-o" . casual-man-tmenu)
-   ;; The following keybindings are recommended to support consistent behavior
-   ;; between `Man-mode' and `casual-man-tmenu'.
-   ("n" . casual-lib-browse-forward-paragraph)
-   ("p" . casual-lib-browse-backward-paragraph)
-   ("[" . Man-previous-section)
-   ("]" . Man-next-section)
-   ("j" . next-line)
-   ("k" . previous-line)
-   ("K" . Man-kill)
-   ("o" . casual-man-occur-options)
-   :map isearch-mode-map
-   ("C-o" . casual-isearch-tmenu)
-   :map reb-lisp-mode-map
-   ("C-o" . casual-re-builder-tmenu)
-   :map reb-mode-map
-   ("C-o" . casual-re-builder-tmenu)
-   :map csv-mode-map
-   ("C-o" . casual-csv-tmenu)))
+  (:map bookmark-bmenu-mode-map
+        ("C-o" . casual-bookmarks-tmenu)
+        :map calc-mode-map
+        ("C-o" . casual-calc-tmenu)
+        :map calc-alg-map
+        ("C-o" . casual-calc-tmenu)
+        :map compilation-mode-map
+        ("C-o" . casual-compile-tmenu)
+        ;; The following keybindings are recommended to support consistent behavior
+        ;; between `compilation-mode-map' and `casual-compile-tmenu'.
+        ("k" . compilation-previous-error)
+        ("j" . compilation-next-error)
+        ("o" . compilation-display-error)
+        ("[" . compilation-previous-file)
+        ("]" . compilation-next-file)
+        :map dired-mode-map
+        ("C-o" . casual-dired-tmenu)
+        ("s" . casual-dired-sort-by-tmenu)
+        ("/" . casual-dired-search-replace-tmenu)
+        :map eshell-mode-map
+        ("C-o" . casual-eshell-tmenu)
+        :map grep-mode-map
+        ("C-o" . casual-compile-tmenu)
+        ;; The following keybindings are recommended to support consistent behavior
+        ;; between `grep-mode-map' and `casual-compile-tmenu'.
+        ("k" . compilation-previous-error)
+        ("j" . compilation-next-error)
+        ("o" . compilation-display-error)
+        ("[" . compilation-previous-file)
+        ("]" . compilation-next-file)
+        :map help-mode-map
+        ("C-o" . casual-help-tmenu)
+        ;; The following keybindings are recommended to support consistent behavior
+        ;; between `help-mode' and `casual-help-tmenu'.
+        ("M-[" . help-go-back)
+        ("M-]" . help-go-forward)
+        ("p" . casual-lib-browse-backward-paragraph)
+        ("n" . casual-lib-browse-forward-paragraph)
+        ("P" . help-goto-previous-page)
+        ("N" . help-goto-next-page)
+        ("j" . forward-button)
+        ("k" . backward-button)
+        :map ibuffer-mode-map
+        ("C-o" . casual-ibuffer-tmenu)
+        ("F" . casual-ibuffer-filter-tmenu)
+        ("s" . casual-ibuffer-sortby-tmenu)
+        ("{" . ibuffer-backwards-next-marked)
+        ("}" . ibuffer-forward-next-marked)
+        ("[" . ibuffer-backward-filter-group)
+        ("]" . ibuffer-forward-filter-group)
+        ("$" . ibuffer-toggle-filter-group)
+        :map Info-mode-map
+        ("C-o" . casual-info-tmenu)
+        ("M-[" . Info-history-back)
+        ("M-]" . Info-history-forward)
+        ("p" . casual-info-browse-backward-paragraph)
+        ("n" . casual-info-browse-forward-paragraph)
+        ("h" . Info-prev)
+        ("j" . Info-next-reference)
+        ("k" . Info-prev-reference)
+        ("l" . Info-next)
+        ("/" . Info-search)
+        ("B" . bookmark-set)
+        :map makefile-mode-map
+        ("C-o" . casual-make-tmenu)
+        :map Man-mode-map ("C-o" . casual-man-tmenu)
+        ;; The following keybindings are recommended to support consistent behavior
+        ;; between `Man-mode' and `casual-man-tmenu'.
+        ("n" . casual-lib-browse-forward-paragraph)
+        ("p" . casual-lib-browse-backward-paragraph)
+        ("[" . Man-previous-section)
+        ("]" . Man-next-section)
+        ("j" . next-line)
+        ("k" . previous-line)
+        ("K" . Man-kill)
+        ("o" . casual-man-occur-options)
+        :map isearch-mode-map
+        ("C-o" . casual-isearch-tmenu)
+        :map reb-lisp-mode-map
+        ("C-o" . casual-re-builder-tmenu)
+        :map reb-mode-map
+        ("C-o" . casual-re-builder-tmenu)
+        :map csv-mode-map
+        ("C-o" . casual-csv-tmenu)))
 
 (use-package disproject
   :ensure t
