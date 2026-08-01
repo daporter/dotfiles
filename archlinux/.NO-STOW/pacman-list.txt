@@ -27,7 +27,6 @@ exfat-utils
 eza
 fastfetch
 fd
-feh
 ffmpegthumbnailer
 file-roller
 firefox
@@ -132,6 +131,7 @@ strace
 stylua
 sudo
 sushi
+swayimg
 swaync
 sxiv
 texlive-binextra

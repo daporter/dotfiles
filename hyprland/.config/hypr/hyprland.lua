@@ -185,6 +185,12 @@ hl.bind("SUPER+M", hl.dsp.exec_cmd("emacsclient --create-frame --no-wait --alter
 hl.bind("SUPER+CTRL+S", hl.dsp.exec_cmd("hyprshot -m window"))
 hl.bind("SUPER+CTRL+SHIFT+S", hl.dsp.exec_cmd("hyprshot -m region"))
 hl.bind("SUPER+SLASH", hl.dsp.exec_cmd("firefox --new-window ~/.config/hypr/keybindings.html"))
+hl.bind(
+	"SUPER+Q",
+	hl.dsp.exec_cmd(
+		[[swayimg -e "swayimg.viewer.set_default_scale(0.8); swayimg.viewer.set_image_background(0xffffffff); swayimg.viewer.set_text('topleft', {}); swayimg.viewer.set_text('topright', {}); swayimg.viewer.set_text('bottomleft', {}); swayimg.viewer.set_text('bottomright', {})" ~/code/qmk_userspace/keymap.svg]]
+	)
+)
 
 -- Window resizing
 hl.bind("SUPER+CTRL+A", hl.dsp.window.resize({ x = -20, y = 0, relative = true }))
@@ -249,3 +255,12 @@ hl.window_rule({
 	size = { "monitor_w * 0.6", "monitor_h * 0.8" },
 })
 hl.window_rule({ match = { class = "^(firefox)$", title = "^(Hyprland Keybindings Reference)$" }, center = true })
+
+-- Popup window with the QMK keymap reference image. Height matches a normal
+-- tiled window's full height (1394px: monitor height minus the waybar and
+-- gaps). Width is derived from the SVG's own 852x2002 aspect ratio at the
+-- 80% scale set in the SUPER+Q bind above; at that scale the image is
+-- taller than the window, so it's scrolled rather than fully visible.
+hl.window_rule({ match = { class = "^(swayimg)$" }, float = true })
+hl.window_rule({ match = { class = "^(swayimg)$" }, size = { 682, 1394 } })
+hl.window_rule({ match = { class = "^(swayimg)$" }, center = true })
