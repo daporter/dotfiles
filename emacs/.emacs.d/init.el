@@ -593,7 +593,9 @@
 
 (use-package string-inflection
   :ensure t
-  :commands (string-inflection-kebab-case))
+  :after embark
+  :bind (:map embark-identifier-map
+              ("k" . string-inflection-kebab-case)))
 
 (use-package flymake
   :hook (prog-mode text-mode)
@@ -1393,8 +1395,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
       ("s o" "Consult outline"       consult-outline)]
      ["Whitespace"
       ("w"   "Cleanup"               whitespace-cleanup)]
-     ["Case"
-      ("k"   "Kebab-case"            string-inflection-kebab-case)]
      ["Insert"
       ("u"   "Unicode char"          my/read-unicode-char)]
      ["Toggle"
