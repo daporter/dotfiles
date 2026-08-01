@@ -198,10 +198,10 @@ hl.bind(
 )
 
 -- Window resizing
-hl.bind("SUPER+CTRL+A", hl.dsp.window.resize({ x = -20, y = 0, relative = true }))
-hl.bind("SUPER+CTRL+E", hl.dsp.window.resize({ x = 0, y = -20, relative = true }))
-hl.bind("SUPER+CTRL+I", hl.dsp.window.resize({ x = 0, y = 20, relative = true }))
-hl.bind("SUPER+CTRL+H", hl.dsp.window.resize({ x = 20, y = 0, relative = true }))
+hl.bind("SUPER+CTRL+A", hl.dsp.window.resize({ x = -20, y = 0, relative = true }), { repeating = true })
+hl.bind("SUPER+CTRL+E", hl.dsp.window.resize({ x = 0, y = -20, relative = true }), { repeating = true })
+hl.bind("SUPER+CTRL+I", hl.dsp.window.resize({ x = 0, y = 20, relative = true }), { repeating = true })
+hl.bind("SUPER+CTRL+H", hl.dsp.window.resize({ x = 20, y = 0, relative = true }), { repeating = true })
 hl.bind("SUPER+mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Layout (Dwindle)
