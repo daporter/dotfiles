@@ -112,6 +112,7 @@ python-pipx
 python-pyserial
 qmk
 qt6ct
+qutebrowser
 readest
 rebuild-detector
 restic

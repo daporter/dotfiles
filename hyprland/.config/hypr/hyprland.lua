@@ -184,7 +184,12 @@ hl.bind("SUPER+CTRL+D", hl.dsp.exec_cmd("goldendict --popup $(wl-paste --primary
 hl.bind("SUPER+M", hl.dsp.exec_cmd("emacsclient --create-frame --no-wait --alternate-editor='' --quiet"))
 hl.bind("SUPER+CTRL+S", hl.dsp.exec_cmd("hyprshot -m window"))
 hl.bind("SUPER+CTRL+SHIFT+S", hl.dsp.exec_cmd("hyprshot -m region"))
-hl.bind("SUPER+SLASH", hl.dsp.exec_cmd("firefox --new-window ~/.config/hypr/keybindings.html"))
+hl.bind(
+	"SUPER+SLASH",
+	hl.dsp.exec_cmd(
+		"qutebrowser -T -R -s statusbar.show never -s tabs.show never -s zoom.default 80% --target window ~/.config/hypr/keybindings.html"
+	)
+)
 hl.bind(
 	"SUPER+Q",
 	hl.dsp.exec_cmd(
@@ -245,16 +250,21 @@ hl.window_rule({ match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(b
 hl.window_rule({ match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(btop)$" }, size = { 1600, 900 } })
 hl.window_rule({ match = { class = "^(com\\.mitchellh\\.ghostty)$", title = "^(btop)$" }, center = true })
 
--- Popup window with the Hyprland keybindings cheatsheet.
--- Note that these rules to make the window float don’t currently work. AIUI,
--- this is due to how Firefox sets the window title. Nevertheless, I’ll leave the
--- rules here in case it happens to start working one day.
-hl.window_rule({ match = { class = "^(firefox)$", title = "^(Hyprland Keybindings Reference)$" }, float = true })
-hl.window_rule({
-	match = { class = "^(firefox)$", title = "^(Hyprland Keybindings Reference)$" },
-	size = { "monitor_w * 0.6", "monitor_h * 0.8" },
-})
-hl.window_rule({ match = { class = "^(firefox)$", title = "^(Hyprland Keybindings Reference)$" }, center = true })
+-- Popup window with the Hyprland keybindings cheatsheet. Matched by class
+-- alone (not title): Firefox's real page title only arrives asynchronously
+-- after the page loads, but Hyprland evaluates float/size/center once at
+-- window creation using the *initial* title ("Mozilla Firefox", generic),
+-- so a title-based match here never actually applied. qutebrowser's class
+-- is stable from creation, sidestepping that race entirely; -T/-R keep it
+-- a throwaway, chrome-free popup with no persistent session state. Width is
+-- sized to the page's own CSS content column (max-width: 900px + padding)
+-- at the 80% zoom set in the SUPER+SLASH bind above, so there's no dead
+-- space on either side. Height matches a normal tiled window's full height
+-- (1394px, see the QMK keymap popup rule below), since the page is long
+-- and scrolls regardless.
+hl.window_rule({ match = { class = "^(org\\.qutebrowser\\.qutebrowser)$" }, float = true })
+hl.window_rule({ match = { class = "^(org\\.qutebrowser\\.qutebrowser)$" }, size = { 786, 1394 } })
+hl.window_rule({ match = { class = "^(org\\.qutebrowser\\.qutebrowser)$" }, center = true })
 
 -- Popup window with the QMK keymap reference image. Height matches a normal
 -- tiled window's full height (1394px: monitor height minus the waybar and
