@@ -197,19 +197,6 @@ hl.bind(
 	)
 )
 
--- swayimg (the QMK keymap popup above) opens without keyboard/mouse focus
--- warping to it, unlike focus changes driven by a dispatcher (e.g.
--- movefocus), which do warp the cursor per the cursor:no_warps default.
--- Warp explicitly on open so the popup is immediately scrollable/closable
--- without first moving the mouse into it. win.at/size are read post-rule
--- (already floated, sized and centered), so this tracks the window rule
--- above rather than duplicating its geometry.
-hl.on("window.open", function(win)
-	if win.class == "swayimg" then
-		hl.dispatch(hl.dsp.cursor.move({ x = win.at.x + win.size.x / 2, y = win.at.y + win.size.y / 2 }))
-	end
-end)
-
 -- Window resizing
 hl.bind("SUPER+CTRL+A", hl.dsp.window.resize({ x = -20, y = 0, relative = true }), { repeating = true })
 hl.bind("SUPER+CTRL+E", hl.dsp.window.resize({ x = 0, y = -20, relative = true }), { repeating = true })
@@ -287,3 +274,20 @@ hl.window_rule({ match = { class = "^(org\\.qutebrowser\\.qutebrowser)$" }, cent
 hl.window_rule({ match = { class = "^(swayimg)$" }, float = true })
 hl.window_rule({ match = { class = "^(swayimg)$" }, size = { 852, 1394 } })
 hl.window_rule({ match = { class = "^(swayimg)$" }, center = true })
+
+-- Both popups above open without keyboard/mouse focus warping to them,
+-- unlike focus changes driven by a dispatcher (e.g. movefocus), which do
+-- warp the cursor per the cursor:no_warps default. Warp explicitly on open
+-- so each popup is immediately usable without first moving the mouse into
+-- it. win.at/size are read post-rule (already floated, sized and centered),
+-- so this tracks the window rules above rather than duplicating their
+-- geometry.
+local cursor_warp_classes = {
+	swayimg = true,
+	["org.qutebrowser.qutebrowser"] = true,
+}
+hl.on("window.open", function(win)
+	if cursor_warp_classes[win.class] then
+		hl.dispatch(hl.dsp.cursor.move({ x = win.at.x + win.size.x / 2, y = win.at.y + win.size.y / 2 }))
+	end
+end)
