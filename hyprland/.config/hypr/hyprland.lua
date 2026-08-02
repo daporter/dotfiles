@@ -193,7 +193,7 @@ hl.bind(
 hl.bind(
 	"SUPER+Q",
 	hl.dsp.exec_cmd(
-		[[swayimg -e "swayimg.viewer.set_default_scale('real'); swayimg.viewer.set_image_background(0xffffffff); swayimg.viewer.set_text('topleft', {}); swayimg.viewer.set_text('topright', {}); swayimg.viewer.set_text('bottomleft', {}); swayimg.viewer.set_text('bottomright', {})" ~/code/qmk_userspace/keymap.svg]]
+		[[swayimg -e "swayimg.viewer.set_default_scale('real'); swayimg.viewer.set_default_position('topcenter'); swayimg.viewer.set_image_background(0xffffffff); swayimg.viewer.set_text('topleft', {}); swayimg.viewer.set_text('topright', {}); swayimg.viewer.set_text('bottomleft', {}); swayimg.viewer.set_text('bottomright', {})" ~/code/qmk_userspace/keymap.svg]]
 	)
 )
 
@@ -270,7 +270,9 @@ hl.window_rule({ match = { class = "^(org\\.qutebrowser\\.qutebrowser)$" }, cent
 -- tiled window's full height (1394px: monitor height minus the waybar and
 -- gaps). Width matches the SVG's own native 852px width, since the SUPER+Q
 -- bind above displays it at "real" (100%) scale; at that size the image is
--- taller than the window, so it's scrolled rather than fully visible.
+-- taller than the window, so it's scrolled rather than fully visible (hence
+-- also anchoring the default position to the top there, rather than
+-- swayimg's usual vertically-centered start).
 hl.window_rule({ match = { class = "^(swayimg)$" }, float = true })
 hl.window_rule({ match = { class = "^(swayimg)$" }, size = { 852, 1394 } })
 hl.window_rule({ match = { class = "^(swayimg)$" }, center = true })
