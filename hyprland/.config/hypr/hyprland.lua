@@ -197,6 +197,19 @@ hl.bind(
 	)
 )
 
+-- swayimg (the QMK keymap popup above) opens without keyboard/mouse focus
+-- warping to it, unlike focus changes driven by a dispatcher (e.g.
+-- movefocus), which do warp the cursor per the cursor:no_warps default.
+-- Warp explicitly on open so the popup is immediately scrollable/closable
+-- without first moving the mouse into it. win.at/size are read post-rule
+-- (already floated, sized and centered), so this tracks the window rule
+-- above rather than duplicating its geometry.
+hl.on("window.open", function(win)
+	if win.class == "swayimg" then
+		hl.dispatch(hl.dsp.cursor.move({ x = win.at.x + win.size.x / 2, y = win.at.y + win.size.y / 2 }))
+	end
+end)
+
 -- Window resizing
 hl.bind("SUPER+CTRL+A", hl.dsp.window.resize({ x = -20, y = 0, relative = true }), { repeating = true })
 hl.bind("SUPER+CTRL+E", hl.dsp.window.resize({ x = 0, y = -20, relative = true }), { repeating = true })
