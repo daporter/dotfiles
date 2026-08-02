@@ -70,7 +70,7 @@ hl.config({
 		border_size = 2,
 		resize_on_border = true,
 		col = {
-			active_border = "rgba(93a1a1ff)",
+			active_border = "rgba(586e75ff)", -- Solarized Dark base01
 			inactive_border = "rgba(eee8d5ff)",
 		},
 		layout = "dwindle",
