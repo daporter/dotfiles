@@ -1547,3 +1547,21 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :after yaml-ts-mode
   :hook
   (yaml-ts-mode . flymake-yamllint-setup))
+
+(use-package ghostel
+  :ensure t
+  :preface
+  (defun my/ghostel-setup ()
+    (setq-local fill-column 100)
+    (visual-line-mode 1))
+  :commands (ghostel)
+  :bind (:map project-prefix-map
+              ("t" . ghostel-project)
+              ("T" . ghostel-project-list-buffers))
+  :hook (ghostel-mode-hook . my/ghostel-setup)
+  :config
+  (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
+  (add-to-list 'project-switch-commands
+               '(ghostel-project-list-buffers "Ghostel buffers") t)
+  (add-to-list 'ghostel-eval-cmds
+               '("magit-status-setup-buffer" magit-status-setup-buffer)))
