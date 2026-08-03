@@ -2,7 +2,7 @@
 
 ;;; Code:
 
-;;;; Package definitions
+;;;; Bootstrap
 
 (use-package package
   :hook (package-menu-mode . hl-line-mode)
@@ -79,9 +79,12 @@
   (read-file-name-completion-ignore-case t)
   (read-buffer-completion-ignore-case t)
   (completion-ignore-case t)
-  (enable-recursive-minibuffers t)
-  (send-mail-function 'smtpmail-send-it)
 
+  (tab-always-indent 'complete)
+
+  (enable-recursive-minibuffers t)
+
+  (send-mail-function 'smtpmail-send-it)
   (user-full-name "David Porter")
   (mail-host-address "daporter.net")
 
@@ -115,46 +118,33 @@
                     "%Y-%m-%d %H:%M:%S")))
       (insert (format-time-string format)))))
 
-;; `package-autoremove' deletes every installed package that is neither
-;; named here nor a dependency of one that is.  package.el records a
-;; package here only when it installs it, and `use-package' :ensure
-;; installs only when the package is missing, so the list drifts out of
-;; step with this file and autoremove starts offering to delete things
-;; that are in use.  Declare it by hand instead.  Must run after
-;; `custom-file' is loaded, which also sets this variable.
-;;
-;; `setq' would not survive: `custom-file' records the value in the
-;; `user' theme, and every `load-theme' below runs `enable-theme', which
-;; recalculates themed variables and would restore the stored value.
-;; Going through Custom overrides that entry instead.
-;;
-;; eglot, flymake, project, tramp and use-package are here because they
-;; are ELPA upgrades of built-ins (see `package-install-upgrade-built-in'
-;; above); dropping them would delete the upgrade and silently fall back
-;; to the bundled version.
-(custom-set-variables
- '(package-selected-packages
-   '(agent-shell apheleia cape captain
-                 casual-suite consult corfu corfu-candidate-overlay csv-mode
-                 dape denote disproject eglot embark
-                 embark-consult flymake flymake-hledger
-                 flymake-lua flymake-markdownlint flymake-yamllint fontaine
-                 gptel hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
-                 ligature lorem-ipsum lua-mode magit magit-todos marginalia
-                 markdown-mode nerd-icons
-                 nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
-                 nov olivetti orderless org-anki org-modern org-noter
-                 page-break-lines pcmpl-args pdf-tools popper project
-                 python-mode shannon-max string-inflection
-                 titlecase tramp unfill use-package vertico
-                 visual-fill-column vterm)))
-
 (use-package custom
   :custom
   (custom-safe-themes t))
 
-(use-package repeat
-  :init (repeat-mode 1))
+;;;; Core editing primitives
+
+(use-package simple
+  :preface
+  ;; https://karthinks.com/software/emacs-window-management-almanac/#org-target--pop-global-mark-advice
+  ;;
+  ;; By default, pop-global-mark always switches buffers (if required) in the
+  ;; current window.  We’d like it to double as a window-switcher, which
+  ;; requires a little advice:
+  (define-advice pop-global-mark (:around (pgm) use-display-buffer)
+    "Make `pop-to-buffer' jump buffers via `display-buffer'."
+    (cl-letf (((symbol-function 'switch-to-buffer)
+               #'pop-to-buffer))
+      (funcall pgm)))
+  :hook ((after-init . column-number-mode))
+  :bind (("C-*" . undo-redo)             ; i.e., C-S-/ since undo is C-/
+         ("C-z" . undo))                 ; was suspend-frame, never used
+  :custom
+  (indent-tabs-mode nil))
+
+(use-package minibuffer
+  :custom
+  (completion-cycle-threshold 3))       ; TAB cycle if only few candidates
 
 (use-package keymap
   :preface
@@ -194,239 +184,34 @@
                  (side . bottom)
                  (window-height . (lambda (w) (fit-window-to-buffer w 10 5))))))
 
-(use-package minibuffer
+(use-package frame
   :custom
-  (completion-cycle-threshold 3))       ; TAB cycle if only few candidates
-
-(use-package popper
-  :ensure t
-  :bind (("C-'"   . popper-toggle)
-         ("M-'"   . popper-cycle)
-         ("C-M-'" . popper-toggle-type))
-
-  :custom
-  (popper-reference-buffers '("\\*Messages\\*$"
-                              "\\*Warnings\\*$"
-                              help-mode
-                              "\\*eldoc.*\\*$"
-                              "\\*Occur\\*"
-                              "\\*Shell Command Output\\*$"
-                              "\\*Async Shell Command\\*$"
-                              flymake-diagnostics-buffer-mode
-                              compilation-mode))
-  (popper-display-control nil)
+  (window-divider-default-right-width 1)
   :config
-  (popper-mode 1)
-  (popper-echo-mode 1))
+  (window-divider-mode 1))
 
-(use-package fontset
-  ;; Set this to nil to set symbols entirely separately
-  ;; Need it set to `t` in order to display org-modern-indent faces properly
-  :custom
-  (use-default-font-for-symbols t)
+(use-package repeat
+  :init (repeat-mode 1)
+  :hook (after-init)
+  :bind ("C-_" . repeat))               ; reuse one of the ‘undo’ bindings
+
+(use-package delsel
   :config
-  ;; Use symbola for proper symbol glyphs, but have some fallbacks
-  (set-fontset-font t 'symbol "Symbola" nil))
+  (delete-selection-mode 1))
 
-(use-package fontaine
-  :ensure t
-  :hook (after-init . fontaine-mode)
-  :init
-  (setq fontaine-presets
-        '((regular)
-          (large
-           :default-height 110)
-          (t
-           :default-family "JetBrainsMono Nerd Font Mono"
-           :default-height 100
-
-           :variable-pitch-family "Inter"
-           :variable-pitch-height 1.05
-
-           :mode-line-active-family "Inter"
-           :mode-line-active-height 1.05
-
-           :mode-line-inactive-family "Inter"
-           :mode-line-inactive-height 1.05)))
+(use-package elec-pair
   :config
-  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))
+  (electric-pair-mode 1))
 
-(use-package simple
-  :preface
-  ;; https://karthinks.com/software/emacs-window-management-almanac/#org-target--pop-global-mark-advice
-  ;;
-  ;; By default, pop-global-mark always switches buffers (if required) in the
-  ;; current window.  We’d like it to double as a window-switcher, which
-  ;; requires a little advice:
-  (define-advice pop-global-mark (:around (pgm) use-display-buffer)
-    "Make `pop-to-buffer' jump buffers via `display-buffer'."
-    (cl-letf (((symbol-function 'switch-to-buffer)
-               #'pop-to-buffer))
-      (funcall pgm)))
-  :hook ((after-init . column-number-mode))
-  :bind (("C-*" . undo-redo)             ; i.e., C-S-/ since undo is C-/
-         ("C-z" . undo))                 ; was suspend-frame, never used
-  :custom
-  (indent-tabs-mode nil))
-
-(use-package newcomment
-  :custom
-  (comment-style 'extra-line))
-
-(use-package isearch
-  :preface
-  ;; https://karthinks.com/software/emacs-window-management-almanac/#with-other-window-an-elisp-helper
-  (defmacro with-other-window (&rest body)
-    "Execute forms in BODY in the other-window."
-    `(unless (one-window-p)
-       (with-selected-window (other-window-for-scrolling)
-         ,@body)))
-
-  (defun isearch-other-window (regexp-p)
-    (interactive "P")
-    (with-other-window (isearch-forward regexp-p)))
-
-  (defun isearch-other-window-backwards (regexp-p)
-    (interactive "P")
-    (with-other-window (isearch-backward regexp-p)))
-
-  :bind (("C-M-s" . isearch-other-window)
-         :map isearch-mode-map
-         ;; Allow M-c to capitalise word and exit the search.  The original
-         ;; command is still available via M-s c.
-         ("M-c" . nil)))
-
-(use-package replace
+(use-package electric
   :config
-  (add-to-list 'display-buffer-alist
-               `(,(rx "*Occur*")
-                 (display-buffer-reuse-window
-                  display-buffer-in-direction)
-                 (direction . above)
-                 (window-height . (lambda (w) (fit-window-to-buffer w 20 10)))
-                 (dedicated . t)
-                 (body-function . select-window))))
+  (electric-quote-mode 1))
 
 (use-package paren
   :custom
   (show-paren-context-when-offscreen 'overlay))
 
-(use-package compile
-  :hook
-  (compilation-filter . ansi-color-compilation-filter)
-  :custom
-  (compilation-auto-jump-to-first-error 'if-location-known))
-
-(use-package gdb-mi
-  :commands (gdb)
-  :custom
-  (gdb-many-windows t)
-  (gdb-default-window-configuration-file "gdb-config")
-  (gdb-restore-window-configuration-after-quit t))
-
-(use-package dired
-  :defer t
-  :custom
-  (dired-recursive-copies   'always)
-  (dired-dwim-target        t)          ; try to guess target directory for copy
-  (dired-auto-revert-buffer t)
-  (dired-vc-rename-file     t)
-
-  :config
-  (add-hook 'dired-mode-hook 'hl-line-mode)
-  (add-hook 'dired-mode-hook 'dired-async-mode))
-
-(use-package project
-  :commands (project-find-file
-             project-switch-to-buffer
-             project-switch-project
-             project-switch-project-open-file))
-
-(use-package autorevert
-  :custom
-  ;; Whenever the disk state changes, Emacs should update as well.
-  (global-auto-revert-mode             t)
-  (global-auto-revert-non-file-buffers t))
-
-(use-package ediff
-  :commands (ediff-buffers
-             ediff-current-file
-             ediff-files
-             ediff-regions-linewise
-             ediff-regions-wordwise)
-  :custom
-  (ediff-split-window-function 'split-window-horizontally)
-  (ediff-window-setup-function 'ediff-setup-windows-plain)
-  (ediff-keep-variants         nil)
-  (ediff-show-clashes-only     t))
-
-(use-package nerd-icons
-  :ensure t
-  :defer t)
-
-(use-package nerd-icons-dired
-  :ensure t
-  :hook dired-mode)
-
-(use-package nerd-icons-ibuffer
-  :ensure t
-  :hook ibuffer-mode)
-
-(use-package nerd-icons-completion
-  :ensure t
-  :after marginalia
-  :config
-  (nerd-icons-completion-mode 1)
-  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
-
-(use-package apropos
-  :custom
-  (apropos-sort-by-scores t))
-
-(use-package ispell
-  :custom
-  (ispell-dictionary "australian-w_accents"))
-
-(use-package hippie-exp
-  :bind
-  ([remap dabbrev-expand] . hippie-expand)
-  :custom
-  (hippie-expand-try-functions-list '(try-expand-dabbrev-visible
-                                      try-expand-dabbrev
-                                      try-expand-dabbrev-all-buffers
-                                      try-complete-file-name-partially
-                                      try-complete-file-name
-                                      try-expand-all-abbrevs
-                                      try-expand-list
-                                      try-expand-line
-                                      try-expand-dabbrev-from-kill
-                                      try-complete-lisp-symbol-partially
-                                      try-complete-lisp-symbol)))
-
-(use-package bookmark
-  :custom
-  (bookmark-save-flag 1)) ;; Save bookmarks on each modification
-
-(use-package man
-  :custom
-  (Man-notify-method 'aggressive))
-
-(use-package proced
-  :commands (proced)
-  :custom
-  (proced-auto-update-flag t)
-  (proced-enable-color-flag t))
-
-(use-package saveplace
-  :init (save-place-mode 1))
-
-(use-package savehist
-  :hook (after-init))
-
-(use-package marginalia
-  :ensure t
-  :hook (after-init)
-  :bind (:map minibuffer-local-map ("M-m" . marginalia-cycle)))
+;;;; Minibuffer completion framework
 
 (use-package orderless
   :ensure t
@@ -442,6 +227,52 @@
   :hook (after-init)
   :config
   (add-hook 'rfn-eshdadow-update-overlay-hook #'vertico-directory-tidy))
+
+(use-package marginalia
+  :ensure t
+  :hook (after-init)
+  :bind (:map minibuffer-local-map ("M-m" . marginalia-cycle)))
+
+(use-package consult
+  :ensure t
+  :bind (([remap switch-to-buffer]              . consult-buffer)
+         ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
+         ([remap switch-to-buffer-other-frame]  . consult-buffer-other-frame)
+         ([remap project-switch-to-buffer]      . consult-project-buffer)
+         ([remap yank-pop]                      . consult-yank-pop)
+         ([remap imenu]                         . consult-imenu)
+         ([remap Info-search]                   . consult-info)))
+
+(use-package embark
+  :ensure t
+  ;; C-. can be seen as a right-click context menu at point and M-. as
+  ;; left-click.  The keybindings are mnemonic, both acting at point (.).  By
+  ;; default, M-. is bound to xref-find-definitions, but overwriting it here is
+  ;; reasonable since embark-dwim acts like xref-find-definitions on the symbol
+  ;; at point.
+  :bind (("C-."   . embark-act)
+         ("M-."   . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command))
+
+(use-package embark-consult
+  :ensure t
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
+(use-package which-key
+  :hook
+  (after-init))
+
+;;;; In-buffer completion
+
+(use-package completion-preview
+  :bind
+  (:map completion-preview-active-mode-map
+        ("<tab>" . completion-preview-complete))
+  :custom
+  (completion-preview-idle-delay 0.5))
 
 (use-package corfu
   :ensure t
@@ -525,97 +356,195 @@
   :config
   (corfu-candidate-overlay-mode 1))
 
-(use-package consult
-  :ensure t
-  :bind (([remap switch-to-buffer]              . consult-buffer)
-         ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
-         ([remap switch-to-buffer-other-frame]  . consult-buffer-other-frame)
-         ([remap project-switch-to-buffer]      . consult-project-buffer)
-         ([remap yank-pop]                      . consult-yank-pop)
-         ([remap imenu]                         . consult-imenu)
-         ([remap Info-search]                   . consult-info)))
-
-(use-package embark
-  :ensure t
-  ;; C-. can be seen as a right-click context menu at point and M-. as
-  ;; left-click.  The keybindings are mnemonic, both acting at point (.).  By
-  ;; default, M-. is bound to xref-find-definitions, but overwriting it here is
-  ;; reasonable since embark-dwim acts like xref-find-definitions on the symbol
-  ;; at point.
-  :bind (("C-."   . embark-act)
-         ("M-."   . embark-dwim)
-         ("C-h B" . embark-bindings))
-  :init
-  (setq prefix-help-command #'embark-prefix-help-command))
-
-(use-package embark-consult
-  :ensure t
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
-
-(use-package which-key
-  :hook
-  (after-init))
-
-(use-package vterm
-  :ensure t
-  :commands vterm)
-
-(use-package whitespace
+(use-package hippie-exp
+  :bind
+  ([remap dabbrev-expand] . hippie-expand)
   :custom
-  (whitespace-line-column nil)
-  (whitespace-style '(face tabs tab-mark trailing empty missing-newline-at-eof))
-  :custom-face
-  ;; Some default faces aren’t visible on spaces or empty lines:
-  (whitespace-empty ((t (:inherit whitespace-trailing))))
-  (whitespace-tab ((t (:inherit magit-diff-whitespace-warning))))
-  (whitespace-indentation ((t (:inherit diff-removed))))
-  (whitespace-space-after-tab ((t (:inherit whitespace-trailing))))
-  :hook
-  (((text-mode prog-mode conf-mode) . whitespace-mode)
-   (before-save . delete-trailing-whitespace)))
+  (hippie-expand-try-functions-list '(try-expand-dabbrev-visible
+                                      try-expand-dabbrev
+                                      try-expand-dabbrev-all-buffers
+                                      try-complete-file-name-partially
+                                      try-complete-file-name
+                                      try-expand-all-abbrevs
+                                      try-expand-list
+                                      try-expand-line
+                                      try-expand-dabbrev-from-kill
+                                      try-complete-lisp-symbol-partially
+                                      try-complete-lisp-symbol)))
 
-(use-package editorconfig
-  :hook
-  (after-init))
-
-(use-package titlecase
-  :ensure t
-  :after embark
-  :commands (titlecase-region
-             titlecase-line
-             titlecase-sentence
-             titlecase-dwim)
-  :bind (:map embark-region-map
-              ("T" . titlecase-region)
-              :map embark-heading-map
-              ("T" . titlecase-region))
-  :custom (titlecase-style 'chicago))
-
-(use-package string-inflection
-  :ensure t
-  :after embark
-  :bind (:map embark-identifier-map
-              ("k" . string-inflection-kebab-case)
-              :map embark-region-map
-              ("k" . string-inflection-kebab-case))
-  ;; Default region behavior just replaces spaces with underscores instead
-  ;; of running the inflection function -- useless for "kebab-case this
-  ;; selection", so switch to applying it symbol-by-symbol.
-  :custom (string-inflection-region-selection-behavior 'apply-to-each-symbols))
-
-(use-package flymake
-  :hook (prog-mode text-mode)
-  :custom (flymake-fringe-indicator-position nil)
+(use-package dabbrev
   :config
-  (add-to-list 'display-buffer-alist
-               '((major-mode . flymake-diagnostics-buffer-mode)
-                 (display-buffer-reuse-window
-                  display-buffer-in-direction)
-                 (direction . above)
-                 (window-height . (lambda (w) (fit-window-to-buffer w 20 10)))
-                 (dedicated . t)
-                 (body-function . select-window))))
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
+
+;;;; Icons
+
+(use-package nerd-icons
+  :ensure t
+  :defer t)
+
+(use-package nerd-icons-completion
+  :ensure t
+  :after marginalia
+  :config
+  (nerd-icons-completion-mode 1)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+(use-package nerd-icons-dired
+  :ensure t
+  :hook dired-mode)
+
+(use-package nerd-icons-ibuffer
+  :ensure t
+  :hook ibuffer-mode)
+
+;;;; Fonts, themes, visual UI
+
+(use-package fontset
+  ;; Set this to nil to set symbols entirely separately
+  ;; Need it set to `t` in order to display org-modern-indent faces properly
+  :custom
+  (use-default-font-for-symbols t)
+  :config
+  ;; Use symbola for proper symbol glyphs, but have some fallbacks
+  (set-fontset-font t 'symbol "Symbola" nil))
+
+(use-package fontaine
+  :ensure t
+  :hook (after-init . fontaine-mode)
+  :init
+  (setq fontaine-presets
+        '((regular)
+          (large
+           :default-height 110)
+          (t
+           :default-family "JetBrainsMono Nerd Font Mono"
+           :default-height 100
+
+           :variable-pitch-family "Inter"
+           :variable-pitch-height 1.05
+
+           :mode-line-active-family "Inter"
+           :mode-line-active-height 1.05
+
+           :mode-line-inactive-family "Inter"
+           :mode-line-inactive-height 1.05)))
+  :config
+  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))
+
+(use-package modus-themes
+  ;; The themes ship with Emacs but live in `etc/themes' (on
+  ;; `custom-theme-load-path', not `load-path'), so there is no
+  ;; `modus-themes' library on `load-path' to require normally -- load it
+  ;; with `require-theme' instead, and skip use-package's implicit
+  ;; require.  This must happen in `:preface', not `:init': use-package's
+  ;; canonical keyword order runs `:init' after `:preface', and `:config'
+  ;; (which sets the options below) needs the library already loaded.
+  ;; `:preface' forms are wrapped in `eval-and-compile' and run before
+  ;; everything else, so this also works when evaluating this form in
+  ;; isolation (e.g. `C-M-x'), not just on a full file load.
+  :preface
+  (require-theme 'modus-themes)
+  :no-require t
+  ;; Set options with plain `setq' in `:config', not use-package's
+  ;; `:custom': `:custom' registers values under an internal
+  ;; `use-package' custom theme (see `custom-known-themes'), and Custom
+  ;; replays a theme's *raw, unevaluated* value forms via `eval' whenever
+  ;; it reprocesses a variable (e.g. when `enable-theme' runs during a
+  ;; later `modus-themes-load-theme' call, or when this library is
+  ;; reloaded).  For `modus-themes-common-palette-overrides' below, whose
+  ;; value is a bare reference to `modus-themes-preset-overrides-faint',
+  ;; that replay can land *before* modus-themes.el has (re)defined the
+  ;; preset variable, raising a void-variable error.  `setq' never
+  ;; touches the Custom/theme system, so it doesn't have this hazard --
+  ;; this matches the setup shown in the modus-themes manual.  Options
+  ;; must be set before the theme is loaded, and `modus-themes-load-theme'
+  ;; is preferred over `load-theme' -- it disables conflicting themes and
+  ;; runs hooks.
+  :config
+  (setq modus-themes-bold-constructs t)
+  (setq modus-themes-italic-constructs t)
+  (setq modus-themes-mixed-fonts t)
+  (setq modus-themes-variable-pitch-ui t)
+  (setq modus-themes-headings
+        '((1 . (variable-pitch 1.3))
+          (2 . (variable-pitch 1.15))
+          (3 . (1.05))
+          (agenda-date . (1.2))
+          (agenda-structure . (variable-pitch light 1.3))
+          (t . (1.0))))
+  (setq modus-themes-completions
+        '((matches . (extrabold underline))
+          (selection . (semibold))))
+  (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
+  (modus-themes-load-theme 'modus-operandi-tinted))
+
+(use-package doric-themes
+  :ensure t
+  :demand t
+  :config
+  (setq doric-themes-to-rotate '(doric-light doric-marble doric-earth)))
+
+(use-package ligature
+  :ensure t
+  :config
+  ;; Enable all ligatures in programming modes.
+  (ligature-set-ligatures
+   '(prog-mode text-mode)
+   '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->"
+     "<---->" "<!--" "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>"
+     "<==>" "<===>" "<====>" "<!---" "<~~" "<~" "~>" "~~>" "::" ":::" "=="
+     "!=" "===" "!==" ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:"
+     "-:" "=:" "<******>" "++" "+++"))
+  (global-ligature-mode t))
+
+(use-package page-break-lines
+  :ensure t
+  :hook (after-init . global-page-break-lines-mode))
+
+(use-package pixel-scroll
+  :hook (after-init . pixel-scroll-precision-mode))
+
+(use-package face-remap
+  :preface
+  (defun my/variable-pitch-set-line-spacing ()
+    ;; The font XCharter needs extra line spacing.
+    (if (and buffer-face-mode
+             (eq buffer-face-mode-face 'variable-pitch))
+        (setq-local line-spacing 0.25)
+      (kill-local-variable 'line-spacing))) ; revert to global setting
+
+  :hook
+  (buffer-face-mode . my/variable-pitch-set-line-spacing))
+
+(use-package winner
+  :hook (after-init))
+
+(use-package popper
+  :ensure t
+  :bind (("C-'"   . popper-toggle)
+         ("M-'"   . popper-cycle)
+         ("C-M-'" . popper-toggle-type))
+
+  :custom
+  (popper-reference-buffers '("\\*Messages\\*$"
+                              "\\*Warnings\\*$"
+                              help-mode
+                              "\\*eldoc.*\\*$"
+                              "\\*Occur\\*"
+                              "\\*Shell Command Output\\*$"
+                              "\\*Async Shell Command\\*$"
+                              flymake-diagnostics-buffer-mode
+                              compilation-mode))
+  (popper-display-control nil)
+  :config
+  (popper-mode 1)
+  (popper-echo-mode 1))
+
+;;;; Programming support
 
 (use-package prog-mode
   :preface
@@ -697,11 +626,31 @@
   ;; Kill compile buffer on build success:
   (add-hook 'dape-compile-hook 'kill-buffer))
 
-(use-package text-mode
-  :hook (text-mode . abbrev-mode)
+(use-package flymake
+  :hook (prog-mode text-mode)
+  :custom (flymake-fringe-indicator-position nil)
   :config
-  ;; For some reason the following doesn't work with :bind
-  (define-key text-mode-map (kbd "C-M-i") #'completion-at-point))
+  (add-to-list 'display-buffer-alist
+               '((major-mode . flymake-diagnostics-buffer-mode)
+                 (display-buffer-reuse-window
+                  display-buffer-in-direction)
+                 (direction . above)
+                 (window-height . (lambda (w) (fit-window-to-buffer w 20 10)))
+                 (dedicated . t)
+                 (body-function . select-window))))
+
+(use-package compile
+  :hook
+  (compilation-filter . ansi-color-compilation-filter)
+  :custom
+  (compilation-auto-jump-to-first-error 'if-location-known))
+
+(use-package gdb-mi
+  :commands (gdb)
+  :custom
+  (gdb-many-windows t)
+  (gdb-default-window-configuration-file "gdb-config")
+  (gdb-restore-window-configuration-after-quit t))
 
 (use-package hideshow
   ;; https://github.com/karthink/.emacs.d/blob/master/lisp/setup-folds.el
@@ -773,23 +722,92 @@
            hs-special-modes-alist
            '((t))))))
 
-(use-package flymake-vale
-  :vc (:url "https://github.com/tpeacock19/flymake-vale" :rev :newest)
-  :hook (text-mode . flymake-vale-load))
+;;;; Editing utilities
 
-(use-package visual-wrap-prefix-mode
+(use-package newcomment
+  :custom
+  (comment-style 'extra-line))
+
+(use-package isearch
   :preface
-  (defun my/toggle-visual-wrap-prefix-mode ()
-    "Enable/disable `visual-wrap-prefix-mode' based on `visual-line-mode' status.
-Skipped in agent-shell viewport buffers: their indentation is a
-`line-prefix'/`wrap-prefix' text property agent-shell sets itself, and
-this mode's own `fill-context-prefix' computation (based on literal
-leading whitespace) overwrites it with an empty prefix — and disabling
-the mode later would wipe every `wrap-prefix' in the buffer outright."
-    (unless (derived-mode-p 'agent-shell-viewport-edit-mode
-                            'agent-shell-viewport-view-mode)
-      (visual-wrap-prefix-mode (if visual-line-mode 1 -1))))
-  :hook (visual-line-mode . my/toggle-visual-wrap-prefix-mode))
+  ;; https://karthinks.com/software/emacs-window-management-almanac/#with-other-window-an-elisp-helper
+  (defmacro with-other-window (&rest body)
+    "Execute forms in BODY in the other-window."
+    `(unless (one-window-p)
+       (with-selected-window (other-window-for-scrolling)
+         ,@body)))
+
+  (defun isearch-other-window (regexp-p)
+    (interactive "P")
+    (with-other-window (isearch-forward regexp-p)))
+
+  (defun isearch-other-window-backwards (regexp-p)
+    (interactive "P")
+    (with-other-window (isearch-backward regexp-p)))
+
+  :bind (("C-M-s" . isearch-other-window)
+         :map isearch-mode-map
+         ;; Allow M-c to capitalise word and exit the search.  The original
+         ;; command is still available via M-s c.
+         ("M-c" . nil)))
+
+(use-package replace
+  :config
+  (add-to-list 'display-buffer-alist
+               `(,(rx "*Occur*")
+                 (display-buffer-reuse-window
+                  display-buffer-in-direction)
+                 (direction . above)
+                 (window-height . (lambda (w) (fit-window-to-buffer w 20 10)))
+                 (dedicated . t)
+                 (body-function . select-window))))
+
+(use-package whitespace
+  :custom
+  (whitespace-line-column nil)
+  (whitespace-style '(face tabs tab-mark trailing empty missing-newline-at-eof))
+  :custom-face
+  ;; Some default faces aren’t visible on spaces or empty lines:
+  (whitespace-empty ((t (:inherit whitespace-trailing))))
+  (whitespace-tab ((t (:inherit magit-diff-whitespace-warning))))
+  (whitespace-indentation ((t (:inherit diff-removed))))
+  (whitespace-space-after-tab ((t (:inherit whitespace-trailing))))
+  :hook
+  (((text-mode prog-mode conf-mode) . whitespace-mode)
+   (before-save . delete-trailing-whitespace)))
+
+(use-package apheleia
+  :ensure t
+  :hook ((prog-mode text-mode conf-mode) . apheleia-mode))
+
+(use-package editorconfig
+  :hook
+  (after-init))
+
+(use-package titlecase
+  :ensure t
+  :after embark
+  :commands (titlecase-region
+             titlecase-line
+             titlecase-sentence
+             titlecase-dwim)
+  :bind (:map embark-region-map
+              ("T" . titlecase-region)
+              :map embark-heading-map
+              ("T" . titlecase-region))
+  :custom (titlecase-style 'chicago))
+
+(use-package string-inflection
+  :ensure t
+  :after embark
+  :bind (:map embark-identifier-map
+              ("k" . string-inflection-kebab-case)
+              :map embark-region-map
+              ("k" . string-inflection-kebab-case))
+  ;; Default region behavior just replaces spaces with underscores instead
+  ;; of running the inflection function -- useless for "kebab-case this
+  ;; selection", so switch to applying it symbol-by-symbol.
+  :custom (string-inflection-region-selection-behavior 'apply-to-each-symbols))
 
 (use-package unfill
   :ensure t
@@ -800,6 +818,183 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :commands (lorem-ipsum-insert-list
              lorem-ipsum-insert-paragraphs
              lorem-ipsum-insert-sentences))
+
+(use-package abbrev
+  :custom
+  (abbrev-suggest t))
+
+(use-package captain
+  :ensure t
+  :preface
+  (defun my/captain-text-mode-setup ()
+    ;; In text-mode, work all the time.
+    (setq captain-predicate (lambda () t))
+    (captain-mode 1))
+  (defun my/captain-prog-mode-setup ()
+    ;; In prog-mode, work only in comments.
+    (setq captain-predicate (lambda ()
+                              (nth 8 (syntax-ppss (point)))))
+    (captain-mode 1))
+  :hook
+  (text-mode . my/captain-text-mode-setup)
+  (prog-mode . my/captain-prog-mode-setup))
+
+(use-package find-func
+  :config
+  (find-function-setup-keys))
+
+(use-package autoinsert
+  :config
+  (auto-insert-mode t))
+
+;;;; Files, projects, VC
+
+(use-package dired
+  :defer t
+  :custom
+  (dired-recursive-copies   'always)
+  (dired-dwim-target        t)          ; try to guess target directory for copy
+  (dired-auto-revert-buffer t)
+  (dired-vc-rename-file     t)
+
+  :config
+  (add-hook 'dired-mode-hook 'hl-line-mode)
+  (add-hook 'dired-mode-hook 'dired-async-mode))
+
+(use-package project
+  :commands (project-find-file
+             project-switch-to-buffer
+             project-switch-project
+             project-switch-project-open-file))
+
+(use-package autorevert
+  :custom
+  ;; Whenever the disk state changes, Emacs should update as well.
+  (global-auto-revert-mode             t)
+  (global-auto-revert-non-file-buffers t))
+
+(use-package recentf
+  :hook (after-init))
+
+(use-package tramp
+  :defer t
+  :custom
+  (tramp-default-method "sudo")
+  (tramp-verbose 1)
+  (tramp-connection-timeout 10)
+  (tramp-chunksize 2000)
+  (tramp-completion-reread-directory-timeout nil)
+  (auto-save-default nil)
+  (make-backup-files nil)
+  (backup-directory-alist
+   (append backup-directory-alist
+           '(("/sudo::" . (concat user-emacs-directory "tramp-backups")))))
+  (tramp-backup-directory-alist backup-directory-alist))
+
+(use-package ediff
+  :commands (ediff-buffers
+             ediff-current-file
+             ediff-files
+             ediff-regions-linewise
+             ediff-regions-wordwise)
+  :custom
+  (ediff-split-window-function 'split-window-horizontally)
+  (ediff-window-setup-function 'ediff-setup-windows-plain)
+  (ediff-keep-variants         nil)
+  (ediff-show-clashes-only     t))
+
+(use-package magit
+  :ensure t
+  :after project
+  :commands magit-status
+  :bind (:map project-prefix-map
+              ("m" . magit-project-status))
+  :custom
+  (magit-display-buffer-function
+   'magit-display-buffer-same-window-except-diff-v1)
+  (git-commit-summary-max-length 50)
+  (magit-diff-refine-hunk t)
+  (git-commit-style-convention-checks '(non-empty-second-line
+                                        overlong-summary-line))
+  :config
+  (add-to-list 'project-switch-commands
+               '(magit-project-status "Magit" "m")))
+
+(use-package hl-todo
+  :ensure t
+  :hook prog-mode)
+
+(use-package magit-todos
+  :ensure t
+  :after magit
+  :hook after-init)
+
+(use-package disproject
+  :ensure t
+  :bind ("C-c p" . disproject-dispatch))
+
+;;;; Shells and processes
+
+(use-package eshell
+  :commands (eshell)
+  :config
+  (with-eval-after-load 'esh-mode
+    (define-key eshell-mode-map [remap display-local-help] #'man))
+  (dolist (module '(eshell-smart eshell-tramp))
+    (add-to-list 'eshell-modules-list module)))
+
+(use-package em-hist
+  :preface
+  (defun my/remove-eshell-hist-binding ()
+    "Remove binding C-<up>, since it’s used by windmove."
+    (keymap-unset eshell-hist-mode-map "C-<up>" :remove))
+  :hook (eshell-hist-load . my/remove-eshell-hist-binding))
+
+(use-package shell
+  :commands shell
+  :bind (:map shell-mode-map
+              ([remap display-local-help] . man)))
+
+(use-package vterm
+  :ensure t
+  :commands vterm)
+
+(use-package pcmpl-args
+  :ensure t
+  :after pcomplete)
+
+(use-package proced
+  :commands (proced)
+  :custom
+  (proced-auto-update-flag t)
+  (proced-enable-color-flag t))
+
+(use-package server
+  :config
+  (server-start))
+
+(use-package ghostel
+  :ensure t
+  :preface
+  :commands (ghostel)
+  :bind (:map project-prefix-map
+              ("t" . ghostel-project)
+              ("T" . ghostel-project-list-buffers))
+  :config
+  (add-to-list 'project-switch-commands
+               '(ghostel-project "Ghostel") t)
+  (add-to-list 'project-switch-commands
+               '(ghostel-project-list-buffers "Ghostel buffers") t)
+  (add-to-list 'ghostel-eval-cmds
+               '("magit-status-setup-buffer" magit-status-setup-buffer))
+  (add-to-list 'display-buffer-alist
+               '((major-mode . ghostel-mode)
+                 (display-buffer-reuse-window
+                  display-buffer-in-direction)
+                 (direction . right)
+                 (window-width . 100))))
+
+;;;; Language modes
 
 (use-package elisp-mode
   :bind ("C-x x e" . eval-buffer))
@@ -813,46 +1008,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :custom
   (c-ts-mode-indent-style 'linux)
   (c-ts-mode-indent-offset 8))
-
-(use-package apheleia
-  :ensure t
-  :hook ((prog-mode text-mode conf-mode) . apheleia-mode))
-
-(use-package markdown-mode
-  :ensure t
-  :preface
-  (defun my/markdown-set-tab-width ()
-    (setq tab-width 4))
-  (defun my/markdown-add-completions ()
-    (add-hook 'completion-at-point-functions
-              'cape-dict nil t))
-  (defun my/markdown-time-stamp-updated-field ()
-    (setq-local time-stamp-pattern "20/^updated: %Y-%m-%d %H:%M$")
-    (add-hook 'before-save-hook #'time-stamp nil t))
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode))
-  :hook
-  ((markdown-mode . my/markdown-set-tab-width)
-   (markdown-mode . my/markdown-add-completions)
-   (markdown-mode . my/markdown-time-stamp-updated-field)
-   (markdown-mode . variable-pitch-mode))
-  :custom
-  (markdown-command "pandoc")
-  (markdown-asymmetric-header t)
-  (markdown-fontify-code-blocks-natively t)
-  :config
-  (define-auto-insert
-    "/.*/Dropbox/reference/.*\\.md\\'"
-    '(nil "---" n
-          "title: " (capitalize (file-name-base buffer-file-name)) n
-          "id: " (format "\"%s\"" (format-time-string "%Y%m%d%H%M")) n
-          "created: " (format-time-string "%Y-%m-%d %H:%M") n
-          "---\n\n")))
-
-(use-package flymake-markdownlint
-  :ensure t
-  :hook
-  (markdown-mode . flymake-markdownlint-setup))
 
 (use-package sh-script
   :init
@@ -894,81 +1049,181 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :mode "\\.ya?ml\\'"
   :hook (yaml-ts-mode . my/yaml-set-tab-width))
 
-(use-package tramp
-  :defer t
-  :custom
-  (tramp-default-method "sudo")
-  (tramp-verbose 1)
-  (tramp-connection-timeout 10)
-  (tramp-chunksize 2000)
-  (tramp-completion-reread-directory-timeout nil)
-  (auto-save-default nil)
-  (make-backup-files nil)
-  (backup-directory-alist
-   (append backup-directory-alist
-           '(("/sudo::" . (concat user-emacs-directory "tramp-backups")))))
-  (tramp-backup-directory-alist backup-directory-alist))
-
-(use-package eshell
-  :commands (eshell)
-  :config
-  (with-eval-after-load 'esh-mode
-    (define-key eshell-mode-map [remap display-local-help] #'man))
-  (dolist (module '(eshell-smart eshell-tramp))
-    (add-to-list 'eshell-modules-list module)))
-
-(use-package em-hist
-  :preface
-  (defun my/remove-eshell-hist-binding ()
-    "Remove binding C-<up>, since it’s used by windmove."
-    (keymap-unset eshell-hist-mode-map "C-<up>" :remove))
-  :hook (eshell-hist-load . my/remove-eshell-hist-binding))
-
-(use-package shell
-  :commands shell
-  :bind (:map shell-mode-map
-              ([remap display-local-help] . man)))
+(use-package flymake-yamllint
+  :ensure t
+  :after yaml-ts-mode
+  :hook
+  (yaml-ts-mode . flymake-yamllint-setup))
 
 (use-package hyprlang-ts-mode
   :ensure t
   :custom
   (hyprlang-ts-mode-indent-offset 4))
 
-(use-package magit
+(use-package make-mode
+  :preface
+  (defun my/makefile-whitespace-setup ()
+    (setq-local whitespace-style '(face
+                                   indentation::space
+                                   space-after-tab::tab
+                                   space-before-tab::space
+                                   trailing
+                                   empty
+                                   missing-newline-at-eof)))
+  :hook
+  (makefile-mode . my/makefile-whitespace-setup))
+
+(use-package csv-mode
   :ensure t
-  :after project
-  :commands magit-status
-  :bind (:map project-prefix-map
-              ("m" . magit-project-status))
-  :custom
-  (magit-display-buffer-function
-   'magit-display-buffer-same-window-except-diff-v1)
-  (git-commit-summary-max-length 50)
-  (magit-diff-refine-hunk t)
-  (git-commit-style-convention-checks '(non-empty-second-line
-                                        overlong-summary-line))
+  :preface
+  (defun my/csv-mode-setup ()
+    (progn
+      (visual-line-mode -1)
+      (toggle-truncate-lines 1)))
+  :mode "\\.csv\\'"
+  :hook
+  ((csv-mode . my/csv-mode-setup)
+   (csv-mode . csv-guess-set-separator)
+   (csv-mode . csv-align-mode)))
+
+;;;; Text and writing modes
+
+(use-package text-mode
+  :hook (text-mode . abbrev-mode)
   :config
-  (add-to-list 'project-switch-commands
-               '(magit-project-status "Magit" "m")))
+  ;; For some reason the following doesn't work with :bind
+  (define-key text-mode-map (kbd "C-M-i") #'completion-at-point))
 
-(use-package hl-todo
+(use-package visual-wrap-prefix-mode
+  :preface
+  (defun my/toggle-visual-wrap-prefix-mode ()
+    "Enable/disable `visual-wrap-prefix-mode' based on `visual-line-mode' status.
+Skipped in agent-shell viewport buffers: their indentation is a
+`line-prefix'/`wrap-prefix' text property agent-shell sets itself, and
+this mode's own `fill-context-prefix' computation (based on literal
+leading whitespace) overwrites it with an empty prefix — and disabling
+the mode later would wipe every `wrap-prefix' in the buffer outright."
+    (unless (derived-mode-p 'agent-shell-viewport-edit-mode
+                            'agent-shell-viewport-view-mode)
+      (visual-wrap-prefix-mode (if visual-line-mode 1 -1))))
+  :hook (visual-line-mode . my/toggle-visual-wrap-prefix-mode))
+
+(use-package olivetti
   :ensure t
-  :hook prog-mode)
+  :hook (text-mode . olivetti-mode))
 
-(use-package magit-todos
+(use-package visual-fill-column
   :ensure t
-  :after magit
-  :hook after-init)
+  :commands visual-fill-column-mode)
 
-(use-package denote
+(use-package markdown-mode
+  :ensure t
+  :preface
+  (defun my/markdown-set-tab-width ()
+    (setq tab-width 4))
+  (defun my/markdown-add-completions ()
+    (add-hook 'completion-at-point-functions
+              'cape-dict nil t))
+  (defun my/markdown-time-stamp-updated-field ()
+    (setq-local time-stamp-pattern "20/^updated: %Y-%m-%d %H:%M$")
+    (add-hook 'before-save-hook #'time-stamp nil t))
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode))
+  :hook
+  ((markdown-mode . my/markdown-set-tab-width)
+   (markdown-mode . my/markdown-add-completions)
+   (markdown-mode . my/markdown-time-stamp-updated-field)
+   (markdown-mode . variable-pitch-mode))
+  :custom
+  (markdown-command "pandoc")
+  (markdown-asymmetric-header t)
+  (markdown-fontify-code-blocks-natively t)
+  :config
+  (define-auto-insert
+    "/.*/Dropbox/reference/.*\\.md\\'"
+    '(nil "---" n
+          "title: " (capitalize (file-name-base buffer-file-name)) n
+          "id: " (format "\"%s\"" (format-time-string "%Y%m%d%H%M")) n
+          "created: " (format-time-string "%Y-%m-%d %H:%M") n
+          "---\n\n")))
+
+(use-package flymake-markdownlint
   :ensure t
   :hook
-  (dired-mode . denote-dired-mode)
+  (markdown-mode . flymake-markdownlint-setup))
+
+(use-package ispell
   :custom
-  (denote-directory (expand-file-name "~/Dropbox/notes"))
-  (denote-file-type 'markdown-yaml)
+  (ispell-dictionary "australian-w_accents"))
+
+(use-package flymake-vale
+  :vc (:url "https://github.com/tpeacock19/flymake-vale" :rev :newest)
+  :hook (text-mode . flymake-vale-load))
+
+;;;; Org
+
+(use-package org
+  :hook (org-mode . variable-pitch-mode)
+  :custom
+  (org-hide-emphasis-markers t)
+  (org-pretty-entities t)
+  (org-ellipsis "…")
   :config
-  (denote-rename-buffer-mode 1))
+  ;; When following links, use find-file.  To follow a link in another window,
+  ;; use C-x 4 C-o.
+  (setf (alist-get 'file org-link-frame-setup)
+        'find-file))
+
+(use-package org-table
+  :defer t
+  :config
+  (keymap-unset org-mode-map "C-#" t))  ; Don’t take my Embark binding
+
+(use-package org-indent
+  :hook (org-mode))
+
+(use-package org-modern
+  :ensure t
+  :after org
+  :config (global-org-modern-mode 1))
+
+(use-package org-noter
+  :ensure t
+  :commands org-noter
+  :custom
+  (org-noter-notes-search-path '("~/Dropbox/notes/zettelkasten/2-source_material/Books"))
+  (org-noter-auto-save-last-location t))
+
+(use-package org-agenda
+  :custom
+  (org-agenda-window-setup 'current-window)
+  (org-agenda-todo-ignore-scheduled 'future)
+  (org-agenda-sorting-strategy
+   '((agenda habit-down time-up priority-down category-keep)
+     (todo scheduled-up)
+     (tags priority-down category-keep)
+     (search category-keep)))
+  :config
+  ;; Don’t steal my keybindings!
+  (keymap-unset org-mode-map "C-," t))
+
+(use-package org-anki
+  :ensure t
+  :commands (org-anki-sync-entry)
+  :custom
+  (org-anki-model-fields '(("Basic" "Front" "Back" "Extra" "Source")
+                           ("Cloze" "Text" "Extra" "Source"))))
+
+;;;; Mail and news
+
+(use-package sendmail
+  :commands sendmail-send-it
+  :custom
+  (send-mail-function 'sendmail-send-it)
+  (sendmail-program "msmtp")
+  (mail-specify-envelope-from t)
+  (message-sendmail-envelope-from 'header)
+  (mail-envelope-from 'header))
 
 ;; From the Notmuch documentation:
 ;;
@@ -1020,68 +1275,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (add-hook 'notmuch-show-mode-hook
             (lambda () (variable-pitch-mode 1))))
 
-(use-package pdf-tools
-  :ensure t
-  :magic ("%PDF" . pdf-view-mode)
-  :hook
-  ((pdf-view-mode . pdf-history-minor-mode)
-   (pdf-view-mode . pdf-view-fit-page-to-window)
-   (pdf-view-mode . pdf-view-auto-slice-minor-mode)
-   (pdf-view-mode . pdf-view-midnight-minor-mode))
-  :custom
-  (pdf-view-midnight-colors '("#ffffff" . "#121212"))
-  :config
-  (pdf-loader-install))
-
-(use-package nov
-  :ensure t
-  :mode ("\\.epub\\'" . nov-mode))
-
-(use-package org
-  :hook (org-mode . variable-pitch-mode)
-  :custom
-  (org-hide-emphasis-markers t)
-  (org-pretty-entities t)
-  (org-ellipsis "…")
-  :config
-  ;; When following links, use find-file.  To follow a link in another window,
-  ;; use C-x 4 C-o.
-  (setf (alist-get 'file org-link-frame-setup)
-        'find-file))
-
-(use-package org-table
-  :defer t
-  :config
-  (keymap-unset org-mode-map "C-#" t))  ; Don’t take my Embark binding
-
-(use-package org-indent
-  :hook (org-mode))
-
-(use-package org-modern
-  :ensure t
-  :after org
-  :config (global-org-modern-mode 1))
-
-(use-package org-noter
-  :ensure t
-  :commands org-noter
-  :custom
-  (org-noter-notes-search-path '("~/Dropbox/notes/zettelkasten/2-source_material/Books"))
-  (org-noter-auto-save-last-location t))
-
-(use-package org-agenda
-  :custom
-  (org-agenda-window-setup 'current-window)
-  (org-agenda-todo-ignore-scheduled 'future)
-  (org-agenda-sorting-strategy
-   '((agenda habit-down time-up priority-down category-keep)
-     (todo scheduled-up)
-     (tags priority-down category-keep)
-     (search category-keep)))
-  :config
-  ;; Don’t steal my keybindings!
-  (keymap-unset org-mode-map "C-," t))
-
 (use-package gnus
   :commands gnus
   :custom
@@ -1117,108 +1310,36 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (gnus-sum-thread-tree-single-leaf     "└─➤ ")
   (gnus-sum-thread-tree-indent          "  "))
 
-(use-package sendmail
-  :commands sendmail-send-it
-  :custom
-  (send-mail-function 'sendmail-send-it)
-  (sendmail-program "msmtp")
-  (mail-specify-envelope-from t)
-  (message-sendmail-envelope-from 'header)
-  (mail-envelope-from 'header))
+;;;; Documents and notes
 
-(use-package winner
-  :hook (after-init))
-
-(use-package elec-pair
-  :config
-  (electric-pair-mode 1))
-
-(use-package electric
-  :config
-  (electric-quote-mode 1))
-
-(use-package repeat
-  :config
-  :hook (after-init)
-  :bind ("C-_" . repeat))               ; reuse one of the ‘undo’ bindings
-
-(use-package server
-  :config
-  (server-start))
-
-(use-package delsel
-  :config
-  (delete-selection-mode 1))
-
-(use-package autoinsert
-  :config
-  (auto-insert-mode t))
-
-(use-package pixel-scroll
-  :hook (after-init . pixel-scroll-precision-mode))
-
-(use-package find-func
-  :config
-  (find-function-setup-keys))
-
-(use-package dabbrev
-  :config
-  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
-  (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
-
-(use-package pcmpl-args
+(use-package pdf-tools
   :ensure t
-  :after pcomplete)
-
-(use-package page-break-lines
-  :ensure t
-  :hook (after-init . global-page-break-lines-mode))
-
-(use-package face-remap
-  :preface
-  (defun my/variable-pitch-set-line-spacing ()
-    ;; The font XCharter needs extra line spacing.
-    (if (and buffer-face-mode
-             (eq buffer-face-mode-face 'variable-pitch))
-        (setq-local line-spacing 0.25)
-      (kill-local-variable 'line-spacing))) ; revert to global setting
-
+  :magic ("%PDF" . pdf-view-mode)
   :hook
-  (buffer-face-mode . my/variable-pitch-set-line-spacing))
-
-(use-package recentf
-  :hook (after-init))
-
-(use-package ligature
-  :ensure t
-  :config
-  ;; Enable all ligatures in programming modes.
-  (ligature-set-ligatures
-   '(prog-mode text-mode)
-   '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->"
-     "<---->" "<!--" "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>"
-     "<==>" "<===>" "<====>" "<!---" "<~~" "<~" "~>" "~~>" "::" ":::" "=="
-     "!=" "===" "!==" ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:"
-     "-:" "=:" "<******>" "++" "+++"))
-  (global-ligature-mode t))
-
-(use-package olivetti
-  :ensure t
-  :hook (text-mode . olivetti-mode))
-
-(use-package visual-fill-column
-  :ensure t
-  :commands visual-fill-column-mode)
-
-(use-package org-anki
-  :ensure t
-  :commands (org-anki-sync-entry)
+  ((pdf-view-mode . pdf-history-minor-mode)
+   (pdf-view-mode . pdf-view-fit-page-to-window)
+   (pdf-view-mode . pdf-view-auto-slice-minor-mode)
+   (pdf-view-mode . pdf-view-midnight-minor-mode))
   :custom
-  (org-anki-model-fields '(("Basic" "Front" "Back" "Extra" "Source")
-                           ("Cloze" "Text" "Extra" "Source"))))
+  (pdf-view-midnight-colors '("#ffffff" . "#121212"))
+  :config
+  (pdf-loader-install))
+
+(use-package nov
+  :ensure t
+  :mode ("\\.epub\\'" . nov-mode))
+
+(use-package denote
+  :ensure t
+  :hook
+  (dired-mode . denote-dired-mode)
+  :custom
+  (denote-directory (expand-file-name "~/Dropbox/notes"))
+  (denote-file-type 'markdown-yaml)
+  :config
+  (denote-rename-buffer-mode 1))
+
+;;;; Finance
 
 (use-package ledger-mode
   :ensure t
@@ -1244,18 +1365,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :after (ledger-mode flymake)
   :hook (ledger-mode . flymake-hledger-enable))
 
-(use-package csv-mode
-  :ensure t
-  :preface
-  (defun my/csv-mode-setup ()
-    (progn
-      (visual-line-mode -1)
-      (toggle-truncate-lines 1)))
-  :mode "\\.csv\\'"
-  :hook
-  ((csv-mode . my/csv-mode-setup)
-   (csv-mode . csv-guess-set-separator)
-   (csv-mode . csv-align-mode)))
+;;;; AI assistants
 
 (use-package gptel
   :ensure t
@@ -1298,95 +1408,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
          (agent-shell-viewport-view-mode . my/agent-shell-setup)
          (agent-shell-mode . my/agent-shell-setup)))
 
-(use-package modus-themes
-  ;; The themes ship with Emacs but live in `etc/themes' (on
-  ;; `custom-theme-load-path', not `load-path'), so there is no
-  ;; `modus-themes' library on `load-path' to require normally -- load it
-  ;; with `require-theme' instead, and skip use-package's implicit
-  ;; require.  This must happen in `:preface', not `:init': use-package's
-  ;; canonical keyword order runs `:init' after `:preface', and `:config'
-  ;; (which sets the options below) needs the library already loaded.
-  ;; `:preface' forms are wrapped in `eval-and-compile' and run before
-  ;; everything else, so this also works when evaluating this form in
-  ;; isolation (e.g. `C-M-x'), not just on a full file load.
-  :preface
-  (require-theme 'modus-themes)
-  :no-require t
-  ;; Set options with plain `setq' in `:config', not use-package's
-  ;; `:custom': `:custom' registers values under an internal
-  ;; `use-package' custom theme (see `custom-known-themes'), and Custom
-  ;; replays a theme's *raw, unevaluated* value forms via `eval' whenever
-  ;; it reprocesses a variable (e.g. when `enable-theme' runs during a
-  ;; later `modus-themes-load-theme' call, or when this library is
-  ;; reloaded).  For `modus-themes-common-palette-overrides' below, whose
-  ;; value is a bare reference to `modus-themes-preset-overrides-faint',
-  ;; that replay can land *before* modus-themes.el has (re)defined the
-  ;; preset variable, raising a void-variable error.  `setq' never
-  ;; touches the Custom/theme system, so it doesn't have this hazard --
-  ;; this matches the setup shown in the modus-themes manual.  Options
-  ;; must be set before the theme is loaded, and `modus-themes-load-theme'
-  ;; is preferred over `load-theme' -- it disables conflicting themes and
-  ;; runs hooks.
-  :config
-  (setq modus-themes-bold-constructs t)
-  (setq modus-themes-italic-constructs t)
-  (setq modus-themes-mixed-fonts t)
-  (setq modus-themes-variable-pitch-ui t)
-  (setq modus-themes-headings
-        '((1 . (variable-pitch 1.3))
-          (2 . (variable-pitch 1.15))
-          (3 . (1.05))
-          (agenda-date . (1.2))
-          (agenda-structure . (variable-pitch light 1.3))
-          (t . (1.0))))
-  (setq modus-themes-completions
-        '((matches . (extrabold underline))
-          (selection . (semibold))))
-  (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
-  (modus-themes-load-theme 'modus-operandi-tinted))
-
-(use-package doric-themes
-  :ensure t
-  :demand t
-  :config
-  (setq doric-themes-to-rotate '(doric-light doric-marble doric-earth)))
-
-(use-package frame
-  :custom
-  (window-divider-default-right-width 1)
-  :config
-  (window-divider-mode 1))
-
-(use-package captain
-  :ensure t
-  :preface
-  (defun my/captain-text-mode-setup ()
-    ;; In text-mode, work all the time.
-    (setq captain-predicate (lambda () t))
-    (captain-mode 1))
-  (defun my/captain-prog-mode-setup ()
-    ;; In prog-mode, work only in comments.
-    (setq captain-predicate (lambda ()
-                              (nth 8 (syntax-ppss (point)))))
-    (captain-mode 1))
-  :hook
-  (text-mode . my/captain-text-mode-setup)
-  (prog-mode . my/captain-prog-mode-setup))
-
-(use-package abbrev
-  :custom
-  (abbrev-suggest t))
-
-(use-package shannon-max
-  :vc (:url "https://github.com/sstraust/shannonmax" :rev :newest)
-  :ensure t
-  :commands shannon-max-start-logger
-  :init
-  (setq shannon-max-keylog-file-name
-        (expand-file-name
-         (concat user-emacs-directory "emacs-logged-keys")))
-  :hook
-  (after-init . shannon-max-start-logger))
+;;;; Dispatch and menu systems
 
 (use-package transient
   :preface
@@ -1526,46 +1548,67 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
         :map csv-mode-map
         ("C-o" . casual-csv-tmenu)))
 
-(use-package disproject
-  :ensure t
-  :bind ("C-c p" . disproject-dispatch))
+;;;; Misc utilities
 
-(use-package make-mode
-  :preface
-  (defun my/makefile-whitespace-setup ()
-    (setq-local whitespace-style '(face
-                                   indentation::space
-                                   space-after-tab::tab
-                                   space-before-tab::space
-                                   trailing
-                                   empty
-                                   missing-newline-at-eof)))
+(use-package apropos
+  :custom
+  (apropos-sort-by-scores t))
+
+(use-package bookmark
+  :custom
+  (bookmark-save-flag 1)) ;; Save bookmarks on each modification
+
+(use-package man
+  :custom
+  (Man-notify-method 'aggressive))
+
+(use-package saveplace
+  :init (save-place-mode 1))
+
+(use-package savehist
+  :hook (after-init))
+
+(use-package shannon-max
+  :vc (:url "https://github.com/sstraust/shannonmax" :rev :newest)
+  :ensure t
+  :commands shannon-max-start-logger
+  :init
+  (setq shannon-max-keylog-file-name
+        (expand-file-name
+         (concat user-emacs-directory "emacs-logged-keys")))
   :hook
-  (makefile-mode . my/makefile-whitespace-setup))
+  (after-init . shannon-max-start-logger))
 
-(use-package flymake-yamllint
-  :ensure t
-  :after yaml-ts-mode
-  :hook
-  (yaml-ts-mode . flymake-yamllint-setup))
-
-(use-package ghostel
-  :ensure t
-  :preface
-  :commands (ghostel)
-  :bind (:map project-prefix-map
-              ("t" . ghostel-project)
-              ("T" . ghostel-project-list-buffers))
-  :config
-  (add-to-list 'project-switch-commands
-               '(ghostel-project "Ghostel") t)
-  (add-to-list 'project-switch-commands
-               '(ghostel-project-list-buffers "Ghostel buffers") t)
-  (add-to-list 'ghostel-eval-cmds
-               '("magit-status-setup-buffer" magit-status-setup-buffer))
-  (add-to-list 'display-buffer-alist
-               '((major-mode . ghostel-mode)
-                 (display-buffer-reuse-window
-                  display-buffer-in-direction)
-                 (direction . right)
-                 (window-width . 100))))
+;; `package-autoremove' deletes every installed package that is neither
+;; named here nor a dependency of one that is.  package.el records a
+;; package here only when it installs it, and `use-package' :ensure
+;; installs only when the package is missing, so the list drifts out of
+;; step with this file and autoremove starts offering to delete things
+;; that are in use.  Declare it by hand instead.  Must run after
+;; `custom-file' is loaded, which also sets this variable.
+;;
+;; `setq' would not survive: `custom-file' records the value in the
+;; `user' theme, and every `load-theme' below runs `enable-theme', which
+;; recalculates themed variables and would restore the stored value.
+;; Going through Custom overrides that entry instead.
+;;
+;; eglot, flymake, project, tramp and use-package are here because they
+;; are ELPA upgrades of built-ins (see `package-install-upgrade-built-in'
+;; above); dropping them would delete the upgrade and silently fall back
+;; to the bundled version.
+(custom-set-variables
+ '(package-selected-packages
+   '(agent-shell apheleia cape captain
+                 casual-suite consult corfu corfu-candidate-overlay csv-mode
+                 dape denote disproject eglot embark
+                 embark-consult flymake flymake-hledger
+                 flymake-lua flymake-markdownlint flymake-yamllint fontaine
+                 gptel hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
+                 ligature lorem-ipsum lua-mode magit magit-todos marginalia
+                 markdown-mode nerd-icons
+                 nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
+                 nov olivetti orderless org-anki org-modern org-noter
+                 page-break-lines pcmpl-args pdf-tools popper project
+                 python-mode shannon-max string-inflection
+                 titlecase tramp unfill use-package vertico
+                 visual-fill-column vterm)))
