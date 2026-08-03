@@ -929,10 +929,6 @@
   :after magit
   :hook after-init)
 
-(use-package disproject
-  :ensure t
-  :bind ("C-c p" . disproject-dispatch))
-
 ;;;; Shells and processes
 
 (use-package eshell
@@ -1275,41 +1271,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (add-hook 'notmuch-show-mode-hook
             (lambda () (variable-pitch-mode 1))))
 
-(use-package gnus
-  :commands gnus
-  :custom
-  (gnus-select-method '(nntp "news.gmane.io"))
-  (gnus-article-mode-line-format "%G %S %m")
-  (gnus-visible-headers
-   '("^Subject:" "^From:" "^Date:" "^To:" "^Cc:" "^Newsgroups:"
-     "Followup-To:" "Reply-To:"
-     "^Organization:" "^Organisation:"
-     "^X-Newsreader:" "^X-Mailer:" "^User-Agent:"))
-  (gnus-sorted-header-list gnus-visible-headers)
-  (gnus-user-date-format-alist
-   '(((gnus-seconds-today) . "Today at %R")
-     ((+ (* 60 60 24) (gnus-seconds-today)) . "Yesterday, %R")
-     (t . "%Y-%m-%d %R")))
-  (gnus-summary-make-false-root 'dummy)
-  (gnus-summary-dummy-line-format
-   (concat "   "
-           "                      "
-           "                            "
-           "• %S\n"))
-  (gnus-summary-line-format
-   (concat "%0{%U%R%z%}"
-           "%-16,16&user-date;  "
-           "%-30,30f  "
-           "%B" "%s\n"))
-  (gnus-summary-mode-line-format "[%U] %p")
-  (gnus-sum-thread-tree-single-indent   "• ")
-  (gnus-sum-thread-tree-false-root      "  ")
-  (gnus-sum-thread-tree-root            "• ")
-  (gnus-sum-thread-tree-vertical        "│ ")
-  (gnus-sum-thread-tree-leaf-with-other "├─➤ ")
-  (gnus-sum-thread-tree-single-leaf     "└─➤ ")
-  (gnus-sum-thread-tree-indent          "  "))
-
 ;;;; Documents and notes
 
 (use-package pdf-tools
@@ -1324,10 +1285,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (pdf-view-midnight-colors '("#ffffff" . "#121212"))
   :config
   (pdf-loader-install))
-
-(use-package nov
-  :ensure t
-  :mode ("\\.epub\\'" . nov-mode))
 
 (use-package denote
   :ensure t
@@ -1366,17 +1323,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :hook (ledger-mode . flymake-hledger-enable))
 
 ;;;; AI assistants
-
-(use-package gptel
-  :ensure t
-  :config
-  (setq gptel-model 'gemini-pro-latest)
-  (setq gptel-backend (gptel-make-gemini "Gemini"
-                        :stream t
-                        :key #'gptel-api-key-from-auth-source))
-  :hook
-  ((gptel-mode . gptel-highlight-mode)
-   (gptel-mode . olivetti-mode)))
 
 (use-package agent-shell
   :ensure t
@@ -1600,14 +1546,14 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
  '(package-selected-packages
    '(agent-shell apheleia cape captain
                  casual-suite consult corfu corfu-candidate-overlay csv-mode
-                 dape denote disproject eglot embark
+                 dape denote eglot embark
                  embark-consult flymake flymake-hledger
                  flymake-lua flymake-markdownlint flymake-yamllint fontaine
-                 gptel hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
+                 hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
                  ligature lorem-ipsum lua-mode magit magit-todos marginalia
                  markdown-mode nerd-icons
                  nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
-                 nov olivetti orderless org-anki org-modern org-noter
+                 olivetti orderless org-anki org-modern org-noter
                  page-break-lines pcmpl-args pdf-tools popper project
                  python-mode shannon-max string-inflection
                  titlecase tramp unfill use-package vertico
