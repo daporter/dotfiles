@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Claude Code status line: model, context usage bar, session cost/duration, rate limits.
+# Claude Code status line: model, context usage bar, rate limits.
 
 input=$(cat)
 
@@ -16,20 +16,6 @@ color_for_pct() {
 		printf 33 # yellow
 	else
 		printf 32 # green
-	fi
-}
-
-format_duration() {
-	local total_s=$(($1 / 1000))
-	local h=$((total_s / 3600))
-	local m=$(((total_s % 3600) / 60))
-	local s=$((total_s % 60))
-	if [ "$h" -gt 0 ]; then
-		printf '%dh%02dm' "$h" "$m"
-	elif [ "$m" -gt 0 ]; then
-		printf '%dm' "$m"
-	else
-		printf '%ds' "$s"
 	fi
 }
 
@@ -53,8 +39,6 @@ cwd=$(printf '%s' "$input" | jq -r '.cwd // empty')
 model=$(printf '%s' "$input" | jq -r '.model.display_name // "unknown"')
 effort=$(printf '%s' "$input" | jq -r '.effort.level // empty')
 used=$(printf '%s' "$input" | jq -r '.context_window.used_percentage // empty')
-cost_usd=$(printf '%s' "$input" | jq -r '.cost.total_cost_usd // empty')
-duration_ms=$(printf '%s' "$input" | jq -r '.cost.total_duration_ms // empty')
 five_hour=$(printf '%s' "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 seven_day=$(printf '%s' "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
 five_hour_resets=$(printf '%s' "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
@@ -93,18 +77,6 @@ if [ -n "$used" ]; then
 	gap=${gap// /░}
 
 	out+="${sep}\033[${color}m[${bar}${gap}] ${pct}%\033[0m"
-fi
-
-if [ -n "$cost_usd" ] || [ -n "$duration_ms" ]; then
-	segment=""
-	if [ -n "$cost_usd" ]; then
-		segment+=$(printf '$%.2f' "$cost_usd")
-	fi
-	if [ -n "$duration_ms" ]; then
-		[ -n "$segment" ] && segment+=" "
-		segment+=$(format_duration "$duration_ms")
-	fi
-	out+="${sep}${segment}"
 fi
 
 if [ -n "$five_hour" ] || [ -n "$seven_day" ]; then
