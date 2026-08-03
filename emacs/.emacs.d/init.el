@@ -264,7 +264,8 @@
                #'pop-to-buffer))
       (funcall pgm)))
   :hook ((after-init . column-number-mode))
-  :bind (("C-*" . undo-redo))            ; i.e., C-S-/ since undo is C-/
+  :bind (("C-*" . undo-redo)             ; i.e., C-S-/ since undo is C-/
+         ("C-z" . undo))                 ; was suspend-frame, never used
   :custom
   (indent-tabs-mode nil))
 
