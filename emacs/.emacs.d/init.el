@@ -138,7 +138,8 @@
       (funcall pgm)))
   :hook ((after-init . column-number-mode))
   :bind (("C-*" . undo-redo)             ; i.e., C-S-/ since undo is C-/
-         ("C-z" . undo))                 ; was suspend-frame, never used
+         ("C-z" . undo)                  ; was suspend-frame, never used
+         ("C-S-z" . undo-redo))          ; matches redo in non-Emacs apps
   :custom
   (indent-tabs-mode nil))
 
