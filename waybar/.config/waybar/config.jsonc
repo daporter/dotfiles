@@ -16,6 +16,7 @@
     "memory",
     "custom/clipboard",
     "tray",
+    "custom/mail",
     "custom/notification"
   ],
 
@@ -101,6 +102,22 @@
   "tray": {
     "icon-size": 18,
     "spacing": 8
+  },
+
+  "custom/mail": {
+    "tooltip": true,
+    "format": "{icon}{text}",
+    "format-icons": {
+      "unread": "<span size='123%'>󰇮</span>",
+      "none": "<span size='123%'>󰇰</span>"
+    },
+    "return-type": "json",
+    "exec-if": "which notmuch",
+    "exec": "waybar-mail-status",
+    "interval": 300,
+    "signal": 8,
+    "on-click": "emacsclient -c -e '(notmuch-search \"tag:unread and tag:inbox\")'",
+    "escape": true
   },
 
   "custom/notification": {

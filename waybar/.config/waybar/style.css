@@ -93,6 +93,7 @@ tooltip label {
 #memory,
 #tray,
 #custom-clipboard,
+#custom-mail,
 #custom-notification {
   color: @fg1;
   padding: 2px 12px;
@@ -120,6 +121,10 @@ tooltip label {
 
 #network.disconnected {
   color: @red;
+}
+
+#custom-mail.unread {
+  color: @blue;
 }
 
 #tray > .passive {
