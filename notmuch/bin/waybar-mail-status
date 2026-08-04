@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# Emit the unread-inbox mail count as waybar custom-module JSON.
+#
+# Invoked by waybar's custom/mail module (waybar/.config/waybar/config.jsonc)
+# on a 300s fallback interval, and instantly whenever notmuch's post-new hook
+# sends SIGRTMIN+8 to waybar after a mail sync (see
+# notmuch/Mail/.notmuch/hooks/post-new and waybar/CLAUDE.md for the signal
+# offset registry).
+#
+# "tag:unread and tag:inbox" is this repo's canonical unread-inbox query: it
+# matches the "Unread inbox" saved search in emacs/.emacs.d/init.el, which is
+# also what this module's on-click handler opens.
+
+set -e
+
+count=$(notmuch count tag:unread and tag:inbox)
+
+if [ "$count" -eq 0 ]; then
+	alt=none
+	text=""
+	tooltip="No unread mail"
+else
+	alt=unread
+	text=" $count"
+	tooltip="$count unread message(s) in inbox"
+fi
+
+printf '{"text": "%s", "alt": "%s", "tooltip": "%s", "class": "%s"}\n' \
+	"$text" "$alt" "$tooltip" "$alt"

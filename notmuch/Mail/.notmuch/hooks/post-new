@@ -39,3 +39,11 @@ notmuch tag -inbox +lists +list/emacs-humanities \
 # Quoting is needed to ensure “~” is interpreted literally.
 notmuch tag -inbox +lists +list/emacs-paris \
 	-- 'from:"~bzg/emacsfr@lists.sr.ht"' or 'to:"~bzg/emacsfr@lists.sr.ht"'
+
+# Nudge waybar to refresh its unread-mail count immediately rather than
+# waiting on its 300s fallback interval (see
+# waybar/.config/waybar/config.jsonc's custom/mail "signal": 8, and
+# waybar/CLAUDE.md for the signal-offset registry). Suppress errors so a
+# notmuch-new run with waybar not present (e.g. over SSH) doesn't fail this
+# hook and abort tagging.
+pkill -RTMIN+8 waybar 2>/dev/null || true
