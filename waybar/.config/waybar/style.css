@@ -90,13 +90,17 @@ tooltip label {
 #pulseaudio,
 #network,
 #cpu,
-#memory,
+#memory {
+  color: @fg1;
+  padding: 2px 12px;
+}
+
 #tray,
 #custom-clipboard,
 #custom-mail,
 #custom-notification {
   color: @fg1;
-  padding: 2px 12px;
+  padding: 2px 8px;
 }
 
 #keyboard-state {
