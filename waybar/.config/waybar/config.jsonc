@@ -14,8 +14,8 @@
     "network",
     "cpu",
     "memory",
-    "custom/clipboard",
     "tray",
+    "custom/clipboard",
     "custom/mail",
     "custom/notification"
   ],
