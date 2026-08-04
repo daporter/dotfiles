@@ -1127,6 +1127,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (markdown-command "pandoc")
   (markdown-asymmetric-header t)
   (markdown-fontify-code-blocks-natively t)
+  (markdown-italic-underscore t)
   :config
   (define-auto-insert
     "/.*/Dropbox/reference/.*\\.md\\'"
