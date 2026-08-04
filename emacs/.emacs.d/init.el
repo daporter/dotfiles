@@ -167,9 +167,6 @@
     (load-file user-init-file)))
 
 (use-package window
-  :bind
-  (("M-o" . other-window))
-
   :custom
   ;; By default, interactively switched buffers are exempt from the rules set in
   ;; ‘display-buffer-alist’ and friends. The following makes such buffers obey
@@ -993,9 +990,6 @@
 
 ;;;; Language modes
 
-(use-package elisp-mode
-  :bind ("C-x x e" . eval-buffer))
-
 (use-package c-ts-mode
   :after (eglot embark)
   :bind (:map c-ts-mode-map
@@ -1410,90 +1404,22 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :custom
   (casual-lib-use-unicode t)
   :bind
-  (:map bookmark-bmenu-mode-map
-        ("C-o" . casual-bookmarks-tmenu)
-        :map calc-mode-map
-        ("C-o" . casual-calc-tmenu)
-        :map calc-alg-map
-        ("C-o" . casual-calc-tmenu)
-        :map compilation-mode-map
-        ("C-o" . casual-compile-tmenu)
-        ;; The following keybindings are recommended to support consistent behavior
-        ;; between `compilation-mode-map' and `casual-compile-tmenu'.
-        ("k" . compilation-previous-error)
-        ("j" . compilation-next-error)
-        ("o" . compilation-display-error)
-        ("[" . compilation-previous-file)
-        ("]" . compilation-next-file)
-        :map dired-mode-map
-        ("C-o" . casual-dired-tmenu)
-        ("s" . casual-dired-sort-by-tmenu)
-        ("/" . casual-dired-search-replace-tmenu)
-        :map eshell-mode-map
-        ("C-o" . casual-eshell-tmenu)
-        :map grep-mode-map
-        ("C-o" . casual-compile-tmenu)
-        ;; The following keybindings are recommended to support consistent behavior
-        ;; between `grep-mode-map' and `casual-compile-tmenu'.
-        ("k" . compilation-previous-error)
-        ("j" . compilation-next-error)
-        ("o" . compilation-display-error)
-        ("[" . compilation-previous-file)
-        ("]" . compilation-next-file)
-        :map help-mode-map
-        ("C-o" . casual-help-tmenu)
-        ;; The following keybindings are recommended to support consistent behavior
-        ;; between `help-mode' and `casual-help-tmenu'.
-        ("M-[" . help-go-back)
-        ("M-]" . help-go-forward)
-        ("p" . casual-lib-browse-backward-paragraph)
-        ("n" . casual-lib-browse-forward-paragraph)
-        ("P" . help-goto-previous-page)
-        ("N" . help-goto-next-page)
-        ("j" . forward-button)
-        ("k" . backward-button)
-        :map ibuffer-mode-map
-        ("C-o" . casual-ibuffer-tmenu)
-        ("F" . casual-ibuffer-filter-tmenu)
-        ("s" . casual-ibuffer-sortby-tmenu)
-        ("{" . ibuffer-backwards-next-marked)
-        ("}" . ibuffer-forward-next-marked)
-        ("[" . ibuffer-backward-filter-group)
-        ("]" . ibuffer-forward-filter-group)
-        ("$" . ibuffer-toggle-filter-group)
-        :map Info-mode-map
-        ("C-o" . casual-info-tmenu)
-        ("M-[" . Info-history-back)
-        ("M-]" . Info-history-forward)
-        ("p" . casual-info-browse-backward-paragraph)
-        ("n" . casual-info-browse-forward-paragraph)
-        ("h" . Info-prev)
-        ("j" . Info-next-reference)
-        ("k" . Info-prev-reference)
-        ("l" . Info-next)
-        ("/" . Info-search)
-        ("B" . bookmark-set)
-        :map makefile-mode-map
-        ("C-o" . casual-make-tmenu)
+  (:map bookmark-bmenu-mode-map ("C-o" . casual-bookmarks-tmenu)
+        :map calc-mode-map ("C-o" . casual-calc-tmenu)
+        :map calc-alg-map ("C-o" . casual-calc-tmenu)
+        :map compilation-mode-map ("C-o" . casual-compile-tmenu)
+        :map dired-mode-map ("C-o" . casual-dired-tmenu)
+        :map eshell-mode-map ("C-o" . casual-eshell-tmenu)
+        :map grep-mode-map ("C-o" . casual-compile-tmenu)
+        :map help-mode-map ("C-o" . casual-help-tmenu)
+        :map ibuffer-mode-map ("C-o" . casual-ibuffer-tmenu)
+        :map Info-mode-map ("C-o" . casual-info-tmenu)
+        :map makefile-mode-map ("C-o" . casual-make-tmenu)
         :map Man-mode-map ("C-o" . casual-man-tmenu)
-        ;; The following keybindings are recommended to support consistent behavior
-        ;; between `Man-mode' and `casual-man-tmenu'.
-        ("n" . casual-lib-browse-forward-paragraph)
-        ("p" . casual-lib-browse-backward-paragraph)
-        ("[" . Man-previous-section)
-        ("]" . Man-next-section)
-        ("j" . next-line)
-        ("k" . previous-line)
-        ("K" . Man-kill)
-        ("o" . casual-man-occur-options)
-        :map isearch-mode-map
-        ("C-o" . casual-isearch-tmenu)
-        :map reb-lisp-mode-map
-        ("C-o" . casual-re-builder-tmenu)
-        :map reb-mode-map
-        ("C-o" . casual-re-builder-tmenu)
-        :map csv-mode-map
-        ("C-o" . casual-csv-tmenu)))
+        :map isearch-mode-map ("C-o" . casual-isearch-tmenu)
+        :map reb-lisp-mode-map ("C-o" . casual-re-builder-tmenu)
+        :map reb-mode-map ("C-o" . casual-re-builder-tmenu)
+        :map csv-mode-map ("C-o" . casual-csv-tmenu)))
 
 ;;;; Misc utilities
 
