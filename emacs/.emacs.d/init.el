@@ -278,14 +278,12 @@
   (corfu-cycle t)
   :custom-face
   (corfu-popupinfo ((t (:inherit corfu-default :height 0.9))))
+  :bind
+  (:map corfu-map ("<tab>" . corfu-complete))
   :hook
   (window-setup . global-corfu-mode)
-  :bind
-  ;; Configure SPC for separator insertion (default is M-SPC).
-  (:map corfu-map ("SPC" . corfu-insert-separator))
   :config
   (corfu-popupinfo-mode 1)
-  (corfu-echo-mode 1)
   (corfu-history-mode 1)
   (savehist-mode 1))
 
