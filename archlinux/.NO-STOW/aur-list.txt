@@ -28,7 +28,6 @@ paru
 pomotroid-bin
 pricehist
 python-alpha_vantage
-python-yfinance
 stardict-bobotig-en
 stardict-bobotig-fr
 tree-sitter-cpp
