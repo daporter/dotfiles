@@ -387,9 +387,22 @@
   :ensure t
   :hook dired-mode)
 
+(use-package nerd-icons-grep
+  :ensure t
+  :init
+  (nerd-icons-grep-mode)
+  :custom
+  ;; Pre-requirement so an icon can be displayed next to each heading.
+  (grep-use-headings t))
+
 (use-package nerd-icons-ibuffer
   :ensure t
   :hook ibuffer-mode)
+
+(use-package nerd-icons-xref
+  :ensure t
+  :init
+  (nerd-icons-xref-mode))
 
 ;;;; Fonts, themes, visual UI
 
@@ -1472,7 +1485,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  ghostel hl-todo hledger-mode hyprlang-ts-mode ledger-mode
                  ligature lorem-ipsum lua-mode magit magit-todos marginalia
                  markdown-mode nerd-icons
-                 nerd-icons-completion nerd-icons-corfu nerd-icons-dired nerd-icons-ibuffer
+                 nerd-icons-completion nerd-icons-corfu nerd-icons-dired
+                 nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref
                  olivetti orderless org-anki org-modern org-noter
                  page-break-lines pcmpl-args pdf-tools popper project
                  python-mode shannon-max string-inflection
