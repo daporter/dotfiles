@@ -211,6 +211,12 @@
 
 ;;;; Minibuffer completion framework
 
+(use-package vertico
+  :ensure t
+  :hook (after-init)
+  :config
+  (add-hook 'rfn-eshdadow-update-overlay-hook #'vertico-directory-tidy))
+
 (use-package orderless
   :ensure t
   :custom
@@ -220,26 +226,10 @@
   ;; partial-completion behaves like substring:
   (completion-pcm-leading-wildcard t))
 
-(use-package vertico
-  :ensure t
-  :hook (after-init)
-  :config
-  (add-hook 'rfn-eshdadow-update-overlay-hook #'vertico-directory-tidy))
-
 (use-package marginalia
   :ensure t
   :hook (after-init)
   :bind (:map minibuffer-local-map ("M-m" . marginalia-cycle)))
-
-(use-package consult
-  :ensure t
-  :bind (([remap switch-to-buffer]              . consult-buffer)
-         ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
-         ([remap switch-to-buffer-other-frame]  . consult-buffer-other-frame)
-         ([remap project-switch-to-buffer]      . consult-project-buffer)
-         ([remap yank-pop]                      . consult-yank-pop)
-         ([remap imenu]                         . consult-imenu)
-         ([remap Info-search]                   . consult-info)))
 
 (use-package embark
   :ensure t
@@ -254,23 +244,22 @@
   :init
   (setq prefix-help-command #'embark-prefix-help-command))
 
+(use-package consult
+  :ensure t
+  :bind (([remap switch-to-buffer]              . consult-buffer)
+         ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
+         ([remap switch-to-buffer-other-frame]  . consult-buffer-other-frame)
+         ([remap project-switch-to-buffer]      . consult-project-buffer)
+         ([remap yank-pop]                      . consult-yank-pop)
+         ([remap imenu]                         . consult-imenu)
+         ([remap Info-search]                   . consult-info)))
+
 (use-package embark-consult
   :ensure t
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package which-key
-  :hook
-  (after-init))
-
 ;;;; In-buffer completion
-
-(use-package completion-preview
-  :bind
-  (:map completion-preview-active-mode-map
-        ("<tab>" . completion-preview-complete))
-  :custom
-  (completion-preview-idle-delay 0.5))
 
 (use-package corfu
   :ensure t
@@ -287,17 +276,13 @@
   (corfu-history-mode 1)
   (savehist-mode 1))
 
-(use-package kind-icon
+(use-package corfu-candidate-overlay
   :ensure t
   :after corfu
-  :custom
-  (kind-icon-default-face 'corfu-default)
-  (kind-icon-blend-background t)
-  (kind-icon-blend-frac 0.08)
-  (kind-icon-extra-space 1)
+  :bind
+  ("C-<tab>" . corfu-candidate-overlay-complete-at-point)
   :config
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
-  (plist-put kind-icon-default-style :height 0.85))
+  (corfu-candidate-overlay-mode 1))
 
 ;; Some notes on CAPFs.
 ;;
@@ -344,13 +329,12 @@
   :hook
   ((eshell-mode . my/eshell-add-completions)))
 
-(use-package corfu-candidate-overlay
-  :ensure t
-  :after corfu
+(use-package completion-preview
   :bind
-  ("C-<tab>" . corfu-candidate-overlay-complete-at-point)
-  :config
-  (corfu-candidate-overlay-mode 1))
+  (:map completion-preview-active-mode-map
+        ("<tab>" . completion-preview-complete))
+  :custom
+  (completion-preview-idle-delay 0.5))
 
 (use-package hippie-exp
   :bind
@@ -376,6 +360,10 @@
   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
+(use-package which-key
+  :hook
+  (after-init))
+
 ;;;; Icons
 
 (use-package nerd-icons
@@ -388,6 +376,12 @@
   :config
   (nerd-icons-completion-mode 1)
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+(use-package nerd-icons-corfu
+  :ensure t
+  :after corfu
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (use-package nerd-icons-dired
   :ensure t
@@ -1475,10 +1469,10 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  dape denote eglot embark
                  embark-consult flymake flymake-hledger
                  flymake-lua flymake-markdownlint flymake-yamllint fontaine
-                 hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
+                 ghostel hl-todo hledger-mode hyprlang-ts-mode ledger-mode
                  ligature lorem-ipsum lua-mode magit magit-todos marginalia
                  markdown-mode nerd-icons
-                 nerd-icons-completion nerd-icons-dired nerd-icons-ibuffer
+                 nerd-icons-completion nerd-icons-corfu nerd-icons-dired nerd-icons-ibuffer
                  olivetti orderless org-anki org-modern org-noter
                  page-break-lines pcmpl-args pdf-tools popper project
                  python-mode shannon-max string-inflection

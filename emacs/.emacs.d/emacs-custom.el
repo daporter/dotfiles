@@ -10,17 +10,21 @@
  '(package-selected-packages
    '(agent-shell apheleia cape captain casual-suite consult corfu
                  corfu-candidate-overlay csv-mode dape denote eglot
-                 embark embark-consult flymake flymake-hledger flymake-lua
-                 flymake-markdownlint flymake-yamllint fontaine ghostel
-                 hl-todo hledger-mode hyprlang-ts-mode kind-icon ledger-mode
-                 ligature lorem-ipsum lua-mode magit magit-todos marginalia
-                 markdown-mode nerd-icons nerd-icons-completion nerd-icons-dired
-                 nerd-icons-ibuffer olivetti orderless org-anki org-modern
-                 org-noter page-break-lines pcmpl-args pdf-tools popper project
-                 python-mode shannon-max string-inflection titlecase tramp
-                 unfill use-package vertico visual-fill-column vterm))
+                 embark embark-consult flymake flymake-hledger
+                 flymake-lua flymake-markdownlint
+                 flymake-yamllint fontaine ghostel hl-todo hledger-mode
+                 hyprlang-ts-mode ledger-mode ligature lorem-ipsum
+                 lua-mode magit magit-todos marginalia markdown-mode
+                 nerd-icons nerd-icons-completion nerd-icons-corfu
+                 nerd-icons-dired nerd-icons-ibuffer olivetti
+                 orderless org-anki org-modern org-noter
+                 page-break-lines pcmpl-args pdf-tools popper project
+                 python-mode shannon-max string-inflection titlecase
+                 tramp unfill use-package vertico visual-fill-column
+                 vterm))
  '(package-vc-selected-packages
    '((dape :url "https://github.com/svaante/dape.git")
+     (flymake-vale :url "https://github.com/tpeacock19/flymake-vale")
      (shannon-max :url "https://github.com/sstraust/shannonmax"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
