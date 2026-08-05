@@ -20,8 +20,8 @@
                  nerd-icons-xref olivetti orderless org-anki
                  org-modern org-noter page-break-lines pcmpl-args
                  pdf-tools popper project python-mode shannon-max
-                 string-inflection titlecase tramp unfill use-package
-                 vertico visual-fill-column vterm))
+                 string-inflection titlecase tramp unfill vertico
+                 visual-fill-column vterm))
  '(package-vc-selected-packages
    '((dape :url "https://github.com/svaante/dape.git")
      (flymake-vale :url "https://github.com/tpeacock19/flymake-vale")

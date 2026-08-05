@@ -1471,10 +1471,10 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 ;; recalculates themed variables and would restore the stored value.
 ;; Going through Custom overrides that entry instead.
 ;;
-;; eglot, flymake, project, tramp and use-package are here because they
-;; are ELPA upgrades of built-ins (see `package-install-upgrade-built-in'
-;; above); dropping them would delete the upgrade and silently fall back
-;; to the bundled version.
+;; eglot, flymake, project and tramp are here because they are ELPA
+;; upgrades of built-ins (see `package-install-upgrade-built-in' above);
+;; dropping them would delete the upgrade and silently fall back to the
+;; bundled version.
 (custom-set-variables
  '(package-selected-packages
    '(agent-shell apheleia cape captain
@@ -1490,5 +1490,5 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  olivetti orderless org-anki org-modern org-noter
                  page-break-lines pcmpl-args pdf-tools popper project
                  python-mode shannon-max string-inflection
-                 titlecase tramp unfill use-package vertico
+                 titlecase tramp unfill vertico
                  visual-fill-column vterm)))
