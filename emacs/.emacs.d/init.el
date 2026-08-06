@@ -296,9 +296,25 @@
          ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
          ([remap switch-to-buffer-other-frame]  . consult-buffer-other-frame)
          ([remap project-switch-to-buffer]      . consult-project-buffer)
+         ([remap project-find-regexp]           . consult-ripgrep)
          ([remap yank-pop]                      . consult-yank-pop)
          ([remap imenu]                         . consult-imenu)
-         ([remap Info-search]                   . consult-info)))
+         ([remap Info-search]                   . consult-info)
+         ([remap goto-line]                     . consult-goto-line)
+         :map isearch-mode-map
+         ("M-e"   . consult-isearch-history)
+         ("M-s e" . consult-isearch-history)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         :map minibuffer-local-map
+         ("M-r"   . consult-history))
+  :custom
+  (consult-narrow-key "<")
+  (register-preview-delay 0.5)
+  (xref-show-xrefs-function #'consult-xref)
+  (xref-show-definitions-function #'consult-xref)
+  :init
+  (advice-add #'register-preview :override #'consult-register-window))
 
 (use-package embark-consult
   :ensure t
