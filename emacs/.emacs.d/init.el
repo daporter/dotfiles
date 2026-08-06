@@ -218,8 +218,20 @@
               ("RET"   . vertico-directory-enter)
               ("DEL"   . vertico-directory-delete-char)
               ("M-DEL" . vertico-directory-delete-word))
+  :custom
+  (vertico-cycle t)
   :config
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
+
+(use-package vertico-repeat
+  :after vertico
+  :hook (minibuffer-setup . vertico-repeat-save)
+  :bind (("M-R" . vertico-repeat)
+         :map vertico-map
+         ("M-P" . vertico-repeat-previous)
+         ("M-N" . vertico-repeat-next)
+         ("S-<prior>" . vertico-repeat-previous)
+         ("S-<next>" . vertico-repeat-next)))
 
 (use-package prescient
   :ensure t
