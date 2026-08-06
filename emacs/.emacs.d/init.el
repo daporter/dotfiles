@@ -362,14 +362,6 @@
   :config
   (corfu-prescient-mode 1))
 
-(use-package corfu-candidate-overlay
-  :ensure t
-  :after corfu
-  :bind
-  ("C-<tab>" . corfu-candidate-overlay-complete-at-point)
-  :config
-  (corfu-candidate-overlay-mode 1))
-
 ;; Some notes on CAPFs.
 ;;
 ;; (See: https://www.reddit.com/r/emacs/comments/td0nth/comment/i0i8hi7/?context=3&share_id=CfzOVcILIBvpQKfRmTanK)
@@ -1581,7 +1573,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
  '(package-selected-packages
    '(agent-shell apheleia cape captain
                  casual-suite consult consult-notmuch corfu
-                 corfu-candidate-overlay corfu-prescient csv-mode
+                 corfu-prescient csv-mode
                  dape doric-themes eglot embark
                  embark-consult flymake flymake-hledger
                  flymake-lua flymake-markdownlint flymake-yamllint fontaine
