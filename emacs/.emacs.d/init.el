@@ -280,6 +280,13 @@
   :bind (("C-."   . embark-act)
          ("M-."   . embark-dwim)
          ("C-h B" . embark-bindings))
+  :custom
+  ;; Prompt for the action via completing-read (narrow by typing the
+  ;; command name) instead of embark-keymap-prompter's which-key-style
+  ;; grid of keys, which gets hard to scan once a target has many bound
+  ;; actions.  Press `@' at the prompt to fall back to reading a single
+  ;; key via embark-keymap-prompter for that invocation.
+  (embark-prompter #'embark-completing-read-prompter)
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
   :config
