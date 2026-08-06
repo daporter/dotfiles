@@ -8,25 +8,20 @@
  '(org-agenda-files
    '("~/Dropbox/63_programming/63.02_leetcode/63.02_journal.org"))
  '(package-selected-packages
-   '(agent-shell apheleia cape captain
-                 casual-suite consult consult-notmuch corfu
-                 corfu-candidate-overlay corfu-prescient csv-mode
-                 dape eglot embark
-                 embark-consult flymake flymake-hledger
-                 flymake-lua flymake-markdownlint flymake-yamllint fontaine
-                 ghostel hl-todo hledger-mode hyprlang-ts-mode ledger-mode
-                 ligature lorem-ipsum lua-mode magit magit-todos marginalia
-                 markdown-mode nerd-icons
+   '(agent-shell apheleia cape captain casual-suite consult consult-notmuch corfu
+                 corfu-candidate-overlay corfu-prescient csv-mode dape eglot
+                 embark embark-consult flymake flymake-hledger flymake-lua
+                 flymake-markdownlint flymake-yamllint fontaine ghostel hl-todo
+                 hledger-mode hyprlang-ts-mode ledger-mode ligature lorem-ipsum
+                 lua-mode magit magit-todos marginalia markdown-mode nerd-icons
                  nerd-icons-completion nerd-icons-corfu nerd-icons-dired
-                 nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref
-                 olivetti orderless org-anki org-modern
-                 page-break-lines pcmpl-args pdf-tools popper prescient
-                 project python-mode shannon-max string-inflection
-                 titlecase tramp unfill vertico vertico-prescient
-                 visual-fill-column vterm))
+                 nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref olivetti
+                 orderless org-anki org-modern page-break-lines pcmpl-args
+                 pdf-tools popper prescient project python-mode shannon-max
+                 string-inflection titlecase tramp unfill vertico
+                 vertico-prescient visual-fill-column vterm))
  '(package-vc-selected-packages
-   '((dape :url "https://github.com/svaante/dape.git")
-     (flymake-vale :url "https://github.com/tpeacock19/flymake-vale")
+   '((flymake-vale :url "https://github.com/tpeacock19/flymake-vale")
      (shannon-max :url "https://github.com/sstraust/shannonmax"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

@@ -699,7 +699,6 @@
   (advice-add 'eglot-execute :around #'my/eglot-execute-ignore-unhandled-method))
 
 (use-package dape
-  :vc (:url "https://github.com/svaante/dape.git" :rev :newest)
   :ensure t
   :commands dape
   :custom
