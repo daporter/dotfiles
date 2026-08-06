@@ -229,9 +229,7 @@
   :bind (("M-R" . vertico-repeat)
          :map vertico-map
          ("M-P" . vertico-repeat-previous)
-         ("M-N" . vertico-repeat-next)
-         ("S-<prior>" . vertico-repeat-previous)
-         ("S-<next>" . vertico-repeat-next)))
+         ("M-N" . vertico-repeat-next)))
 
 (use-package prescient
   :ensure t
