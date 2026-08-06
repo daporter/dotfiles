@@ -343,8 +343,6 @@
   (corfu-cycle t)
   :custom-face
   (corfu-popupinfo ((t (:inherit corfu-default :height 0.9))))
-  :bind
-  (:map corfu-map ("<tab>" . corfu-complete))
   :hook
   ((window-setup . global-corfu-mode)
    (minibuffer-setup . my/corfu-enable-in-minibuffer))
