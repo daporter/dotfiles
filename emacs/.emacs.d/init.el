@@ -1052,7 +1052,6 @@
 
 (use-package ghostel
   :ensure t
-  :preface
   :commands (ghostel)
   :bind (:map project-prefix-map
               ("t" . ghostel-project)
