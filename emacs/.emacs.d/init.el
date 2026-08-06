@@ -1009,7 +1009,9 @@
 (use-package magit-todos
   :ensure t
   :after magit
-  :hook after-init)
+  :hook after-init
+  :custom
+  (magit-todos-insert-after '(bottom)))
 
 ;;;; Shells and processes
 
@@ -1265,6 +1267,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 
 (use-package org-agenda
   :custom
+  (org-agenda-files '("~/Dropbox/63_programming/63.02_leetcode/63.02_journal.org"))
   (org-agenda-window-setup 'current-window)
   (org-agenda-todo-ignore-scheduled 'future)
   (org-agenda-sorting-strategy
@@ -1447,6 +1450,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
     (visual-line-mode 1)
     (visual-fill-column-mode 1))
   :custom
+  (agent-shell-anthropic-default-model-id "Default")
   (agent-shell-preferred-agent-config 'claude-code)
   (agent-shell-show-usage-at-turn-end t)
   :commands (agent-shell agent-shell-anthropic-start-claude-code)
