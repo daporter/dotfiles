@@ -214,8 +214,12 @@
 (use-package vertico
   :ensure t
   :hook (after-init)
+  :bind (:map vertico-map
+              ("RET"   . vertico-directory-enter)
+              ("DEL"   . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
   :config
-  (add-hook 'rfn-eshdadow-update-overlay-hook #'vertico-directory-tidy))
+  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
 (use-package prescient
   :ensure t
