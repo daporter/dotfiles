@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(agent-shell apheleia cape captain casual-suite consult consult-notmuch corfu
+   '(agent-shell apheleia auto-compile cape captain casual-suite consult consult-notmuch corfu
                  corfu-candidate-overlay corfu-prescient csv-mode dape eglot
                  embark embark-consult flymake flymake-hledger flymake-lua
                  flymake-markdownlint flymake-yamllint fontaine ghostel hl-todo

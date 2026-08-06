@@ -93,6 +93,13 @@
   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
   (load custom-file)
 
+  ;; Installing anything via `:ensure' before this point would save
+  ;; `package-selected-packages' -- and hence overwrite emacs-custom.el
+  ;; on disk -- before that variable has been loaded from it above,
+  ;; clobbering the existing list. `auto-compile' (which early-init.el
+  ;; enables; see the `require' there) must therefore be installed no
+  ;; earlier than here.
+
   (dolist (cmd '(upcase-region
                  downcase-region
                  narrow-to-region
@@ -115,6 +122,15 @@
                       "%Y%m%d%H%M%S"
                     "%Y-%m-%d %H:%M:%S")))
       (insert (format-time-string format)))))
+
+;; Installs the package early-init.el enables (see the `require' there);
+;; keeps it, and its `packed' dependency, tracked in package-selected-packages
+;; like any other package.
+(use-package auto-compile
+  :ensure t
+  :config
+  (auto-compile-on-load-mode 1)
+  (auto-compile-on-save-mode 1))
 
 (use-package custom
   :custom
