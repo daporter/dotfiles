@@ -1257,13 +1257,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :after org
   :config (global-org-modern-mode 1))
 
-(use-package org-noter
-  :ensure t
-  :commands org-noter
-  :custom
-  (org-noter-notes-search-path '("~/Dropbox/notes/zettelkasten/2-source_material/Books"))
-  (org-noter-auto-save-last-location t))
-
 (use-package org-agenda
   :custom
   (org-agenda-window-setup 'current-window)
@@ -1570,7 +1563,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  markdown-mode nerd-icons
                  nerd-icons-completion nerd-icons-corfu nerd-icons-dired
                  nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref
-                 olivetti orderless org-anki org-modern org-noter
+                 olivetti orderless org-anki org-modern
                  page-break-lines pcmpl-args pdf-tools popper prescient
                  project python-mode shannon-max string-inflection
                  titlecase tramp unfill vertico vertico-prescient
