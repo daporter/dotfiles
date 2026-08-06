@@ -1582,7 +1582,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
    '(agent-shell apheleia cape captain
                  casual-suite consult consult-notmuch corfu
                  corfu-candidate-overlay corfu-prescient csv-mode
-                 dape eglot embark
+                 dape doric-themes eglot embark
                  embark-consult flymake flymake-hledger
                  flymake-lua flymake-markdownlint flymake-yamllint fontaine
                  ghostel hl-todo hledger-mode hyprlang-ts-mode ledger-mode
