@@ -249,10 +249,21 @@
   :ensure t
   :custom
   (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles partial-completion))))
+  (completion-category-overrides
+   '((file (styles partial-completion))
+     ;; Let M-x, describe-function, describe-variable, etc. match
+     ;; initialisms, e.g. "gtb" for "git-todos-browse".
+     (command  (styles orderless+initialism))
+     (symbol   (styles orderless+initialism))
+     (variable (styles orderless+initialism))))
   (completion-category-defaults nil)
   ;; partial-completion behaves like substring:
-  (completion-pcm-leading-wildcard t))
+  (completion-pcm-leading-wildcard t)
+  :config
+  (orderless-define-completion-style orderless+initialism
+    (orderless-matching-styles '(orderless-initialism
+                                 orderless-literal
+                                 orderless-regexp))))
 
 (use-package marginalia
   :ensure t
