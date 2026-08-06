@@ -1416,6 +1416,21 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :after (ledger-mode flymake)
   :hook (ledger-mode . flymake-hledger-enable))
 
+(defvar my/finances-dir (expand-file-name "~/Documents/finances/")
+  "Root of the finances project, the only project hledger commands apply to.")
+
+(defun my/hledger-import ()
+  "Run \"hledger-flow import\" asynchronously in `my/finances-dir'."
+  (interactive)
+  (let ((default-directory my/finances-dir))
+    (async-shell-command "hledger-flow import")))
+
+(defun my/hledger-report ()
+  "Run \"hledger-flow report\" asynchronously in `my/finances-dir'."
+  (interactive)
+  (let ((default-directory my/finances-dir))
+    (async-shell-command "hledger-flow report")))
+
 ;;;; AI assistants
 
 (use-package agent-shell
@@ -1455,6 +1470,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (defun my/eglot-active-p ()
     (and (boundp 'eglot--managed-mode)
          eglot--managed-mode))
+  (defun my/in-finances-project-p ()
+    (file-in-directory-p default-directory my/finances-dir))
   :config
   (transient-define-prefix my/dispatch-menu ()
     "My dispatch menu of context-sensitive editing commands."
@@ -1493,7 +1510,10 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
       ("e q" "Quickfix actions"      eglot-code-action-quickfix)
       ("e a" "Code actionsⁿ"         eglot-code-actions)
       ("e d" "Symbol documentation"  eldoc)
-      ("e s" "Restart server"        eglot-reconnect)]])
+      ("e s" "Restart server"        eglot-reconnect)]
+     ["Hledger" :if my/in-finances-project-p
+      ("h i" "Import"                my/hledger-import)
+      ("h r" "Report"                my/hledger-report)]])
 
   ;; `org-agenda' unsets `C-,' in `org-mode-map' to keep this chord clear.
   (keymap-set (current-global-map) "C-," #'my/dispatch-menu))
