@@ -1159,7 +1159,13 @@
 ;;;; Text and writing modes
 
 (use-package text-mode
-  :hook (text-mode . abbrev-mode)
+  :preface
+  (defun my/text-mode-capf ()
+    (cape-capf-super #'cape-dabbrev #'cape-dict))
+  (defun my/text-mode-add-completions ()
+    (add-hook 'completion-at-point-functions #'my/text-mode-capf nil t))
+  :hook ((text-mode . abbrev-mode)
+         (text-mode . my/text-mode-add-completions))
   :config
   ;; For some reason the following doesn't work with :bind
   (define-key text-mode-map (kbd "C-M-i") #'completion-at-point))
@@ -1191,9 +1197,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :preface
   (defun my/markdown-set-tab-width ()
     (setq tab-width 4))
-  (defun my/markdown-add-completions ()
-    (add-hook 'completion-at-point-functions
-              'cape-dict nil t))
   (defun my/markdown-time-stamp-updated-field ()
     (setq-local time-stamp-pattern "20/^updated: %Y-%m-%d %H:%M$")
     (add-hook 'before-save-hook #'time-stamp nil t))
@@ -1201,7 +1204,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
          ("\\.md\\'" . markdown-mode))
   :hook
   ((markdown-mode . my/markdown-set-tab-width)
-   (markdown-mode . my/markdown-add-completions)
    (markdown-mode . my/markdown-time-stamp-updated-field)
    (markdown-mode . variable-pitch-mode))
   :custom
