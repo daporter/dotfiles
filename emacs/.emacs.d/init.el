@@ -1341,8 +1341,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 (use-package consult-notmuch
   :ensure t
   :after (consult notmuch)
-  :bind (("C-c n" . consult-notmuch)
-         ("C-c N" . consult-notmuch-tree))
+  :bind (("C-c m" . consult-notmuch)
+         ("C-c M" . consult-notmuch-tree))
   :config
   ;; Narrow `consult-buffer' to already-open notmuch buffers with "< n".
   (add-to-list 'consult-buffer-sources 'consult-notmuch-buffer-source))
@@ -1362,15 +1362,26 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :config
   (pdf-loader-install))
 
-(use-package denote
-  :ensure t
-  :hook
-  (dired-mode . denote-dired-mode)
-  :custom
-  (denote-directory (expand-file-name "~/Dropbox/notes"))
-  (denote-file-type 'markdown-yaml)
-  :config
-  (denote-rename-buffer-mode 1))
+;; Plain markdown notes (no denote/org-roam): find/search them recursively
+;; with consult's own consult-fd/consult-ripgrep, rather than consult-notes'
+;; file-dir-sources, which only lists one directory level (no recursion).
+(defvar my/note-dirs
+  (list (expand-file-name "~/Dropbox/reference")
+        (expand-file-name "~/Dropbox/Apps/remotely-save/Zettelkasten"))
+  "Directories to search when finding personal notes.")
+
+(defun my/find-note ()
+  "Find a note by filename, recursively, across `my/note-dirs'."
+  (interactive)
+  (consult-fd my/note-dirs))
+
+(defun my/search-notes ()
+  "Search note contents, recursively, across `my/note-dirs'."
+  (interactive)
+  (consult-ripgrep my/note-dirs))
+
+(keymap-global-set "C-c n" #'my/find-note)
+(keymap-global-set "C-c N" #'my/search-notes)
 
 ;;;; Finance
 
@@ -1553,9 +1564,9 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 (custom-set-variables
  '(package-selected-packages
    '(agent-shell apheleia cape captain
-                 casual-suite consult consult-notmuch corfu corfu-candidate-overlay
-                 corfu-prescient csv-mode
-                 dape denote eglot embark
+                 casual-suite consult consult-notmuch corfu
+                 corfu-candidate-overlay corfu-prescient csv-mode
+                 dape eglot embark
                  embark-consult flymake flymake-hledger
                  flymake-lua flymake-markdownlint flymake-yamllint fontaine
                  ghostel hl-todo hledger-mode hyprlang-ts-mode ledger-mode
