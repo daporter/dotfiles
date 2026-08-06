@@ -1243,7 +1243,12 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   ;; When following links, use find-file.  To follow a link in another window,
   ;; use C-x 4 C-o.
   (setf (alist-get 'file org-link-frame-setup)
-        'find-file))
+        'find-file)
+
+  ;; Don’t steal my keybinding!  `org-keys' binds this to
+  ;; `org-cycle-agenda-files' unconditionally, whether or not org-agenda is
+  ;; ever used.
+  (keymap-unset org-mode-map "C-," t))
 
 (use-package org-table
   :defer t
@@ -1257,20 +1262,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :ensure t
   :after org
   :config (global-org-modern-mode 1))
-
-(use-package org-agenda
-  :custom
-  (org-agenda-files '("~/Dropbox/63_programming/63.02_leetcode/63.02_journal.org"))
-  (org-agenda-window-setup 'current-window)
-  (org-agenda-todo-ignore-scheduled 'future)
-  (org-agenda-sorting-strategy
-   '((agenda habit-down time-up priority-down category-keep)
-     (todo scheduled-up)
-     (tags priority-down category-keep)
-     (search category-keep)))
-  :config
-  ;; Don’t steal my keybindings!
-  (keymap-unset org-mode-map "C-," t))
 
 (use-package org-anki
   :ensure t
@@ -1511,7 +1502,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
       ("h i" "Import"                my/hledger-import)
       ("h r" "Report"                my/hledger-report)]])
 
-  ;; `org-agenda' unsets `C-,' in `org-mode-map' to keep this chord clear.
+  ;; `org' unsets `C-,' in `org-mode-map' to keep this chord clear.
   (keymap-set (current-global-map) "C-," #'my/dispatch-menu))
 
 (use-package casual-suite
