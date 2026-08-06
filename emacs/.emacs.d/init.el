@@ -1345,6 +1345,15 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (add-hook 'notmuch-show-mode-hook
             (lambda () (variable-pitch-mode 1))))
 
+(use-package consult-notmuch
+  :ensure t
+  :after (consult notmuch)
+  :bind (("C-c n" . consult-notmuch)
+         ("C-c N" . consult-notmuch-tree))
+  :config
+  ;; Narrow `consult-buffer' to already-open notmuch buffers with "< n".
+  (add-to-list 'consult-buffer-sources 'consult-notmuch-buffer-source))
+
 ;;;; Documents and notes
 
 (use-package pdf-tools
@@ -1551,7 +1560,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 (custom-set-variables
  '(package-selected-packages
    '(agent-shell apheleia cape captain
-                 casual-suite consult corfu corfu-candidate-overlay
+                 casual-suite consult consult-notmuch corfu corfu-candidate-overlay
                  corfu-prescient csv-mode
                  dape denote eglot embark
                  embark-consult flymake flymake-hledger
