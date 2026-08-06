@@ -9,7 +9,7 @@
                  embark embark-consult flymake flymake-hledger flymake-lua
                  flymake-markdownlint flymake-yamllint fontaine ghostel hl-todo
                  hledger-mode hyprlang-ts-mode ledger-mode ligature lorem-ipsum
-                 lua-mode magit magit-todos marginalia markdown-mode nerd-icons
+                 lua-mode magit marginalia markdown-mode nerd-icons
                  nerd-icons-completion nerd-icons-corfu nerd-icons-dired
                  nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref olivetti
                  orderless org-anki org-modern page-break-lines pcmpl-args

@@ -1006,13 +1006,6 @@
   :ensure t
   :hook prog-mode)
 
-(use-package magit-todos
-  :ensure t
-  :after magit
-  :hook after-init
-  :custom
-  (magit-todos-insert-after '(bottom)))
-
 ;;;; Shells and processes
 
 (use-package eshell
@@ -1600,7 +1593,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  embark-consult flymake flymake-hledger
                  flymake-lua flymake-markdownlint flymake-yamllint fontaine
                  ghostel hl-todo hledger-mode hyprlang-ts-mode ledger-mode
-                 ligature lorem-ipsum lua-mode magit magit-todos marginalia
+                 ligature lorem-ipsum lua-mode magit marginalia
                  markdown-mode nerd-icons
                  nerd-icons-completion nerd-icons-corfu nerd-icons-dired
                  nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref
