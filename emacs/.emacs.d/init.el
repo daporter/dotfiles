@@ -398,6 +398,7 @@
                      #'cape-history))
   (defun my/eshell-add-completions ()
     (add-hook 'completion-at-point-functions 'my/eshell-capf nil t))
+  :bind ("C-c p" . cape-prefix-map)
   :init
   ;; Add to the global default value of `completion-at-point-functions', which
   ;; is used by `completion-at-point'.  The order of the functions matters: the
