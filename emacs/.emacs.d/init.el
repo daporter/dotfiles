@@ -325,6 +325,13 @@
 
 (use-package corfu
   :ensure t
+  :preface
+  (defun my/corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer, unless Vertico is driving it."
+    (unless (or (bound-and-true-p vertico--input)
+                (eq (current-local-map) read-passwd-map))
+      (setq-local corfu-auto nil)
+      (corfu-mode 1)))
   :custom
   (corfu-cycle t)
   :custom-face
@@ -332,7 +339,8 @@
   :bind
   (:map corfu-map ("<tab>" . corfu-complete))
   :hook
-  (window-setup . global-corfu-mode)
+  ((window-setup . global-corfu-mode)
+   (minibuffer-setup . my/corfu-enable-in-minibuffer))
   :config
   (corfu-popupinfo-mode 1)
   (corfu-history-mode 1)
