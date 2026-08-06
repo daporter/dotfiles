@@ -281,7 +281,14 @@
          ("M-."   . embark-dwim)
          ("C-h B" . embark-bindings))
   :init
-  (setq prefix-help-command #'embark-prefix-help-command))
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  ;; Hide the mode line in Embark Collect buffers (embark-export,
+  ;; embark-collect) for a cleaner look.
+  (add-to-list 'display-buffer-alist
+               `(,(rx "*Embark Collect " (or "Live" "Completions") "*")
+                 nil
+                 (window-parameters (mode-line-format . none)))))
 
 (use-package consult
   :ensure t
