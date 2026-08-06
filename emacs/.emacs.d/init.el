@@ -408,13 +408,6 @@
   :hook
   ((eshell-mode . my/eshell-add-completions)))
 
-(use-package completion-preview
-  :bind
-  (:map completion-preview-active-mode-map
-        ("<tab>" . completion-preview-complete))
-  :custom
-  (completion-preview-idle-delay 0.5))
-
 (use-package hippie-exp
   :bind
   ([remap dabbrev-expand] . hippie-expand)
