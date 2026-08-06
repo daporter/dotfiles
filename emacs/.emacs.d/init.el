@@ -217,6 +217,20 @@
   :config
   (add-hook 'rfn-eshdadow-update-overlay-hook #'vertico-directory-tidy))
 
+(use-package prescient
+  :ensure t
+  :config
+  (prescient-persist-mode 1))
+
+(use-package vertico-prescient
+  :ensure t
+  :after (prescient vertico)
+  ;; Keep orderless doing the matching; only take prescient's sorting.
+  :custom
+  (vertico-prescient-enable-filtering nil)
+  :config
+  (vertico-prescient-mode 1))
+
 (use-package orderless
   :ensure t
   :custom
@@ -275,6 +289,15 @@
   (corfu-popupinfo-mode 1)
   (corfu-history-mode 1)
   (savehist-mode 1))
+
+(use-package corfu-prescient
+  :ensure t
+  :after (prescient corfu)
+  ;; Keep orderless doing the matching; only take prescient's sorting.
+  :custom
+  (corfu-prescient-enable-filtering nil)
+  :config
+  (corfu-prescient-mode 1))
 
 (use-package corfu-candidate-overlay
   :ensure t
@@ -1478,7 +1501,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 (custom-set-variables
  '(package-selected-packages
    '(agent-shell apheleia cape captain
-                 casual-suite consult corfu corfu-candidate-overlay csv-mode
+                 casual-suite consult corfu corfu-candidate-overlay
+                 corfu-prescient csv-mode
                  dape denote eglot embark
                  embark-consult flymake flymake-hledger
                  flymake-lua flymake-markdownlint flymake-yamllint fontaine
@@ -1488,7 +1512,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  nerd-icons-completion nerd-icons-corfu nerd-icons-dired
                  nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref
                  olivetti orderless org-anki org-modern org-noter
-                 page-break-lines pcmpl-args pdf-tools popper project
-                 python-mode shannon-max string-inflection
-                 titlecase tramp unfill vertico
+                 page-break-lines pcmpl-args pdf-tools popper prescient
+                 project python-mode shannon-max string-inflection
+                 titlecase tramp unfill vertico vertico-prescient
                  visual-fill-column vterm)))
