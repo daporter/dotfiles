@@ -80,8 +80,6 @@
   (read-buffer-completion-ignore-case t)
   (completion-ignore-case t)
 
-  (tab-always-indent 'complete)
-
   (enable-recursive-minibuffers t)
 
   (send-mail-function 'smtpmail-send-it)
