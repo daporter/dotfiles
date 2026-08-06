@@ -181,7 +181,7 @@ hl.bind("SUPER+V", hl.dsp.exec_cmd("cliphist-pick"))
 hl.bind("SUPER+RETURN", hl.dsp.exec_cmd("ghostty"))
 hl.bind("SUPER+B", hl.dsp.exec_cmd("firefox --new-window"))
 hl.bind("SUPER+CTRL+D", hl.dsp.exec_cmd("goldendict --popup $(wl-paste --primary --no-newline)"))
-hl.bind("SUPER+M", hl.dsp.exec_cmd("emacsclient --create-frame --no-wait --alternate-editor='' --quiet"))
+hl.bind("SUPER+M", hl.dsp.exec_cmd("emacs-frame"))
 hl.bind("SUPER+CTRL+S", hl.dsp.exec_cmd("hyprshot -m window"))
 hl.bind("SUPER+CTRL+SHIFT+S", hl.dsp.exec_cmd("hyprshot -m region"))
 hl.bind(

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Open an emacsclient frame, making sure the daemon has actually finished
+# loading init.el first.
+#
+# `systemctl --user start emacs.service` is idempotent, and because the
+# unit is Type=notify it blocks until Emacs signals readiness -- which
+# only happens after init.el has fully run. Relying instead on
+# emacsclient's own `--alternate-editor=''` auto-spawn fallback doesn't
+# give that guarantee: it reconnects as soon as the daemon's socket
+# exists, which happens well before init.el finishes, so a frame created
+# that early is missing keybindings defined later in the file.
+
+set -eu
+
+systemctl --user start emacs.service
+
+exec emacsclient --create-frame --no-wait --alternate-editor='' --quiet
