@@ -558,14 +558,23 @@
            :default-family "JetBrainsMono Nerd Font Mono"
            :default-height 100
 
+           ;; 1.01, not the eyeballed-looking 1.05 this replaced: x-height is
+           ;; what a reader perceives as "the size of the text" (not point
+           ;; size, and not the ascent+descent `font-info' reports, which
+           ;; mostly reflects each font's chosen line-spacing rather than
+           ;; glyph size).  Per each font's `OS/2.sxHeight' normalized by
+           ;; `head.unitsPerEm' -- JetBrainsMono 550/1000 = 0.5500, Inter
+           ;; 1118/2048 = 0.5459 -- the two are already within ~0.75% of each
+           ;; other at the same nominal point size, so only a small
+           ;; correction is needed to match, not a 5% one.
            :variable-pitch-family "Inter"
-           :variable-pitch-height 1.05
+           :variable-pitch-height 1.01
 
            :mode-line-active-family "Inter"
-           :mode-line-active-height 1.05
+           :mode-line-active-height 1.01
 
            :mode-line-inactive-family "Inter"
-           :mode-line-inactive-height 1.05)))
+           :mode-line-inactive-height 1.01)))
   :config
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))
 
