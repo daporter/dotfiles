@@ -408,6 +408,23 @@
   :config
   (corfu-prescient-mode 1))
 
+(use-package completion-preview
+  :hook (window-setup . global-completion-preview-mode)
+  :custom
+  ;; Debounce so rapid typing doesn't re-run every CAPF (including the
+  ;; uncapped `cape-dict' grep in `my/text-mode-capf', see the
+  ;; `cape-dict-limit' comment below) on each keystroke.
+  (completion-preview-idle-delay 0.5)
+  :custom-face
+  ;; Drop the default underline and inherit `default' (undimmed) instead,
+  ;; so the confirmed common prefix reads via color/brightness alone
+  ;; against the dimmer `completion-preview' shadow text -- same
+  ;; single-channel treatment `modus-themes-completions' uses for Corfu.
+  (completion-preview-common ((t (:underline nil :inherit default))))
+  ;; Default hardcodes a non-theme-aware green underline; use the
+  ;; theme's own `success' face instead so it adapts with the theme.
+  (completion-preview-exact ((t (:underline nil :inherit success)))))
+
 ;; Some notes on CAPFs.
 ;;
 ;; (See: https://www.reddit.com/r/emacs/comments/td0nth/comment/i0i8hi7/?context=3&share_id=CfzOVcILIBvpQKfRmTanK)
