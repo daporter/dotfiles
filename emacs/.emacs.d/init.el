@@ -619,8 +619,17 @@
           (agenda-date . (1.2))
           (agenda-structure . (variable-pitch light 1.3))
           (t . (1.0))))
+  ;; `regular' (not the default extrabold+underline) keeps completion
+  ;; matches at normal weight with no underline, relying on their
+  ;; existing colored foreground (blue/magenta-warmer/cyan/red, per
+  ;; match index) as the single channel that marks a match -- stacking
+  ;; weight+underline+color+background all at once (the default, and a
+  ;; background-based variant tried after it) reads as an alert rather
+  ;; than as informative.  A background fill in particular competes with
+  ;; `corfu-current''s own background, which already uses that channel
+  ;; to mean "selected row" -- one visual channel, one meaning.
   (setq modus-themes-completions
-        '((matches . (extrabold underline))
+        '((matches . (regular))
           (selection . (semibold))))
   (setq modus-themes-common-palette-overrides modus-themes-preset-overrides-faint)
   (modus-themes-load-theme 'modus-operandi-tinted))
