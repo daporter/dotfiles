@@ -383,7 +383,21 @@
   :config
   (corfu-popupinfo-mode 1)
   (corfu-history-mode 1)
-  (savehist-mode 1))
+  (savehist-mode 1)
+  ;; The annotation column (source metadata like "Dabbrev"/"Dict") is
+  ;; right-aligned against the widest candidate in view, so whichever row
+  ;; has that candidate gets zero gap before its annotation -- Corfu has
+  ;; no customization variable for this padding.  `corfu--affixate' is a
+  ;; `cl-defgeneric', Corfu's own extension point for this sort of thing
+  ;; (it's how `corfu-terminal' and similar packages hook in), so extend
+  ;; it to prepend one column of breathing room to every annotation.
+  (require 'cl-lib)
+  (cl-defmethod corfu--affixate :around (cands)
+    (pcase-let ((`(,mf . ,acands) (cl-call-next-method)))
+      (dolist (x acands)
+        (unless (string-empty-p (caddr x))
+          (setf (caddr x) (concat " " (caddr x)))))
+      (cons mf acands))))
 
 (use-package corfu-prescient
   :ensure t
