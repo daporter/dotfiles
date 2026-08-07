@@ -366,6 +366,16 @@
   ;; fixed-width font.  Force a fixed-pitch family directly on
   ;; `corfu-default' so it's immune to that remap.
   (corfu-default ((t (:inherit fixed-pitch))))
+  ;; `corfu-annotations' inherits `completions-annotations', which
+  ;; modus-themes recolors to its `docstring' palette color -- a
+  ;; saturated blue nearly as prominent as the candidate text.  Send it
+  ;; to `vertical-border' instead -- see the comment on the `text' kind
+  ;; in `nerd-icons-corfu-mapping' below for why not plain `shadow' --
+  ;; so the source annotation ("Dabbrev"/"Dict"/...) reads as secondary,
+  ;; while keeping the italic slant as a lighter-weight cue.  Scoped to
+  ;; this face rather than `completions-annotations' itself, which is
+  ;; also used outside Corfu (e.g. the `*Completions*' buffer).
+  (corfu-annotations ((t (:inherit (vertical-border italic)))))
   (corfu-popupinfo ((t (:inherit corfu-default :height 0.9))))
   :hook
   ((window-setup . global-corfu-mode)
@@ -487,6 +497,20 @@
 (use-package nerd-icons-corfu
   :ensure t
   :after corfu
+  :init
+  ;; The bundled mapping colors the `text' kind -- used by `cape-dabbrev'
+  ;; and `cape-dict', so it's what shows for most prose completion -- with
+  ;; `font-lock-doc-face', a saturated color about as prominent as the
+  ;; candidate text itself.  Dim it so the icon reads as secondary
+  ;; metadata, matching the `corfu-annotations' treatment below.  Borrows
+  ;; `vertical-border' rather than `shadow': in this theme `shadow'
+  ;; resolves to the same color as the `fg-dim' palette entry, which
+  ;; still isn't very dim, whereas `vertical-border' -- window dividers,
+  ;; nothing else -- sits on modus-themes' quietest named gray (`border').
+  (setq nerd-icons-corfu-mapping
+        (let ((mapping (copy-tree nerd-icons-corfu-mapping)))
+          (plist-put (alist-get 'text mapping) :face 'vertical-border)
+          mapping))
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
