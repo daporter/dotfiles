@@ -410,6 +410,19 @@
   (defun my/eshell-add-completions ()
     (add-hook 'completion-at-point-functions 'my/eshell-capf nil t))
   :bind ("C-c p" . cape-prefix-map)
+  :custom
+  ;; `cape-dict' greps `cape-dict-file' for the input as a *substring*
+  ;; (not anchored to word-start), then caps the hits at this limit
+  ;; before Emacs's own prefix-filtering runs.  `/usr/share/dict/words'
+  ;; is sorted alphabetically, not by frequency, so the default limit
+  ;; of 100 is routinely exhausted by words that merely contain the
+  ;; input mid-word (e.g. "afterword" for "wor") before grep ever
+  ;; reaches real prefix matches ("word", "work", "world") -- leaving
+  ;; zero surviving candidates.  Uncapped, this is still <10ms for a
+  ;; typical prefix against a ~124k-line dictionary; completion here is
+  ;; manually triggered (`corfu-auto' is off), so there's no per-keystroke
+  ;; cost to worry about.
+  (cape-dict-limit nil)
   :init
   ;; Add to the global default value of `completion-at-point-functions', which
   ;; is used by `completion-at-point'.  The order of the functions matters: the
@@ -1164,7 +1177,18 @@
 (use-package text-mode
   :preface
   (defun my/text-mode-capf ()
-    (cape-capf-super #'cape-dabbrev #'cape-dict))
+    ;; `cape-wrap-super' (not the curried `cape-capf-super') because this
+    ;; function is itself used directly as a `completion-at-point-functions'
+    ;; entry: it must return completion data `(beg end table . plist)' right
+    ;; now, not another capf function for something else to call later.
+    ;; Returning a bare function here structurally satisfies Corfu's
+    ;; `(,beg ,end ,table . ,plist)' pcase match (an interpreted closure is
+    ;; itself a list) but fails the `integer-or-marker-p' sanity check on
+    ;; BEG, so Corfu silently treats it as "no completions" and falls
+    ;; through to the plain `cape-dabbrev' entry added globally in the
+    ;; `cape' package below -- which is why only dabbrev candidates ever
+    ;; appeared.
+    (cape-wrap-super #'cape-dabbrev #'cape-dict))
   (defun my/text-mode-add-completions ()
     (add-hook 'completion-at-point-functions #'my/text-mode-capf nil t))
   :hook ((text-mode . abbrev-mode)
