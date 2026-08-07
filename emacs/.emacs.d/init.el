@@ -382,8 +382,6 @@
    (minibuffer-setup . my/corfu-enable-in-minibuffer))
   :config
   (corfu-popupinfo-mode 1)
-  (corfu-history-mode 1)
-  (savehist-mode 1)
   ;; The annotation column (source metadata like "Dabbrev"/"Dict") is
   ;; right-aligned against the widest candidate in view, so whichever row
   ;; has that candidate gets zero gap before its annotation -- Corfu has
