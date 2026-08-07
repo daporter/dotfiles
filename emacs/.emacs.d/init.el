@@ -356,6 +356,16 @@
   :custom
   (corfu-cycle t)
   :custom-face
+  ;; `corfu-default' has no explicit `:family', so it normally falls
+  ;; through to whatever the `default' face resolves to in the buffer
+  ;; being completed in.  `corfu--make-buffer' copies that buffer's
+  ;; `face-remapping-alist' into the popup buffer, and `variable-pitch-mode'
+  ;; (hooked into `markdown-mode'/`org-mode') remaps `default' to the
+  ;; proportional `variable-pitch' face -- which breaks the popup's
+  ;; column-padding math, since it pads by character count and assumes a
+  ;; fixed-width font.  Force a fixed-pitch family directly on
+  ;; `corfu-default' so it's immune to that remap.
+  (corfu-default ((t (:inherit fixed-pitch))))
   (corfu-popupinfo ((t (:inherit corfu-default :height 0.9))))
   :hook
   ((window-setup . global-corfu-mode)
