@@ -702,6 +702,10 @@
   (buffer-face-mode . my/variable-pitch-set-line-spacing))
 
 (use-package winner
+  :custom
+  (winner-dont-bind-my-keys t)   ; free C-c <left>/<right> for major modes (markdown-mode)
+  :bind (("C--" . winner-undo)   ; mirrors C-/ -> undo
+         ("C-+" . winner-redo))  ; mirrors C-* -> undo-redo (C-S--)
   :hook (after-init))
 
 (use-package popper
