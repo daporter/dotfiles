@@ -97,9 +97,6 @@ hl.config({
 
 	dwindle = {
 		force_split = 2, -- to the right or below
-		preserve_split = true, -- keep split direction fixed once set, rather
-		-- than re-deriving it from window aspect ratio
-		-- as windows are added/removed/resized
 	},
 })
 
