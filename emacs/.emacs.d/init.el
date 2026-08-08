@@ -1033,6 +1033,11 @@
 
 ;;;; Files, projects, VC
 
+;; Bare chord: `save-buffer' is the single most-used command in my logged
+;; keybinding history, and `C-x C-s' puts repeated load on the awkward `x'
+;; reach every time.
+(keymap-global-set "C-#" #'save-buffer)
+
 (use-package dired
   :defer t
   :custom
