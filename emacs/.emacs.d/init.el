@@ -1359,14 +1359,16 @@ that."
 
 (use-package make-mode
   :preface
+  ;; Builds on the global `whitespace-style' (recipe lines require a
+  ;; literal tab, and `make-mode' itself sets `indent-tabs-mode' t, so the
+  ;; adaptive `indentation' element already flags space-indented recipes
+  ;; correctly) rather than duplicating it, adding only the two checks
+  ;; specific to Makefiles' tab/space pitfalls: a tab followed by a run of
+  ;; alignment spaces, and the classic space-then-tab mistake.
   (defun my/makefile-whitespace-setup ()
-    (setq-local whitespace-style '(face
-                                   indentation::space
-                                   space-after-tab::tab
-                                   space-before-tab::space
-                                   trailing
-                                   empty
-                                   missing-newline-at-eof)))
+    (setq-local whitespace-style
+                (append '(space-after-tab::tab space-before-tab::space)
+                        whitespace-style)))
   :hook
   (makefile-mode . my/makefile-whitespace-setup))
 
