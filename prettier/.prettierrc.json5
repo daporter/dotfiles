@@ -1,0 +1,20 @@
+// Per-filetype overrides so prettier's --tab-width matches this dotfiles
+// repo's Emacs indentation policy (emacs/.emacs.d/init.el) for the
+// filetypes apheleia has no built-in way to derive automatically:
+// markdown-mode/gfm-mode aren't in apheleia's indent-var lookup table at
+// all, and yaml-ts-mode's tab-width isn't backed by any bound Emacs
+// variable apheleia can read (the real `yaml-mode' package isn't
+// installed). css/json/js/ts don't need an entry here -- apheleia already
+// derives their --tab-width live from css-indent-offset/js-indent-level/etc.
+{
+  overrides: [
+    {
+      files: ["*.md", "*.markdown"],
+      options: { tabWidth: 4, useTabs: false },
+    },
+    {
+      files: ["*.yaml", "*.yml"],
+      options: { tabWidth: 2, useTabs: false },
+    },
+  ],
+}
