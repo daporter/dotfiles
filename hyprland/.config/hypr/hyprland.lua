@@ -56,7 +56,11 @@ hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 
--- Font rendering
+-- Font rendering: env-var-only knobs that fontconfig's XML can't express.
+-- Antialiasing/hinting/subpixel themselves are pinned in the fontconfig
+-- package (fontconfig/.config/fontconfig/conf.d/10-rendering.conf); this is
+-- just the FreeType interpreter choice, plus forcing 1x scale everywhere so
+-- no toolkit double-scales and blurs text on this non-HiDPI monitor.
 hl.env("FREETYPE_PROPERTIES", "truetype:interpreter-version=38")
 hl.env("GDK_SCALE", "1")
 hl.env("GDK_DPI_SCALE", "1")
