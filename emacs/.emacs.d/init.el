@@ -976,13 +976,25 @@ than the default Inter (sans-serif)."
 (use-package whitespace
   :custom
   (whitespace-line-column nil)
-  ;; `indentation' (not `tabs') flags indentation using the wrong character
-  ;; for the buffer's own `indent-tabs-mode' -- e.g. spaces-only leading
-  ;; whitespace once tabs are the default.  Flagging every tab via `tabs'
-  ;; would just paint normal indentation as a warning now that tabs are the
-  ;; default.  `tab-mark' is unaffected: it's a display-table glyph swap
-  ;; with no face of its own, so it stays a quiet visual marker.
-  (whitespace-style '(face indentation tab-mark trailing empty missing-newline-at-eof))
+  ;; `indentation' (not the old `tabs' style) flags indentation using the
+  ;; wrong character for the buffer's own `indent-tabs-mode' -- e.g.
+  ;; spaces-only leading whitespace once tabs are the default -- instead of
+  ;; painting every tab as a warning now that tabs are the default.
+  ;;
+  ;; `tabs' is back for a narrower reason: `tab-mark''s glyph deliberately
+  ;; has no face of its own (see `whitespace-display-char-on', which omits
+  ;; one so as not to obstruct the `tabs'/`spaces' styling), so without
+  ;; `tabs' supplying `whitespace-tab' via font-lock, the glyph falls back
+  ;; to Emacs's `escape-glyph' face -- a strong warning red in this theme.
+  ;; `whitespace-tab' is set to `shadow' below so the marker reads as a
+  ;; quiet indicator, not a warning.  `spaces'/`space-mark' give SPACEs the
+  ;; same middle-dot-plus-`shadow' treatment, for the same reason.
+  (whitespace-style '(face indentation tabs tab-mark spaces space-mark
+                            trailing empty missing-newline-at-eof))
+  :custom-face
+  (whitespace-tab ((t (:inherit shadow))))
+  (whitespace-space ((t (:inherit shadow))))
+  (whitespace-hspace ((t (:inherit shadow))))
   :hook
   (((text-mode prog-mode conf-mode) . whitespace-mode)
    (before-save . delete-trailing-whitespace)))
