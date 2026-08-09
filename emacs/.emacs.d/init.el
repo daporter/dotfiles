@@ -974,23 +974,32 @@ than the default Inter (sans-serif)."
                  (body-function . select-window))))
 
 (use-package whitespace
+  :preface
+  (defun my/whitespace-toggle-chars ()
+    "Toggle indicators for every tab and space character.
+By default `whitespace-mode' only highlights whitespace that's
+wrong (bad indentation, trailing, ...); this toggles `tabs',
+`tab-mark', `spaces', and `space-mark' as a group on top of
+that."
+    (interactive)
+    (whitespace-toggle-options '(tabs tab-mark spaces space-mark)))
   :custom
   (whitespace-line-column nil)
-  ;; `indentation' (not the old `tabs' style) flags indentation using the
-  ;; wrong character for the buffer's own `indent-tabs-mode' -- e.g.
-  ;; spaces-only leading whitespace once tabs are the default -- instead of
-  ;; painting every tab as a warning now that tabs are the default.
-  ;;
-  ;; `tabs' is back for a narrower reason: `tab-mark''s glyph deliberately
-  ;; has no face of its own (see `whitespace-display-char-on', which omits
-  ;; one so as not to obstruct the `tabs'/`spaces' styling), so without
-  ;; `tabs' supplying `whitespace-tab' via font-lock, the glyph falls back
-  ;; to Emacs's `escape-glyph' face -- a strong warning red in this theme.
-  ;; `whitespace-tab' is set to `shadow' below so the marker reads as a
-  ;; quiet indicator, not a warning.  `spaces'/`space-mark' give SPACEs the
-  ;; same middle-dot-plus-`shadow' treatment, for the same reason.
-  (whitespace-style '(face indentation tabs tab-mark spaces space-mark
-                      trailing empty missing-newline-at-eof))
+  ;; `indentation' flags indentation using the wrong character for the
+  ;; buffer's own `indent-tabs-mode' -- e.g. spaces-only leading whitespace
+  ;; once tabs are the default -- so only genuinely wrong whitespace is
+  ;; highlighted by default.
+  (whitespace-style '(face indentation trailing empty missing-newline-at-eof))
+  ;; `my/whitespace-toggle-chars' (bound in `my/dispatch-menu') layers on
+  ;; `tabs tab-mark spaces space-mark' to mark every tab/space character,
+  ;; correct or not.  `tab-mark''s glyph deliberately has no face of its
+  ;; own (see `whitespace-display-char-on', which omits one so as not to
+  ;; obstruct the `tabs'/`spaces' styling), so without `tabs' supplying
+  ;; `whitespace-tab' via font-lock, the glyph falls back to Emacs's
+  ;; `escape-glyph' face -- a strong warning red in this theme.  Pairing
+  ;; `tabs' with `tab-mark' (and `spaces' with `space-mark') routes the
+  ;; glyph through `whitespace-tab', set to `shadow' below so it reads as
+  ;; a quiet indicator, not a warning; same for SPACEs.
   :custom-face
   (whitespace-tab ((t (:inherit shadow))))
   (whitespace-space ((t (:inherit shadow))))
@@ -1727,7 +1736,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
       ("t n" "Line numbers"          display-line-numbers-mode)
       ("t o" "Olivetti"              olivetti-mode)
       ("t f" "Flymake"               flymake-mode)
-      ("t r" "Serif variable-pitch"  my/variable-pitch-toggle-serif)]]
+      ("t r" "Serif variable-pitch"  my/variable-pitch-toggle-serif)
+      ("t w" "Whitespace chars"      my/whitespace-toggle-chars)]]
     [["Flymake" :if-non-nil flymake-mode
       ("f f" "Consult Flymake"       consult-flymake)
       ("f h" "Next error"            flymake-goto-next-error)
