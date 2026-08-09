@@ -9,13 +9,11 @@ AlignConsecutiveDeclarations:
 AlignConsecutiveMacros:
   Enabled: true
 AlignEscapedNewlines: Left
-AlignOperands: Align
 AlignTrailingComments:
   Kind: Always
   OverEmptyLines: 1
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: Never
 BraceWrapping:
   AfterFunction: true
   AfterNamespace: true
@@ -35,7 +33,10 @@ IncludeCategories:
     Priority: 2
 IndentGotoLabels: false
 IndentWidth: 8
-KeepEmptyLinesAtTheStartOfBlocks: false
+# KeepEmptyLinesAtTheStartOfBlocks was renamed/restructured upstream; this is
+# its replacement (AtStartOfBlock: false is the same intent as the old key).
+KeepEmptyLines:
+  AtStartOfBlock: false
 ObjCBlockIndentWidth: 8
 ObjCSpaceAfterProperty: true
 PenaltyBreakAssignment: 10
@@ -48,4 +49,9 @@ SeparateDefinitionBlocks: Always
 SpaceBeforeParens: ControlStatementsExceptForEachMacros
 SpacesBeforeTrailingComments: 4
 SpacesInContainerLiterals: false
+# Must match IndentWidth/ContinuationIndentWidth so each indent level is
+# exactly one tab character under UseTab: AlignWithSpaces, rather than a
+# tab-plus-spaces mix -- same reasoning as tab-width/sh-basic-offset in
+# emacs/.emacs.d/init.el.
+TabWidth: 8
 UseTab: AlignWithSpaces
