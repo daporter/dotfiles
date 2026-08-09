@@ -1,0 +1,5 @@
+# Pin what are currently stylua's own defaults so a future stylua upgrade
+# (or a nested project's own stylua.toml) can't silently drift away from
+# `lua-indent-level'/`tab-width' in emacs/.emacs.d/init.el (my/lua-set-tab-width).
+indent_type = "Tabs"
+indent_width = 4
