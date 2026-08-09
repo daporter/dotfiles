@@ -1001,7 +1001,24 @@ than the default Inter (sans-serif)."
 
 (use-package apheleia
   :ensure t
-  :hook ((prog-mode text-mode conf-mode) . apheleia-mode))
+  :hook ((prog-mode text-mode conf-mode) . apheleia-mode)
+  :config
+  ;; stylua only searches its own working directory by default; without
+  ;; `--search-parent-directories' it never finds `~/.stylua.toml' (added
+  ;; to pin lua-mode's indent policy -- see lua/.stylua.toml) for files
+  ;; that live elsewhere under $HOME.
+  (setf (alist-get 'stylua apheleia-formatters)
+        '("stylua" "--search-parent-directories" "-"))
+  ;; Upstream apheleia omits markdown from `apheleia-mode-alist' by design
+  ;; ("so many people format markdown in so many different ways"), but
+  ;; this repo's own markdown policy (spaces, tab-width 4; see
+  ;; `my/markdown-set-indent-tabs-mode') is deliberate enough to enforce.
+  ;; The stock `prettier-markdown' formatter needs no changes here -- its
+  ;; --tab-width comes from the *.md override in ~/.prettierrc.json5
+  ;; instead of from apheleia deriving it from an Emacs variable, since
+  ;; apheleia has no indent-var case for markdown-mode/gfm-mode at all.
+  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier-markdown))
+  (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier-markdown)))
 
 (use-package editorconfig
   :hook
@@ -1293,6 +1310,8 @@ than the default Inter (sans-serif)."
   :preface
   (defun my/js-set-indent-tabs-mode ()
     (setq indent-tabs-mode nil))
+  :custom
+  (js-indent-level 2)
   :hook (js-ts-mode . my/js-set-indent-tabs-mode))
 
 (use-package typescript-ts-mode
