@@ -1215,14 +1215,19 @@ than the default Inter (sans-serif)."
 ;;;; Language modes
 
 (use-package c-ts-mode
-  :after (eglot embark)
   :bind (:map c-ts-mode-map
-              ("C-c o" . ff-find-other-file)
-              :map embark-identifier-map
-              ("m" . man))
+              ("C-c o" . ff-find-other-file))
   :custom
   (c-ts-mode-indent-style 'linux)
-  (c-ts-mode-indent-offset 8))
+  (c-ts-mode-indent-offset 8)
+  :init
+  ;; Only this binding actually needs `embark' loaded; gating the whole
+  ;; package config behind `:after (eglot embark)' meant indent-style and
+  ;; indent-offset above wouldn't apply until both happened to load, so a
+  ;; .c file opened early in a session could silently get c-ts-mode's
+  ;; factory GNU/2 instead of these.
+  (with-eval-after-load 'embark
+    (define-key embark-identifier-map "m" #'man)))
 
 (use-package sh-script
   :preface
