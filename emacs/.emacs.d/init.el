@@ -594,6 +594,26 @@
            :default-family "JetBrainsMono Nerd Font Mono"
            :default-height 100
 
+           ;; Without this, `fixed-pitch' has no height of its own and
+           ;; inherits whatever `default' resolves to in the current
+           ;; buffer.  That's fine normally, but `variable-pitch-mode'
+           ;; (markdown-mode/org-mode) remaps `default' to a scaled-up
+           ;; variable-pitch face, and fixed-pitch text silently inflates
+           ;; along with it -- measured via `font-info' in a markdown
+           ;; buffer, code text was requesting 15px instead of the frame's
+           ;; true 13px.  An absolute height (not a relative float) is used
+           ;; as-is regardless of what `default' remaps to, so this anchors
+           ;; fixed-pitch back to the frame default everywhere.  Same bug
+           ;; class as the `corfu-default' fix above, just for `:height'
+           ;; instead of `:family'.
+           :fixed-pitch-height 100
+
+           ;; Same gap as `fixed-pitch' above -- unused today (nothing in
+           ;; this config references `fixed-pitch-serif'), but pin it too
+           ;; so it doesn't silently inherit a remapped `default' the day
+           ;; something starts using it.
+           :fixed-pitch-serif-height 100
+
            ;; 1.01, not the eyeballed-looking 1.05 this replaced: x-height is
            ;; what a reader perceives as "the size of the text" (not point
            ;; size, and not the ascent+descent `font-info' reports, which
