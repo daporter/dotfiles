@@ -691,15 +691,35 @@
 
 (use-package face-remap
   :preface
-  (defun my/variable-pitch-set-line-spacing ()
-    ;; The font XCharter needs extra line spacing.
-    (if (and buffer-face-mode
-             (eq buffer-face-mode-face 'variable-pitch))
-        (setq-local line-spacing 0.25)
-      (kill-local-variable 'line-spacing))) ; revert to global setting
+  (defvar-local my/variable-pitch-serif-cookie nil
+    "Face-remap cookie for this buffer's serif override of `variable-pitch',
+or nil when showing the default (sans-serif) family.")
 
-  :hook
-  (buffer-face-mode . my/variable-pitch-set-line-spacing))
+  (defun my/variable-pitch-serif ()
+    "Show this buffer's variable-pitch text in XCharter (serif) rather
+than the default Inter (sans-serif)."
+    (interactive)
+    (unless my/variable-pitch-serif-cookie
+      (setq my/variable-pitch-serif-cookie
+            ;; XCharter's x-height is ~12% smaller than Inter's --
+            ;; `OS/2.sxHeight' normalized by `head.unitsPerEm': XCharter
+            ;; 481/1000 = 48.10%, Inter 1118/2048 = 54.59%.  Scale up to
+            ;; match Inter's perceived size: 54.59/48.10 = 1.135.
+            (face-remap-add-relative 'variable-pitch :family "XCharter" :height 1.135))))
+
+  (defun my/variable-pitch-sans ()
+    "Show this buffer's variable-pitch text in the default Inter (sans-serif)."
+    (interactive)
+    (when my/variable-pitch-serif-cookie
+      (face-remap-remove-relative my/variable-pitch-serif-cookie)
+      (setq my/variable-pitch-serif-cookie nil)))
+
+  (defun my/variable-pitch-toggle-serif ()
+    "Toggle this buffer's variable-pitch face between serif and sans-serif."
+    (interactive)
+    (if my/variable-pitch-serif-cookie
+        (my/variable-pitch-sans)
+      (my/variable-pitch-serif))))
 
 (use-package winner
   :custom
@@ -1322,7 +1342,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :hook
   ((markdown-mode . my/markdown-set-tab-width)
    (markdown-mode . my/markdown-time-stamp-updated-field)
-   (markdown-mode . variable-pitch-mode))
+   (markdown-mode . variable-pitch-mode)
+   (markdown-mode . my/variable-pitch-serif))
   :custom
   (markdown-command "pandoc")
   (markdown-asymmetric-header t)
@@ -1593,7 +1614,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
       ("t h" "Highlight line"        hl-line-mode)
       ("t n" "Line numbers"          display-line-numbers-mode)
       ("t o" "Olivetti"              olivetti-mode)
-      ("t f" "Flymake"               flymake-mode)]]
+      ("t f" "Flymake"               flymake-mode)
+      ("t r" "Serif variable-pitch"  my/variable-pitch-toggle-serif)]]
     [["Flymake" :if-non-nil flymake-mode
       ("f f" "Consult Flymake"       consult-flymake)
       ("f h" "Next error"            flymake-goto-next-error)
