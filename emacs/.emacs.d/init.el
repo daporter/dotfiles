@@ -990,7 +990,7 @@ than the default Inter (sans-serif)."
   ;; quiet indicator, not a warning.  `spaces'/`space-mark' give SPACEs the
   ;; same middle-dot-plus-`shadow' treatment, for the same reason.
   (whitespace-style '(face indentation tabs tab-mark spaces space-mark
-                            trailing empty missing-newline-at-eof))
+                      trailing empty missing-newline-at-eof))
   :custom-face
   (whitespace-tab ((t (:inherit shadow))))
   (whitespace-space ((t (:inherit shadow))))
@@ -1225,6 +1225,12 @@ than the default Inter (sans-serif)."
   (c-ts-mode-indent-offset 8))
 
 (use-package sh-script
+  :preface
+  ;; Match `sh-basic-offset' so each indent level is exactly one tab
+  ;; character, rather than `indent-to' splitting some levels into a
+  ;; tab-plus-spaces mix whenever the offset doesn't land on a tab stop.
+  (defun my/sh-set-tab-width ()
+    (setq tab-width 4))
   :init
   ;; Is there a more idiomatic way to do this?:
   (with-eval-after-load 'sh-script
@@ -1232,6 +1238,7 @@ than the default Inter (sans-serif)."
   :mode
   (("\\.sh\\'" . bash-ts-mode)
    ("\\.bash\\'" . bash-ts-mode))
+  :hook (bash-ts-mode . my/sh-set-tab-width)
   :config
   (add-to-list 'interpreter-mode-alist '("bash" . bash-ts-mode)))
 
