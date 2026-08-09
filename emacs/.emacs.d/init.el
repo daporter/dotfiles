@@ -1251,20 +1251,55 @@ than the default Inter (sans-serif)."
   :ensure t)
 
 (use-package lua-mode
-  :ensure t)
+  :ensure t
+  ;; No .stylua.toml exists, so stylua's own defaults (indent_type = Tabs,
+  ;; indent_width = 4) are the convention actually in effect via apheleia.
+  ;; Match them here so Emacs's own indentation agrees even if apheleia
+  ;; isn't running.
+  :preface
+  (defun my/lua-set-tab-width ()
+    (setq tab-width 4))
+  :custom
+  (lua-indent-level 4)
+  :hook (lua-mode . my/lua-set-tab-width))
 
 (use-package flymake-lua
   :ensure t)
 
 (use-package mhtml-mode
-  :mode "\\.html\\'")
+  :preface
+  (defun my/mhtml-set-indent-tabs-mode ()
+    (setq indent-tabs-mode nil))
+  :mode "\\.html\\'"
+  :hook (mhtml-mode . my/mhtml-set-indent-tabs-mode))
 
 (use-package css-mode
+  :preface
+  (defun my/css-set-indent-tabs-mode ()
+    (setq indent-tabs-mode nil))
   :custom
-  (css-indent-offset 2))
+  (css-indent-offset 2)
+  :hook
+  ((css-mode css-ts-mode) . my/css-set-indent-tabs-mode))
 
 (use-package json-ts-mode
-  :mode "\\.jsonc?\\'")
+  :preface
+  (defun my/json-set-indent-tabs-mode ()
+    (setq indent-tabs-mode nil))
+  :mode "\\.jsonc?\\'"
+  :hook (json-ts-mode . my/json-set-indent-tabs-mode))
+
+(use-package js
+  :preface
+  (defun my/js-set-indent-tabs-mode ()
+    (setq indent-tabs-mode nil))
+  :hook (js-ts-mode . my/js-set-indent-tabs-mode))
+
+(use-package typescript-ts-mode
+  :preface
+  (defun my/typescript-set-indent-tabs-mode ()
+    (setq indent-tabs-mode nil))
+  :hook (typescript-ts-mode . my/typescript-set-indent-tabs-mode))
 
 (use-package conf-mode
   :mode "\\.service\\'")
@@ -1284,8 +1319,15 @@ than the default Inter (sans-serif)."
 
 (use-package hyprlang-ts-mode
   :ensure t
+  ;; No community convention pulls this toward spaces (it's Hyprland's own
+  ;; config format), so keep the tabs default and match tab-width to the
+  ;; offset instead, same fix as sh-basic-offset/tab-width in `sh-script'.
+  :preface
+  (defun my/hyprlang-set-tab-width ()
+    (setq tab-width 4))
   :custom
-  (hyprlang-ts-mode-indent-offset 4))
+  (hyprlang-ts-mode-indent-offset 4)
+  :hook (hyprlang-ts-mode . my/hyprlang-set-tab-width))
 
 (use-package make-mode
   :preface
@@ -1375,6 +1417,12 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :preface
   (defun my/markdown-set-tab-width ()
     (setq tab-width 4))
+  ;; Tab characters are risky in markdown source: some renderers treat a
+  ;; leading tab in a list continuation inconsistently, unlike a fixed
+  ;; number of spaces. Force spaces the same way as the other markup/data
+  ;; formats (css-mode, json-ts-mode, mhtml-mode).
+  (defun my/markdown-set-indent-tabs-mode ()
+    (setq indent-tabs-mode nil))
   (defun my/markdown-time-stamp-updated-field ()
     (setq-local time-stamp-pattern "20/^updated: %Y-%m-%d %H:%M$")
     (add-hook 'before-save-hook #'time-stamp nil t))
@@ -1382,6 +1430,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
          ("\\.md\\'" . markdown-mode))
   :hook
   ((markdown-mode . my/markdown-set-tab-width)
+   (markdown-mode . my/markdown-set-indent-tabs-mode)
    (markdown-mode . my/markdown-time-stamp-updated-field)
    (markdown-mode . variable-pitch-mode)
    (markdown-mode . my/variable-pitch-serif))
