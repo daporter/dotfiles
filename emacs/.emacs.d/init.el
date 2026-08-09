@@ -1415,12 +1415,16 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 (use-package markdown-mode
   :ensure t
   :preface
-  (defun my/markdown-set-tab-width ()
-    (setq tab-width 4))
   ;; Tab characters are risky in markdown source: some renderers treat a
   ;; leading tab in a list continuation inconsistently, unlike a fixed
   ;; number of spaces. Force spaces the same way as the other markup/data
   ;; formats (css-mode, json-ts-mode, mhtml-mode).
+  ;;
+  ;; No tab-width override needed here: markdown-mode's own
+  ;; define-derived-mode body already does (setq tab-width 4) ("Natural
+  ;; Markdown tab width"), and its indent-cycling logic still consults
+  ;; tab-width even with indent-tabs-mode nil, same as yaml-ts-mode's
+  ;; indent-relative fallback.
   (defun my/markdown-set-indent-tabs-mode ()
     (setq indent-tabs-mode nil))
   (defun my/markdown-time-stamp-updated-field ()
@@ -1429,8 +1433,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode))
   :hook
-  ((markdown-mode . my/markdown-set-tab-width)
-   (markdown-mode . my/markdown-set-indent-tabs-mode)
+  ((markdown-mode . my/markdown-set-indent-tabs-mode)
    (markdown-mode . my/markdown-time-stamp-updated-field)
    (markdown-mode . variable-pitch-mode)
    (markdown-mode . my/variable-pitch-serif))
