@@ -11,7 +11,7 @@ claude-desktop
 dropbox
 gitlint
 gnu-c-manual
-goldendict-ng-git
+goldendict-ng
 google-chrome
 hledger-bin
 hledger-flow-bin
