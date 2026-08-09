@@ -1877,10 +1877,13 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 ;; eglot, flymake, project and tramp are here because they are ELPA
 ;; upgrades of built-ins (see `package-install-upgrade-built-in' above);
 ;; dropping them would delete the upgrade and silently fall back to the
-;; bundled version.
+;; bundled version. auto-compile is here because nothing else depends
+;; on it -- it's only `require'd directly, by early-init.el -- so
+;; without a manual entry it would drop out on every save and become a
+;; package-autoremove target despite being in active use.
 (custom-set-variables
  '(package-selected-packages
-   '(agent-shell apheleia cape captain
+   '(agent-shell apheleia auto-compile cape captain
                  casual-suite consult consult-notmuch corfu
                  corfu-prescient csv-mode
                  dape doric-themes eglot embark
