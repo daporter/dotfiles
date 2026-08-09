@@ -138,6 +138,15 @@
 
 ;;;; Core editing primitives
 
+;; Indentation policy: tabs for indentation, spaces for alignment.  We rely
+;; on `indent-tabs-mode''s own factory default (t) rather than restating
+;; it -- `indent-to' (the primitive behind every mode's indent function)
+;; already emits tabs up to the nearest tab stop and spaces for the
+;; remainder whenever it's non-nil, so the split is native.  Modes with a
+;; hard requirement for spaces override it locally (`elisp-mode',
+;; `python-mode', `yaml-ts-mode'); modes that require tabs (`make-mode')
+;; already match the default and need no override.
+
 (use-package simple
   :preface
   ;; https://karthinks.com/software/emacs-window-management-almanac/#org-target--pop-global-mark-advice
@@ -153,9 +162,7 @@
   :hook ((after-init . column-number-mode))
   :bind (("C-*" . undo-redo)             ; i.e., C-S-/ since undo is C-/
          ("C-z" . undo)                  ; was suspend-frame, never used
-         ("C-S-z" . undo-redo))          ; matches redo in non-Emacs apps
-  :custom
-  (indent-tabs-mode nil))
+         ("C-S-z" . undo-redo)))         ; matches redo in non-Emacs apps
 
 (use-package minibuffer
   :custom
@@ -969,13 +976,13 @@ than the default Inter (sans-serif)."
 (use-package whitespace
   :custom
   (whitespace-line-column nil)
-  (whitespace-style '(face tabs tab-mark trailing empty missing-newline-at-eof))
-  :custom-face
-  ;; Some default faces aren’t visible on spaces or empty lines:
-  (whitespace-empty ((t (:inherit whitespace-trailing))))
-  (whitespace-tab ((t (:inherit magit-diff-whitespace-warning))))
-  (whitespace-indentation ((t (:inherit diff-removed))))
-  (whitespace-space-after-tab ((t (:inherit whitespace-trailing))))
+  ;; `indentation' (not `tabs') flags indentation using the wrong character
+  ;; for the buffer's own `indent-tabs-mode' -- e.g. spaces-only leading
+  ;; whitespace once tabs are the default.  Flagging every tab via `tabs'
+  ;; would just paint normal indentation as a warning now that tabs are the
+  ;; default.  `tab-mark' is unaffected: it's a display-table glyph swap
+  ;; with no face of its own, so it stays a quiet visual marker.
+  (whitespace-style '(face indentation tab-mark trailing empty missing-newline-at-eof))
   :hook
   (((text-mode prog-mode conf-mode) . whitespace-mode)
    (before-save . delete-trailing-whitespace)))
@@ -1281,6 +1288,16 @@ than the default Inter (sans-serif)."
   ((csv-mode . my/csv-mode-setup)
    (csv-mode . csv-guess-set-separator)
    (csv-mode . csv-align-mode)))
+
+(use-package elisp-mode
+  :preface
+  ;; Elisp indentation depth is frequently not a multiple of `tab-width' --
+  ;; e.g. a wrapped argument list lines up under the first argument, not
+  ;; under the next tab stop -- so tabs-for-depth doesn't apply cleanly, and
+  ;; the community (including Emacs's own source tree) indents with spaces.
+  (defun my/elisp-set-indent-tabs-mode ()
+    (setq indent-tabs-mode nil))
+  :hook (emacs-lisp-mode . my/elisp-set-indent-tabs-mode))
 
 ;;;; Text and writing modes
 
