@@ -702,6 +702,21 @@
     "Face-remap cookie for this buffer's serif override of `variable-pitch',
 or nil when showing the default (sans-serif) family.")
 
+  (defun my/variable-pitch-line-spacing ()
+    "Set this buffer's `line-spacing' to match its variable-pitch state.
+XCharter (serif) is a book/text serif designed for generous leading and
+has a smaller x-height than Inter, so it needs more extra leading; the
+frame default (when not showing variable-pitch text) is tuned against
+JetBrainsMono and applies to neither.
+
+`variable-pitch-mode' is a thin wrapper around `buffer-face-mode' with
+`buffer-face-mode-face' fixed at `variable-pitch' -- there's no
+`variable-pitch-mode' variable or hook to key off of, so check the
+underlying mode and face instead."
+    (if (and buffer-face-mode (eq buffer-face-mode-face 'variable-pitch))
+        (setq-local line-spacing (if my/variable-pitch-serif-cookie 0.3 0.2))
+      (kill-local-variable 'line-spacing)))
+
   (defun my/variable-pitch-serif ()
     "Show this buffer's variable-pitch text in XCharter (serif) rather
 than the default Inter (sans-serif)."
@@ -712,21 +727,24 @@ than the default Inter (sans-serif)."
             ;; `OS/2.sxHeight' normalized by `head.unitsPerEm': XCharter
             ;; 481/1000 = 48.10%, Inter 1118/2048 = 54.59%.  Scale up to
             ;; match Inter's perceived size: 54.59/48.10 = 1.135.
-            (face-remap-add-relative 'variable-pitch :family "XCharter" :height 1.135))))
+            (face-remap-add-relative 'variable-pitch :family "XCharter" :height 1.135)))
+    (my/variable-pitch-line-spacing))
 
   (defun my/variable-pitch-sans ()
     "Show this buffer's variable-pitch text in the default Inter (sans-serif)."
     (interactive)
     (when my/variable-pitch-serif-cookie
       (face-remap-remove-relative my/variable-pitch-serif-cookie)
-      (setq my/variable-pitch-serif-cookie nil)))
+      (setq my/variable-pitch-serif-cookie nil))
+    (my/variable-pitch-line-spacing))
 
   (defun my/variable-pitch-toggle-serif ()
     "Toggle this buffer's variable-pitch face between serif and sans-serif."
     (interactive)
     (if my/variable-pitch-serif-cookie
         (my/variable-pitch-sans)
-      (my/variable-pitch-serif))))
+      (my/variable-pitch-serif)))
+  :hook (buffer-face-mode . my/variable-pitch-line-spacing))
 
 (use-package winner
   :custom
