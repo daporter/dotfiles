@@ -22,9 +22,13 @@ equivalent toggle in nwg-look's UI, don't just hand-edit it again.
 ## What's _not_ here
 
 - FreeType interpreter version (`FREETYPE_PROPERTIES=truetype:interpreter-version=...`)
-  is a FreeType env var, not expressible in fontconfig's XML — it's set in
-  `hyprland/.config/hypr/hyprland.lua` alongside the other font-relevant env
-  vars (`GDK_SCALE`, `QT_SCALE_FACTOR`, etc.).
+  is a FreeType env var, not expressible in fontconfig's XML, so it would go
+  in `hyprland/.config/hypr/hyprland.lua` alongside the other font-relevant
+  env vars (`GDK_SCALE`, `QT_SCALE_FACTOR`, etc.) if it were ever needed.
+  It was tried (pinned to the old `38` engine) but measured pixel-identical
+  to FreeType's own default under `hintstyle=hintslight`, so it's left
+  unset rather than pinned for no effect — only worth revisiting if
+  `hintstyle` here ever changes away from `hintslight`.
 - Family substitution/preference (`45-latin.conf`, `60-latin.conf`) and font
   selection quirks (`80-condensed-large-dejavu.conf`) are unrelated to
   rendering and follow the numeric convention in `conf.d/README`.
