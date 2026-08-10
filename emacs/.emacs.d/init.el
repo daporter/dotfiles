@@ -162,9 +162,12 @@
                #'pop-to-buffer))
       (funcall pgm)))
   :hook ((after-init . column-number-mode))
+  :custom
+  (duplicate-line-final-position 1)     ; point follows the duplicate
   :bind (("C-*" . undo-redo)             ; i.e., C-S-/ since undo is C-/
          ("C-z" . undo)                  ; was suspend-frame, never used
-         ("C-S-z" . undo-redo)))         ; matches redo in non-Emacs apps
+         ("C-S-z" . undo-redo)           ; matches redo in non-Emacs apps
+         ("C-\"" . duplicate-dwim)))
 
 (use-package minibuffer
   :custom
@@ -930,6 +933,9 @@ than the default Inter (sans-serif)."
 (use-package newcomment
   :custom
   (comment-style 'extra-line))
+
+(use-package misc
+  :bind ("C-c c" . copy-from-above-command))
 
 (use-package isearch
   :preface
