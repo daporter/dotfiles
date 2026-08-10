@@ -90,7 +90,8 @@ tooltip label {
 #idle_inhibitor,
 #pulseaudio,
 #cpu,
-#memory {
+#memory,
+#systemd-failed-units {
   color: @fg1;
   padding: 2px 12px;
 }
@@ -125,6 +126,10 @@ tooltip label {
 
 #custom-mail.unread {
   color: @blue;
+}
+
+#systemd-failed-units.degraded {
+  color: @red;
 }
 
 #tray > .passive {

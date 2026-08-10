@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# Show systemctl status (incl. recent log lines) for every failed
+# system and user unit. Used by waybar's systemd-failed-units on-click.
+
+{
+	systemctl --failed --no-legend --plain | awk '{print $1}' \
+		| xargs -r -I{} systemctl status --no-pager {}
+	systemctl --user --failed --no-legend --plain | awk '{print $1}' \
+		| xargs -r -I{} systemctl --user status --no-pager {}
+} | less

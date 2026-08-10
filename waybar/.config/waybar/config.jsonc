@@ -87,7 +87,9 @@
   "systemd-failed-units": {
     "format": "✗ {nr_failed}",
     "hide-on-ok": true,
-    "tooltip-format": "{system_state} / {user_state}\n{failed_units_list}"
+    "tooltip-format": "{system_state} / {user_state}\n{failed_units_list}",
+    "on-click": "ghostty --title=systemd-failed -e systemd-failed-status",
+    "on-click-right": "systemctl reset-failed; systemctl --user reset-failed"
   },
 
   "custom/clipboard": {
