@@ -1110,7 +1110,7 @@ that."
   :after project
   :custom
   (beframe-global-buffers '("^\\*scratch\\*$" "^\\*Messages\\*$"
-                             "^\\*Backtrace\\*$" "^\\*Warnings\\*$"))
+                            "^\\*Backtrace\\*$" "^\\*Warnings\\*$"))
   ;; Run `project-prompt-project-dir' (the directory prompt that
   ;; `project-switch-project' reads from) in a new frame, so every
   ;; project switch lands in its own frame. See beframe's "Features of
