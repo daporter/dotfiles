@@ -29,6 +29,10 @@
   (use-package-minimum-reported-time 0)
   (use-package-enable-imenu-support t))
 
+(use-package package-vc
+  :custom
+  (package-vc-allow-build-commands t))
+
 (use-package emacs
   :preface
   ;; Add prompt indicator to `completing-read-multiple'.  We display
@@ -478,7 +482,7 @@
   (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
   (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'reader-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
 (use-package which-key
@@ -1615,18 +1619,9 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 
 ;;;; Documents and notes
 
-(use-package pdf-tools
-  :ensure t
-  :magic ("%PDF" . pdf-view-mode)
-  :hook
-  ((pdf-view-mode . pdf-history-minor-mode)
-   (pdf-view-mode . pdf-view-fit-page-to-window)
-   (pdf-view-mode . pdf-view-auto-slice-minor-mode)
-   (pdf-view-mode . pdf-view-midnight-minor-mode))
-  :custom
-  (pdf-view-midnight-colors '("#ffffff" . "#121212"))
-  :config
-  (pdf-loader-install))
+(use-package reader
+  :vc (:url "https://codeberg.org/MonadicSheep/emacs-reader"
+            :make "clean all"))
 
 ;; Plain markdown notes (no denote/org-roam): find/search them recursively
 ;; with consult's own consult-fd/consult-ripgrep, rather than consult-notes'
@@ -1861,7 +1856,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  nerd-icons-completion nerd-icons-corfu nerd-icons-dired
                  nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref
                  olivetti orderless org-anki org-modern
-                 page-break-lines pcmpl-args pdf-tools popper prescient
-                 project python-mode shannon-max string-inflection
+                 page-break-lines pcmpl-args popper prescient
+                 project python-mode reader shannon-max string-inflection
                  titlecase tramp unfill vertico vertico-prescient
                  visual-fill-column vterm)))
