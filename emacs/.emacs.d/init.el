@@ -1159,6 +1159,43 @@ that."
              project-switch-project
              project-switch-project-open-file))
 
+(use-package beframe
+  :ensure t
+  :after project
+  :custom
+  (beframe-global-buffers '("^\\*scratch\\*$" "^\\*Messages\\*$"
+                             "^\\*Backtrace\\*$" "^\\*Warnings\\*$"))
+  ;; Run `project-prompt-project-dir' (the directory prompt that
+  ;; `project-switch-project' reads from) in a new frame, so every
+  ;; project switch lands in its own frame. See beframe's "Features of
+  ;; beframe-mode" manual node for this as the recommended hook point.
+  (beframe-functions-in-frames '(project-prompt-project-dir))
+  :bind
+  (:map global-map
+        ("C-c b" . beframe-prefix-map))
+  :config
+  (beframe-mode 1)
+  (defvar consult-buffer-sources)
+  (declare-function consult--buffer-state "consult")
+  (with-eval-after-load 'consult
+    (defface beframe-buffer '((t :inherit font-lock-string-face))
+      "Face for `consult' framed buffers."
+      :group 'beframe)
+    (defun my/beframe-buffer-names-sorted (&optional frame)
+      "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+With optional argument FRAME, return the list of buffers of FRAME."
+      (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+    (defvar beframe-consult-source
+      `( :name     "Frame-specific buffers (current frame)"
+         :narrow   ?F
+         :category buffer
+         :face     beframe-buffer
+         :history  beframe-history
+         :items    ,#'my/beframe-buffer-names-sorted
+         :action   ,#'switch-to-buffer
+         :state    ,#'consult--buffer-state))
+    (add-to-list 'consult-buffer-sources 'beframe-consult-source)))
+
 (use-package autorevert
   :custom
   ;; Whenever the disk state changes, Emacs should update as well.
