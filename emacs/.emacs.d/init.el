@@ -1101,7 +1101,8 @@ that."
 
   :config
   (add-hook 'dired-mode-hook 'hl-line-mode)
-  (add-hook 'dired-mode-hook 'dired-async-mode))
+  (add-hook 'dired-mode-hook 'dired-async-mode)
+  (add-hook 'dired-mode-hook 'dired-hide-details-mode))
 
 (use-package project
   :commands (project-find-file
