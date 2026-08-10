@@ -11,7 +11,6 @@
     "keyboard-state",
     "idle_inhibitor",
     "pulseaudio",
-    "network",
     "cpu",
     "memory",
     "tray",
@@ -62,21 +61,6 @@
     },
     "scroll-step": 5,
     "on-click": "pavucontrol"
-  },
-
-  "network": {
-    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
-    "format": "{icon}",
-    "format-wifi": " {essid} ({signalStrength}%)",
-    "format-ethernet": "󰛳 {ipaddr}",
-    "format-linked": " {ifname} (No IP)",
-    "format-disconnected": "󰤮",
-    "format-alt": "{ifname}: {ipaddr}/{cidr}",
-    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-    "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-    "tooltip-format-disconnected": "Disconnected",
-    "interval": 3,
-    "on-click": "ghostty --title=btop -e btop"
   },
 
   "cpu": {

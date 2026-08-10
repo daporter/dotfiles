@@ -88,7 +88,6 @@ tooltip label {
 #keyboard-state,
 #idle_inhibitor,
 #pulseaudio,
-#network,
 #cpu,
 #memory {
   color: @fg1;
@@ -121,10 +120,6 @@ tooltip label {
 
 #pulseaudio.muted {
   color: @bg1;
-}
-
-#network.disconnected {
-  color: @red;
 }
 
 #custom-mail.unread {
