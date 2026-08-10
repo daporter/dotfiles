@@ -1848,12 +1848,13 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 ;; avoid looking unused.
 (custom-set-variables
  '(package-selected-packages
-   '(agent-shell apheleia auto-compile cape captain
+   '(agent-shell apheleia auto-compile beframe cape captain
                  casual-suite consult consult-notmuch corfu
                  corfu-prescient csv-mode
                  dape doric-themes eglot embark
                  embark-consult flymake flymake-hledger
-                 flymake-lua flymake-markdownlint flymake-yamllint fontaine
+                 flymake-lua flymake-markdownlint flymake-vale
+                 flymake-yamllint fontaine
                  ghostel hl-todo hledger-mode hyprlang-ts-mode ledger-mode
                  ligature lorem-ipsum lua-mode magit marginalia
                  markdown-mode nerd-icons
