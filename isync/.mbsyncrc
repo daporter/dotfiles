@@ -20,7 +20,7 @@ SubFolders Verbatim
 Channel gmail
 Far :gmail-remote:
 Near :gmail-local:
-Patterns *
+Patterns * !emacs-humanities
 Create Both
 SyncState *
 Expunge Both
