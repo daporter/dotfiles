@@ -33,6 +33,7 @@ folder_explicit_list =
     gmail/emacs-humanities
     gmail/emacs-paris
     gmail/great-conversation
+    gmail/backup-reports
 folder_transforms =
     gmail/[Gmail]/Bin:deleted
     gmail/[Gmail]/Drafts:draft
@@ -42,6 +43,7 @@ folder_transforms =
     gmail/emacs-humanities:emacs-humanities
     gmail/emacs-paris:emacs-paris
     gmail/great-conversation:great-conversation
+    gmail/backup-reports:backup-reports
 
 # Remove the “new” tag and add the “inbox” tag to any message that isn’t
 # spam.
