@@ -33,9 +33,6 @@ notmuch tag -inbox +lists +list/great-conversation \
 	-- to:great-conversation@googlegroups.com \
 	   or to:GreatConversation@yahoogroups.com
 
-notmuch tag -inbox +lists +list/emacs-humanities \
-	-- from:emacs-humanities@gnu.org or to:emacs-humanities@gnu.org
-
 # Quoting is needed to ensure “~” is interpreted literally.
 notmuch tag -inbox +lists +list/emacs-paris \
 	-- 'from:"~bzg/emacsfr@lists.sr.ht"' or 'to:"~bzg/emacsfr@lists.sr.ht"'

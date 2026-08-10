@@ -30,7 +30,6 @@ folder_explicit_list =
     "gmail/[Gmail]/Sent Mail"
     gmail/[Gmail]/Spam
     gmail/[Gmail]/Starred
-    gmail/emacs-humanities
     gmail/emacs-paris
     gmail/great-conversation
     gmail/backup-reports
@@ -40,7 +39,6 @@ folder_transforms =
     "gmail/[Gmail]/Sent Mail":sent
     gmail/[Gmail]/Spam:spam
     gmail/[Gmail]/Starred:flagged
-    gmail/emacs-humanities:emacs-humanities
     gmail/emacs-paris:emacs-paris
     gmail/great-conversation:great-conversation
     gmail/backup-reports:backup-reports

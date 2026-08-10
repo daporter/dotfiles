@@ -1594,7 +1594,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
      (:name "All mail"           :query "*"                              :key "a"   :sort-order newest-first)
      (:name "Deleted"            :query "tag:deleted"                    :key "D")
      (:name "Backup reports"     :query "tag:backup-reports"             :key "b")
-     (:name "emacs-humanities"   :query "tag:list/emacs-humanities"      :key "leh" :count-query "tag:list/emacs-humanities and tag:unread")
      (:name "emacs-paris"        :query "tag:list/emacs-paris"           :key "lep" :count-query "tag:list/emacs-paris and tag:unread")
      (:name "great-conversation" :query "tag:list/great-conversation"    :key "lg"  :count-query "tag:list/great-conversation and tag:unread")))
   (notmuch-archive-tags '("-inbox"))
