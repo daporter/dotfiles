@@ -1813,7 +1813,11 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (Man-notify-method 'aggressive))
 
 (use-package saveplace
-  :init (save-place-mode 1))
+  :init (save-place-mode 1)
+  :config
+  ;; Always land on the first file entry in Dired instead of restoring
+  ;; wherever point was last left in that directory.
+  (remove-hook 'dired-initial-position-hook #'save-place-dired-hook))
 
 (use-package savehist
   :hook (after-init))
