@@ -1597,7 +1597,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
      (:name "emacs-paris"        :query "tag:list/emacs-paris"           :key "lep" :count-query "tag:list/emacs-paris and tag:unread")
      (:name "great-conversation" :query "tag:list/great-conversation"    :key "lg"  :count-query "tag:list/great-conversation and tag:unread")))
   (notmuch-archive-tags '("-inbox"))
-  (notmuch-draft-folder "Drafts")
+  (notmuch-draft-folder "gmail/[Gmail]/Drafts")
   (notmuch-tagging-keys
    '(("r" notmuch-show-mark-read-tags "Mark read")
      ("f" ("+flagged") "Flag")
@@ -1606,8 +1606,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (notmuch-tag-formats '(("starred" tag))) ; Show the tag name, not an icon
   (notmuch-mua-user-agent-function #'notmuch-mua-user-agent-full)
 
-  (notmuch-fcc-dirs
-   '(("david@daporter.net" . "gmail/\"[Gmail]/Sent Mail\"")))
+  (notmuch-fcc-dirs "\"gmail/[Gmail]/Sent Mail\"")
 
   :config
   (add-hook 'notmuch-message-mode-hook #'turn-off-auto-fill)
