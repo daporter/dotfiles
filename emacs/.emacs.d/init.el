@@ -138,14 +138,12 @@
 
 ;;;; Core editing primitives
 
-;; Indentation policy: tabs for indentation, spaces for alignment.  We rely
-;; on `indent-tabs-mode''s own factory default (t) rather than restating
-;; it -- `indent-to' (the primitive behind every mode's indent function)
-;; already emits tabs up to the nearest tab stop and spaces for the
-;; remainder whenever it's non-nil, so the split is native.  Modes with a
-;; hard requirement for spaces override it locally (`elisp-mode',
+;; Indentation policy: tabs for indentation, spaces for alignment, via
+;; `indent-tabs-mode''s factory default (t) -- `indent-to' already emits
+;; tabs then spaces when it's non-nil, so no restating is needed.  Modes
+;; with a hard requirement for spaces override it locally (`elisp-mode',
 ;; `python-mode', `yaml-ts-mode'); modes that require tabs (`make-mode')
-;; already match the default and need no override.
+;; already match the default.
 
 (use-package simple
   :preface
@@ -293,11 +291,9 @@
 
 (use-package embark
   :ensure t
-  ;; C-. can be seen as a right-click context menu at point and M-. as
-  ;; left-click.  The keybindings are mnemonic, both acting at point (.).  By
-  ;; default, M-. is bound to xref-find-definitions, but overwriting it here is
-  ;; reasonable since embark-dwim acts like xref-find-definitions on the symbol
-  ;; at point.
+  ;; C-./M-. mirror right-click/left-click context menus at point (mnemonic:
+  ;; both act at point).  Overwriting the default M-. (xref-find-definitions)
+  ;; is fine since embark-dwim does the same thing on the symbol at point.
   :bind (("C-."   . embark-act)
          ("M-."   . embark-dwim)
          ("C-h B" . embark-bindings))
@@ -363,25 +359,19 @@
   :custom
   (corfu-cycle t)
   :custom-face
-  ;; `corfu-default' has no explicit `:family', so it normally falls
-  ;; through to whatever the `default' face resolves to in the buffer
-  ;; being completed in.  `corfu--make-buffer' copies that buffer's
-  ;; `face-remapping-alist' into the popup buffer, and `variable-pitch-mode'
-  ;; (hooked into `markdown-mode'/`org-mode') remaps `default' to the
-  ;; proportional `variable-pitch' face -- which breaks the popup's
-  ;; column-padding math, since it pads by character count and assumes a
-  ;; fixed-width font.  Force a fixed-pitch family directly on
-  ;; `corfu-default' so it's immune to that remap.
+  ;; `corfu-default' has no explicit `:family', so it inherits whatever
+  ;; `default' resolves to -- and `variable-pitch-mode' (markdown-mode/
+  ;; org-mode) remaps `default' to a proportional face, breaking the
+  ;; popup's character-count-based column padding.  Force a fixed-pitch
+  ;; family directly here so it's immune to that remap.
   (corfu-default ((t (:inherit fixed-pitch))))
   ;; `corfu-annotations' inherits `completions-annotations', which
-  ;; modus-themes recolors to its `docstring' palette color -- a
-  ;; saturated blue nearly as prominent as the candidate text.  Send it
-  ;; to `vertical-border' instead -- see the comment on the `text' kind
-  ;; in `nerd-icons-corfu-mapping' below for why not plain `shadow' --
-  ;; so the source annotation ("Dabbrev"/"Dict"/...) reads as secondary,
-  ;; while keeping the italic slant as a lighter-weight cue.  Scoped to
-  ;; this face rather than `completions-annotations' itself, which is
-  ;; also used outside Corfu (e.g. the `*Completions*' buffer).
+  ;; modus-themes recolors to a saturated blue nearly as prominent as the
+  ;; candidate text; send it to `vertical-border' instead so the source
+  ;; annotation reads as secondary (see the `nerd-icons-corfu-mapping'
+  ;; comment below for why not plain `shadow').  Scoped to this face
+  ;; rather than `completions-annotations' itself, which is also used
+  ;; outside Corfu (e.g. the `*Completions*' buffer).
   (corfu-annotations ((t (:inherit (vertical-border italic)))))
   (corfu-popupinfo ((t (:inherit corfu-default :height 0.9))))
   :hook
@@ -430,32 +420,14 @@
   ;; theme's own `success' face instead so it adapts with the theme.
   (completion-preview-exact ((t (:underline nil :inherit success)))))
 
-;; Some notes on CAPFs.
-;;
-;; (See: https://www.reddit.com/r/emacs/comments/td0nth/comment/i0i8hi7/?context=3&share_id=CfzOVcILIBvpQKfRmTanK)
-;;
-;; You've always been able to add multiple CAPFs to the variable
-;; `completion-at-point-functions'.  This isn't CAPE-specific (other than the
-;; fact that CAPE provides a few simple CAPFs for easy use).  But this
-;; "multi-CAPF" setup may not function like you expect.  The reason is that CAPF
-;; completion is a two-step process.
-;;
-;; Step 1: Each CAPF on the list is asked first whether it can complete at this
-;; location.  So if you are in a string, a CAPF might say "no, I can't complete
-;; in strings", and just return nil.  The first CAPF on the list to say it can
-;; in principle provide some completions "wins".  But it hasn't yet actually
-;; checked for completions!
-;;
-;; Step 2: The winning CAPF is asked for the completions at point.  But maybe it
-;; returns no completions at all!  If so, completion is over.
-;;
-;; This is fine if, say; the first CAPF on your list works outside of strings,
-;; and the next works inside of strings; they'll dovetail nicely.  But what if
-;; they both work "in the same place"?  CAPFs can themselves set a property
-;; `:exclusive 'no', which means "if Step 2 fails, go back to Step 1" and try
-;; the next CAPF, but in practice none do, since Emacs has some bugs related to
-;; this.  To me it's strange to let the CAPFs themselves decide this; this
-;; should be a user choice.  Cape makes that possible.
+;; Note on CAPFs: completion is two-step -- each entry on
+;; `completion-at-point-functions' is first asked only whether it *can*
+;; complete here, and the first to say yes "wins" before being asked for
+;; actual completions; if that CAPF then returns none, completion just
+;; ends rather than falling back to the next one.  `:exclusive 'no' exists
+;; to opt into that fallback, but nothing sets it in practice, so list
+;; CAPFs in an order where they don't compete for the same context.
+;; (https://www.reddit.com/r/emacs/comments/td0nth/comment/i0i8hi7/?context=3&share_id=CfzOVcILIBvpQKfRmTanK)
 (use-package cape
   :ensure t
   :preface
@@ -467,23 +439,19 @@
     (add-hook 'completion-at-point-functions 'my/eshell-capf nil t))
   :bind ("C-c p" . cape-prefix-map)
   :custom
-  ;; `cape-dict' greps `cape-dict-file' for the input as a *substring*
-  ;; (not anchored to word-start), then caps the hits at this limit
-  ;; before Emacs's own prefix-filtering runs.  `/usr/share/dict/words'
-  ;; is sorted alphabetically, not by frequency, so the default limit
-  ;; of 100 is routinely exhausted by words that merely contain the
-  ;; input mid-word (e.g. "afterword" for "wor") before grep ever
-  ;; reaches real prefix matches ("word", "work", "world") -- leaving
-  ;; zero surviving candidates.  Uncapped, this is still <10ms for a
-  ;; typical prefix against a ~124k-line dictionary; completion here is
-  ;; manually triggered (`corfu-auto' is off), so there's no per-keystroke
-  ;; cost to worry about.
+  ;; `cape-dict' greps `cape-dict-file' for the input as a substring (not
+  ;; anchored to word-start), then caps hits at this limit before Emacs's
+  ;; prefix-filtering runs -- since the dictionary is alphabetical, not
+  ;; frequency-sorted, the default 100 is routinely exhausted by mid-word
+  ;; matches before real prefix matches are reached.  Uncapped is still
+  ;; <10ms here since completion is manually triggered (`corfu-auto' is
+  ;; off), so there's no per-keystroke cost.
   (cape-dict-limit nil)
   :init
-  ;; Add to the global default value of `completion-at-point-functions', which
-  ;; is used by `completion-at-point'.  The order of the functions matters: the
-  ;; first function returning a result wins.  Note that the list of buffer-local
-  ;; completion functions takes precedence over the global list.
+  ;; Add to the global default of `completion-at-point-functions' (used by
+  ;; `completion-at-point'); order matters since the first function to
+  ;; return a result wins.  Buffer-local completion functions take
+  ;; precedence over this global list.
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   :hook
@@ -534,15 +502,12 @@
   :ensure t
   :after corfu
   :init
-  ;; The bundled mapping colors the `text' kind -- used by `cape-dabbrev'
-  ;; and `cape-dict', so it's what shows for most prose completion -- with
-  ;; `font-lock-doc-face', a saturated color about as prominent as the
-  ;; candidate text itself.  Dim it so the icon reads as secondary
-  ;; metadata, matching the `corfu-annotations' treatment below.  Borrows
-  ;; `vertical-border' rather than `shadow': in this theme `shadow'
-  ;; resolves to the same color as the `fg-dim' palette entry, which
-  ;; still isn't very dim, whereas `vertical-border' -- window dividers,
-  ;; nothing else -- sits on modus-themes' quietest named gray (`border').
+  ;; The bundled mapping colors the `text' kind (used by `cape-dabbrev'/
+  ;; `cape-dict', so most prose completions) with `font-lock-doc-face', as
+  ;; prominent as the candidate text -- dim it to match the
+  ;; `corfu-annotations' treatment above.  Uses `vertical-border' rather
+  ;; than `shadow', which in this theme isn't actually very dim;
+  ;; `vertical-border' sits on modus-themes' quietest gray (`border').
   (setq nerd-icons-corfu-mapping
         (let ((mapping (copy-tree nerd-icons-corfu-mapping)))
           (plist-put (alist-get 'text mapping) :face 'vertical-border)
@@ -594,18 +559,14 @@
            :default-family "JetBrainsMono Nerd Font Mono"
            :default-height 100
 
-           ;; Without this, `fixed-pitch' has no height of its own and
-           ;; inherits whatever `default' resolves to in the current
-           ;; buffer.  That's fine normally, but `variable-pitch-mode'
-           ;; (markdown-mode/org-mode) remaps `default' to a scaled-up
-           ;; variable-pitch face, and fixed-pitch text silently inflates
-           ;; along with it -- measured via `font-info' in a markdown
-           ;; buffer, code text was requesting 15px instead of the frame's
-           ;; true 13px.  An absolute height (not a relative float) is used
-           ;; as-is regardless of what `default' remaps to, so this anchors
-           ;; fixed-pitch back to the frame default everywhere.  Same bug
-           ;; class as the `corfu-default' fix above, just for `:height'
-           ;; instead of `:family'.
+           ;; Without this, `fixed-pitch' inherits whatever `default'
+           ;; resolves to, and `variable-pitch-mode' (markdown-mode/org-mode)
+           ;; remaps `default' to a scaled-up face -- fixed-pitch text
+           ;; silently inflated along with it (measured: 15px instead of
+           ;; the frame's true 13px).  An absolute height ignores that
+           ;; remap, anchoring fixed-pitch to the frame default everywhere;
+           ;; same bug class as the `corfu-default' `:family' fix above,
+           ;; just for `:height'.
            :fixed-pitch-height 100
 
            ;; Same gap as `fixed-pitch' above -- unused today (nothing in
@@ -635,34 +596,23 @@
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))
 
 (use-package modus-themes
-  ;; The themes ship with Emacs but live in `etc/themes' (on
-  ;; `custom-theme-load-path', not `load-path'), so there is no
-  ;; `modus-themes' library on `load-path' to require normally -- load it
-  ;; with `require-theme' instead, and skip use-package's implicit
-  ;; require.  This must happen in `:preface', not `:init': use-package's
-  ;; canonical keyword order runs `:init' after `:preface', and `:config'
-  ;; (which sets the options below) needs the library already loaded.
-  ;; `:preface' forms are wrapped in `eval-and-compile' and run before
-  ;; everything else, so this also works when evaluating this form in
-  ;; isolation (e.g. `C-M-x'), not just on a full file load.
+  ;; The themes ship in `etc/themes' (on `custom-theme-load-path', not
+  ;; `load-path'), so load with `require-theme' instead of use-package's
+  ;; implicit require.  Must happen in `:preface' (wrapped in
+  ;; `eval-and-compile', runs before `:init'/`:config') so the library is
+  ;; loaded before `:config' sets the options below, including when
+  ;; evaluating this form in isolation (e.g. `C-M-x').
   :preface
   (require-theme 'modus-themes)
   :no-require t
-  ;; Set options with plain `setq' in `:config', not use-package's
-  ;; `:custom': `:custom' registers values under an internal
-  ;; `use-package' custom theme (see `custom-known-themes'), and Custom
-  ;; replays a theme's *raw, unevaluated* value forms via `eval' whenever
-  ;; it reprocesses a variable (e.g. when `enable-theme' runs during a
-  ;; later `modus-themes-load-theme' call, or when this library is
-  ;; reloaded).  For `modus-themes-common-palette-overrides' below, whose
-  ;; value is a bare reference to `modus-themes-preset-overrides-faint',
-  ;; that replay can land *before* modus-themes.el has (re)defined the
-  ;; preset variable, raising a void-variable error.  `setq' never
-  ;; touches the Custom/theme system, so it doesn't have this hazard --
-  ;; this matches the setup shown in the modus-themes manual.  Options
-  ;; must be set before the theme is loaded, and `modus-themes-load-theme'
-  ;; is preferred over `load-theme' -- it disables conflicting themes and
-  ;; runs hooks.
+  ;; Use plain `setq' here, not use-package's `:custom': Custom replays a
+  ;; variable's raw, unevaluated form via `eval' whenever it reprocesses
+  ;; it (e.g. on a later `enable-theme'), and for
+  ;; `modus-themes-common-palette-overrides' below that can run before its
+  ;; preset variable is (re)defined, raising a void-variable error.
+  ;; Options must be set before the theme loads; prefer
+  ;; `modus-themes-load-theme' over `load-theme' since it also disables
+  ;; conflicting themes and runs hooks.
   :config
   (setq modus-themes-bold-constructs t)
   (setq modus-themes-italic-constructs t)
@@ -1028,16 +978,12 @@ that."
   ;; once tabs are the default -- so only genuinely wrong whitespace is
   ;; highlighted by default.
   (whitespace-style '(face indentation trailing empty missing-newline-at-eof))
-  ;; `my/whitespace-toggle-chars' (bound in `my/dispatch-menu') layers on
-  ;; `tabs tab-mark spaces space-mark' to mark every tab/space character,
-  ;; correct or not.  `tab-mark''s glyph deliberately has no face of its
-  ;; own (see `whitespace-display-char-on', which omits one so as not to
-  ;; obstruct the `tabs'/`spaces' styling), so without `tabs' supplying
-  ;; `whitespace-tab' via font-lock, the glyph falls back to Emacs's
-  ;; `escape-glyph' face -- a strong warning red in this theme.  Pairing
-  ;; `tabs' with `tab-mark' (and `spaces' with `space-mark') routes the
-  ;; glyph through `whitespace-tab', set to `shadow' below so it reads as
-  ;; a quiet indicator, not a warning; same for SPACEs.
+  ;; `my/whitespace-toggle-chars' (bound in `my/dispatch-menu') layers
+  ;; `tabs tab-mark spaces space-mark' on top of this to mark every
+  ;; tab/space character, not just wrong ones.  `tab-mark' has no face of
+  ;; its own, so without `tabs' supplying `whitespace-tab' it'd fall back
+  ;; to the alarming `escape-glyph' face; pairing them routes it through
+  ;; `whitespace-tab' (set to `shadow' below) instead, same for spaces.
   :custom-face
   (whitespace-tab ((t (:inherit shadow))))
   (whitespace-space ((t (:inherit shadow))))
@@ -1475,17 +1421,14 @@ With optional argument FRAME, return the list of buffers of FRAME."
 (use-package text-mode
   :preface
   (defun my/text-mode-capf ()
-    ;; `cape-wrap-super' (not the curried `cape-capf-super') because this
+    ;; `cape-wrap-super' (not the curried `cape-capf-super') since this
     ;; function is itself used directly as a `completion-at-point-functions'
-    ;; entry: it must return completion data `(beg end table . plist)' right
-    ;; now, not another capf function for something else to call later.
-    ;; Returning a bare function here structurally satisfies Corfu's
-    ;; `(,beg ,end ,table . ,plist)' pcase match (an interpreted closure is
-    ;; itself a list) but fails the `integer-or-marker-p' sanity check on
-    ;; BEG, so Corfu silently treats it as "no completions" and falls
-    ;; through to the plain `cape-dabbrev' entry added globally in the
-    ;; `cape' package below -- which is why only dabbrev candidates ever
-    ;; appeared.
+    ;; entry, so it must return completion data now rather than a capf for
+    ;; something else to call later.  A bare function here structurally
+    ;; matches Corfu's pcase pattern but fails its `integer-or-marker-p'
+    ;; check on BEG, so Corfu silently falls through to the plain
+    ;; `cape-dabbrev' entry below -- which is why only dabbrev candidates
+    ;; used to appear.
     (cape-wrap-super #'cape-dabbrev #'cape-dict))
   (defun my/text-mode-add-completions ()
     (add-hook 'completion-at-point-functions #'my/text-mode-capf nil t))
@@ -1619,17 +1562,9 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (message-sendmail-envelope-from 'header)
   (mail-envelope-from 'header))
 
-;; From the Notmuch documentation:
-;;
-;;   Due to the dependency on the command line interface, the Notmuch
-;;   Emacs interface version must be compatible with the Notmuch
-;;   version. On Linux, the easiest way to ensure this is to use the
-;;   package(s) in your distribution's package repository.
-;;
-;;   It is not recommended to install Notmuch Emacs from the Emacs
-;;   Lisp Package Archive (ELPA), as the version there is likely not
-;;   in sync with the command line interface.
-;;
+;; The Notmuch Emacs interface must match the installed `notmuch' CLI
+;; version, so load it from the distro package's site-lisp rather than a
+;; possibly out-of-sync ELPA/MELPA build.
 (use-package notmuch
   :load-path "/usr/share/emacs/site-lisp"
   :commands notmuch
@@ -1898,26 +1833,19 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :hook
   (after-init . shannon-max-start-logger))
 
-;; `package-autoremove' deletes every installed package that is neither
-;; named here nor a dependency of one that is.  package.el records a
-;; package here only when it installs it, and `use-package' :ensure
-;; installs only when the package is missing, so the list drifts out of
-;; step with this file and autoremove starts offering to delete things
-;; that are in use.  Declare it by hand instead.  Must run after
-;; `custom-file' is loaded, which also sets this variable.
+;; `package-autoremove' deletes every installed package neither named here
+;; nor a dependency of one that is; since `use-package' :ensure only
+;; installs when a package is missing, this list drifts from the file over
+;; time and autoremove starts offering to delete things still in use.
+;; Declare it by hand instead -- via Custom, not `setq' (which
+;; `enable-theme' would silently overwrite on every theme load below) --
+;; and after `custom-file' is loaded, which also sets this variable.
 ;;
-;; `setq' would not survive: `custom-file' records the value in the
-;; `user' theme, and every `load-theme' below runs `enable-theme', which
-;; recalculates themed variables and would restore the stored value.
-;; Going through Custom overrides that entry instead.
-;;
-;; eglot, flymake, project and tramp are here because they are ELPA
-;; upgrades of built-ins (see `package-install-upgrade-built-in' above);
-;; dropping them would delete the upgrade and silently fall back to the
-;; bundled version. auto-compile is here because nothing else depends
-;; on it -- it's only `require'd directly, by early-init.el -- so
-;; without a manual entry it would drop out on every save and become a
-;; package-autoremove target despite being in active use.
+;; eglot, flymake, project and tramp are ELPA upgrades of built-ins (see
+;; `package-install-upgrade-built-in' above) that autoremove would
+;; otherwise delete; auto-compile is `require'd directly by early-init.el
+;; rather than via `use-package', so it needs the same manual entry to
+;; avoid looking unused.
 (custom-set-variables
  '(package-selected-packages
    '(agent-shell apheleia auto-compile cape captain
