@@ -70,15 +70,22 @@ log_fail() {
 send_report() {
 	local SUBJECT="$1"
 	command -v sendmail >/dev/null 2>&1 || return 0
-	if ! {
-		printf 'To: %s\n' "$EMAIL_TO"
-		printf 'Subject: %s\n' "$SUBJECT"
-		printf 'Content-Type: text/plain; charset=UTF-8\n'
-		printf '\n'
-		sed 's/\x1b\[[0-9;]*m//g' "$TMP_LOG"
-	} | sendmail -t; then
-		log_fail "Failed to email report"
-	fi
+	# Retry: a WakeSystem= run can start before Wi-Fi/DNS has reconnected
+	# after resume, so give it a couple of minutes to come back.
+	local ATTEMPT
+	for ATTEMPT in 1 2 3 4 5; do
+		if {
+			printf 'To: %s\n' "$EMAIL_TO"
+			printf 'Subject: %s\n' "$SUBJECT"
+			printf 'Content-Type: text/plain; charset=UTF-8\n'
+			printf '\n'
+			sed 's/\x1b\[[0-9;]*m//g' "$TMP_LOG"
+		} | sendmail -t; then
+			return 0
+		fi
+		sleep 15
+	done
+	log_fail "Failed to email report"
 }
 
 fail() {

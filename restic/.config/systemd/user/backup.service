@@ -11,3 +11,8 @@ ExecStart=%h/bin/backup.sh daily
 # 1Password or answer a pinentry prompt on a gpg-agent cache miss.
 Environment="RESTIC_REPOSITORY=/mnt/restic"
 Environment="RESTIC_PASSWORD_FILE=%h/.config/restic/password"
+# restic.sh's `import-environment` puts RESTIC_PASSWORD_COMMAND in the
+# systemd --user manager's global environment; Environment= above can't
+# override it, so it must be explicitly unset here or restic sees both
+# password sources and refuses to run.
+UnsetEnvironment=RESTIC_PASSWORD_COMMAND
