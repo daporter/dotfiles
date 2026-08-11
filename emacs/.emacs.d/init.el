@@ -1112,6 +1112,10 @@ that."
 ;; reach every time.
 (keymap-global-set "C-#" #'save-buffer)
 
+(use-package async
+  :ensure t
+  :hook (dired-mode . dired-async-mode))
+
 (use-package dired
   :defer t
   :custom
@@ -1122,7 +1126,6 @@ that."
 
   :config
   (add-hook 'dired-mode-hook 'hl-line-mode)
-  (add-hook 'dired-mode-hook 'dired-async-mode)
   (add-hook 'dired-mode-hook 'dired-hide-details-mode))
 
 (use-package project
@@ -1865,7 +1868,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 ;; avoid looking unused.
 (custom-set-variables
  '(package-selected-packages
-   '(agent-shell apheleia auto-compile beframe cape captain
+   '(agent-shell apheleia async auto-compile beframe cape captain
                  casual-suite consult consult-notmuch corfu
                  corfu-prescient csv-mode
                  dape doric-themes eglot embark
