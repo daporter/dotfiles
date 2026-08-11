@@ -582,23 +582,31 @@
            ;; something starts using it.
            :fixed-pitch-serif-height 100
 
-           ;; 1.01, not the eyeballed-looking 1.05 this replaced: x-height is
-           ;; what a reader perceives as "the size of the text" (not point
-           ;; size, and not the ascent+descent `font-info' reports, which
-           ;; mostly reflects each font's chosen line-spacing rather than
-           ;; glyph size).  Per each font's `OS/2.sxHeight' normalized by
-           ;; `head.unitsPerEm' -- JetBrainsMono 550/1000 = 0.5500, Inter
-           ;; 1118/2048 = 0.5459 -- the two are already within ~0.75% of each
-           ;; other at the same nominal point size, so only a small
-           ;; correction is needed to match, not a 5% one.
+           ;; x-height is what a reader perceives as "the size of the text"
+           ;; (not point size, and not the ascent+descent `font-info'
+           ;; reports, which mostly reflects each font's chosen line-spacing
+           ;; rather than glyph size).  Per each font's `OS/2.sxHeight'
+           ;; normalized by `head.unitsPerEm' -- JetBrainsMono 550/1000 =
+           ;; 0.5500, Inter 1118/2048 = 0.5459 -- the two are within ~0.75%
+           ;; of each other at the same nominal point size, so x-height
+           ;; matching alone only wants a small correction (1.01, 14px at
+           ;; this frame's `default-height'). 1.13 (15px) overshoots that
+           ;; match deliberately -- 14px read as too small in practice.
            :variable-pitch-family "Inter"
-           :variable-pitch-height 1.01
+           :variable-pitch-height 1.13
 
+           ;; NOT the same 1.13 as `variable-pitch-height' above, despite
+           ;; targeting the same 15px: `modus-themes-variable-pitch-ui'
+           ;; makes the mode-line inherit from `variable-pitch', so this
+           ;; float compounds on top of variable-pitch's already-scaled
+           ;; height rather than scaling from `default' directly (confirmed
+           ;; by trial: 1.13 here actually resolved to 18px). 0.95 is the
+           ;; smallest value that lands on 15px given that compounding.
            :mode-line-active-family "Inter"
-           :mode-line-active-height 1.01
+           :mode-line-active-height 0.95
 
            :mode-line-inactive-family "Inter"
-           :mode-line-inactive-height 1.01)))
+           :mode-line-inactive-height 0.95)))
   :config
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))
 
@@ -700,11 +708,18 @@ than the default Inter (sans-serif)."
     (interactive)
     (unless my/variable-pitch-serif-cookie
       (setq my/variable-pitch-serif-cookie
-            ;; XCharter's x-height is ~12% smaller than Inter's --
-            ;; `OS/2.sxHeight' normalized by `head.unitsPerEm': XCharter
-            ;; 481/1000 = 48.10%, Inter 1118/2048 = 54.59%.  Scale up to
-            ;; match Inter's perceived size: 54.59/48.10 = 1.135.
-            (face-remap-add-relative 'variable-pitch :family "XCharter" :height 1.135)))
+            ;; This stacks relative to `variable-pitch's *current* resolved
+            ;; height (15px, `variable-pitch-height' above), not relative to
+            ;; `default' -- so it tracks Inter's size automatically if that
+            ;; ever changes. XCharter's x-height is ~12% smaller than
+            ;; Inter's (`OS/2.sxHeight' / `head.unitsPerEm': XCharter
+            ;; 481/1000 = 48.10%, Inter 1118/2048 = 54.59%), which alone
+            ;; would call for 1.135. But at sizes that small, FreeType's
+            ;; small-size hinting rounds partial-ascender glyphs (`t', `f')
+            ;; short -- confirmed on screen (compare Emacs vs. Obsidian
+            ;; rendering the same text). 1.08 (16px against the 15px Inter
+            ;; base) clears it.
+            (face-remap-add-relative 'variable-pitch :family "XCharter" :height 1.08)))
     (my/variable-pitch-line-spacing))
 
   (defun my/variable-pitch-sans ()
