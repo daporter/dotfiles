@@ -5,3 +5,9 @@ Documentation=man:restic-backup(1)
 [Service]
 Type=oneshot
 ExecStart=%h/bin/backup.sh daily
+# Use the plaintext password file, not the GPG-encrypted one from
+# restic.sh's profile-imported env: this unit can run unattended (woken
+# from suspend at midnight via WakeSystem=) with nobody around to unlock
+# 1Password or answer a pinentry prompt on a gpg-agent cache miss.
+Environment="RESTIC_REPOSITORY=/mnt/restic"
+Environment="RESTIC_PASSWORD_FILE=%h/.config/restic/password"

@@ -63,16 +63,22 @@ log_fail() {
 
 # Email the accumulated run log via the system MTA (msmtp provides sendmail).
 # ANSI colour codes are stripped so the message is plain text.
+#
+# Never lets a mail failure (e.g. no network yet right after resume) fail
+# the whole script via errexit -- that would misreport a successful backup
+# as FAILED, or mask a real backup failure's exit code with the mailer's.
 send_report() {
 	local SUBJECT="$1"
 	command -v sendmail >/dev/null 2>&1 || return 0
-	{
+	if ! {
 		printf 'To: %s\n' "$EMAIL_TO"
 		printf 'Subject: %s\n' "$SUBJECT"
 		printf 'Content-Type: text/plain; charset=UTF-8\n'
 		printf '\n'
 		sed 's/\x1b\[[0-9;]*m//g' "$TMP_LOG"
-	} | sendmail -t
+	} | sendmail -t; then
+		log_fail "Failed to email report"
+	fi
 }
 
 fail() {
