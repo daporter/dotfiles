@@ -9,7 +9,7 @@
 		 csv-mode dape doric-themes eglot embark
 		 embark-consult flymake flymake-hledger flymake-lua
 		 flymake-markdownlint flymake-yamllint fontaine
-		 ghostel hl-todo hledger-mode hyprlang-ts-mode
+		 ghostel hl-todo hyprlang-ts-mode
 		 ledger-mode ligature lorem-ipsum lua-mode magit
 		 marginalia markdown-mode nerd-icons
 		 nerd-icons-completion nerd-icons-corfu

@@ -1,0 +1,50 @@
+#!/bin/bash
+# wrap-hledger
+#
+# ledger-mode<->hledger compatibility shim from hledger.org/editors.html
+# (their "hledger.sh"; renamed here because flymake-hledger's auto-enable
+# check requires ledger-binary-path to end in "hledger", and rewritten with
+# a bash shebang since the array syntax below isn't POSIX sh).
+#
+# Requires ledger-default-date-format set to ISO format ("%Y-%m-%d").
+# Kudos to acarrico for the original script.
+
+iargs=("$@")
+oargs=()
+j=0
+date=
+for ((i = 0; i < ${#iargs[@]}; ++i)); do
+	case ${iargs[i]} in
+	--date-format)
+		# drop --date-format and the next arg
+		i=$((i + 1))
+		;;
+	cleared)
+		# convert "cleared" to "balance -N -C"
+		oargs[j]=balance
+		oargs[j + 1]=-N
+		oargs[j + 2]=-C
+		j=$((j + 3))
+		;;
+	xact)
+		# convert "xact" to "print --match"
+		oargs[j]=print
+		oargs[j + 1]=--match
+		j=$((j + 2))
+		# drop xact's own date argument and stash it
+		i=$((i + 1))
+		date=${iargs[i]}
+		;;
+	*)
+		oargs[j]=${iargs[i]}
+		j=$((j + 1))
+		;;
+	esac
+done
+
+if [ -n "$date" ]; then
+	# substitute the given date for the one hledger reports
+	hledger "${oargs[@]}" | sed "1s/....-..-../$date/"
+else
+	hledger "${oargs[@]}"
+fi

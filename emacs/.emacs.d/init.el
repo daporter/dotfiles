@@ -1671,20 +1671,17 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :ensure t
   :mode "\\.journal\\'"
   :custom
-  (ledger-default-date-format ledger-iso-date-format))
-
-(use-package hledger-mode
-  :ensure t
-  :mode "\\.journal\\'"
-  :custom
-  (hledger-jfile (getenv "LEDGER_FILE"))
-  (hledger-currency-string "$")
-  (hledger-comments-column comment-column)
-  (hledger-life-expectancy 90)
-  (hledger-ratios-income-accounts hledger-top-income-account)
-  (hledger-ratios-liquid-asset-accounts "assets:cash")
-  (hledger-top-income-account "revenues")
-  (hledger-year-of-birth 1971))
+  (ledger-default-date-format ledger-iso-date-format)
+  ;; "wrap-hledger" (in ~/bin), not "hledger" or hledger.org's "hledger.sh":
+  ;; flymake-hledger only auto-enables in a ledger-mode buffer when
+  ;; `ledger-binary-path' ends in the literal string "hledger"
+  ;; (flymake-hledger.el's `flymake-hledger--should-enable-p') -- a name
+  ;; ending in ".sh" would silently disable linting again.
+  (ledger-binary-path "wrap-hledger")
+  (ledger-mode-should-check-version nil)
+  (ledger-report-auto-width nil)
+  (ledger-report-links-in-register nil)
+  (ledger-report-native-highlighting-arguments '("--color=always")))
 
 (use-package flymake-hledger
   :ensure t
@@ -1875,7 +1872,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  embark-consult flymake flymake-hledger
                  flymake-lua flymake-markdownlint flymake-vale
                  flymake-yamllint fontaine
-                 ghostel hl-todo hledger-mode hyprlang-ts-mode ledger-mode
+                 ghostel hl-todo hyprlang-ts-mode ledger-mode
                  ligature lorem-ipsum lua-mode magit marginalia
                  markdown-mode nerd-icons
                  nerd-icons-completion nerd-icons-corfu nerd-icons-dired
