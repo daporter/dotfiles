@@ -1533,6 +1533,12 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :hook
   (markdown-mode . flymake-markdownlint-setup))
 
+(use-package indent-bars
+  :ensure t
+  :hook (markdown-mode . indent-bars-mode)
+  ;; Dimmer than the default 0.325 blend toward the frame background.
+  :custom (indent-bars-color '(highlight :face-bg t :blend 0.12)))
+
 (use-package ispell
   :custom
   (ispell-dictionary "australian-w_accents"))
@@ -1875,8 +1881,8 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  embark-consult flymake flymake-hledger
                  flymake-lua flymake-markdownlint flymake-vale
                  flymake-yamllint fontaine
-                 ghostel hl-todo hyprlang-ts-mode ledger-mode
-                 ligature lorem-ipsum lua-mode magit marginalia
+                 ghostel hl-todo hyprlang-ts-mode indent-bars
+                 ledger-mode ligature lorem-ipsum lua-mode magit marginalia
                  markdown-mode nerd-icons
                  nerd-icons-completion nerd-icons-corfu nerd-icons-dired
                  nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref
