@@ -91,7 +91,7 @@ tooltip label {
 #pulseaudio,
 #cpu,
 #memory,
-#systemd-failed-units {
+#custom-systemd-failed-units {
   color: @fg1;
   padding: 2px 12px;
 }
@@ -128,7 +128,7 @@ tooltip label {
   color: @blue;
 }
 
-#systemd-failed-units.degraded {
+#custom-systemd-failed-units.degraded {
   color: @red;
 }
 

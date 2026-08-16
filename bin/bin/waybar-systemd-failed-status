@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# Emit systemd's failed-unit count (system + user) as waybar custom-module
+# JSON, replacing the built-in `systemd-failed-units` module.
+#
+# The built-in module drives its `.degraded`/count state off D-Bus signals
+# and has a known upstream bug where that state can go stale after a
+# transient boot-time unit failure clears -- the "✗ N" indicator can get
+# stuck showing a failure that no longer exists until Waybar itself is
+# restarted (Alexays/Waybar#4422, #3444). It also has no `interval` option,
+# so there's no way to work around this via config alone. This script
+# sidesteps the bug by re-querying systemctl fresh on every poll instead of
+# relying on any persisted internal state.
+#
+# No `signal` is used: waybar's `exec-on-event` (default true, see
+# waybar-custom(5)) already re-runs this script after on-click/on-click-right
+# fire, so the on-click-right "reset-failed" handler gets an immediate
+# refresh for free.
+
+set -e
+
+sys_units=$(systemctl --failed --no-legend --plain | awk '{print $1}' | xargs -r echo)
+user_units=$(systemctl --user --failed --no-legend --plain | awk '{print $1}' | xargs -r echo)
+
+set -- $sys_units
+sys_count=$#
+set -- $user_units
+user_count=$#
+
+count=$((sys_count + user_count))
+
+if [ "$count" -eq 0 ]; then
+	class=ok
+	text=""
+	tooltip="No failed units"
+else
+	class=degraded
+	text="✗ $count"
+	tooltip="System: ${sys_units:-none} / User: ${user_units:-none}"
+fi
+
+printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' \
+	"$text" "$tooltip" "$class"

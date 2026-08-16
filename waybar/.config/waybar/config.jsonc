@@ -14,7 +14,7 @@
     "pulseaudio",
     "cpu",
     "memory",
-    "systemd-failed-units",
+    "custom/systemd-failed-units",
     "tray",
     "custom/clipboard",
     "custom/mail",
@@ -84,12 +84,15 @@
     "on-click": "ghostty --title=btop -e btop"
   },
 
-  "systemd-failed-units": {
-    "format": "✗ {nr_failed}",
-    "hide-on-ok": true,
-    "tooltip-format": "{system_state} / {user_state}\n{failed_units_list}",
+  "custom/systemd-failed-units": {
+    "tooltip": true,
+    "return-type": "json",
+    "exec": "waybar-systemd-failed-status",
+    "interval": 30,
+    "hide-empty-text": true,
     "on-click": "ghostty --title=systemd-failed -e systemd-failed-status",
-    "on-click-right": "systemctl reset-failed; systemctl --user reset-failed"
+    "on-click-right": "systemctl reset-failed; systemctl --user reset-failed",
+    "escape": true
   },
 
   "custom/clipboard": {
