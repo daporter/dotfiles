@@ -508,18 +508,20 @@
 (use-package nerd-icons-corfu
   :ensure t
   :after corfu
-  :init
+  :config
   ;; The bundled mapping colors the `text' kind (used by `cape-dabbrev'/
   ;; `cape-dict', so most prose completions) with `font-lock-doc-face', as
   ;; prominent as the candidate text -- dim it to match the
   ;; `corfu-annotations' treatment above.  Uses `vertical-border' rather
   ;; than `shadow', which in this theme isn't actually very dim;
   ;; `vertical-border' sits on modus-themes' quietest gray (`border').
+  ;; Must be `:config', not `:init': `:init' runs unconditionally at
+  ;; load time regardless of `:after', before the package (and its
+  ;; default value for this variable) is guaranteed to be loaded.
   (setq nerd-icons-corfu-mapping
         (let ((mapping (copy-tree nerd-icons-corfu-mapping)))
           (plist-put (alist-get 'text mapping) :face 'vertical-border)
           mapping))
-  :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (use-package nerd-icons-dired
