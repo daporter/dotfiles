@@ -160,13 +160,11 @@
       "### Org-wide",
       "**Organization**: None configured",
       "**Cloud provider(s)**: None configured",
-      "**Repository visibility**: Public — daporter/dotfiles (github.com:daporter/dotfiles.git)",
       "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
       "**Secrets management**: None configured",
-      "**Default / protected branches**: Default branch master; no rulesets or protected branches listed via gh for daporter/dotfiles",
       "**CI/CD deploy targets**: None configured",
       "**Network posture**: None configured",
-      "**Source control**: The trusted repo (daporter/dotfiles, github.com:daporter/dotfiles.git) and its remote only — no additional orgs configured",
+      "**Source control**: None configured — no orgs beyond each session's own working repo and remote",
       "**Trusted internal domains**: None configured",
       "**Trusted cloud buckets**: None configured",
       "**Key internal services**: None configured",
@@ -177,10 +175,8 @@
       "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
       "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
       "### User-specific",
-      "**Primary use of Claude Code**: personal dotfiles management (Arch Linux / Hyprland desktop, GNU Stow) — hobby/personal use",
-      "**Trusted repo**: /home/david/dotfiles, public repo at github.com:daporter/dotfiles.git — this repo's own work is safe to commit/push here; content ported, repointed, or first read from outside this session's repo is not its own work, whoever directed the port; secrets and sensitive personal data are never cleared into it by visibility alone",
-      "**Org-specific CLIs**: None configured",
-      "routine under /home/david/dotfiles/ prefix: Stow package operations (stow, doas stow --dir=system), pacman/paru package management, systemd/hyprland desktop tooling (systemctl, hyprctl, journalctl) as seen in usage"
+      "**Primary use of Claude Code**: personal, non-enterprise software projects (e.g. Linux desktop config, personal tooling, notes) — hobby/personal use, not work",
+      "**Org-specific CLIs**: None configured"
     ]
   }
 }
