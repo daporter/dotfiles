@@ -30,6 +30,7 @@ fd
 ffmpegthumbnailer
 file-roller
 firefox
+gammastep
 gdb
 ghostty
 git
@@ -172,7 +173,6 @@ valgrind
 waybar
 wev
 wget
-wlsunset
 wofi
 words
 xdg-desktop-portal-gtk
