@@ -19,7 +19,11 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("systemctl --user start hyprpolkitagent")
 
 	hl.exec_cmd("1password --silent")
-	hl.exec_cmd("systemctl --user start emacs.service")
+
+	-- restart, not start: if emacs.service is already active from before this
+	-- login (e.g. restarted by a pacman hook pre-session), `start` is a no-op
+	-- and the daemon keeps stale env, missing WAYLAND_DISPLAY imported above.
+	hl.exec_cmd("systemctl --user restart emacs.service")
 
 	-- Dropbox only registers its tray icon if waybar's StatusNotifierWatcher
 	-- already exists, and never retries. Wait for the bus name rather than
