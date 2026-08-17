@@ -1754,6 +1754,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
     (visual-fill-column-mode 1))
   :custom
   (agent-shell-anthropic-default-model-id "Default")
+  (agent-shell-anthropic-default-session-mode-id "auto")
   (agent-shell-preferred-agent-config 'claude-code)
   (agent-shell-show-usage-at-turn-end t)
   :commands (agent-shell agent-shell-anthropic-start-claude-code)
