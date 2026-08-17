@@ -15,8 +15,11 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=Hyprland")
 
-	-- From instructions at https://wiki.hypr.land/Hypr-Ecosystem/hyprpolkitagent/
-	hl.exec_cmd("systemctl --user start hyprpolkitagent")
+	-- From instructions at https://wiki.hypr.land/Hypr-Ecosystem/hyprpolkitagent/.
+	-- reset-failed first: on logout, the old session's process dies with a
+	-- broken Wayland pipe and burns through the restart-limit before this
+	-- session's `start` runs, leaving the unit stuck in start-limit-hit.
+	hl.exec_cmd("sh -c 'systemctl --user reset-failed hyprpolkitagent; systemctl --user start hyprpolkitagent'")
 
 	hl.exec_cmd("1password --silent")
 
