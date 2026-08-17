@@ -119,7 +119,7 @@
     "exec": "waybar-mail-status",
     "interval": 300,
     "signal": 8,
-    "on-click": "emacsclient -c -e '(notmuch-search \"tag:unread and tag:inbox\")'",
+    "on-click": "emacsclient -c -e '(my/notmuch-jump-to \"u\")'",
     "escape": true
   },
 

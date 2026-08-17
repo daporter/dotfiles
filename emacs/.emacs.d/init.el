@@ -1611,17 +1611,17 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (notmuch-identities '("David Porter <david@daporter.net>"))
   (notmuch-wash-wrap-lines-length 80)
   (notmuch-saved-searches
-   '((:name "Unread inbox"       :query "tag:unread and tag:inbox"       :key "u")
-     (:name "Unread all"         :query "tag:unread"                     :key "U")
-     (:name "Inbox"              :query "tag:inbox"                      :key "i")
-     (:name "Drafts"             :query "tag:draft"                      :key "d")
-     (:name "Sent"               :query "tag:sent"                       :key "s"   :sort-order newest-first)
-     (:name "Flagged"            :query "tag:flagged"                    :key "f")
-     (:name "All mail"           :query "*"                              :key "a"   :sort-order newest-first)
-     (:name "Deleted"            :query "tag:deleted"                    :key "D"   :sort-order newest-first)
-     (:name "Backup reports"     :query "tag:backup-reports"             :key "b"   :sort-order newest-first)
-     (:name "emacs-paris"        :query "tag:list/emacs-paris"           :key "lep" :count-query "tag:list/emacs-paris and tag:unread")
-     (:name "great-conversation" :query "tag:list/great-conversation"    :key "lg"  :count-query "tag:list/great-conversation and tag:unread")))
+   '((:name "Unread inbox"       :query "tag:unread and tag:inbox"    :key "u")
+     (:name "Unread all"         :query "tag:unread"                  :key "U")
+     (:name "Inbox"              :query "tag:inbox"                   :key "i")
+     (:name "Drafts"             :query "tag:draft"                   :key "d")
+     (:name "Sent"               :query "tag:sent"                    :key "s"   :sort-order newest-first)
+     (:name "Flagged"            :query "tag:flagged"                 :key "f")
+     (:name "All mail"           :query "*"                           :key "a"   :sort-order newest-first)
+     (:name "Deleted"            :query "tag:deleted"                 :key "D"   :sort-order newest-first)
+     (:name "Backup reports"     :query "tag:backup-reports"          :key "b"   :sort-order newest-first)
+     (:name "emacs-paris"        :query "tag:list/emacs-paris"        :key "lep" :count-query "tag:list/emacs-paris and tag:unread")
+     (:name "great-conversation" :query "tag:list/great-conversation" :key "lg"  :count-query "tag:list/great-conversation and tag:unread")))
   (notmuch-archive-tags '("-inbox"))
   (notmuch-draft-folder "gmail/[Gmail]/Drafts")
   (notmuch-tagging-keys
@@ -1639,6 +1639,28 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check)
   (add-hook 'notmuch-show-mode-hook
             (lambda () (variable-pitch-mode 1))))
+
+;; For invoking a saved search non-interactively (e.g. from waybar), since
+;; `notmuch-jump-search' always prompts in the minibuffer for a key, even
+;; when called from `emacsclient -e'. Resolves :sort-order/:excluded the
+;; same way `notmuch-jump-search' does (notmuch-jump.el).
+(defun my/notmuch-jump-to (key)
+  "Open the `notmuch-saved-searches' entry bound to KEY, as if pressed."
+  (require 'notmuch)
+  (let* ((saved-search
+          (seq-find (lambda (s)
+                      (equal (plist-get (notmuch-hello-saved-search-to-plist s) :key) key))
+                    notmuch-saved-searches))
+         (plist (notmuch-hello-saved-search-to-plist saved-search))
+         (oldest-first (cl-case (plist-get plist :sort-order)
+                         (newest-first nil)
+                         (oldest-first t)
+                         (otherwise (default-value 'notmuch-search-oldest-first))))
+         (exclude (cl-case (plist-get plist :excluded)
+                    (hide t)
+                    (show nil)
+                    (otherwise notmuch-search-hide-excluded))))
+    (notmuch-search (plist-get plist :query) oldest-first exclude)))
 
 (use-package consult-notmuch
   :ensure t
