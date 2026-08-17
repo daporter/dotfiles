@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# Sync monitor hardware brightness (DDC/CI) to gammastep's day/night period,
+# since gammastep's own brightness-day/brightness-night only fakes dimming
+# via the gamma ramp. Fires on gammastep's period-changed hook event.
+
+case "$1" in
+	period-changed)
+		case "$3" in
+			daytime) exec ddcutil setvcp 10 30 ;;
+			night) exec ddcutil setvcp 10 20 ;;
+		esac
+		;;
+esac

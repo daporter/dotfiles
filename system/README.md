@@ -10,7 +10,7 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
 `--dir=system --target=/`, as root (via `doas`).
 
 > Safe here because `/home` is on the **root filesystem** — the symlink targets
-> (under `/home/david/dotfiles`) are available as early as `/` itself. Do *not*
+> (under `/home/david/dotfiles`) are available as early as `/` itself. Do _not_
 > use this pattern for boot-critical files if `/home` ever becomes a separate,
 > late-mounted partition.
 
@@ -19,13 +19,13 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
 - `samba/` — `/etc/samba/smb.conf` (standalone file server, private `[Photos]`,
   `[Music]` and `[Inbox]` LAN shares) and the `smb.service` drop-in requiring
   the `/mnt/media` mount. `[Inbox]` is the staging area phone sync apps write
-  to; see *Samba accounts* below for the user setup it needs.
+  to; see _Samba accounts_ below for the user setup it needs.
 - `archlinux/` — the `PostTransaction` pacman hooks
   (`/etc/pacman.d/hooks/{pacman-list,aur-list}.hook`) that regenerate the
   package manifests under `archlinux/.NO-STOW/`.
 - `openssh/` — `/etc/ssh/sshd_config.d/10-local.conf`, the local `sshd` policy:
   public-key logins for `david` only, and only from the `192.168.178.0/24` home
-  LAN. The authorized keys themselves are *not* here — they are stowed from the
+  LAN. The authorized keys themselves are _not_ here — they are stowed from the
   `$HOME`-side `ssh/` package as `~/.ssh/authorized_keys`.
 - `networkd/` — the `systemd-networkd` config in `/etc/systemd/network/`: the
   wired DHCP setup (`20-wired.network`) plus `20-wired.link`, which arms
@@ -36,6 +36,9 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
   suspend guard (`~/.config/hypr/suspend-unless-active.sh`) can read Samba's
   root-only session state non-interactively. **Deployed by copying, not
   stowing** — see below.
+- `i2c-dev/` — `/etc/modules-load.d/i2c-dev.conf`, loading the `i2c-dev` kernel
+  module at boot so `ddcutil` can reach the monitor over DDC/CI (used by
+  gammastep's `brightness-ddcutil` hook).
 
 ## Deploy
 
@@ -89,7 +92,7 @@ The `ssh-keygen -A` step is only needed the first time. `sshd.service` pulls in
 `sshdgenkeys.service` (which runs the same command) via `Wants=`, so starting
 the daemon would generate the keys by itself — but `sshd -t` is a bare binary
 invocation that bypasses systemd, and it exits with `no hostkeys available`
-*before* checking the config, so validation is useless until they exist.
+_before_ checking the config, so validation is useless until they exist.
 
 Arch no longer ships an `sshd.socket`, so this is the plain `sshd.service`.
 After editing `10-local.conf`, `doas systemctl reload sshd` — existing sessions
@@ -101,7 +104,7 @@ sshd -G | grep -iE 'allowusers|addressfamily|passwordauthentication'
 ```
 
 Use `-G`, not `-T`: both dump the effective config, but `-T` also runs the `-t`
-key sanity check, so it needs root *and* pre-existing host keys. `-G` skips
+key sanity check, so it needs root _and_ pre-existing host keys. `-G` skips
 that and runs fine as an ordinary user. Keep the `grep -i` — OpenSSH 10 prints
 keywords in canonical CamelCase (`AllowUsers`), not the all-lowercase form
 older versions emitted, so a lowercase pattern silently matches nothing.
@@ -113,7 +116,7 @@ older versions emitted, so a lowercase pattern silently matches nothing.
 therefore **cannot follow a symlink into `/home/david/dotfiles`** — stowed
 `.network` files fail with `Failed to chase '…': Permission denied`, the links
 are left `unmanaged`, and the machine boots with no DHCP lease and no route.
-(The `.link` file is exempt only because *udev*, running as root, applies it —
+(The `.link` file is exempt only because _udev_, running as root, applies it —
 not networkd.) So this package is deployed by **copying real files** into
 `/etc/systemd/network/`, not by stowing:
 
@@ -134,7 +137,7 @@ in the repo, re-run the `cp` above and `restart systemd-networkd` (or
 `udevadm trigger` for the `.link`) to redeploy. `networkctl status eth0` should
 show a `Network File:` set and state `routable (configured)`.
 
-> `eth0` above is this NIC's *current* name, not a stable one. Because
+> `eth0` above is this NIC's _current_ name, not a stable one. Because
 > `20-wired.link` matches it and sets no `NamePolicy=`, it replaces
 > `99-default.link` and udev never renames the device, so it keeps the kernel
 > fallback `eth0` rather than its predictable name `eno1`. Config files
@@ -167,7 +170,7 @@ with `doas -n /usr/bin/smbstatus --json`.
 
 ---
 
-The stowed packages differ: edits to a file's *contents* take effect
+The stowed packages differ: edits to a file's _contents_ take effect
 immediately (symlinks) — just `daemon-reload` / `reload smb` as appropriate. The
 Samba password for `david` lives in the tdbsam passdb, not in this repo
 (`doas smbpasswd -a david`).

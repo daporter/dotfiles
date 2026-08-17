@@ -17,6 +17,7 @@ cliphist
 cmake
 code
 dateutils
+ddcutil
 duf
 dust
 emacs-wayland
