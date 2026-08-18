@@ -17,6 +17,10 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("waybar")
 	hl.exec_cmd("hypridle")
 	hl.exec_cmd("gammastep")
+	-- swaync.service (its D-Bus-activatable systemd unit) must stay masked:
+	-- it races this direct exec for the org.freedesktop.Notifications name
+	-- and crash-loops into start-limit-hit. Run `systemctl --user mask
+	-- swaync.service` once per machine.
 	hl.exec_cmd("swaync")
 	hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=Hyprland")
