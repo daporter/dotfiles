@@ -131,10 +131,13 @@ hl.config({
 -- The trackball exposes a second HID interface for buttons
 -- (...-keyboard-1), but `libinput list-devices` shows it has no motion
 -- capability (Accel profiles: n/a), so only this interface needs it.
+-- left_handed swaps the primary/secondary buttons for operating it with
+-- the left hand.
 hl.device({
 	name = "kensington-slimblade-pro-trackball(wired)-kensington-slimblade-pro-trackball(wired)",
 	sensitivity = -1,
 	accel_profile = "adaptive",
+	left_handed = true,
 })
 
 --
