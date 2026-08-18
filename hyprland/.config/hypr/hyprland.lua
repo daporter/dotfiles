@@ -6,6 +6,12 @@ hl.monitor({
 })
 
 hl.on("hyprland.start", function()
+	-- Run first: apps started below (and the GTK_IM_MODULE/QT_IM_MODULE/
+	-- XMODIFIERS env vars) expect ibus to already be up so they pick it up
+	-- as their input method at launch. Used for QMK's Unicode-via-IBus combo
+	-- input (see qmk_userspace/keyboards/.../daporter/config.h).
+	hl.exec_cmd("ibus-daemon -drx")
+
 	hl.exec_cmd("hyprctl setcursor Adwaita 24")
 	hl.exec_cmd("hyprpaper")
 	hl.exec_cmd("waybar")
@@ -48,6 +54,11 @@ end)
 
 hl.env("GOLDENDICT_FORCE_WAYLAND", "1")
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
+
+-- IBus as the input method, for QMK's Unicode-via-IBus combo input.
+hl.env("GTK_IM_MODULE", "ibus")
+hl.env("QT_IM_MODULE", "ibus")
+hl.env("XMODIFIERS", "@im=ibus")
 
 -- Force all apps to use Wayland
 hl.env("GDK_BACKEND", "wayland,x11,*")
@@ -189,8 +200,13 @@ hl.bind("SUPER+RETURN", hl.dsp.exec_cmd("ghostty"))
 hl.bind("SUPER+B", hl.dsp.exec_cmd("firefox --new-window"))
 hl.bind("SUPER+CTRL+D", hl.dsp.exec_cmd("goldendict --popup $(wl-paste --primary --no-newline)"))
 hl.bind("SUPER+M", hl.dsp.exec_cmd("emacs-frame"))
-hl.bind("SUPER+CTRL+S", hl.dsp.exec_cmd("hyprshot -m window"))
-hl.bind("SUPER+CTRL+SHIFT+S", hl.dsp.exec_cmd("hyprshot -m region"))
+-- GNOME-style Print Screen bindings, so QMK's combo_SCAP/combo_SCLP (Shift+
+-- PrtScn / Ctrl+Shift+PrtScn) work the way they do under GNOME: plain
+-- PrtScn grabs the full screen to file, Shift+PrtScn a selected region to
+-- file, Ctrl+Shift+PrtScn a selected region to the clipboard only.
+hl.bind("PRINT", hl.dsp.exec_cmd("hyprshot -m output"))
+hl.bind("SHIFT+PRINT", hl.dsp.exec_cmd("hyprshot -m region"))
+hl.bind("CTRL+SHIFT+PRINT", hl.dsp.exec_cmd("hyprshot -m region --clipboard-only"))
 hl.bind(
 	"SUPER+SLASH",
 	hl.dsp.exec_cmd(
