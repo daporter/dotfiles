@@ -138,6 +138,10 @@ hl.device({
 	sensitivity = -1,
 	accel_profile = "adaptive",
 	left_handed = true,
+	-- The scroll ring's hardware polarity is opposite a typical mouse
+	-- wheel, so the global natural_scroll=true (set above) ends up
+	-- feeling reversed on this device specifically; cancel it out here.
+	natural_scroll = false,
 })
 
 --
