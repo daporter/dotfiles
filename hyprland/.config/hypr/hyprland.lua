@@ -148,11 +148,13 @@ hl.device({
 -- KEYBINDINGS
 --
 
--- Window focus
-hl.bind("SUPER+A", hl.dsp.focus({ direction = "l" }))
-hl.bind("SUPER+E", hl.dsp.focus({ direction = "u" }))
-hl.bind("SUPER+I", hl.dsp.focus({ direction = "d" }))
-hl.bind("SUPER+H", hl.dsp.focus({ direction = "r" }))
+-- Window focus. Bound to the physical home-row cluster (right hand, columns
+-- 1-4) rather than these specific letters -- under the Night alpha layout
+-- that cluster sends C/A/E/I instead of vb's A/E/I/H.
+hl.bind("SUPER+C", hl.dsp.focus({ direction = "l" }))
+hl.bind("SUPER+A", hl.dsp.focus({ direction = "u" }))
+hl.bind("SUPER+E", hl.dsp.focus({ direction = "d" }))
+hl.bind("SUPER+I", hl.dsp.focus({ direction = "r" }))
 
 -- Window cycling. Not MRU-ordered: Hyprland's Lua dispatcher API has no
 -- focus-history option (the old hyprland.conf `cyclenext, hist` string
@@ -178,11 +180,11 @@ hl.bind("SUPER+O", hl.dsp.focus({ workspace = "previous" }))
 hl.bind("SUPER+mouse_up", hl.dsp.focus({ workspace = "+1" }))
 hl.bind("SUPER+mouse_down", hl.dsp.focus({ workspace = "-1" }))
 
--- Window movement
-hl.bind("SUPER+SHIFT+A", hl.dsp.window.swap({ direction = "l" }))
-hl.bind("SUPER+SHIFT+E", hl.dsp.window.swap({ direction = "u" }))
-hl.bind("SUPER+SHIFT+I", hl.dsp.window.swap({ direction = "d" }))
-hl.bind("SUPER+SHIFT+H", hl.dsp.window.swap({ direction = "r" }))
+-- Window movement. Same physical home-row cluster as the focus binds above.
+hl.bind("SUPER+SHIFT+C", hl.dsp.window.swap({ direction = "l" }))
+hl.bind("SUPER+SHIFT+A", hl.dsp.window.swap({ direction = "u" }))
+hl.bind("SUPER+SHIFT+E", hl.dsp.window.swap({ direction = "d" }))
+hl.bind("SUPER+SHIFT+I", hl.dsp.window.swap({ direction = "r" }))
 hl.bind("SUPER+mouse:272", hl.dsp.window.drag(), { mouse = true })
 
 -- Move to workspace
@@ -231,11 +233,11 @@ hl.bind(
 	)
 )
 
--- Window resizing
-hl.bind("SUPER+CTRL+A", hl.dsp.window.resize({ x = -20, y = 0, relative = true }), { repeating = true })
-hl.bind("SUPER+CTRL+E", hl.dsp.window.resize({ x = 0, y = -20, relative = true }), { repeating = true })
-hl.bind("SUPER+CTRL+I", hl.dsp.window.resize({ x = 0, y = 20, relative = true }), { repeating = true })
-hl.bind("SUPER+CTRL+H", hl.dsp.window.resize({ x = 20, y = 0, relative = true }), { repeating = true })
+-- Window resizing. Same physical home-row cluster as the focus binds above.
+hl.bind("SUPER+CTRL+C", hl.dsp.window.resize({ x = -20, y = 0, relative = true }), { repeating = true })
+hl.bind("SUPER+CTRL+A", hl.dsp.window.resize({ x = 0, y = -20, relative = true }), { repeating = true })
+hl.bind("SUPER+CTRL+E", hl.dsp.window.resize({ x = 0, y = 20, relative = true }), { repeating = true })
+hl.bind("SUPER+CTRL+I", hl.dsp.window.resize({ x = 20, y = 0, relative = true }), { repeating = true })
 hl.bind("SUPER+mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Layout (Dwindle)
