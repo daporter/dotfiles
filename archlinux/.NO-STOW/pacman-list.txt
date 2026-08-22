@@ -173,7 +173,6 @@ usbutils
 uthash
 vale
 valgrind
-waybar
 wev
 wget
 wofi

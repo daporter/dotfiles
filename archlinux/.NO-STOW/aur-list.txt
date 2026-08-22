@@ -40,6 +40,7 @@ tree-sitter-yaml
 ttf-adobe-source-serif-fonts
 ttf-ia-writer
 vscode-langservers-extracted
+waybar-git
 windscribe-v2-bin
 xdg-terminal-exec
 z-library-bin
