@@ -1,0 +1,25 @@
+# Full override of the packaged /usr/lib/systemd/user/waybar.service, not a
+# .d/ drop-in: systemd's empty-value reset (`After=`) only clears STRV-type
+# options like Documentation=; it's a no-op for dependency directives such as
+# After=/PartOf=/Requisite=, so a drop-in can't unset them once the vendor
+# unit sets them (confirmed empirically, contra common folklore).
+#
+# This session never starts graphical-session.target (nothing here uses
+# uwsm/logind session tracking for it -- see hyprpolkitagent/dropbox in
+# hyprland.lua, started the same explicit way), so the vendor unit's
+# `Requisite=graphical-session.target` would permanently refuse to start.
+# Dropping PartOf/After/Requisite entirely and keeping Restart=on-failure is
+# what actually matters: waybar's keyboard-state module crashes the whole
+# process on a USB keyboard reset, and this recovers it instead of leaving
+# the bar dead until next login. RestartSec=10: the keyboard takes ~5s to
+# re-enumerate after a reset, and restarting into a still-missing device
+# just crashes waybar again immediately.
+[Unit]
+Description=Highly customizable Wayland bar for Sway and Wlroots based compositors
+Documentation=https://github.com/Alexays/Waybar/wiki/
+
+[Service]
+ExecStart=/usr/bin/waybar
+ExecReload=kill -SIGUSR2 $MAINPID
+Restart=on-failure
+RestartSec=10

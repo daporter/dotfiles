@@ -14,7 +14,6 @@ hl.on("hyprland.start", function()
 
 	hl.exec_cmd("hyprctl setcursor Adwaita 24")
 	hl.exec_cmd("hyprpaper")
-	hl.exec_cmd("waybar")
 	hl.exec_cmd("hypridle")
 	hl.exec_cmd("gammastep")
 	-- swaync.service (its D-Bus-activatable systemd unit) must stay masked:
@@ -24,6 +23,14 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("swaync")
 	hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=Hyprland")
+
+	-- systemd-supervised (Restart=on-failure), not a bare exec: waybar's
+	-- keyboard-state module crashes the process on a USB keyboard reset, and
+	-- this recovers it instead of leaving the bar dead until next login. See
+	-- waybar/.config/systemd/user/waybar.service for why it's a full
+	-- override rather than a drop-in, and for the RestartSec delay. restart,
+	-- not start: same stale-env reasoning as emacs.service below.
+	hl.exec_cmd("sh -c 'systemctl --user reset-failed waybar.service; systemctl --user restart waybar.service'")
 
 	-- From instructions at https://wiki.hypr.land/Hypr-Ecosystem/hyprpolkitagent/.
 	-- reset-failed first: on logout, the old session's process dies with a
