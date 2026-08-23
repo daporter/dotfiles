@@ -3,7 +3,7 @@ Description=Timer for Notmuch new mail incorporation
 Documentation=man:notmuch-new(1)
 
 [Timer]
-OnBootSec=1m
+OnBootSec=5m
 OnUnitActiveSec=10m
 Unit=notmuch.service
 
