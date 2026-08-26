@@ -1065,7 +1065,7 @@ that."
 
 (use-package find-func
   :config
-  (find-function-setup-keys))
+  (find-function-mode 1))
 
 (use-package autoinsert
   :config
