@@ -1604,7 +1604,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
      ("authors" . "%-20s")
      (((my/notmuch-tree-field . "%s")
        ("subject" . "%s"))
-      . " %-54s ")
+      . " %-70s ")
      ("tags" . "(%s)")))
   (notmuch-archive-tags '("-inbox"))
   (notmuch-draft-folder "gmail/[Gmail]/Drafts")
