@@ -1614,6 +1614,14 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
      ("a" notmuch-archive-tags "Archive")
      ("d" ("+deleted" "-inbox" "-unread") "Delete")))
   (notmuch-tag-formats '(("starred" tag))) ; Show the tag name, not an icon
+  ;; Mark a pending tag change (before the next refresh) by prefix, not just
+  ;; colour -- modus's `notmuch-tag-deleted' face drops strike-through and its
+  ;; red barely differs from the normal tag red, so an archived message's
+  ;; "-inbox" was invisible.
+  (notmuch-tag-deleted-formats
+   '((".*" (notmuch-apply-face (concat "-" tag) 'notmuch-tag-deleted))))
+  (notmuch-tag-added-formats
+   '((".*" (notmuch-apply-face (concat "+" tag) 'notmuch-tag-added))))
   (notmuch-mua-user-agent-function #'notmuch-mua-user-agent-full)
 
   (notmuch-fcc-dirs "\"gmail/[Gmail]/Sent Mail\"")
@@ -1623,6 +1631,17 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check)
   (add-hook 'notmuch-show-mode-hook
             (lambda () (variable-pitch-mode 1)))
+
+  ;; modus paints every unchanged tag the same red as its own
+  ;; `notmuch-tag-deleted' face, so a just-removed "-inbox" barely stands
+  ;; out. Force the base tag colour to modus's `blue' so red = removed and
+  ;; green = added read purely by hue. An override spec beats the themed
+  ;; face and survives `modus-themes-load-theme' / theme rotation; the
+  ;; literal is a fallback for when a non-modus theme is active at load.
+  (let ((blue (let ((c (ignore-errors (modus-themes-get-color-value 'blue))))
+                (if (stringp c) c "#0031a9"))))
+    (dolist (face '(notmuch-tag-face notmuch-tree-match-tag-face))
+      (face-spec-set face `((t :foreground ,blue)) 'face-override-spec)))
 
   ;; "tree" field renderer (used by `notmuch-tree-result-format') that blanks
   ;; the glyph column for a thread's first message -- `:first' is set only on
