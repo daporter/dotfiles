@@ -1037,10 +1037,6 @@ that."
   ;; selection", so switch to applying it symbol-by-symbol.
   :custom (string-inflection-region-selection-behavior 'apply-to-each-symbols))
 
-(use-package unfill
-  :ensure t
-  :commands (unfill-region unfill-paragraph))
-
 (use-package lorem-ipsum
   :ensure t
   :commands (lorem-ipsum-insert-list
@@ -1882,5 +1878,5 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  olivetti orderless org-anki org-modern
                  page-break-lines pcmpl-args popper prescient
                  project python-mode reader shannon-max string-inflection
-                 titlecase tramp unfill vertico vertico-prescient
+                 titlecase tramp vertico vertico-prescient
                  visual-fill-column vterm)))
