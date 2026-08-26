@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;; Activate installed packages now, before anything below needs them
 ;; -- normally this waits until after early-init.el finishes.
 (package-activate-all)
