@@ -10,6 +10,10 @@ gmail/INBOX =
     'tag:sent':'gmail/[Gmail]/Sent Mail'
     'tag:spam':'gmail/[Gmail]/Spam'
     'tag:flagged':'gmail/[Gmail]/Starred'
+    # Catch-all: a message archived in Emacs (notmuch-archive-tags = -inbox)
+    # has no folder move of its own. Move it to All Mail so mbsync drops the
+    # Gmail INBOX label; must stay last so the rules above win first.
+    'NOT tag:inbox':'gmail/[Gmail]/All Mail'
 
 # Add tag “spam” to all messages tha have the header “X-Spam-Flag”.
 [SpamFilter]
