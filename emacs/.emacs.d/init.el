@@ -395,7 +395,7 @@
   ;; (it's how `corfu-terminal' and similar packages hook in), so extend
   ;; it to prepend one column of breathing room to every annotation.
   (require 'cl-lib)
-  (cl-defmethod corfu--affixate :around (cands)
+  (cl-defmethod corfu--affixate :around (_cands)
     (pcase-let ((`(,mf . ,acands) (cl-call-next-method)))
       (dolist (x acands)
         (unless (string-empty-p (caddr x))
@@ -900,7 +900,7 @@ than the default Inter (sans-serif)."
   (dolist (hs-command (list #'hs-cycle
                             #'hs-toggle-all))
     (advice-add hs-command :before
-                (lambda (&optional end) "Advice to ensure `hs-minor-mode' is enabled"
+                (lambda (&rest _) "Advice to ensure `hs-minor-mode' is enabled"
                   (unless (bound-and-true-p hs-minor-mode)
                     (hs-minor-mode +1)))))
 
@@ -1574,18 +1574,38 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (mail-user-agent #'notmuch-mua-new-mail)
   (notmuch-identities '("David Porter <david@daporter.net>"))
   (notmuch-wash-wrap-lines-length 80)
+  ;; `:search-type tree' opens every saved search in threaded tree view.
   (notmuch-saved-searches
-   '((:name "Unread inbox"       :query "tag:unread and tag:inbox"    :key "u")
-     (:name "Unread all"         :query "tag:unread"                  :key "U")
-     (:name "Inbox"              :query "tag:inbox"                   :key "i")
-     (:name "Drafts"             :query "tag:draft"                   :key "d")
-     (:name "Sent"               :query "tag:sent"                    :key "s"   :sort-order newest-first)
-     (:name "Flagged"            :query "tag:flagged"                 :key "f")
-     (:name "All mail"           :query "*"                           :key "a"   :sort-order newest-first)
-     (:name "Deleted"            :query "tag:deleted"                 :key "D"   :sort-order newest-first)
-     (:name "Backup reports"     :query "tag:backup-reports"          :key "b"   :sort-order newest-first)
-     (:name "emacs-paris"        :query "tag:list/emacs-paris"        :key "lep" :count-query "tag:list/emacs-paris and tag:unread")
-     (:name "great-conversation" :query "tag:list/great-conversation" :key "lg"  :count-query "tag:list/great-conversation and tag:unread")))
+   '((:name "Unread inbox"       :query "tag:unread and tag:inbox"    :key "u"   :search-type tree)
+     (:name "Unread all"         :query "tag:unread"                  :key "U"   :search-type tree)
+     (:name "Inbox"              :query "tag:inbox"                   :key "i"   :search-type tree)
+     (:name "Drafts"             :query "tag:draft"                   :key "d"   :search-type tree)
+     (:name "Sent"               :query "tag:sent"                    :key "s"   :sort-order newest-first :search-type tree)
+     (:name "Flagged"            :query "tag:flagged"                 :key "f"   :search-type tree)
+     (:name "All mail"           :query "*"                           :key "a"   :sort-order newest-first :search-type tree)
+     (:name "Deleted"            :query "tag:deleted"                 :key "D"   :sort-order newest-first :search-type tree)
+     (:name "Backup reports"     :query "tag:backup-reports"          :key "b"   :sort-order newest-first :search-type tree)
+     (:name "emacs-paris"        :query "tag:list/emacs-paris"        :key "lep" :count-query "tag:list/emacs-paris and tag:unread" :search-type tree)
+     (:name "great-conversation" :query "tag:list/great-conversation" :key "lg"  :count-query "tag:list/great-conversation and tag:unread" :search-type tree)))
+  ;; Square corners throughout (the default mixes rounded `╰' with square
+  ;; `┬'/`├'); trailing space on the arrow keeps the subject off the tree.
+  (notmuch-tree-thread-symbols
+   '((prefix       . " ")
+     (top          . "─")
+     (top-tee      . "┬")
+     (vertical     . "│")
+     (vertical-tee . "├")
+     (bottom       . "└")
+     (arrow        . "► ")))
+  ;; Stock format, but with the "tree" field swapped for a function that
+  ;; blanks the glyphs on a thread's first message (see :config).
+  (notmuch-tree-result-format
+   '(("date" . "%12s  ")
+     ("authors" . "%-20s")
+     (((my/notmuch-tree-field . "%s")
+       ("subject" . "%s"))
+      . " %-54s ")
+     ("tags" . "(%s)")))
   (notmuch-archive-tags '("-inbox"))
   (notmuch-draft-folder "gmail/[Gmail]/Drafts")
   (notmuch-tagging-keys
@@ -1602,7 +1622,30 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   (add-hook 'notmuch-message-mode-hook #'turn-off-auto-fill)
   (add-hook 'notmuch-mua-send-hook #'notmuch-mua-attachment-check)
   (add-hook 'notmuch-show-mode-hook
-            (lambda () (variable-pitch-mode 1))))
+            (lambda () (variable-pitch-mode 1)))
+
+  ;; "tree" field renderer (used by `notmuch-tree-result-format') that blanks
+  ;; the glyph column for a thread's first message -- `:first' is set only on
+  ;; the thread root, which also makes a single-message thread render flush
+  ;; left. Otherwise identical to the built-in "tree" field.
+  (defun my/notmuch-tree-field (format-string msg)
+    (let ((tree-status (unless (plist-get msg :first)
+                         (plist-get msg :tree-status)))
+          (face (if (plist-get msg :match)
+                    'notmuch-tree-match-tree-face
+                  'notmuch-tree-no-match-tree-face)))
+      (propertize (format format-string
+                          (mapconcat #'identity (reverse tree-status) ""))
+                  'face face)))
+
+  ;; notmuch-tree has no unread face of its own; bold any line whose message
+  ;; still carries the "unread" tag.
+  (defun my/notmuch-tree--bold-unread (orig msg)
+    (let ((start (point)))
+      (funcall orig msg)
+      (when (member "unread" (plist-get msg :tags))
+        (add-face-text-property start (point) 'bold))))
+  (advice-add 'notmuch-tree-insert-msg :around #'my/notmuch-tree--bold-unread))
 
 ;; For invoking a saved search non-interactively (e.g. from waybar), since
 ;; `notmuch-jump-search' always prompts in the minibuffer for a key, even
@@ -1623,8 +1666,13 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
          (exclude (cl-case (plist-get plist :excluded)
                     (hide t)
                     (show nil)
-                    (otherwise notmuch-search-hide-excluded))))
-    (notmuch-search (plist-get plist :query) oldest-first exclude)))
+                    (otherwise notmuch-search-hide-excluded)))
+         (query (plist-get plist :query)))
+    ;; Dispatch on :search-type like `notmuch-jump-search' (notmuch-jump.el).
+    (cl-case (plist-get plist :search-type)
+      (tree (notmuch-tree query nil nil nil nil nil nil oldest-first exclude))
+      (unthreaded (notmuch-unthreaded query nil nil nil nil oldest-first exclude))
+      (otherwise (notmuch-search query oldest-first exclude)))))
 
 (use-package consult-notmuch
   :ensure t
