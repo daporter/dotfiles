@@ -879,9 +879,9 @@ than the default Inter (sans-serif)."
 (use-package hideshow
   ;; https://github.com/karthink/.emacs.d/blob/master/lisp/setup-folds.el
   :commands (hs-cycle
-             hs-global-cycle)
+             hs-toggle-all)
   :bind
-  (:map prog-mode-map ("C-S-<iso-lefttab>" . hs-global-cycle))
+  (:map prog-mode-map ("C-S-<iso-lefttab>" . hs-toggle-all))
   :config
   (setq hs-hide-comments-when-hiding-all nil
         ;; Nicer code-folding overlays (with fringe indicators)
@@ -898,53 +898,20 @@ than the default Inter (sans-serif)."
        ov 'display (propertize "  [...]  " 'face 'hideshow-folded-face))))
 
   (dolist (hs-command (list #'hs-cycle
-                            #'hs-global-cycle))
+                            #'hs-toggle-all))
     (advice-add hs-command :before
                 (lambda (&optional end) "Advice to ensure `hs-minor-mode' is enabled"
                   (unless (bound-and-true-p hs-minor-mode)
                     (hs-minor-mode +1)))))
 
-  (defun hs-cycle (&optional level)
-    (interactive "p")
-    (save-excursion
-      (if (= level 1)
-          (pcase last-command
-            ('hs-cycle
-             (hs-hide-level 1)
-             (setq this-command 'hs-cycle-children))
-            ('hs-cycle-children
-             ;;TODO: Fix this case. `hs-show-block' needs to be called twice to
-             ;;open all folds of the parent block.
-             (hs-show-block)
-             (hs-show-block)
-             (setq this-command 'hs-cycle-subtree))
-            ('hs-cycle-subtree
-             (hs-hide-block))
-            (_
-             (if (not (hs-already-hidden-p))
-                 (hs-hide-block)
-               (hs-hide-level 1)
-               (setq this-command 'hs-cycle-children))))
-        (hs-hide-level level)
-        (setq this-command 'hs-hide-level))))
-
-  (defun hs-global-cycle ()
-    (interactive)
-    (pcase last-command
-      ('hs-global-cycle
-       (save-excursion (hs-show-all))
-       (setq this-command 'hs-global-show))
-      (_ (hs-hide-all))))
-
-  ;; extra folding support for more languages
-  (unless (assq 't hs-special-modes-alist)
-    (setq hs-special-modes-alist
-          (append
-           '((nxml-mode "<!--\\|<[^/>]*[^/]>"
-                        "-->\\|</[^/>]*[^/]>"
-                        "<!--" sgml-skip-tag-forward nil))
-           hs-special-modes-alist
-           '((t))))))
+  ;; `hs-special-modes-alist' is obsolete as of Emacs 31.1; extra folding
+  ;; support for nxml-mode now goes through its buffer-local replacements.
+  (defun my/hideshow-nxml-setup ()
+    (setq-local hs-block-start-regexp "<!--\\|<[^/>]*[^/]>"
+                hs-block-end-regexp "-->\\|</[^/>]*[^/]>"
+                hs-c-start-regexp "<!--"
+                hs-forward-sexp-function #'sgml-skip-tag-forward))
+  (add-hook 'nxml-mode-hook #'my/hideshow-nxml-setup))
 
 ;;;; Editing utilities
 
