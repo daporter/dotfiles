@@ -1,5 +1,5 @@
 # Elephant: the data/exec backend Walker queries. Based on what
-# `elephant service enable` generates, with two changes for this session:
+# `elephant service enable` generates, with three changes for this session:
 #
 #   - The generated unit keys off graphical-session.target (After= and
 #     WantedBy=). Nothing here starts that target -- see waybar.service --
@@ -7,12 +7,21 @@
 #     (reset-failed + restart), after WAYLAND_DISPLAY is imported into the
 #     systemd --user environment, same as waybar and emacs.
 #   - ExecStart is made absolute.
+#   - ExecStartPre waits for the Wayland socket. On relogin the old
+#     instance dies on a broken Wayland pipe and Restart= retries during
+#     the compositor handoff, before the new socket exists -- the windows
+#     and clipboard providers then spew "connect: no such file or
+#     directory". Blocking until the socket is back keeps the restart
+#     clean; the widened start limit is a backstop for that window.
 [Unit]
 Description=Elephant data provider backend for Walker
 Documentation=https://github.com/abenz1267/elephant
+StartLimitIntervalSec=30
+StartLimitBurst=10
 
 [Service]
 Type=simple
+ExecStartPre=/bin/sh -c 'for i in $(seq 1 60); do [ -S "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY:-wayland-1}" ] && exit 0; sleep 0.5; done; exit 1'
 ExecStart=/usr/bin/elephant
 Restart=on-failure
 RestartSec=2

@@ -54,15 +54,19 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("goldendict --group-name Main --popup-group-name Popup")
 
 	-- Walker launcher (SUPER+SPACE) and its elephant backend. Both are full
-	-- systemd units started here, not `enable`d: they need WAYLAND_DISPLAY
-	-- from the import above, same stale-env reasoning as waybar/emacs. The
-	-- elephant clipboard provider runs its own `wl-paste --watch`, so it
-	-- replaces the old cliphist capture. walker.service must stay up because
-	-- Walker only loads the clipboard module when running as a service.
-	-- reset-failed: a logout leaves the old process dead on a broken
-	-- Wayland pipe and burns the restart limit before this `restart` runs.
-	hl.exec_cmd("sh -c 'systemctl --user reset-failed elephant.service; systemctl --user restart elephant.service'")
-	hl.exec_cmd("sh -c 'systemctl --user reset-failed walker.service; systemctl --user restart walker.service'")
+	-- systemd units started here, not `enable`d, same stale-env reasoning as
+	-- waybar/emacs. The elephant clipboard provider runs its own
+	-- `wl-paste --watch`, replacing the old cliphist capture; walker.service
+	-- must stay up because Walker only loads the clipboard module as a
+	-- service. Re-import WAYLAND_DISPLAY synchronously here: the line-24
+	-- import is fire-and-forget and races this, and the units want the real
+	-- value (their ExecStartPre also waits for the socket). reset-failed
+	-- clears the start-limit state the compositor handoff can leave behind.
+	hl.exec_cmd(
+		"sh -c 'systemctl --user import-environment WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP; "
+			.. "systemctl --user reset-failed elephant.service walker.service; "
+			.. "systemctl --user restart elephant.service walker.service'"
+	)
 
 	-- Launch a terminal on the scratchpad.
 	hl.exec_cmd("ghostty --title=scratchpad")
