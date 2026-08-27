@@ -53,11 +53,16 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
 	hl.exec_cmd("goldendict --group-name Main --popup-group-name Popup")
 
-	-- Clipboard history. Watch text and images separately per cliphist's own
-	-- recommendation, rather than one `wl-paste --watch`, since a single
-	-- watcher gets confused switching between mime types.
-	hl.exec_cmd("wl-paste --type text --watch cliphist store")
-	hl.exec_cmd("wl-paste --type image --watch cliphist store")
+	-- Walker launcher (SUPER+SPACE) and its elephant backend. Both are full
+	-- systemd units started here, not `enable`d: they need WAYLAND_DISPLAY
+	-- from the import above, same stale-env reasoning as waybar/emacs. The
+	-- elephant clipboard provider runs its own `wl-paste --watch`, so it
+	-- replaces the old cliphist capture. walker.service must stay up because
+	-- Walker only loads the clipboard module when running as a service.
+	-- reset-failed: a logout leaves the old process dead on a broken
+	-- Wayland pipe and burns the restart limit before this `restart` runs.
+	hl.exec_cmd("sh -c 'systemctl --user reset-failed elephant.service; systemctl --user restart elephant.service'")
+	hl.exec_cmd("sh -c 'systemctl --user reset-failed walker.service; systemctl --user restart walker.service'")
 
 	-- Launch a terminal on the scratchpad.
 	hl.exec_cmd("ghostty --title=scratchpad")
@@ -208,14 +213,10 @@ hl.bind("SUPER+SHIFT+PERIOD", hl.dsp.window.move({ workspace = "+1" }))
 hl.bind("SUPER+SHIFT+W", hl.dsp.window.move({ workspace = "-1" }))
 
 -- Applications
-hl.bind("SUPER+SPACE", hl.dsp.exec_cmd("wofi --show drun"))
--- Shell command prompt. Piping into `sh -c` rather than using wofi's own run
--- mode is what makes pipes, redirects and globs work. The `printf '\n'` is
--- required: given genuinely empty stdin wofi exits immediately instead of
--- opening, so it needs one blank line to type over.
-hl.bind("SUPER+R", hl.dsp.exec_cmd([[sh -c "$(printf '\n' | wofi --dmenu --prompt 'Run:')"]]))
+hl.bind("SUPER+SPACE", hl.dsp.exec_cmd("walker"))
 hl.bind("SUPER+CTRL+SPACE", hl.dsp.exec_cmd("1password --quick-access"))
-hl.bind("SUPER+V", hl.dsp.exec_cmd("cliphist-pick"))
+hl.bind("SUPER+V", hl.dsp.exec_cmd("walker --provider clipboard"))
+hl.bind("SUPER+G", hl.dsp.exec_cmd("walker --provider websearch"))
 hl.bind("SUPER+RETURN", hl.dsp.exec_cmd("ghostty"))
 hl.bind("SUPER+B", hl.dsp.exec_cmd("firefox --new-window"))
 hl.bind("SUPER+CTRL+D", hl.dsp.exec_cmd("goldendict --popup $(wl-paste --primary --no-newline)"))
