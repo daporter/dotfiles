@@ -14,7 +14,6 @@ bat
 bc
 btop
 clang
-cliphist
 cmake
 code
 dateutils
@@ -121,7 +120,6 @@ readest
 rebuild-detector
 restic
 ripgrep
-rofi-calc
 rsync
 ruff
 rust-analyzer
@@ -175,7 +173,6 @@ vale
 valgrind
 wev
 wget
-wofi
 words
 xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
