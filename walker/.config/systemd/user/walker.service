@@ -1,0 +1,16 @@
+# Persistent Walker instance. Started explicitly from hyprland.lua (like
+# waybar/emacs/dropbox), not via `systemctl --user enable` -- this session
+# never starts graphical-session.target, so no PartOf=/After= on it.
+#
+# The service is not optional: Walker's clipboard provider only loads when
+# Walker runs as a service, so SUPER+V depends on this being up.
+[Unit]
+Description=Walker application launcher (persistent GTK service)
+Documentation=https://github.com/abenz1267/walker
+Wants=elephant.service
+After=elephant.service
+
+[Service]
+ExecStart=/usr/bin/walker --gapplication-service
+Restart=on-failure
+RestartSec=2

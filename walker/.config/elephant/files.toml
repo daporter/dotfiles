@@ -1,0 +1,21 @@
+# Elephant files provider -- partial override of its defaults.
+#
+# search_dirs defaults to all of $HOME, which builds a ~46 MB index and
+# ~300 MB of RAM while indexing. Scope it to the dirs that actually hold
+# findable documents; source code lives in ~/code and is browsed from the
+# editor, not the launcher, so it's deliberately excluded.
+#
+# Index rebuilds on each elephant start (i.e. each Hyprland login); watch
+# is left at its default (false).
+search_dirs = [
+  "/home/david/Documents",
+  "/home/david/Downloads",
+  "/home/david/Dropbox",
+  "/home/david/Pictures",
+  "/home/david/Videos",
+  "/home/david/zettelkasten",
+]
+
+# Regexp-matched against the path. Keeps build/VCS trees out of results --
+# ~/Dropbox/archive holds old code projects with target/ and node_modules/.
+ignored_dirs = ["/target/", "/node_modules/", "/\\.git/"]

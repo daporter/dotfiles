@@ -1,0 +1,182 @@
+/*
+ * Solarized Light theme for Walker, ported from the old wofi style.css so
+ * the launcher matches waybar and the rest of the system.
+ *
+ * Inherits the default theme's layout.xml / item_*.xml (Walker only
+ * overrides the stylesheet when a theme supplies its own style.css).
+ *
+ * ---- TUNE HERE -------------------------------------------------------
+ * GTK CSS has no numeric variables, so the geometry knobs are inline:
+ *   - corner radius: the `border-radius` values below (wofi used 2-3px)
+ *   - row separators: `.item-box` border-bottom (set to `none` to drop)
+ *   - selected-row accent bar: `child:selected .item-box` border-left
+ *   - window size: width-request / height-request are in layout.xml, not
+ *     here -- override by copying layout.xml into this theme dir
+ * -------------------------------------------------------------------- */
+
+/* Solarized Light palette */
+@define-color window_bg_color #fdf6e3; /* base3  */
+@define-color surface_bg_color #eee8d5; /* base2  */
+@define-color muted_border_color #93a1a1; /* base1  */
+@define-color theme_fg_color #586e75; /* base01 */
+@define-color accent_color #268bd2; /* blue   */
+@define-color error_bg_color #dc322f; /* red    */
+@define-color error_fg_color #fdf6e3;
+
+* {
+  all: unset;
+  font-size: 14px;
+}
+
+popover {
+  background: @window_bg_color;
+  border: 1px solid @theme_fg_color;
+  border-radius: 3px;
+  padding: 6px;
+}
+
+.normal-icons {
+  -gtk-icon-size: 16px;
+}
+
+.large-icons {
+  -gtk-icon-size: 32px;
+}
+
+scrollbar {
+  opacity: 0;
+}
+
+.box-wrapper {
+  background: @window_bg_color;
+  padding: 8px;
+  border-radius: 3px;
+  border: 2px solid @theme_fg_color;
+}
+
+.preview-box,
+.elephant-hint,
+.placeholder {
+  color: @theme_fg_color;
+}
+
+.search-container {
+  border-radius: 2px;
+}
+
+.input {
+  caret-color: @accent_color;
+  background: @surface_bg_color;
+  border: 1px solid @muted_border_color;
+  border-radius: 2px;
+  padding: 3px 12px;
+  color: @theme_fg_color;
+}
+
+.input:focus,
+.input:active {
+  border-color: @accent_color;
+}
+
+.input placeholder {
+  opacity: 0.5;
+}
+
+.input selection {
+  background: alpha(@accent_color, 0.25);
+  color: @theme_fg_color;
+}
+
+.list {
+  color: @theme_fg_color;
+}
+
+.item-box {
+  padding: 5px 12px;
+  border-radius: 2px;
+  border-bottom: 1px solid @surface_bg_color;
+}
+
+.item-quick-activation {
+  background: alpha(@accent_color, 0.25);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+child:selected .item-box,
+row:selected .item-box {
+  background: @surface_bg_color;
+  color: @accent_color;
+  border-left: 3px solid @accent_color;
+}
+
+.item-subtext {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.providerlist .item-subtext {
+  font-size: unset;
+  opacity: 0.75;
+}
+
+.item-image-text {
+  font-size: 28px;
+}
+
+.preview {
+  border: 1px solid alpha(@muted_border_color, 0.5);
+  border-radius: 2px;
+  color: @theme_fg_color;
+}
+
+.calc .item-text {
+  font-size: 22px;
+}
+
+.symbols .item-image {
+  font-size: 24px;
+}
+
+.keybinds {
+  padding-top: 8px;
+  border-top: 1px solid @surface_bg_color;
+  font-size: 12px;
+  color: @theme_fg_color;
+}
+
+.keybind-button {
+  opacity: 0.5;
+}
+
+.keybind-button:hover {
+  opacity: 0.75;
+}
+
+.keybind-bind {
+  text-transform: lowercase;
+  opacity: 0.4;
+}
+
+.keybind-label {
+  padding: 2px 4px;
+  border-radius: 3px;
+  border: 1px solid @theme_fg_color;
+}
+
+.error {
+  padding: 10px;
+  background: @error_bg_color;
+  color: @error_fg_color;
+  border-radius: 2px;
+}
+
+:not(.calc).current {
+  font-style: italic;
+}
+
+.preview-content.archlinuxpkgs,
+.preview-content.dnfpackages,
+.preview-content.aptpackages {
+  font-family: monospace;
+}

@@ -1,0 +1,18 @@
+# Elephant: the data/exec backend Walker queries. Based on what
+# `elephant service enable` generates, with two changes for this session:
+#
+#   - The generated unit keys off graphical-session.target (After= and
+#     WantedBy=). Nothing here starts that target -- see waybar.service --
+#     so it's dropped. This unit is started explicitly from hyprland.lua
+#     (reset-failed + restart), after WAYLAND_DISPLAY is imported into the
+#     systemd --user environment, same as waybar and emacs.
+#   - ExecStart is made absolute.
+[Unit]
+Description=Elephant data provider backend for Walker
+Documentation=https://github.com/abenz1267/elephant
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/elephant
+Restart=on-failure
+RestartSec=2

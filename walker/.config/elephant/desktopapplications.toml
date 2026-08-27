@@ -1,0 +1,11 @@
+# Elephant config (not Walker's) -- partial override of the desktopapplications
+# provider's defaults. Lives here in the walker/ stow package so it deploys
+# alongside the launcher.
+#
+# window_integration: when an app already has an open window, its launcher
+# entry activates as "focus that window" instead of spawning a new instance.
+# Needs the `windows` provider (elephant-windows-bin). score_open_windows
+# (default true) then sinks already-open apps down the list. This gets
+# open-window awareness into SUPER+SPACE without adding `windows` to the
+# no-prefix default set; the "$" prefix still does explicit window switching.
+window_integration = true

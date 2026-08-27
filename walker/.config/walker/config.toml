@@ -1,0 +1,57 @@
+# Partial override, merged over /etc/xdg/walker/config.toml. Only keys that
+# differ from the packaged default belong here.
+
+theme = "solarized"
+
+[providers]
+# The bare launcher (SUPER+SPACE, no prefix) queries apps only, matching the
+# old `wofi --show drun`. Everything else is prefix-gated (see below);
+# notably calc stays one keystroke away via "=". The packaged default also
+# folds in calc and websearch, but calc feeds digit-containing app names to
+# qalculate ("s3fs" -> "0.001 ms^4") and websearch appends a "Search: ..."
+# row to every keystroke.
+default = ["desktopapplications"]
+empty = ["desktopapplications"]
+
+# Prefixes listed explicitly (rather than inheriting the packaged set) so the
+# active provider set is visible in one place. Drops the packaged "!" todo
+# entry (provider not installed) and adds "\" for unicode.
+[[providers.prefixes]]
+prefix = ";"
+provider = "providerlist"
+
+[[providers.prefixes]]
+prefix = ">"
+provider = "runner"
+
+[[providers.prefixes]]
+prefix = "/"
+provider = "files"
+
+[[providers.prefixes]]
+prefix = "."
+provider = "symbols"
+
+[[providers.prefixes]]
+prefix = "\\"
+provider = "unicode"
+
+[[providers.prefixes]]
+prefix = "%"
+provider = "bookmarks"
+
+[[providers.prefixes]]
+prefix = "="
+provider = "calc"
+
+[[providers.prefixes]]
+prefix = "@"
+provider = "websearch"
+
+[[providers.prefixes]]
+prefix = ":"
+provider = "clipboard"
+
+[[providers.prefixes]]
+prefix = "$"
+provider = "windows"
