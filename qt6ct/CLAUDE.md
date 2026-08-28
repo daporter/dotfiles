@@ -11,6 +11,9 @@ Key choices in `qt6ct.conf`:
   light surfaces.
 - No `icon_theme` key — falls back to the system default (Adwaita), matching
   `gtk-icon-theme-name` in the `gtk/` package.
+- Fonts match the rest of the system: `general` = Inter 10 (as `gtk-font-name`),
+  `fixed` = JetBrains Mono 10 (what `fc-match monospace` resolves to; the plain
+  family, not the Nerd Font variant Emacs uses).
 - `force_raster_widgets=1` — kept from prior setup.
 
 The `[SettingsWindow]` section (window geometry) is intentionally omitted: qt6ct
