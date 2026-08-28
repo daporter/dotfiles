@@ -814,6 +814,9 @@ than the default Inter (sans-serif)."
 
 (use-package eglot
   :preface
+  (declare-function eglot-inlay-hints-mode "eglot")
+  (declare-function eglot--message "eglot")
+
   (defun my/eglot-setup-eldoc ()
     (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly))
   (defun my/eglot-disable-hints ()
@@ -906,6 +909,7 @@ than the default Inter (sans-serif)."
 
   ;; `hs-special-modes-alist' is obsolete as of Emacs 31.1; extra folding
   ;; support for nxml-mode now goes through its buffer-local replacements.
+  (declare-function sgml-skip-tag-forward "sgml-mode")
   (defun my/hideshow-nxml-setup ()
     (setq-local hs-block-start-regexp "<!--\\|<[^/>]*[^/]>"
                 hs-block-end-regexp "-->\\|</[^/>]*[^/]>"
@@ -1103,6 +1107,13 @@ that."
 (use-package beframe
   :ensure t
   :after project
+  :preface
+  (declare-function beframe-buffer-names "beframe")
+  (declare-function beframe-buffer-sort-visibility "beframe")
+  (defun my/beframe-buffer-names-sorted (&optional frame)
+    "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+With optional argument FRAME, return the list of buffers of FRAME."
+    (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
   :custom
   (beframe-global-buffers '("^\\*scratch\\*$" "^\\*Messages\\*$"
                             "^\\*Backtrace\\*$" "^\\*Warnings\\*$"))
@@ -1122,10 +1133,6 @@ that."
     (defface beframe-buffer '((t :inherit font-lock-string-face))
       "Face for `consult' framed buffers."
       :group 'beframe)
-    (defun my/beframe-buffer-names-sorted (&optional frame)
-      "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
-With optional argument FRAME, return the list of buffers of FRAME."
-      (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
     (defvar beframe-consult-source
       `( :name     "Frame-specific buffers (current frame)"
          :narrow   ?F
@@ -1198,9 +1205,9 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
 (use-package eshell
   :commands (eshell)
+  :bind (:map eshell-mode-map
+              ([remap display-local-help] . man))
   :config
-  (with-eval-after-load 'esh-mode
-    (define-key eshell-mode-map [remap display-local-help] #'man))
   (dolist (module '(eshell-smart eshell-tramp))
     (add-to-list 'eshell-modules-list module)))
 
