@@ -16,7 +16,6 @@
     "memory",
     "custom/systemd-failed-units",
     "tray",
-    "custom/clipboard",
     "custom/mail",
     "custom/notification"
   ],
@@ -93,13 +92,6 @@
     "on-click": "ghostty --title=systemd-failed -e systemd-failed-status",
     "on-click-right": "systemctl reset-failed; systemctl --user reset-failed",
     "escape": true
-  },
-
-  "custom/clipboard": {
-    "format": "󰅍",
-    "tooltip": true,
-    "tooltip-format": "Clipboard history (SUPER+V)",
-    "on-click": "cliphist-pick"
   },
 
   "tray": {

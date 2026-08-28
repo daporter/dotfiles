@@ -97,7 +97,6 @@ tooltip label {
 }
 
 #tray,
-#custom-clipboard,
 #custom-mail,
 #custom-notification {
   color: @fg1;
@@ -140,7 +139,6 @@ tooltip label {
   -gtk-icon-effect: highlight;
 }
 
-#custom-clipboard,
 #custom-notification {
   font-size: 16px;
 }
