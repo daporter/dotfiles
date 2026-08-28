@@ -1257,8 +1257,10 @@ With optional argument FRAME, return the list of buffers of FRAME."
   (add-to-list 'display-buffer-alist
                '((major-mode . ghostel-mode)
                  (display-buffer-reuse-window
+                  display-buffer-reuse-mode-window
                   display-buffer-in-direction)
-                 (direction . right)
+                 (direction . left)
+                 (mode . ghostel-mode)
                  (window-width . 100))))
 
 ;;;; Language modes
