@@ -56,11 +56,11 @@ hl.on("hyprland.start", function()
 	-- Walker launcher (SUPER+SPACE) and its elephant backend. Both are full
 	-- systemd units started here, not `enable`d, same stale-env reasoning as
 	-- waybar/emacs. The elephant clipboard provider runs its own
-	-- `wl-paste --watch`, replacing the old cliphist capture; walker.service
-	-- must stay up because Walker only loads the clipboard module as a
-	-- service. Re-import WAYLAND_DISPLAY synchronously here: the line-24
-	-- import is fire-and-forget and races this, and the units want the real
-	-- value (their ExecStartPre also waits for the socket). reset-failed
+	-- `wl-paste --watch`; walker.service must stay up because Walker only
+	-- loads the clipboard module as a service. Re-import WAYLAND_DISPLAY
+	-- synchronously here: the line-24 import is fire-and-forget and races
+	-- this, and the units want the real value (their ExecStartPre also
+	-- waits for the socket). reset-failed
 	-- clears the start-limit state the compositor handoff can leave behind.
 	hl.exec_cmd(
 		"sh -c 'systemctl --user import-environment WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP; "
