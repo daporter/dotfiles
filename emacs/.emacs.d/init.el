@@ -191,7 +191,12 @@
   (defun my/load-config ()
     "Load config"
     (interactive)
-    (load-file user-init-file)))
+    (load-file user-init-file))
+
+  :bind
+  ;; Matches QMK's UNICODE_MODE_LINUX sequence (C-S-u, hex digits, trailing
+  ;; space) -- see `my/read-unicode-char' above.
+  ("C-S-u" . my/read-unicode-char))
 
 (use-package window
   :custom
