@@ -196,12 +196,22 @@
   (switch-to-buffer-obey-display-actions t)
   (fit-window-to-buffer-horizontally t)
 
+  ;; `other-window' is muscle-memory frequent; `C-x o' puts repeated load on
+  ;; the awkward `x' reach. `M-o' is a free home-row Meta chord (facemenu
+  ;; stopped binding it in Emacs 28).
+  :bind ("M-o" . other-window)
+
   :config
   (add-to-list 'display-buffer-alist
                `(,(rx "*Warnings*")
                  (display-buffer-in-side-window)
                  (side . bottom)
-                 (window-height . (lambda (w) (fit-window-to-buffer w 10 5))))))
+                 (window-height . (lambda (w) (fit-window-to-buffer w 10 5)))))
+
+  ;; Let a bare `o' self-insert right after switching windows: drop the
+  ;; `repeat-map' `window.el' puts on `other-window' so `repeat-mode' doesn't
+  ;; grab the next keystroke.
+  (put 'other-window 'repeat-map nil))
 
 (use-package frame
   :custom
@@ -1234,6 +1244,11 @@ With optional argument FRAME, return the list of buffers of FRAME."
               ("t" . ghostel-project)
               ("T" . ghostel-project-list-buffers))
   :config
+  ;; Let `M-o' (`other-window') through instead of forwarding it to the
+  ;; shell.  `customize-set-variable' fires the `:set' that rebuilds the keymap.
+  (customize-set-variable 'ghostel-keymap-exceptions
+                          (cons "M-o" ghostel-keymap-exceptions))
+
   (add-to-list 'project-switch-commands
                '(ghostel-project "Ghostel") t)
   (add-to-list 'project-switch-commands
