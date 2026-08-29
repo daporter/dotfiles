@@ -372,7 +372,7 @@
   (corfu-cycle t)
   :custom-face
   ;; `corfu-default' has no explicit `:family', so it inherits whatever
-  ;; `default' resolves to -- and `variable-pitch-mode' (markdown-mode/
+  ;; `default' resolves to -- and `variable-pitch-mode' (markdown-ts-mode/
   ;; org-mode) remaps `default' to a proportional face, breaking the
   ;; popup's character-count-based column padding.  Force a fixed-pitch
   ;; family directly here so it's immune to that remap.
@@ -574,7 +574,7 @@
            :default-height 100
 
            ;; Without this, `fixed-pitch' inherits whatever `default'
-           ;; resolves to, and `variable-pitch-mode' (markdown-mode/org-mode)
+           ;; resolves to, and `variable-pitch-mode' (markdown-ts-mode/org-mode)
            ;; remaps `default' to a scaled-up face -- fixed-pitch text
            ;; silently inflated along with it (measured: 15px instead of
            ;; the frame's true 13px).  An absolute height ignores that
@@ -814,7 +814,8 @@ than the default Inter (sans-serif)."
   (after-init . my/remap-treesitter-modes)
 
   :custom
-  (treesit-font-lock-level 4))
+  (treesit-font-lock-level 4)
+  (treesit-auto-install-grammar 'always))
 
 (use-package eglot
   :preface
@@ -1008,9 +1009,8 @@ that."
   ;; The stock `prettier-markdown' formatter needs no changes here -- its
   ;; --tab-width comes from the *.md override in ~/.prettierrc.json5
   ;; instead of from apheleia deriving it from an Emacs variable, since
-  ;; apheleia has no indent-var case for markdown-mode/gfm-mode at all.
-  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier-markdown))
-  (add-to-list 'apheleia-mode-alist '(gfm-mode . prettier-markdown)))
+  ;; apheleia has no indent-var case for markdown-ts-mode at all.
+  (add-to-list 'apheleia-mode-alist '(markdown-ts-mode . prettier-markdown)))
 
 (use-package editorconfig
   :hook
@@ -1073,7 +1073,15 @@ that."
 
 (use-package autoinsert
   :config
-  (auto-insert-mode t))
+  (auto-insert-mode t)
+  ;; YAML front matter for Zettelkasten notes; keyed on file path, not mode.
+  (define-auto-insert
+    "/.*/Dropbox/reference/.*\\.md\\'"
+    '(nil "---" n
+          "title: " (capitalize (file-name-base buffer-file-name)) n
+          "id: " (format "\"%s\"" (format-time-string "%Y%m%d%H%M")) n
+          "created: " (format-time-string "%Y-%m-%d %H:%M") n
+          "---\n\n")))
 
 ;;;; Files, projects, VC
 
@@ -1465,53 +1473,50 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
   :ensure t
   :commands visual-fill-column-mode)
 
-(use-package markdown-mode
-  :ensure t
+(use-package markdown-ts-mode
   :preface
-  ;; Tab characters are risky in markdown source: some renderers treat a
+  ;; Tab characters are risky in Markdown source: some renderers treat a
   ;; leading tab in a list continuation inconsistently, unlike a fixed
   ;; number of spaces. Force spaces the same way as the other markup/data
   ;; formats (css-mode, json-ts-mode, mhtml-mode).
-  ;;
-  ;; No tab-width override needed here: markdown-mode's own
-  ;; define-derived-mode body already does (setq tab-width 4) ("Natural
-  ;; Markdown tab width"), and its indent-cycling logic still consults
-  ;; tab-width even with indent-tabs-mode nil, same as yaml-ts-mode's
-  ;; indent-relative fallback.
   (defun my/markdown-set-indent-tabs-mode ()
     (setq indent-tabs-mode nil))
   (defun my/markdown-time-stamp-updated-field ()
     (setq-local time-stamp-pattern "20/^updated: %Y-%m-%d %H:%M$")
     (add-hook 'before-save-hook #'time-stamp nil t))
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode))
+  :mode ("\\.md\\'" "\\.mdx\\'" "\\.markdown\\'")
   :hook
-  ((markdown-mode . my/markdown-set-indent-tabs-mode)
-   (markdown-mode . my/markdown-time-stamp-updated-field)
-   (markdown-mode . variable-pitch-mode)
-   (markdown-mode . my/variable-pitch-serif))
-  :custom
-  (markdown-command "pandoc")
-  (markdown-asymmetric-header t)
-  (markdown-fontify-code-blocks-natively t)
-  (markdown-italic-underscore t)
+  ((markdown-ts-mode . my/markdown-set-indent-tabs-mode)
+   (markdown-ts-mode . my/markdown-time-stamp-updated-field)
+   (markdown-ts-mode . variable-pitch-mode)
+   (markdown-ts-mode . my/variable-pitch-serif))
+  :custom-face
+  ;; `modus-themes-headings' only styles the heading faces modus knows
+  ;; (`outline-N', `org-level-N', `markdown-header-face-N', ...); the Emacs
+  ;; 31 `markdown-ts-heading-N' faces aren't in that set, so they render
+  ;; flat -- one colour, one size. Inheriting `outline-N' routes them back
+  ;; through `modus-themes-headings' (doric styles `outline-*' too). Drop
+  ;; this once modus styles `markdown-ts-heading-*' directly.
+  (markdown-ts-heading-1 ((t (:inherit outline-1))))
+  (markdown-ts-heading-2 ((t (:inherit outline-2))))
+  (markdown-ts-heading-3 ((t (:inherit outline-3))))
+  (markdown-ts-heading-4 ((t (:inherit outline-4))))
+  (markdown-ts-heading-5 ((t (:inherit outline-5))))
+  (markdown-ts-heading-6 ((t (:inherit outline-6))))
   :config
-  (define-auto-insert
-    "/.*/Dropbox/reference/.*\\.md\\'"
-    '(nil "---" n
-          "title: " (capitalize (file-name-base buffer-file-name)) n
-          "id: " (format "\"%s\"" (format-time-string "%Y%m%d%H%M")) n
-          "created: " (format-time-string "%Y-%m-%d %H:%M") n
-          "---\n\n")))
+  ;; Extras library: TOC generation, buffer/file conversion, spec browsers.
+  (require 'markdown-ts-mode-x))
 
 (use-package flymake-markdownlint
   :ensure t
   :hook
-  (markdown-mode . flymake-markdownlint-setup))
+  (markdown-ts-mode . flymake-markdownlint-setup))
 
 (use-package indent-bars
   :ensure t
-  :hook (markdown-mode . indent-bars-mode)
+  ;; Kept from the markdown-mode setup; revisit whether it still earns its
+  ;; place under markdown-ts-mode's indentation model.
+  :hook (markdown-ts-mode . indent-bars-mode)
   ;; Dimmer than the default 0.325 blend toward the frame background.
   :custom (indent-bars-color '(highlight :face-bg t :blend 0.12)))
 
@@ -1947,7 +1952,7 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
                  flymake-yamllint fontaine
                  ghostel hl-todo hyprlang-ts-mode indent-bars
                  ledger-mode ligature lorem-ipsum lua-mode magit marginalia
-                 markdown-mode nerd-icons
+                 nerd-icons
                  nerd-icons-completion nerd-icons-corfu nerd-icons-dired
                  nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref
                  olivetti orderless org-anki org-modern

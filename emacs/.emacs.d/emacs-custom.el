@@ -11,7 +11,7 @@
                  flymake-hledger flymake-lua flymake-markdownlint flymake-vale
                  flymake-yamllint fontaine ghostel hl-todo hyprlang-ts-mode
                  indent-bars ledger-mode ligature lorem-ipsum lua-mode magit
-                 marginalia markdown-mode nerd-icons nerd-icons-completion
+                 marginalia nerd-icons nerd-icons-completion
                  nerd-icons-corfu nerd-icons-dired nerd-icons-grep
                  nerd-icons-ibuffer nerd-icons-xref olivetti orderless org-anki
                  org-modern page-break-lines pcmpl-args popper prescient project
