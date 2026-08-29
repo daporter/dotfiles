@@ -5,7 +5,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(agent-shell apheleia async auto-compile beframe cape captain casual-suite
+   '(agent-shell apheleia async beframe cape captain casual-suite
                  consult consult-notmuch corfu corfu-prescient csv-mode dape
                  doric-themes eglot embark embark-consult flymake
                  flymake-hledger flymake-lua flymake-markdownlint flymake-vale

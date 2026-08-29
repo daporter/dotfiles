@@ -100,9 +100,7 @@
   ;; Installing anything via `:ensure' before this point would save
   ;; `package-selected-packages' -- and hence overwrite emacs-custom.el
   ;; on disk -- before that variable has been loaded from it above,
-  ;; clobbering the existing list. `auto-compile' (which early-init.el
-  ;; enables; see the `require' there) must therefore be installed no
-  ;; earlier than here.
+  ;; clobbering the existing list.  Keep the first `:ensure' after here.
 
   (dolist (cmd '(upcase-region
                  downcase-region
@@ -126,15 +124,6 @@
                       "%Y%m%d%H%M%S"
                     "%Y-%m-%d %H:%M:%S")))
       (insert (format-time-string format)))))
-
-;; Installs the package early-init.el enables (see the `require' there);
-;; keeps it, and its `packed' dependency, tracked in package-selected-packages
-;; like any other package.
-(use-package auto-compile
-  :ensure t
-  :config
-  (auto-compile-on-load-mode 1)
-  (auto-compile-on-save-mode 1))
 
 (use-package custom
   :custom
@@ -819,9 +808,6 @@ than the default Inter (sans-serif)."
 
 (use-package eglot
   :preface
-  (declare-function eglot-inlay-hints-mode "eglot")
-  (declare-function eglot--message "eglot")
-
   (defun my/eglot-setup-eldoc ()
     (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly))
   (defun my/eglot-disable-hints ()
@@ -914,7 +900,6 @@ than the default Inter (sans-serif)."
 
   ;; `hs-special-modes-alist' is obsolete as of Emacs 31.1; extra folding
   ;; support for nxml-mode now goes through its buffer-local replacements.
-  (declare-function sgml-skip-tag-forward "sgml-mode")
   (defun my/hideshow-nxml-setup ()
     (setq-local hs-block-start-regexp "<!--\\|<[^/>]*[^/]>"
                 hs-block-end-regexp "-->\\|</[^/>]*[^/]>"
@@ -1113,8 +1098,6 @@ that."
   :ensure t
   :after project
   :preface
-  (declare-function beframe-buffer-names "beframe")
-  (declare-function beframe-buffer-sort-visibility "beframe")
   (defun my/beframe-buffer-names-sorted (&optional frame)
     "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
 With optional argument FRAME, return the list of buffers of FRAME."
@@ -1132,8 +1115,6 @@ With optional argument FRAME, return the list of buffers of FRAME."
         ("C-c b" . beframe-prefix-map))
   :config
   (beframe-mode 1)
-  (defvar consult-buffer-sources)
-  (declare-function consult--buffer-state "consult")
   (with-eval-after-load 'consult
     (defface beframe-buffer '((t :inherit font-lock-string-face))
       "Face for `consult' framed buffers."
@@ -1939,12 +1920,10 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 ;;
 ;; eglot, flymake, project and tramp are ELPA upgrades of built-ins (see
 ;; `package-install-upgrade-built-in' above) that autoremove would
-;; otherwise delete; auto-compile is `require'd directly by early-init.el
-;; rather than via `use-package', so it needs the same manual entry to
-;; avoid looking unused.
+;; otherwise delete, so they need a manual entry here too.
 (custom-set-variables
  '(package-selected-packages
-   '(agent-shell apheleia async auto-compile beframe cape captain
+   '(agent-shell apheleia async beframe cape captain
                  casual-suite consult consult-notmuch corfu
                  corfu-prescient csv-mode
                  dape doric-themes eglot embark
