@@ -686,7 +686,19 @@
   :hook (after-init . global-page-break-lines-mode))
 
 (use-package pixel-scroll
-  :hook (after-init . pixel-scroll-precision-mode))
+  :hook (after-init . pixel-scroll-precision-mode)
+  ;; `pixel-scroll-precision-mode' only intercepts wheel events, not the
+  ;; page-scroll commands, so C-v / M-v need an explicit remap to the
+  ;; interpolating variants (which honor `...-interpolate-page' below).
+  :bind (([remap scroll-up-command]   . pixel-scroll-interpolate-down)
+         ([remap scroll-down-command] . pixel-scroll-interpolate-up))
+  :custom
+  ;; The Kensington SlimBlade Pro's scroll ring sends one discrete event
+  ;; per detent; the defaults animate each over just 0.1s, which reads as
+  ;; steppy. Stretch the glide and soften the per-detent throw.
+  (pixel-scroll-precision-interpolation-total-time 0.2)
+  (pixel-scroll-precision-interpolation-factor 0.5)
+  (pixel-scroll-precision-interpolate-page t)) ; also animate C-v / M-v
 
 (use-package face-remap
   :preface
