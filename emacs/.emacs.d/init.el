@@ -418,19 +418,20 @@
 (use-package completion-preview
   :hook (window-setup . global-completion-preview-mode)
   :custom
-  ;; Debounce so rapid typing doesn't re-run every CAPF (including the
-  ;; uncapped `cape-dict' grep in `my/text-mode-capf', see the
-  ;; `cape-dict-limit' comment below) on each keystroke.
+  ;; Debounce so rapid typing doesn't re-run every CAPF (including the uncapped
+  ;; `cape-dict' grep in `my/text-mode-capf', see the `cape-dict-limit' comment
+  ;; below) on each keystroke.
   (completion-preview-idle-delay 0.5)
-  :custom-face
-  ;; Drop the default underline and inherit `default' (undimmed) instead,
-  ;; so the confirmed common prefix reads via color/brightness alone
-  ;; against the dimmer `completion-preview' shadow text -- same
-  ;; single-channel treatment `modus-themes-completions' uses for Corfu.
-  (completion-preview-common ((t (:underline nil :inherit default))))
-  ;; Default hardcodes a non-theme-aware green underline; use the
-  ;; theme's own `success' face instead so it adapts with the theme.
-  (completion-preview-exact ((t (:underline nil :inherit success)))))
+  (completion-preview-ignore-case t)
+  :bind
+  (:map completion-preview-active-mode-map
+        ("M-i" . completion-preview-insert-word)
+        ("M-n" . completion-preview-next-candidate)
+        ("M-p" . completion-preview-prev-candidate)
+        ("M-<return>" . completion-preview-insert)
+        ;; With TAB we effectively defer to the *Completions* buffer to show
+        ;; more completion candidates at once.
+        ("<tab>" . completion-preview-complete)))
 
 ;; Note on CAPFs: completion is two-step -- each entry on
 ;; `completion-at-point-functions' is first asked only whether it *can*
