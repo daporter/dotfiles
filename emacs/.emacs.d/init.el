@@ -154,8 +154,7 @@
   :custom
   (duplicate-line-final-position 1)     ; point follows the duplicate
   (kill-region-dwim t)                  ; C-w with no region kills last word
-  :bind (("C-*" . undo-redo)             ; i.e., C-S-/ since undo is C-/
-         ("C-z" . undo)                  ; was suspend-frame, never used
+  :bind (("C-z" . undo)                  ; was suspend-frame, never used
          ("C-S-z" . undo-redo)           ; matches redo in non-Emacs apps
          ("C-\"" . duplicate-dwim)))
 
@@ -760,7 +759,7 @@ than the default Inter (sans-serif)."
 
 (use-package winner
   :bind (("C--" . winner-undo)   ; mirrors C-/ -> undo
-         ("C-+" . winner-redo))  ; mirrors C-* -> undo-redo (C-S--)
+         ("C-+" . winner-redo))  ; C-S-- mirrors redo, as C-- mirrors undo
   :hook (after-init))
 
 (use-package popper
