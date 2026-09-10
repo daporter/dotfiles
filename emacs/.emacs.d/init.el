@@ -1731,7 +1731,17 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
 
 (use-package reader
   :vc (:url "https://codeberg.org/MonadicSheep/emacs-reader"
-            :make "clean all"))
+            :make "clean all")
+  :init
+  ;; emacs-reader's Makefile regenerates reader-autoloads.el via a bare
+  ;; `loaddefs-generate', which omits the `add-to-list 'load-path' stanza
+  ;; package.el normally injects. Emacs 31 also dropped load-path handling
+  ;; from `package-activate-1', so without this the package dir never
+  ;; reaches `load-path' and `find-file' breaks in
+  ;; `save-place-after-find-file-hook' (loading `reader-saveplace').
+  (let ((dir (expand-file-name "reader" package-user-dir)))
+    (when (file-directory-p dir)
+      (add-to-list 'load-path dir))))
 
 ;; Plain markdown notes (no denote/org-roam): find/search them recursively
 ;; with consult's own consult-fd/consult-ripgrep, rather than consult-notes'
