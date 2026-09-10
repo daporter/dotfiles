@@ -1219,11 +1219,19 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
 (use-package eshell
   :commands (eshell)
-  :bind (:map eshell-mode-map
-              ([remap display-local-help] . man))
   :config
   (dolist (module '(eshell-smart eshell-tramp))
     (add-to-list 'eshell-modules-list module)))
+
+;; `eshell-mode-map' is defined by `esh-mode', not `eshell', and only loads
+;; when an eshell session starts. Binding it via the `eshell' block (or the
+;; `casual-suite' block) breaks when something (e.g. ledger-xact) requires
+;; `eshell' without `esh-mode'; hence the `casual-eshell-tmenu' bind lives
+;; here too rather than beside the other Casual menus.
+(use-package esh-mode
+  :bind (:map eshell-mode-map
+              ([remap display-local-help] . man)
+              ("C-o" . casual-eshell-tmenu)))
 
 (use-package em-hist
   :preface
@@ -1903,7 +1911,6 @@ the mode later would wipe every `wrap-prefix' in the buffer outright."
         :map calc-alg-map ("C-o" . casual-calc-tmenu)
         :map compilation-mode-map ("C-o" . casual-compile-tmenu)
         :map dired-mode-map ("C-o" . casual-dired-tmenu)
-        :map eshell-mode-map ("C-o" . casual-eshell-tmenu)
         :map grep-mode-map ("C-o" . casual-compile-tmenu)
         :map help-mode-map ("C-o" . casual-help-tmenu)
         :map ibuffer-mode-map ("C-o" . casual-ibuffer-tmenu)
