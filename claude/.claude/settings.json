@@ -158,7 +158,13 @@
       }
     }
   },
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  },
   "theme": "light",
+  "agentPushNotifEnabled": true,
   "autoMode": {
     "environment": [
       "### Org-wide",
@@ -183,5 +189,5 @@
       "**Org-specific CLIs**: None configured"
     ]
   },
-  "agentPushNotifEnabled": true
+  "model": "sonnet"
 }
