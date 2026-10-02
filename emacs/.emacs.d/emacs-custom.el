@@ -6,19 +6,19 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    '(agent-shell apheleia async beframe cape captain casual-suite consult
-                 consult-notmuch corfu corfu-prescient cperl-mode csharp-mode
-                 csv-mode dape dictionary doric-themes eglot elixir-ts-mode
-                 embark embark-consult faceup flymake flymake-hledger
-                 flymake-lua flymake-markdownlint flymake-vale flymake-yamllint
-                 fontaine ghostel heex-ts-mode hl-todo hyprlang-ts-mode
-                 indent-bars ledger-mode less-css-mode ligature lorem-ipsum
-                 lua-mode magit marginalia markdown-ts-mode nerd-icons
-                 nerd-icons-completion nerd-icons-corfu nerd-icons-dired
-                 nerd-icons-grep nerd-icons-ibuffer nerd-icons-xref olivetti
-                 orderless org-anki org-modern page-break-lines pcmpl-args peg
-                 popper prescient project python-mode reader shannon-max
-                 string-inflection titlecase tramp verilog-mode vertico
-                 vertico-prescient visual-fill-column vterm wallpaper))
+                 consult-notmuch corfu corfu-prescient cperl-mode csv-mode dape
+                 dictionary doric-themes eglot elixir-ts-mode embark
+                 embark-consult faceup flymake flymake-hledger flymake-lua
+                 flymake-markdownlint flymake-vale flymake-yamllint fontaine
+                 ghostel hl-todo hyprlang-ts-mode indent-bars ledger-mode
+                 less-css-mode ligature lorem-ipsum lua-mode magit marginalia
+                 markdown-ts-mode nerd-icons nerd-icons-completion
+                 nerd-icons-corfu nerd-icons-dired nerd-icons-grep
+                 nerd-icons-ibuffer nerd-icons-xref olivetti orderless org-anki
+                 org-modern page-break-lines pcmpl-args peg popper prescient
+                 project python-mode reader shannon-max string-inflection
+                 titlecase tramp verilog-mode vertico vertico-prescient
+                 visual-fill-column vterm wallpaper))
  '(package-vc-selected-packages
    '((reader :url "https://codeberg.org/MonadicSheep/emacs-reader" :make
              "clean all")
