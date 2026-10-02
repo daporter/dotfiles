@@ -4,6 +4,8 @@
 # ruff replaces the isort/docformatter/black/pylint/flake8/darglint chain this
 # repo used to carry: `ruff format` for formatting, `ruff check` for linting.
 
+cache-dir = "~/.cache/ruff"
+
 line-length = 88
 
 [lint]
