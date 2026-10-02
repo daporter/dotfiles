@@ -130,6 +130,7 @@ shfmt
 smartmontools
 spotify-launcher
 sqlitebrowser
+sshfs
 stow
 strace
 stylua
@@ -177,6 +178,7 @@ wget
 words
 xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
+xdg-terminal-exec
 xdg-user-dirs
 xorg-bdftopcf
 xorg-docs

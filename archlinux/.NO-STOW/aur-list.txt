@@ -38,7 +38,10 @@ otf-xcharter
 paisa-bin
 paru
 pricehist
+pyglossary-git
 python-alpha_vantage
+python-idzip
+python-standardebooks
 stardict-bobotig-en
 stardict-bobotig-fr
 tree-sitter-cpp
@@ -55,7 +58,6 @@ vscode-langservers-extracted
 walker-bin
 waybar-git
 windscribe-v2-bin
-xdg-terminal-exec
 z-library-bin
 zathura-solarized-git
 zotero-bin
