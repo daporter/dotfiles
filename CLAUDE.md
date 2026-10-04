@@ -56,7 +56,7 @@ started with `ProtectHome=yes` (e.g. `systemd-networkd`, which also runs as an
 unprivileged user) has `/home` masked from its mount namespace, so it cannot
 follow a stow symlink into `/home/david/dotfiles` — it fails with `Failed to
 chase '…': Permission denied`. Such packages must be **copied** into place, not
-stowed; the `networkd/` package is deployed this way. Check a service's
+stowed; the `system/networkd/` package is deployed this way. Check a service's
 `ProtectHome`/`User` before assuming the symlink pattern will work for it.
 
 ## Modular shell configuration
@@ -78,7 +78,7 @@ automatically once stowed. Prefer this over editing `bash/.bashrc` directly.
   `btop: sort processes by CPU usage`). Enforced by `git/.gitlint`: title ≤ 72
   chars, body lines ≤ 72 chars.
 - **Package-specific conventions** (formatting/lint tools, language quirks, etc.) belong in a `CLAUDE.md` at the top of that package's
-  directory (e.g.  `hyprland/CLAUDE.md`), not here. Check for one
+  directory (e.g. `hyprland/CLAUDE.md`), not here. Check for one
   before editing a package's files; add one when a package gains a
   convention that doesn't apply repo-wide.
 
