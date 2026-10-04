@@ -6,14 +6,11 @@ Personal dotfiles for an Arch Linux / Hyprland (Wayland) desktop, managed with G
 
 ## Package
 
-On `waybar-git` (AUR), not `extra/waybar`, since 2026-08-21 (commit
-`bdbc816f`) — reason not recorded; investigate before switching back to
-`extra/waybar`.
+On `waybar-git` (AUR), not `extra/waybar` — reason not recorded;
+investigate before switching back to `extra/waybar`.
 
 Cost of `-git`: rebuild with `paru -S waybar-git` after any dependency
-soname bump. On 2026-09-10 a `jsoncpp` update (`libjsoncpp.so.26` →
-`.so.27`) left the binary unable to start (exit 127, crash-looped by the
-systemd unit) until it was rebuilt.
+soname bump (e.g. `jsoncpp`). Otherwise the binary fails to start (exit 127) and the systemd unit crash-loops.
 
 ## Custom module refresh signals
 
