@@ -73,7 +73,8 @@
       "Bash(yarn add *)",
       "Bash(yarn install *)",
       "Bash(yarn remove *)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
   "skillOverrides": {
     "emacs-skills:xcode-build-device": "off",
@@ -148,7 +149,8 @@
     "lua-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true
+    "security-guidance@claude-plugins-official": true,
+    "cc-plugin-you-should-know@builtin": true
   },
   "extraKnownMarketplaces": {
     "xenodium-emacs-skills": {
