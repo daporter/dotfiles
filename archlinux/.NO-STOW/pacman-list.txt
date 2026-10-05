@@ -48,6 +48,7 @@ gvfs-afc
 gvfs-gphoto2
 gvfs-mtp
 hdparm
+hunspell-es_any
 hypridle
 hyprland
 hyprpaper
