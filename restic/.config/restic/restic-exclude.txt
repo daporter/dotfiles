@@ -1,6 +1,8 @@
 $HOME/.cache
 $HOME/.cargo
 $HOME/.config/obsidian/Cache
+$HOME/.config/thunderbird/*/ImapMail
+$HOME/.config/thunderbird/*/global-messages-db.sqlite*
 $HOME/.dropbox
 $HOME/.dropbox-dist
 $HOME/.dropbox.cache
