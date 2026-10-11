@@ -112,8 +112,10 @@ prettier
 pyright
 python-fonttools
 python-gpgme
+python-lxml
 python-pipx
 python-pyserial
+python-roman
 qmk
 qt6ct
 qutebrowser
@@ -142,6 +144,7 @@ swaync
 sxiv
 texlive-binextra
 texlive-plaingeneric
+thunderbird
 torbrowser-launcher
 tree
 tree-sitter-bash
@@ -172,6 +175,7 @@ udiskie
 unrar
 usbutils
 uthash
+uv
 vale
 valgrind
 wev
