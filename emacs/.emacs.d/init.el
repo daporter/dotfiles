@@ -428,9 +428,9 @@
         ("M-n" . completion-preview-next-candidate)
         ("M-p" . completion-preview-prev-candidate)
         ("M-<return>" . completion-preview-insert)
-        ;; With TAB we effectively defer to the *Completions* buffer to show
-        ;; more completion candidates at once.
-        ("<tab>" . completion-preview-complete)))
+        ;; TAB accepts the preview; the Corfu popup is opened explicitly
+        ;; with `completion-at-point' (C-M-i).
+        ("<tab>" . completion-preview-insert)))
 
 ;; Note on CAPFs: completion is two-step -- each entry on
 ;; `completion-at-point-functions' is first asked only whether it *can*
