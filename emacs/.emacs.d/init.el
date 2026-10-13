@@ -862,6 +862,11 @@ than the default Inter (sans-serif)."
   (dape-buffer-window-arrangement 'right)
   (dape-inlay-hints t)
   :config
+  ;; No indicators: with the fringe one disabled, flymake falls back to a
+  ;; margin glyph whose taller font makes diagnostic lines jump in height.
+  ;; (`flymake-indicator-type' nil leaves a literal "!" in the buffer.)
+  (dolist (cat '(flymake-error flymake-warning flymake-note))
+    (put cat 'flymake-overlay-control '((before-string))))
   ;; Kill compile buffer on build success:
   (add-hook 'dape-compile-hook 'kill-buffer))
 
