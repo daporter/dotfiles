@@ -308,13 +308,6 @@
   :bind (("C-."   . embark-act)
          ("M-."   . embark-dwim)
          ("C-h B" . embark-bindings))
-  :custom
-  ;; Prompt for the action via completing-read (narrow by typing the
-  ;; command name) instead of embark-keymap-prompter's which-key-style
-  ;; grid of keys, which gets hard to scan once a target has many bound
-  ;; actions.  Press `@' at the prompt to fall back to reading a single
-  ;; key via embark-keymap-prompter for that invocation.
-  (embark-prompter #'embark-completing-read-prompter)
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
   :config
@@ -862,11 +855,6 @@ than the default Inter (sans-serif)."
   (dape-buffer-window-arrangement 'right)
   (dape-inlay-hints t)
   :config
-  ;; No indicators: with the fringe one disabled, flymake falls back to a
-  ;; margin glyph whose taller font makes diagnostic lines jump in height.
-  ;; (`flymake-indicator-type' nil leaves a literal "!" in the buffer.)
-  (dolist (cat '(flymake-error flymake-warning flymake-note))
-    (put cat 'flymake-overlay-control '((before-string))))
   ;; Kill compile buffer on build success:
   (add-hook 'dape-compile-hook 'kill-buffer))
 
@@ -874,6 +862,11 @@ than the default Inter (sans-serif)."
   :hook (prog-mode text-mode)
   :custom (flymake-fringe-indicator-position nil)
   :config
+  ;; No indicators: with the fringe one disabled, flymake falls back to a
+  ;; margin glyph whose taller font makes diagnostic lines jump in height.
+  ;; (`flymake-indicator-type' nil leaves a literal "!" in the buffer.)
+  (dolist (cat '(flymake-error flymake-warning flymake-note))
+    (put cat 'flymake-overlay-control '((before-string))))
   (add-to-list 'display-buffer-alist
                '((major-mode . flymake-diagnostics-buffer-mode)
                  (display-buffer-reuse-window
