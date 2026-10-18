@@ -23,6 +23,7 @@ application/x-shellscript=emacsclient.desktop
 text/x-shellscript=emacsclient.desktop
 text/x-python=emacsclient.desktop
 application/pdf=mupdf.desktop
+application/epub+zip=com.bilingify.readest.desktop
 x-scheme-handler/readest=readest-handler.desktop
 x-scheme-handler/about=firefox.desktop
 x-scheme-handler/unknown=firefox.desktop
