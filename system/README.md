@@ -24,7 +24,7 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
   (`/etc/pacman.d/hooks/{pacman-list,aur-list}.hook`) that regenerate the
   package manifests under `archlinux/.NO-STOW/`.
 - `openssh/` — `/etc/ssh/sshd_config.d/10-local.conf`, the local `sshd` policy:
-  public-key logins for `david` only, and only from the `192.168.178.0/24` home
+  public-key logins for `david` only, and only from the `192.168.1.0/24` home
   LAN. The authorized keys themselves are _not_ here — they are stowed from the
   `$HOME`-side `ssh/` package as `~/.ssh/authorized_keys`.
 - `networkd/` — the `systemd-networkd` config in `/etc/systemd/network/`: the
