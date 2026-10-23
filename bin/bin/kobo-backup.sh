@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# kobo-backup — snapshot KOReader configuration, user fonts and book data
-# from a Kobo, over SSH or USB, into ~/kobo-backup/YYYY-MM-DD[-N].
+# kobo-backup — snapshot KOReader configuration, NickelMenu config, user
+# fonts and book data from a Kobo, over SSH or USB, into
+# ~/kobo-backup/YYYY-MM-DD[-N].
 #
 # Each snapshot is complete, but unchanged files are hard-linked to the
 # previous snapshot (rsync --link-dest), so repeat backups cost almost nothing.
@@ -62,6 +63,9 @@ rsync -a "${LINK[@]/%//koreader}" --ignore-missing-args \
 
 # Your own fonts (KOReader's bundled fonts are deliberately not included).
 rsync -a "${LINK[@]/%//fonts}" "$K/fonts/" "$B/fonts/"
+
+# NickelMenu config (menu entries, e.g. the KOReader launcher).
+rsync -a "${LINK[@]/%//nm}" --ignore-missing-args "$K/.adds/nm/" "$B/nm/"
 
 # Per-book data: highlights, notes, reading position (*.sdr folders).
 rsync -a "${LINK[@]/%//book-data}" --prune-empty-dirs \
