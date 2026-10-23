@@ -1,0 +1,5 @@
+[Match]
+Driver=ipheth
+
+[Network]
+DHCP=yes

@@ -29,7 +29,9 @@ accidentally symlink them into `~/etc/...`. Always deploy them explicitly with
   `$HOME`-side `ssh/` package as `~/.ssh/authorized_keys`.
 - `networkd/` — the `systemd-networkd` config in `/etc/systemd/network/`: the
   wired DHCP setup (`20-wired.network`) plus `20-wired.link`, which arms
-  magic-packet Wake-on-LAN on the `r8169` NIC. This host is wired-only.
+  magic-packet Wake-on-LAN on the `r8169` NIC. Wi-Fi (`25-wireless.network`)
+  and iPhone USB tethering (`30-iphone.network`) are fallbacks at a higher
+  route metric, so the wire wins whenever it is up.
   **Deployed by copying, not stowing** — see below.
 - `doas/` — `/etc/doas.conf`, the `doas` (opendoas) privilege rules. Includes a
   scoped `permit nopass david cmd /usr/bin/smbstatus` grant so the hypridle
@@ -123,9 +125,7 @@ not networkd.) So this package is deployed by **copying real files** into
 ```sh
 cd ~/dotfiles
 
-doas cp system/networkd/etc/systemd/network/20-wired.link \
-        system/networkd/etc/systemd/network/20-wired.network \
-        /etc/systemd/network/
+doas cp system/networkd/etc/systemd/network/* /etc/systemd/network/
 doas systemctl restart systemd-networkd      # apply the .network changes
 
 # Arm WoL now without a reboot (the .link is applied by udev on device add):
