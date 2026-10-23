@@ -48,7 +48,9 @@
       "Glob",
       "Grep",
       "Read",
-      "mcp__claude_ai_Gmail__search_threads"
+      "mcp__claude_ai_Gmail__search_threads",
+      "Bash(ssh kobo *)",
+      "Bash(scp *kobo:*)"
     ],
     "deny": [
       "Bash(curl *)",
@@ -67,8 +69,6 @@
       "Bash(pnpm uninstall *)",
       "Bash(rm *)",
       "Bash(rmdir *)",
-      "Bash(scp *)",
-      "Bash(ssh *)",
       "Bash(wget *)",
       "Bash(yarn add *)",
       "Bash(yarn install *)",
