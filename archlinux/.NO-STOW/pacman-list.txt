@@ -62,6 +62,7 @@ imagemagick
 inetutils
 inter-font
 isync
+iwd
 jdk8-openjdk
 jq
 ledger
