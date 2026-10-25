@@ -11,10 +11,10 @@
                  flymake-hledger flymake-lua flymake-markdownlint flymake-vale
                  flymake-yamllint fontaine ghostel hl-todo hyprlang-ts-mode
                  indent-bars ledger-mode ligature lorem-ipsum lua-mode magit
-                 marginalia markdown-ts-mode nerd-icons nerd-icons-completion
-                 nerd-icons-corfu nerd-icons-dired nerd-icons-grep
-                 nerd-icons-ibuffer nerd-icons-xref olivetti orderless org-anki
-                 org-modern page-break-lines pcmpl-args popper prescient project
+                 marginalia nerd-icons nerd-icons-completion nerd-icons-corfu
+                 nerd-icons-dired nerd-icons-grep nerd-icons-ibuffer
+                 nerd-icons-xref olivetti orderless org-anki org-modern
+                 page-break-lines pcmpl-args popper prescient project
                  python-mode reader shannon-max string-inflection titlecase
                  tramp vertico vertico-prescient visual-fill-column vterm))
  '(package-vc-selected-packages
