@@ -190,6 +190,5 @@
       "**Primary use of Claude Code**: personal, non-enterprise software projects (e.g. Linux desktop config, personal tooling, notes) — hobby/personal use, not work",
       "**Org-specific CLIs**: None configured"
     ]
-  },
-  "model": "sonnet"
+  }
 }
