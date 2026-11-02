@@ -41,6 +41,7 @@ pricehist
 pyglossary-git
 python-alpha_vantage
 python-idzip
+python-pdfplumber
 stardict-bobotig-en
 stardict-bobotig-fr
 tree-sitter-cpp

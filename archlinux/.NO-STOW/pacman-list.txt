@@ -115,6 +115,7 @@ python-fonttools
 python-gpgme
 python-lxml
 python-pipx
+python-pymupdf
 python-pyserial
 python-roman
 qmk
