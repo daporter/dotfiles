@@ -15,6 +15,7 @@ $HOME/.npm
 $HOME/Downloads
 $HOME/Mail/.notmuch/xapian
 $HOME/code/ebooks/originals
+$HOME/kobo
 $HOME/src
 $HOME/tmp
 # media backup: skip the photo-ingest staging inbox and its log
