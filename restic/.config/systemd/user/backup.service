@@ -16,3 +16,8 @@ Environment="RESTIC_PASSWORD_FILE=%h/.config/restic/password"
 # override it, so it must be explicitly unset here or restic sees both
 # password sources and refuses to run.
 UnsetEnvironment=RESTIC_PASSWORD_COMMAND
+# Stay out of the way when a missed run catches up while the desktop is
+# in use.
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
