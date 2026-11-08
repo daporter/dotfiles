@@ -22,6 +22,7 @@ $HOME/.vscode-oss/extensions
 $HOME/Downloads
 $HOME/Mail/.notmuch/xapian
 $HOME/code/ebooks/originals
+$HOME/code/ebooks/scratch
 $HOME/kobo
 $HOME/src
 $HOME/tmp
