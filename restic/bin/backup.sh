@@ -13,6 +13,8 @@ set -o pipefail
 # --- Configuration ---
 
 EMAIL_TO="david@daporter.net"
+# A Gmail filter matches "Restic report" to label these (self-sent mail
+# never reaches the Inbox); update the filter if this prefix changes.
 EMAIL_SUBJECT="Restic report: $(date '+%Y-%m-%d')"
 
 # Daily backup
