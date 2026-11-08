@@ -1,3 +1,16 @@
+program_options:
+  # Temporary (2026-11-08): flag pending offsite-drive chores when it's
+  # plugged in; remove once done. Matches the UUID, which survives relabel.
+  # No braces in the script: udiskie runs str.format on every argument.
+  event_hook: >-
+    sh -c 'test "$0" = device_added
+    && test "$1" = 0b0e55eb-e605-4f66-a086-3aa4fad53a30
+    && notify-send -u critical "Offsite backup drive connected"
+    "Pending: rewrite restic snapshots with the new excludes,
+    relabel restic_offsite to restic-offsite. Ask Claude.";
+    exit 0'
+    {event} {id_uuid}
+
 device_config:
   - id_label: restic
     ignore: true
