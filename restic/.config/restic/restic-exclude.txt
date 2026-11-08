@@ -1,5 +1,9 @@
 $HOME/.cache
 $HOME/.cargo
+$HOME/.config/Claude/Cache
+$HOME/.config/Claude/Extensions Update Cache
+$HOME/.config/Claude/claude-code-vm
+$HOME/.config/Claude/vm_bundles
 $HOME/.config/obsidian/Cache
 $HOME/.config/thunderbird/*/ImapMail
 $HOME/.config/thunderbird/*/global-messages-db.sqlite*
@@ -10,8 +14,11 @@ $HOME/.emacs.d/eln-cache
 $HOME/.emacs.d/elpa
 $HOME/.emacs.d/package-quickstart.el*
 $HOME/.local/share/Trash
+$HOME/.local/share/calibre-dbin
+$HOME/.local/share/spotify-launcher
 $HOME/.mozilla
 $HOME/.npm
+$HOME/.vscode-oss/extensions
 $HOME/Downloads
 $HOME/Mail/.notmuch/xapian
 $HOME/code/ebooks/originals
