@@ -59,6 +59,7 @@ hyprutils
 ibus
 ifuse
 imagemagick
+imv
 inetutils
 inter-font
 isync
@@ -180,6 +181,7 @@ uthash
 uv
 vale
 valgrind
+waybar
 wev
 wget
 words
