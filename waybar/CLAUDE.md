@@ -6,11 +6,10 @@ Personal dotfiles for an Arch Linux / Hyprland (Wayland) desktop, managed with G
 
 ## Package
 
-On `waybar-git` (AUR), not `extra/waybar` — reason not recorded;
-investigate before switching back to `extra/waybar`.
-
-Cost of `-git`: rebuild with `paru -S waybar-git` after any dependency
-soname bump (e.g. `jsoncpp`). Otherwise the binary fails to start (exit 127) and the systemd unit crash-loops.
+On `extra/waybar`. It was briefly on `waybar-git` (AUR) with no recorded
+reason, and switched back since the repo build was newer. Avoid `-git`:
+it needs a rebuild after any dependency soname bump (e.g. `jsoncpp`),
+or the binary fails to start (exit 127) and the unit crash-loops.
 
 ## Custom module refresh signals
 
