@@ -74,8 +74,8 @@ send_report() {
 	command -v sendmail >/dev/null 2>&1 || return 0
 	# Retry: a WakeSystem= run can start before Wi-Fi/DNS has reconnected
 	# after resume, so give it a couple of minutes to come back.
-	local ATTEMPT
-	for ATTEMPT in 1 2 3 4 5; do
+	local _
+	for _ in 1 2 3 4 5; do
 		if {
 			printf 'To: %s\n' "$EMAIL_TO"
 			printf 'Subject: %s\n' "$SUBJECT"
