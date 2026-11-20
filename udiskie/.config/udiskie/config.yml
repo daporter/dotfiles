@@ -16,5 +16,6 @@ device_config:
   - id_label: nas
     ignore: true
 
-  - id_label: restic-offsite
+  # Offsite drive: UUID, not label, so a relabel can't trigger automount.
+  - id_uuid: 0b0e55eb-e605-4f66-a086-3aa4fad53a30
     ignore: true
