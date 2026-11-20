@@ -1,3 +1,14 @@
+program_options:
+  # Temporary (2026-11-21): flag the pending offsite repack when the drive
+  # is plugged in; remove once done. No braces: udiskie str.formats args.
+  event_hook: >-
+    sh -c 'test "$0" = device_added
+    && test "$1" = 0b0e55eb-e605-4f66-a086-3aa4fad53a30
+    && notify-send -u critical "Offsite backup drive connected"
+    "Pending: restic prune --repack-uncompressed. Ask Claude.";
+    exit 0'
+    {event} {id_uuid}
+
 device_config:
   - id_label: restic
     ignore: true
