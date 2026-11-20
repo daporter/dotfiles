@@ -134,6 +134,7 @@ backup_drive() {
 		fi
 	fi
 
+	# WARN: backup saved, but prune or check failed. Hard failures exit early.
 	STATUS="SUCCESS"
 
 	log "=== Starting backup on $MOUNTPOINT ==="
@@ -181,6 +182,7 @@ backup_drive() {
 		if ! restic -r "$MOUNTPOINT" forget $PRUNE_ARGS --prune 2>&1 |
 			tee -a "$LOGFILE" "$TMP_LOG"; then
 			log_fail "Prune failed"
+			STATUS="WARN"
 		else
 			log "Prune completed successfully."
 		fi
@@ -201,6 +203,7 @@ backup_drive() {
 	if ! restic -r "$MOUNTPOINT" check --read-data-subset=1% 2>&1 |
 		tee -a "$LOGFILE" "$TMP_LOG"; then
 		log_fail "Repository verification failed."
+		STATUS="WARN"
 	else
 		log "Repository verification succeeded."
 	fi
