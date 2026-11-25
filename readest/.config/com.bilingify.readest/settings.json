@@ -1,0 +1,666 @@
+{
+  "keepLogin": false,
+  "alwaysOnTop": false,
+  "openBookInNewWindow": true,
+  "alwaysShowStatusBar": false,
+  "autoCheckUpdates": true,
+  "updateChannel": "stable",
+  "screenWakeLock": false,
+  "autohideCursor": true,
+  "screenBrightness": -1,
+  "autoScreenBrightness": true,
+  "swipeBrightnessGesture": true,
+  "hardwarePageTurner": {
+    "enabled": false,
+    "bindings": {
+      "pagePrev": null,
+      "pageNext": null,
+      "sectionPrev": null,
+      "sectionNext": null,
+      "refresh": null
+    }
+  },
+  "gamepadEnabled": true,
+  "reverseWheelPaging": false,
+  "hideBookshelfPageButtons": true,
+  "openLastBooks": false,
+  "lastOpenBooks": [
+    "a8913f4fd0dbbfd486364399b81035b4"
+  ],
+  "autoImportBooksOnOpen": false,
+  "telemetryEnabled": true,
+  "discordRichPresenceEnabled": false,
+  "libraryViewMode": "grid",
+  "librarySortBy": "updated",
+  "librarySortAscending": false,
+  "librarySortByAuto": true,
+  "libraryThenSortBy": "none",
+  "libraryThenSortAscending": true,
+  "libraryGroupBy": "group",
+  "libraryCoverFit": "crop",
+  "libraryAutoColumns": true,
+  "libraryColumns": 6,
+  "librarySkeuomorphicCovers": false,
+  "libraryHideCovers": false,
+  "libraryRecentShelfEnabled": false,
+  "metadataSeriesCollapsed": false,
+  "metadataOthersCollapsed": false,
+  "metadataDescriptionCollapsed": false,
+  "pinCodeEnabled": false,
+  "customDictionaries": [],
+  "dictionarySettings": {
+    "providerOrder": [
+      "builtin:wiktionary",
+      "builtin:wikipedia"
+    ],
+    "providerEnabled": {
+      "builtin:wiktionary": true,
+      "builtin:wikipedia": true
+    }
+  },
+  "kosync": {
+    "serverUrl": "https://sync.koreader.rocks/",
+    "username": "",
+    "userkey": "",
+    "deviceId": "79a1ee7c-6fab-454f-9ad2-ba4353d92490",
+    "deviceName": "",
+    "checksumMethod": "binary",
+    "strategy": "prompt",
+    "enabled": false
+  },
+  "bookorbit": {
+    "enabled": false,
+    "serverUrl": "",
+    "username": "",
+    "userkey": "",
+    "deviceId": "24b81991-fe77-4626-9466-0d46424acf28",
+    "deviceName": "",
+    "strategy": "prompt",
+    "syncProgress": true,
+    "syncNotes": true,
+    "syncStats": true,
+    "syncBookStates": true
+  },
+  "readwise": {
+    "enabled": false,
+    "accessToken": "",
+    "lastSyncedAt": 0
+  },
+  "hardcover": {
+    "enabled": false,
+    "accessToken": "",
+    "lastSyncedAt": 0,
+    "autoSync": false
+  },
+  "pagebound": {
+    "enabled": false,
+    "email": "",
+    "refreshToken": "",
+    "apiToken": "",
+    "lastSyncedAt": 0,
+    "autoSync": false
+  },
+  "notion": {
+    "enabled": false,
+    "accessToken": "",
+    "databaseId": "",
+    "lastSyncedAt": 0,
+    "includeChapterHeading": true
+  },
+  "webdav": {
+    "enabled": false,
+    "serverUrl": "",
+    "username": "",
+    "password": "",
+    "rootPath": "/",
+    "syncProgress": true,
+    "syncNotes": true,
+    "syncBooks": false,
+    "strategy": "silent",
+    "deviceId": "",
+    "lastSyncedAt": 0
+  },
+  "googleDrive": {
+    "enabled": false,
+    "syncProgress": true,
+    "syncNotes": true,
+    "syncBooks": false,
+    "strategy": "silent",
+    "deviceId": "",
+    "lastSyncedAt": 0
+  },
+  "s3": {
+    "enabled": false,
+    "endpoint": "",
+    "region": "auto",
+    "bucket": "",
+    "accessKeyId": "",
+    "secretAccessKey": "",
+    "syncProgress": true,
+    "syncNotes": true,
+    "syncBooks": false,
+    "strategy": "silent",
+    "deviceId": "",
+    "lastSyncedAt": 0
+  },
+  "onedrive": {
+    "enabled": false,
+    "syncProgress": true,
+    "syncNotes": true,
+    "syncBooks": false,
+    "strategy": "silent",
+    "deviceId": "",
+    "lastSyncedAt": 0
+  },
+  "icloud": {
+    "enabled": false,
+    "syncProgress": true,
+    "syncNotes": true,
+    "syncBooks": false,
+    "strategy": "silent",
+    "deviceId": "",
+    "lastSyncedAt": 0
+  },
+  "aiSettings": {
+    "enabled": false,
+    "provider": "ollama",
+    "ollamaBaseUrl": "http://127.0.0.1:11434",
+    "ollamaModel": "llama3.2",
+    "ollamaEmbeddingModel": "nomic-embed-text",
+    "aiGatewayModel": "google/gemini-2.5-flash-lite",
+    "aiGatewayEmbeddingModel": "openai/text-embedding-3-small",
+    "openrouterBaseUrl": "https://openrouter.ai/api/v1",
+    "openrouterModel": "",
+    "openrouterEmbeddingModel": "",
+    "spoilerProtection": true,
+    "maxContextChunks": 10,
+    "indexingMode": "on-demand",
+    "reedy": {
+      "enabled": false
+    }
+  },
+  "lastSyncedAtBooks": 0,
+  "lastSyncedAtConfigs": 0,
+  "lastSyncedAtNotes": 0,
+  "lastSyncedAtReplicas": {},
+  "syncCategories": {
+    "book": true,
+    "progress": true,
+    "note": true,
+    "dictionary": true,
+    "font": true,
+    "texture": true,
+    "opds_catalog": true,
+    "settings": true
+  },
+  "autoUpload": false,
+  "alwaysInForeground": false,
+  "version": 1,
+  "localBooksDir": "/home/david/.local/share/com.bilingify.readest/Readest/Books",
+  "koreaderSyncDeviceId": "710f8920-67ac-441a-a830-d4401ae43725",
+  "globalReadSettings": {
+    "sideBarWidth": "15%",
+    "isSideBarPinned": false,
+    "notebookWidth": "25%",
+    "isNotebookPinned": false,
+    "notebookActiveTab": "notes",
+    "translationProvider": "deepl",
+    "translateTargetLang": "EN",
+    "wordLensAutoDownload": true,
+    "customThemes": [],
+    "handwritingColor": "#1a1a1a",
+    "handwritingWidth": 0.006,
+    "handwritingTool": "pen",
+    "handwritingMarkerColor": "#facc15",
+    "handwritingMarkerWidth": 0.03,
+    "highlightStyle": "highlight",
+    "highlightStyles": {
+      "highlight": "yellow",
+      "underline": "green",
+      "squiggly": "blue"
+    },
+    "customHighlightColors": {
+      "red": "#f87171",
+      "yellow": "#facc15",
+      "green": "#4ade80",
+      "blue": "#60a5fa",
+      "violet": "#a78bfa"
+    },
+    "userHighlightColors": [],
+    "defaultHighlightLabels": {},
+    "customTtsHighlightColors": [],
+    "autohideCursor": true
+  },
+  "globalViewSettings": {
+    "marginTopPx": 83,
+    "marginBottomPx": 122,
+    "marginLeftPx": 16,
+    "marginRightPx": 16,
+    "compactMarginTopPx": 16,
+    "compactMarginBottomPx": 16,
+    "compactMarginLeftPx": 16,
+    "compactMarginRightPx": 16,
+    "gapPercent": 0,
+    "columnGapPx": 0,
+    "scrolled": false,
+    "scrolledDirection": "vertical",
+    "webtoonMode": false,
+    "lockHorizontalPan": false,
+    "noContinuousScroll": false,
+    "disableClick": false,
+    "disableSwipe": false,
+    "disablePullDownToBookmark": false,
+    "fullscreenClickArea": false,
+    "swapClickArea": false,
+    "disableDoubleClick": false,
+    "volumeKeysToFlip": false,
+    "maxColumnCount": 1,
+    "maxInlineSize": 610,
+    "maxBlockSize": 1440,
+    "writingMode": "auto",
+    "vertical": false,
+    "rtl": false,
+    "scrollingOverlap": 0,
+    "allowScript": false,
+    "hideScrollbar": false,
+    "autoScrollSpeed": 100,
+    "autoScrollRunning": false,
+    "zoomLevel": 100,
+    "paragraphMargin": 0,
+    "lineHeight": 1.4,
+    "wordSpacing": 0,
+    "letterSpacing": 0,
+    "textIndent": 1,
+    "fullJustification": true,
+    "hyphenation": true,
+    "theme": "light",
+    "backgroundTextureId": "none",
+    "backgroundOpacity": 0.6,
+    "backgroundSize": "cover",
+    "highlightOpacity": 0.4,
+    "codeHighlighting": false,
+    "codeLanguage": "auto-detect",
+    "dialogueHighlight": false,
+    "dialogueHighlightCustomColor": false,
+    "dialogueHighlightColor": "#facc15",
+    "dialogueHighlightCustomTextColor": false,
+    "dialogueHighlightTextColor": "",
+    "dialogueHighlightItalic": false,
+    "userStylesheet": "/* Readest \"Custom Content CSS\": the Kobo's device-side rules that CSS can carry.\n   Justified text (SE's CSS sets none; KOReader justifies, and Readest's own\n   justification is off with \"Use Book Layout\"); hyphenation limits 2 left,\n   3 right (Bringhurst 2.4.1); hanging punctuation (5.1.4) works only in\n   Safari's engine (macOS), Chromium ignores it. */\nbody {\n\ttext-align: justify;\n\thyphenate-limit-chars: auto 2 3;\n\thanging-punctuation: first allow-end last;\n}\n",
+    "userUIStylesheet": "/* Readest \"Custom Reader UI CSS\": the Kobo's Bookends \"tschichold\" preset,\n   as far as Readest's header and footer allow, without the progress bar\n   (Readest's toolbar has one). Classes from SectionInfo.tsx and ProgressBar.tsx. */\n\n/* Running head: centred, NV Garamond small caps (the Kobo uses NV Garamond SC). */\n.sectioninfo {\n\tjustify-content: center !important;\n\tfont-family: \"NV Garamond\", serif !important;\n\tfont-weight: 400 !important;\n\tfont-variant-caps: small-caps;\n\tletter-spacing: .05em;\n}\n/* Head baseline two lines (2 × 1.355 × 18 px) above the first text baseline. */\n.sectioninfo > span {\n\tposition: relative;\n\ttop: 4px;\n}\n\n/* Footer: folio and pages left centred together (\"32 / 69 · 6 left\"). */\n.progressinfo {\n\tfont-family: \"NV Garamond\", serif !important;\n\tfont-weight: 400 !important;\n\tpadding-inline: 0 !important;\n}\n/* The strip shrinks to its content unless given the row's width. Folio baseline\n   two lines below the last text baseline (bottom margin 122 px). */\n.progress-strip {\n\tflex: 1 1 100% !important;\n\tflex-wrap: wrap !important;\n\tjustify-content: center !important;\n\talign-content: flex-start !important;\n\tcolumn-gap: 0 !important;\n\tline-height: 20px;\n\tposition: relative;\n\ttop: 9px;\n}\n.progress-readout,\n.remaining-info {\n\tflex: none !important;\n\tfont-variant-numeric: oldstyle-nums proportional-nums !important;\n}\n.progress-readout { order: 1; }\n.progress-info-label { margin-inline-start: 0 !important; }\n.remaining-info { order: 2; }\n.remaining-info:not(:empty)::before { content: \"\\00a0·\\00a0\"; }\n.pages-left-label { display: none; }\n/* \"left\" in small caps, letterspaced like the head; figures stay old-style. */\n.pages-left-number::after {\n\tcontent: \" left\";\n\tfont-variant-caps: small-caps;\n\tletter-spacing: .05em;\n}\n",
+    "overrideFont": false,
+    "overrideLayout": false,
+    "overrideColor": false,
+    "useBookLayout": true,
+    "zoomMode": "fit-page",
+    "spreadMode": "auto",
+    "keepCoverSpread": true,
+    "invertImgColorInDark": false,
+    "applyThemeToPDF": false,
+    "contrast": 100,
+    "serifFont": "NV Garamond",
+    "sansSerifFont": "GillSansStd",
+    "monospaceFont": "Source Code Pro",
+    "defaultFont": "Serif",
+    "defaultCJKFont": "LXGW WenKai GB Screen",
+    "defaultFontSize": 18,
+    "minimumFontSize": 8,
+    "fontWeight": 400,
+    "replaceQuotationMarks": true,
+    "convertChineseVariant": "none",
+    "sideBarTab": "toc",
+    "uiLanguage": "",
+    "sortedTOC": false,
+    "showTOCThumbnails": true,
+    "doubleBorder": false,
+    "borderColor": "red",
+    "showHeader": true,
+    "showFooter": true,
+    "showRemainingTime": false,
+    "showRemainingPages": true,
+    "showProgressInfo": true,
+    "showStickyProgressBar": false,
+    "showCurrentTime": false,
+    "showCurrentBatteryStatus": false,
+    "showBatteryPercentage": true,
+    "use24HourClock": false,
+    "showPaginationButtons": false,
+    "progressStyle": "fraction",
+    "referencePageCount": 0,
+    "headerFooterFontSize": 16,
+    "headerFooterTextColor": "",
+    "headerFooterBackground": "auto",
+    "headerFooterBgOpacity": 0.85,
+    "animated": false,
+    "pageTurnStyle": "push",
+    "isEink": false,
+    "isColorEink": false,
+    "einkAutoRefreshInterval": 0,
+    "paragraphMode": {
+      "enabled": false
+    },
+    "readingRulerEnabled": false,
+    "readingRulerLines": 2,
+    "readingRulerPosition": 33,
+    "readingRulerOpacity": 0.5,
+    "readingRulerColor": "transparent",
+    "ttsRate": 1.3,
+    "ttsSentenceGap": 0.15,
+    "ttsParagraphGap": 0.3,
+    "ttsVoice": "",
+    "ttsUseNarration": true,
+    "ttsLocation": "",
+    "ttsHighlightOptions": {
+      "style": "highlight",
+      "color": "#808080"
+    },
+    "ttsHighlightGranularity": "word",
+    "ttsMediaMetadata": "sentence",
+    "ttsPlayerStyle": "full",
+    "ttsSkipInlineAnnotations": false,
+    "ttsPauseAfterSentence": false,
+    "screenOrientation": "auto",
+    "enableAnnotationQuickActions": true,
+    "annotationQuickAction": null,
+    "keepSelectionAfterLookup": false,
+    "annotationToolbarItems": [
+      "copy",
+      "highlight",
+      "annotate",
+      "search",
+      "dictionary",
+      "translate",
+      "tts",
+      "proofread"
+    ],
+    "copyToNotebook": false,
+    "noteExportConfig": {
+      "includeTitle": true,
+      "includeAuthor": true,
+      "includeDate": true,
+      "includeChapterTitles": true,
+      "includeQuotes": true,
+      "includeNotes": true,
+      "includePageNumber": true,
+      "includeTimestamp": false,
+      "includeChapterSeparator": false,
+      "linkType": "app",
+      "noteSeparator": "\n\n",
+      "useCustomTemplate": false,
+      "customTemplate": "",
+      "exportAsPlainText": false,
+      "excludedColors": [],
+      "excludedStyles": []
+    },
+    "wordLensEnabled": false,
+    "wordLensLevel": 3,
+    "wordLensHintLang": "",
+    "wordLensGlossFontSize": 0.5,
+    "wordLensGlossColor": "",
+    "isGlobal": true,
+    "translationEnabled": false,
+    "translationProvider": "deepl",
+    "translationPromptId": "default",
+    "translateTargetLang": "en",
+    "showTranslateSource": true,
+    "ttsReadAloudText": "both",
+    "translationFont": "",
+    "translationFontStyle": "normal",
+    "translationFontSize": 1,
+    "translationColor": "",
+    "continuousScroll": false,
+    "showBarsOnScroll": false,
+    "tapToToggleFooter": false,
+    "showMarginsOnScroll": false,
+    "progressInfoMode": "all",
+    "showTTSBar": false
+  },
+  "migrationVersion": 20260706,
+  "replicaDeviceId": "4bde9d14-f390-4066-83b9-d78ac39f3838",
+  "externalLibraryFolders": [
+    "/home/david/Dropbox/Calibre/Library/Fiona McPherson/Effective Notetaking (1421)",
+    "/home/david/Dropbox/Calibre/Library/Anna Lembke/Dopamine Nation (1154)"
+  ],
+  "bookshelves": {
+    "rows": {
+      "recent": {
+        "user_id": "",
+        "kind": "bookshelf",
+        "replica_id": "recent",
+        "fields_jsonb": {
+          "definition": {
+            "v": {
+              "id": "recent",
+              "name": "",
+              "enabled": false,
+              "layout": "carousel",
+              "hideCovers": false,
+              "coverFit": "crop",
+              "skeuomorphicCovers": false,
+              "filters": {
+                "type": "group",
+                "match": "all",
+                "children": [
+                  {
+                    "type": "rule",
+                    "field": "currentlyReading",
+                    "kind": "boolean",
+                    "operator": "equals",
+                    "value": true
+                  }
+                ]
+              },
+              "useGlobalGrouping": true,
+              "groupBy": "group",
+              "useGlobalSort": true,
+              "sort": {
+                "by": "updated",
+                "ascending": false,
+                "thenBy": "none",
+                "thenAscending": true
+              },
+              "exclusive": false,
+              "includeExclusiveBooks": true
+            },
+            "t": "0000000000000-00000000-4bde9d14-f390-4066-83b9-d78ac39f3838",
+            "s": "4bde9d14-f390-4066-83b9-d78ac39f3838"
+          }
+        },
+        "updated_at_ts": "0000000000000-00000000-4bde9d14-f390-4066-83b9-d78ac39f3838",
+        "deleted_at_ts": null,
+        "reincarnation": null,
+        "manifest_jsonb": null,
+        "schema_version": 1
+      },
+      "audiobooks": {
+        "user_id": "",
+        "kind": "bookshelf",
+        "replica_id": "audiobooks",
+        "fields_jsonb": {
+          "definition": {
+            "v": {
+              "id": "audiobooks",
+              "name": "",
+              "enabled": true,
+              "layout": "carousel",
+              "hideCovers": false,
+              "coverFit": "crop",
+              "skeuomorphicCovers": false,
+              "filters": {
+                "type": "group",
+                "match": "all",
+                "children": [
+                  {
+                    "type": "rule",
+                    "field": "audio",
+                    "kind": "boolean",
+                    "operator": "equals",
+                    "value": true
+                  }
+                ]
+              },
+              "useGlobalGrouping": true,
+              "groupBy": "group",
+              "useGlobalSort": true,
+              "sort": {
+                "by": "updated",
+                "ascending": false,
+                "thenBy": "none",
+                "thenAscending": true
+              },
+              "exclusive": true,
+              "includeExclusiveBooks": false
+            },
+            "t": "0000000000000-00000000-4bde9d14-f390-4066-83b9-d78ac39f3838",
+            "s": "4bde9d14-f390-4066-83b9-d78ac39f3838"
+          }
+        },
+        "updated_at_ts": "0000000000000-00000000-4bde9d14-f390-4066-83b9-d78ac39f3838",
+        "deleted_at_ts": null,
+        "reincarnation": null,
+        "manifest_jsonb": null,
+        "schema_version": 1
+      },
+      "podcasts": {
+        "user_id": "",
+        "kind": "bookshelf",
+        "replica_id": "podcasts",
+        "fields_jsonb": {
+          "definition": {
+            "v": {
+              "id": "podcasts",
+              "name": "",
+              "enabled": true,
+              "layout": "carousel",
+              "hideCovers": false,
+              "coverFit": "crop",
+              "skeuomorphicCovers": false,
+              "filters": {
+                "type": "group",
+                "match": "all",
+                "children": [
+                  {
+                    "type": "rule",
+                    "field": "mediaType",
+                    "kind": "text",
+                    "operator": "equals",
+                    "value": "podcast"
+                  }
+                ]
+              },
+              "useGlobalGrouping": true,
+              "groupBy": "group",
+              "useGlobalSort": true,
+              "sort": {
+                "by": "updated",
+                "ascending": false,
+                "thenBy": "none",
+                "thenAscending": true
+              },
+              "exclusive": true,
+              "includeExclusiveBooks": false
+            },
+            "t": "0000000000000-00000000-4bde9d14-f390-4066-83b9-d78ac39f3838",
+            "s": "4bde9d14-f390-4066-83b9-d78ac39f3838"
+          }
+        },
+        "updated_at_ts": "0000000000000-00000000-4bde9d14-f390-4066-83b9-d78ac39f3838",
+        "deleted_at_ts": null,
+        "reincarnation": null,
+        "manifest_jsonb": null,
+        "schema_version": 1
+      },
+      "default": {
+        "user_id": "",
+        "kind": "bookshelf",
+        "replica_id": "default",
+        "fields_jsonb": {
+          "definition": {
+            "v": {
+              "id": "default",
+              "name": "",
+              "enabled": true,
+              "layout": "grid",
+              "hideCovers": false,
+              "coverFit": "crop",
+              "skeuomorphicCovers": false,
+              "filters": {
+                "type": "group",
+                "match": "all",
+                "children": []
+              },
+              "useGlobalGrouping": true,
+              "groupBy": "group",
+              "useGlobalSort": true,
+              "sort": {
+                "by": "updated",
+                "ascending": false,
+                "thenBy": "none",
+                "thenAscending": true
+              },
+              "exclusive": false,
+              "includeExclusiveBooks": false
+            },
+            "t": "0000000000000-00000000-4bde9d14-f390-4066-83b9-d78ac39f3838",
+            "s": "4bde9d14-f390-4066-83b9-d78ac39f3838"
+          }
+        },
+        "updated_at_ts": "0000000000000-00000000-4bde9d14-f390-4066-83b9-d78ac39f3838",
+        "deleted_at_ts": null,
+        "reincarnation": null,
+        "manifest_jsonb": null,
+        "schema_version": 1
+      },
+      "finished": {
+        "user_id": "",
+        "kind": "bookshelf",
+        "replica_id": "finished",
+        "fields_jsonb": {
+          "definition": {
+            "v": {
+              "id": "finished",
+              "name": "",
+              "enabled": false,
+              "layout": "carousel",
+              "hideCovers": false,
+              "coverFit": "crop",
+              "skeuomorphicCovers": false,
+              "filters": {
+                "type": "group",
+                "match": "all",
+                "children": [
+                  {
+                    "type": "rule",
+                    "field": "status",
+                    "kind": "text",
+                    "operator": "equals",
+                    "value": "finished"
+                  }
+                ]
+              },
+              "useGlobalGrouping": true,
+              "groupBy": "group",
+              "useGlobalSort": true,
+              "sort": {
+                "by": "updated",
+                "ascending": false,
+                "thenBy": "none",
+                "thenAscending": true
+              },
+              "exclusive": true,
+              "includeExclusiveBooks": false
+            },
+            "t": "0000000000000-00000000-4bde9d14-f390-4066-83b9-d78ac39f3838",
+            "s": "4bde9d14-f390-4066-83b9-d78ac39f3838"
+          }
+        },
+        "updated_at_ts": "0000000000000-00000000-4bde9d14-f390-4066-83b9-d78ac39f3838",
+        "deleted_at_ts": null,
+        "reincarnation": null,
+        "manifest_jsonb": null,
+        "schema_version": 1
+      }
+    },
+    "legacySettingsMigrated": true
+  }
+}
